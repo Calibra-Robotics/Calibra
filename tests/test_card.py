@@ -7,7 +7,12 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 
-from calibra.card import _metric_row, generate_card, generate_yaml_frontmatter
+from calibra.card import (
+    _detect_eval_env_type,
+    _metric_row,
+    generate_card,
+    generate_yaml_frontmatter,
+)
 from calibra.schema.report import (
     AnalyzerResult,
     DiagnosticReport,
@@ -223,6 +228,60 @@ class TestGenerateCard:
         card, _ = generate_card(report)
         assert "prune" in card.lower() or "coreset" in card.lower()
 
+    def test_provenance_section_always_present(self):
+        report = _make_report(n_episodes=120)
+        card, _ = generate_card(report)
+        assert "Dataset Provenance" in card
+        assert "Episodes (total)" in card
+        assert "120" in card
+
+    def test_episodes_used_shown_when_provided(self):
+        report = _make_report(n_episodes=120)
+        card, _ = generate_card(report, episodes_used=108)
+        assert "108" in card
+        assert "12 failed quality filter" in card
+
+    def test_episodes_used_fallback_when_none(self):
+        report = _make_report()
+        card, _ = generate_card(report, episodes_used=None)
+        assert "calibra prune" in card
+
+    def test_eval_env_type_shown_when_provided(self):
+        report = _make_report()
+        card, _ = generate_card(report, eval_env_type="simulator")
+        assert "simulator" in card
+
+    def test_eval_env_type_fallback_when_none(self):
+        report = _make_report()
+        card, _ = generate_card(report, eval_env_type=None)
+        assert "fill in manually" in card
+
+    def test_known_defects_placeholder_always_present(self):
+        report = _make_report()
+        card, _ = generate_card(report)
+        assert "known_defects" in card
+        assert "calibra review" in card
+
+    def test_episodes_used_equals_total_when_all_pass(self):
+        report = _make_report(n_episodes=50)
+        card, _ = generate_card(report, episodes_used=50)
+        assert "all passed quality filter" in card
+
+
+# ── _detect_eval_env_type ─────────────────────────────────────────────────────
+
+
+class TestDetectEvalEnvType:
+    def test_isaac_lab_is_simulator(self):
+        assert _detect_eval_env_type("isaac_lab") == "simulator"
+
+    def test_mcap_is_hardware(self):
+        assert _detect_eval_env_type("mcap") == "hardware"
+
+    def test_ambiguous_formats_return_none(self):
+        for fmt in ("hdf5", "lerobot", "rlds"):
+            assert _detect_eval_env_type(fmt) is None
+
 
 # ── generate_yaml_frontmatter ─────────────────────────────────────────────────
 
@@ -249,6 +308,26 @@ class TestGenerateYamlFrontmatter:
         report = _make_report(n_episodes=77)
         yaml = generate_yaml_frontmatter(report)
         assert "77" in yaml
+
+    def test_episodes_used_in_yaml_when_provided(self):
+        report = _make_report(n_episodes=100)
+        yaml = generate_yaml_frontmatter(report, episodes_used=90)
+        assert "calibra_episodes_used: 90" in yaml
+
+    def test_episodes_used_absent_from_yaml_when_none(self):
+        report = _make_report()
+        yaml = generate_yaml_frontmatter(report, episodes_used=None)
+        assert "calibra_episodes_used" not in yaml
+
+    def test_eval_env_type_in_yaml_when_provided(self):
+        report = _make_report()
+        yaml = generate_yaml_frontmatter(report, eval_env_type="simulator")
+        assert 'calibra_eval_env_type: "simulator"' in yaml
+
+    def test_eval_env_type_absent_from_yaml_when_none(self):
+        report = _make_report()
+        yaml = generate_yaml_frontmatter(report, eval_env_type=None)
+        assert "calibra_eval_env_type" not in yaml
 
 
 # ── run_card CLI ──────────────────────────────────────────────────────────────

@@ -165,7 +165,7 @@ def run_benchmark(argv: List[str]) -> None:
         "--base-gpu-hours",
         type=float,
         default=24.0,
-        help="GPU-hours required to train on the full (100%) dataset (default: 24.0)",
+        help="GPU-hours required to train on the full (100%%) dataset (default: 24.0)",
     )
     p.add_argument(
         "--experiment-id",
