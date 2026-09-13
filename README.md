@@ -5,7 +5,7 @@
   <a href="https://omertt27.github.io/Calibra/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" alt="Docs"/></a>
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-BSL_1.1-blue.svg" alt="License"/></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-v0.10.0-informational" alt="Changelog"/></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-v0.10.1-informational" alt="Changelog"/></a>
 </p>
 
 <p align="center"><b>Train robot policies with up to 75% less data.</b></p>

@@ -4,6 +4,21 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+## [0.10.1] — CLI fixes
+
+### Fixed
+
+- **`calibra audit` subcommand** — the command was documented in the README
+  and the Commands table but had no dispatcher in the CLI, so running
+  `calibra audit <path>` silently fell through to the wrong argument parser.
+  `calibra/audit.py` now implements `run_audit()` with the full option set
+  (`--html-out`, `--json`, `--policy`, `--format`, `--strict`,
+  `--no-anomalies`, `--cache-dir`).
+- **`calibra benchmark --help` crash** — a `%` character in the
+  `--base-gpu-hours` help string (`"full (100%) dataset"`) caused a
+  `ValueError: unsupported format character` in argparse on Python 3.14.
+  Escaped to `100%%`.
+
 ## [0.10.0] — Calibrated detection
 
 Addresses the core HF feedback question: "Is this anomaly actually corruption, or
