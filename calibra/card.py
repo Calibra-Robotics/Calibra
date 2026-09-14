@@ -247,9 +247,9 @@ def generate_card(
         card += "\n"
 
     card += (
-        f"### Recommended Coreset\n\n"
-        f"Run `calibra prune <dataset> --keep 0.3` to select the most diverse "
-        f"30% of quality-passing episodes before training.\n\n"
+        "### Recommended Coreset\n\n"
+        "Run `calibra prune <dataset> --keep 0.3` to select the most diverse "
+        "30% of quality-passing episodes before training.\n\n"
     )
 
     # ── Dataset Provenance ────────────────────────────────────────────────────
