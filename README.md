@@ -22,8 +22,8 @@ Calibra is a robotics dataset decision layer. It audits integrity, characterizes
 |---|---:|---:|---|
 | PushT (`lerobot/pusht`) | 76.7 | 25% | 99.5% of full-data performance with 75% less training data |
 | DROID-100 (`lerobot/droid_100`) | 77.0 | 75% | Outperformed full-data baseline (+3%) |
-| ALOHA sim (`lerobot/aloha_sim_insertion_human`) | 87.3 | Higher | Smaller gains — already a clean dataset |
-| xArm lift (`lerobot/xarm_lift_medium`) | 82.7 | — | Little benefit — already a high-quality simulation dataset |
+| ALOHA sim (`lerobot/aloha_sim_insertion_human`) | 87.3 | Higher | Smaller gains; already a clean dataset |
+| xArm lift (`lerobot/xarm_lift_medium`) | 82.7 | n/a | Little benefit; already a high-quality simulation dataset |
 
 Across four public robotics datasets, Calibra consistently preserved more rare behaviors than random selection. The magnitude of training-data reduction depended on the dataset's quality and redundancy.
 
@@ -68,7 +68,7 @@ Passed (8)
 Integrity Score: 85/100  ·  Status: Warning
 ```
 
-Or run all four steps as one report with `calibra analyze` — integrity, Calibra Score, estimated redundancy, and a training-set recommendation from the same coreset selector `calibra prune` uses:
+Or run all four steps as one report with `calibra analyze`: integrity, Calibra Score, estimated redundancy, and a training-set recommendation from the same coreset selector `calibra prune` uses:
 
 ```
 $ calibra analyze lerobot/pusht
@@ -81,7 +81,7 @@ $ calibra analyze lerobot/pusht
     Episodes   : 206
     ...
 
-  Quality (Calibra Score)     76.7 / 100   —  Good
+  Quality (Calibra Score)     76.7 / 100   ·  Good
   Coverage / diversity        68.2 / 100
   Redundancy (estimated)      41.0%  of state-space occupies duplicate regions
 ──────────────────────────────────────────────────────────
@@ -117,25 +117,25 @@ calibra analyze lerobot/pusht
 A full pass on one dataset, from install to a trained policy. Every step accepts a
 local path (`.h5`, `.hdf5`, a LeRobot directory) or a HuggingFace Hub ID.
 
-### 1. Trust — `calibra integrity`
+### 1. Trust: `calibra integrity`
 
 ```bash
 pip install 'calibra-robotics[lerobot]'
 calibra integrity lerobot/pusht
 ```
 
-Answers *can I trust this dataset?* — timestamp sync, episode completeness, and (on
+Answers *can I trust this dataset?* Timestamp sync, episode completeness, and (on
 HDF5 / LeRobot v1) duplicate, frozen, and blurry camera frames. Read it top-down:
 
 - **Critical** findings with `suggested_action: block` are objective acquisition
   failures. Fix the data or drop those episodes before training.
-- **Critical / inspect** and everything under **Warnings** are context-dependent —
+- **Critical / inspect** and everything under **Warnings** are context-dependent:
   jerky motion is a defect for a delicate insertion and normal for a fast reach.
   Open those episodes and decide.
 - **Integrity Score ≥ 80 · Status: Pass** means nothing objective is broken. Below
   that, expect to lose episodes.
 
-### 2. Quality — `calibra audit`
+### 2. Quality: `calibra audit`
 
 ```bash
 calibra audit lerobot/pusht --html-out report.html
@@ -146,17 +146,17 @@ per-episode outliers. Open `report.html` for the dashboard. A score in the **70s
 is a normal, usable dataset with redundancy to remove; **80s+** means it is already
 clean and Calibra will help less.
 
-### 3. Coverage — `calibra review`
+### 3. Coverage: `calibra review`
 
 ```bash
 calibra review lerobot/pusht --top 20 --output review.json
 ```
 
-Ranks episodes by three separate signals — anomaly, quality risk, and coverage
-value — so you can see which episodes are broken *and* which rare ones you cannot
+Ranks episodes by three separate signals (anomaly, quality risk, and coverage
+value) so you can see which episodes are broken *and* which rare ones you cannot
 afford to drop. Skim the top of the queue before pruning.
 
-### 4. Decide — `calibra prune`
+### 4. Decide: `calibra prune`
 
 ```bash
 calibra prune lerobot/pusht --keep 0.25 \
@@ -176,9 +176,9 @@ on that metadata can then use the weaker episodes rather than discarding them.
 `--annotate-format {jsonl,parquet,both}`. Model-agnostic;
 see [Annotate Mode](docs/annotate.md).
 
-Unsure what `--keep` to use? Run `calibra analyze lerobot/pusht` first — it
+Unsure what `--keep` to use? Run `calibra analyze lerobot/pusht` first; it
 recommends a retention fraction from the same selector. It is a heuristic starting
-point, not a validated retention curve — confirm it with the design-partner
+point, not a validated retention curve; confirm it with the design-partner
 protocol (`calibra experiment` + `calibra case-study`) before a production run.
 
 ### 5. Train
@@ -187,7 +187,7 @@ protocol (`calibra experiment` + `calibra case-study`) before a production run.
 lerobot-train policy=act dataset_repo_id=./pusht_coreset
 ```
 
-Or keep your existing training script and load the coreset directly — see
+Or keep your existing training script and load the coreset directly; see
 [LeRobot integration](#lerobot-integration) and [Isaac Lab → GR00T](#isaac-lab--gr00t-nvidia) below.
 
 → [Full walkthrough with annotated output](docs/guide.md) · [Command reference](docs/commands.md)
@@ -198,9 +198,9 @@ Or keep your existing training script and load the coreset directly — see
 
 No installation required.
 
-🔗 [Calibra — Dataset Integrity](https://huggingface.co/spaces/omert27/robot-dataset-health-check) (Hugging Face Space)
+🔗 [Calibra: Dataset Integrity](https://huggingface.co/spaces/omert27/robot-dataset-health-check) (Hugging Face Space)
 
-- Check any LeRobot dataset's integrity — timestamps, sync, completeness, duplicate/frozen/blurry frames, jittery motion
+- Check any LeRobot dataset's integrity: timestamps, sync, completeness, duplicate/frozen/blurry frames, jittery motion
 - See its Quality & Coverage score and percentile
 - Compare against community benchmarks
 - Download a full audit report
@@ -239,17 +239,17 @@ Method rankings are stable across all three policy families (Spearman ρ ≥ 0.8
 
 ## Detector calibration
 
-Calibra flags episodes that look unusual relative to the rest of the dataset. Not every flag is corruption — some episodes are just at the tail of a clean distribution. The table below shows, for each detector, how often it fires on **ground-truth-clean data** (benign firing rate) and how often it catches **synthetically-corrupted episodes** (episode detection rate). Both measured on real LeRobot datasets via `experiments/benign_firing_rate_benchmark.py`.
+Calibra flags episodes that look unusual relative to the rest of the dataset. Not every flag is corruption; some episodes are just at the tail of a clean distribution. The table below shows, for each detector, how often it fires on **ground-truth-clean data** (benign firing rate) and how often it catches **synthetically-corrupted episodes** (episode detection rate). Both measured on real LeRobot datasets via `experiments/benign_firing_rate_benchmark.py`.
 
 | Detector | Benign firing rate | Episode detection rate | Signal ratio |
 |---|---:|---:|---:|
 | `jitter_cv` | 3.4% | 37.1% | 11× |
-| `dropout_rate` | 0.0% | 18.8% | — |
+| `dropout_rate` | 0.0% | 18.8% | n/a |
 | `spike_rate` | 4.7% | 51.2% | 11× |
 | `vel_disc_rate` | 1.9% | 30.5% | 16× |
-| `ldlj` | 0.0% | 50.0% | — |
+| `ldlj` | 0.0% | 50.0% | n/a |
 
-Averaged across `lerobot/pusht` (n=206) and `lerobot/aloha_sim_insertion_scripted` (n=50) with 95% Wilson CIs. Signal ratio is undefined (—) when the benign rate is 0%.
+Averaged across `lerobot/pusht` (n=206) and `lerobot/aloha_sim_insertion_scripted` (n=50) with 95% Wilson CIs. Signal ratio is undefined (n/a) when the benign rate is 0%.
 
 **A detected anomaly is not the same as confirmed corruption.** Use `calibra review` to inspect flagged episodes before deciding to drop, downweight, or annotate them.
 
@@ -288,7 +288,7 @@ Once a design partner's retention curve is fully recorded, turn it into a partne
 calibra case-study --experiment-id my-run --partner "Partner A" --gpu-cost-per-hour 2.50 --out case_study.md
 ```
 
-`calibra case-study` reads only real measured `calibra experiment record` data — never `calibra benchmark`'s simulated numbers — and marks the report `DRAFT` rather than `VALIDATED` if any protocol condition is still unrecorded.
+`calibra case-study` reads only real measured `calibra experiment record` data (never `calibra benchmark`'s simulated numbers) and marks the report `DRAFT` rather than `VALIDATED` if any protocol condition is still unrecorded.
 
 → [Full command reference](docs/commands.md)
 
@@ -300,7 +300,7 @@ calibra case-study --experiment-id my-run --partner "Partner A" --gpu-cost-per-h
   <img src="docs/figures/diversity.svg" alt="Behavioral diversity comparison" width="680"/>
 </p>
 
-Random selection picks a clustered subset. Calibra's coverage-based selector spreads selections across the behavioral space — ensuring the policy sees every behavioral mode, even rare ones.
+Random selection picks a clustered subset. Calibra's coverage-based selector spreads selections across the behavioral space, ensuring the policy sees every behavioral mode, even rare ones.
 
 ---
 
@@ -369,14 +369,14 @@ result = selector.select(batch, report)
 
 ## Commands
 
-**Start here — the core workflow** ([full walkthrough](docs/guide.md)):
+**Start here: the core workflow** ([full walkthrough](docs/guide.md)):
 
 | Command | Description |
 |---|---|
 | `calibra analyze` | One-command report: integrity, Calibra Score, estimated redundancy, and a training-set recommendation |
-| `calibra integrity` | "Can I trust this dataset?" — timestamps, sync, episode completeness, duplicate/frozen/blurry camera frames, jittery/jerky motion (`--decode-images` for LeRobot v1) |
+| `calibra integrity` | "Can I trust this dataset?" Timestamps, sync, episode completeness, duplicate/frozen/blurry camera frames, jittery/jerky motion (`--decode-images` for LeRobot v1) |
 | `calibra audit` | Full diagnostic report with bootstrap CIs and per-episode outlier detection |
-| `calibra review` | Ranked episode review queue — separates anomaly, quality-risk, and coverage-value signals |
+| `calibra review` | Ranked episode review queue: separates anomaly, quality-risk, and coverage-value signals |
 | `calibra prune` | Two-stage coreset: quality filter + greedy max-coverage selection. `--annotate DIR` keeps every episode instead and writes a per-episode decision + characterization sidecar ([Annotate Mode](docs/annotate.md)) |
 
 **Everything else:**
@@ -406,16 +406,16 @@ result = selector.select(batch, report)
 
 ## Roadmap
 
-**v0.10.0 (current) — Calibrated detection:** `CalibrationRegistry` ships
+**v0.10.0 (current), Calibrated detection:** `CalibrationRegistry` ships
 empirically-measured benign firing rates for each detector on known-clean LeRobot
 datasets (PushT n=206, ALOHA n=50), so flagged episodes can be compared against a
 baseline rather than treated as absolute. `AnomalySummary` (schema 1.2.0) exposes
-per-detector context — baseline, concentration, detection rate — in the public JSON
+per-detector context (baseline, concentration, detection rate) in the public JSON
 report. Human-reviewed `FindingCharacterization` evidence schema (ADR-012) provides
 the vocabulary to distinguish true corruption from unusual-but-valid episodes. See
 [CHANGELOG.md](CHANGELOG.md).
 
-**v0.9.0 — Dataset decision layer & annotate mode:** `calibra prune`
+**v0.9.0, Dataset decision layer & annotate mode:** `calibra prune`
 can now emit a per-episode decision (`KEEP` / `DROP` / `ANNOTATE` / …) plus a
 characterization (`quality_risk`, `coverage_value`, `anomaly_score`, `calibra_score`,
 `redundancy`), and `--annotate` writes it as a model-agnostic training sidecar
@@ -423,17 +423,17 @@ characterization (`quality_risk`, `coverage_value`, `anomaly_score`, `calibra_sc
 pruning would drop. The existing coreset workflow is unchanged. See
 [Annotate Mode](docs/annotate.md) and ADR-011; full details in [CHANGELOG.md](CHANGELOG.md).
 
-**v0.8.0 — Measured training results:** `calibra experiment record/list/report` logs a design partner's real training-run outcomes; `calibra benchmark --sweep` and `--experiment-id` fold measured numbers into the benchmark report wherever available, tagging every value `(measured)` or `(simulated)` and stamping the report `SIMULATED` / `PARTIAL MEASUREMENT` / `CASE STUDY / VALIDATED`.
+**v0.8.0, Measured training results:** `calibra experiment record/list/report` logs a design partner's real training-run outcomes; `calibra benchmark --sweep` and `--experiment-id` fold measured numbers into the benchmark report wherever available, tagging every value `(measured)` or `(simulated)` and stamping the report `SIMULATED` / `PARTIAL MEASUREMENT` / `CASE STUDY / VALIDATED`.
 
-**Also since v0.8.0 — One-command report:** `calibra analyze` composes integrity, Calibra Score, and the coreset recommendation into a single report, and `calibra case-study` turns a completed experiment log into a partner-facing markdown report.
+**Also since v0.8.0, One-command report:** `calibra analyze` composes integrity, Calibra Score, and the coreset recommendation into a single report, and `calibra case-study` turns a completed experiment log into a partner-facing markdown report.
 
-**Next — does the metadata help?** A partner benchmark
+**Next: does the metadata help?** A partner benchmark
 (`experiments/METADATA_CONDITIONING_BENCHMARK.md`) measures whether conditioning
 ACT / Diffusion Policy on the annotate-mode sidecar recovers what aggressive
 pruning loses. That result decides whether Calibra's emphasis is smaller
 datasets or richer characterization.
 
-**Also next — Vision Integrity for video-backed LeRobot (v2/v3):** decode sampled frames from LeRobot's mp4-encoded v2/v3 datasets so duplicate-frame/camera-freeze/blur detection work there too.
+**Also next, Vision Integrity for video-backed LeRobot (v2/v3):** decode sampled frames from LeRobot's mp4-encoded v2/v3 datasets so duplicate-frame/camera-freeze/blur detection work there too.
 
 ---
 
@@ -452,13 +452,13 @@ pip install 'calibra-robotics[all]'               # everything
 
 **Formats supported:** LeRobot v1/v2/v3 (Parquet), HuggingFace Hub IDs, HDF5 (Isaac Lab, Robomimic), RLDS/TF Datasets, MCAP/ROS2 bags.
 
-Camera-frame checks (`duplicate_frame_rate`, `camera_freeze_events`, `blurry_episode_fraction` in `calibra integrity`) work out of the box on HDF5/Isaac Lab/robomimic data, and on LeRobot **v1** datasets via `calibra integrity <path> --decode-images` (opt-in — decodes HuggingFace `Image`-feature columns, off by default since it increases load time/memory). Not yet supported for LeRobot v2/v3 (video-encoded).
+Camera-frame checks (`duplicate_frame_rate`, `camera_freeze_events`, `blurry_episode_fraction` in `calibra integrity`) work out of the box on HDF5/Isaac Lab/robomimic data, and on LeRobot **v1** datasets via `calibra integrity <path> --decode-images` (opt-in; decodes HuggingFace `Image`-feature columns, off by default since it increases load time/memory). Not yet supported for LeRobot v2/v3 (video-encoded).
 
 ---
 
 ## Paper
 
-*Coming soon.* The central empirical finding — that the optimal coreset selection strategy depends on the data-retention budget — will be described in full detail.
+*Coming soon.* The central empirical finding, that the optimal coreset selection strategy depends on the data-retention budget, will be described in full detail.
 
 ---
 
@@ -485,4 +485,4 @@ ruff check .        # zero errors expected
 
 ## License
 
-[Business Source License 1.1](LICENSE) — free for research and internal use, converts to Apache 2.0 on 2030-06-30. Commercial hosting requires a separate license. See [LICENSE](LICENSE) and [LICENSING.md](LICENSING.md). Contact: omertahtaci05@gmail.com
+[Business Source License 1.1](LICENSE): free for research and internal use, converts to Apache 2.0 on 2030-06-30. Commercial hosting requires a separate license. See [LICENSE](LICENSE) and [LICENSING.md](LICENSING.md). Contact: omertahtaci05@gmail.com

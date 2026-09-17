@@ -5,7 +5,7 @@ Each ADR captures the context, decision, alternatives considered, and consequenc
 at the time the decision was made.
 
 ADRs are append-only. A superseded decision should have its status updated and
-a new ADR written to replace it — the original is never deleted.
+a new ADR written to replace it; the original is never deleted.
 
 ## Index
 

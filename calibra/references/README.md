@@ -1,7 +1,7 @@
 # Calibra Reference Profiles
 
 Real-dataset baselines for interpreting Calibra diagnostic output. Each profile
-is a raw metric distribution — no thresholds applied — produced by running
+is a raw metric distribution (no thresholds applied) produced by running
 `scripts/profile_pusht.py` against a publicly available dataset.
 
 Use these as anchors when reading a new dataset's Calibra report. A signal that
@@ -14,13 +14,13 @@ fine may be surprisingly clean compared to peers.
 
 | Metric | pusht (velocity cmd, sim) | aloha insertion (position cmd, sim) | aloha mobile cabinet (position cmd, **hardware**) | Verdict |
 |--------|--------------------------|-------------------------------------|--------------------------------------------------|---------|
-| Episodes / Steps | 206 / 25,650 | 50 / 25,000 | 85 / 127,500 | — |
-| Episode length (steps) | mean 125, std 36 | exactly 500 | exactly 1,500 | — |
-| Control frequency | ~10 Hz | 50 Hz | 50 Hz | — |
-| Action dim | 2 | 14 | 14 | — |
+| Episodes / Steps | 206 / 25,650 | 50 / 25,000 | 85 / 127,500 | n/a |
+| Episode length (steps) | mean 125, std 36 | exactly 500 | exactly 1,500 | n/a |
+| Control frequency | ~10 Hz | 50 Hz | 50 Hz | n/a |
+| Action dim | 2 | 14 | 14 | n/a |
 | Jitter CV | 2.9e-6 | 1.1e-5 | 3.1e-5 | Sim and hardware similar here |
-| Dropout | 0.0% | 0.0% | 0.0% | — |
-| **LDLJ (mean)** | **−16.34** | **−20.43** | **−24.08** | All CRITICAL — see note |
+| Dropout | 0.0% | 0.0% | 0.0% | n/a |
+| **LDLJ (mean)** | **−16.34** | **−20.43** | **−24.08** | All CRITICAL (see note) |
 | **Jerk spike rate** | **4.9% WARNING** | **0.69% OK** | **1.0% OK** | Position cmd consistently cleaner |
 | **Velocity disc. rate** | **16.7% CRITICAL** | **2.4% WARNING** | **1.3% OK** | Clean separation by control mode |
 | Action entropy (bits/dim) | 5.30 | 4.85 | 4.67 | All healthy |
@@ -28,17 +28,17 @@ fine may be surprisingly clean compared to peers.
 | Grasps per episode | none (no gripper) | 1.0 | 4.0 | Task structure detected correctly |
 | **Episode outliers (Calibra)** | **27 / 206** | **n/a (fixed length)** | **8 / 85** | Aggregate-invisible corruption |
 
-### Verdict: Outcome 1 — velocity discontinuity threshold is correctly calibrated
+### Verdict: Outcome 1, velocity discontinuity threshold is correctly calibrated
 
 The velocity discontinuity rate separates cleanly by action space semantics:
 
 - **pusht (velocity commands): 16.7% → CRITICAL**. Human teleoperation of direct
-  velocity inputs allows instantaneous reversals — the robot has no physical
+  velocity inputs allows instantaneous reversals; the robot has no physical
   inertia constraint at the command level. Frequent direction changes are a
   structural property of this control mode, not a data quality failure.
 
 - **aloha (joint positions): 2.4% → WARNING**. Position-command joint targets are
-  physically bounded by the previous position — large velocity changes require
+  physically bounded by the previous position; large velocity changes require
   large position deltas, which teleoperators avoid naturally. The 2.4% rate is
   low but not zero (some sharp approach-to-grasp transitions).
 
@@ -52,7 +52,7 @@ policy-conditioning is built.
 
 Both pusht and aloha score CRITICAL on LDLJ (−16.3 and −20.4 respectively), with
 aloha scoring *worse* despite using position commands. The LDLJ formula is
-theoretically dimensionless — it normalizes by T³ and v_max² — but in practice it
+theoretically dimensionless (it normalizes by T³ and v_max²) but in practice it
 is sensitive to control frequency and action space dimensionality in ways the
 normalization does not fully cancel. At 50 Hz over 500 steps, numerical
 differentiation produces high jerk values from small positional oscillations; at
@@ -74,18 +74,18 @@ incompatible control frequencies.
 
 **Dataset:** `lerobot/pusht`  
 **Task:** Push a T-shaped block to a target pose using a 2D velocity-command interface (teleop).  
-**Episodes:** 206 | **Steps:** 25,650 | **Action space:** 2D velocity (dx, dy) — no gripper  
-**Origin:** Simulated (Chi et al., 2023 — Diffusion Policy paper)
+**Episodes:** 206 | **Steps:** 25,650 | **Action space:** 2D velocity (dx, dy), no gripper  
+**Origin:** Simulated (Chi et al., 2023, Diffusion Policy paper)
 
 ### Key numbers
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| Timestamp jitter CV | 2.86e-6 | Near machine-precision — sim timestamps are exact |
+| Timestamp jitter CV | 2.86e-6 | Near machine-precision; sim timestamps are exact |
 | Dropout rate | 0.0% | Simulated, no dropped frames |
 | LDLJ (mean) | −16.34 | Characteristic of human velocity-command teleop; not comparable to position-cmd datasets |
 | Jerk spike rate | 4.9% | At edge of 5% critical threshold |
-| Velocity discontinuity rate | 16.7% | Structural — p50=16.3%, p95=27.5%; velocity-command artifact |
+| Velocity discontinuity rate | 16.7% | Structural: p50=16.3%, p95=27.5%; velocity-command artifact |
 | Action entropy | 5.30 bits/dim | Healthy coverage of 2D velocity space |
 | Contact fraction | 21.7% | Steps in slow/contact phase (velocity envelope proxy, no gripper) |
 
@@ -108,20 +108,20 @@ datasets of the same control mode and frequency.
 **Dataset:** `lerobot/aloha_sim_insertion_human`  
 **Task:** Bimanual peg insertion (sim), 2×7-DOF joint position control (teleop via ALOHA hardware).  
 **Episodes:** 50 | **Steps:** 25,000 | **Action space:** 14D joint positions (7 per arm) + gripper  
-**Origin:** Simulated (Zhao et al., 2023 — ACT paper)
+**Origin:** Simulated (Zhao et al., 2023, ACT paper)
 
 ### Key numbers
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| Timestamp jitter CV | 1.1e-5 | Sim — not informative |
-| Dropout rate | 0.0% | Sim — not informative |
-| LDLJ (mean) | −20.43 | Worse than pusht despite position control — frequency/dim sensitivity; not cross-comparable |
+| Timestamp jitter CV | 1.1e-5 | Sim; not informative |
+| Dropout rate | 0.0% | Sim; not informative |
+| LDLJ (mean) | −20.43 | Worse than pusht despite position control (frequency/dim sensitivity); not cross-comparable |
 | Jerk spike rate | 0.69% | Well within OK (< 2% threshold); clean position trajectories |
 | Velocity discontinuity rate | 2.4% | Position-command floor; contrast with pusht's 16.7% |
-| Action entropy | 4.85 bits/dim | Healthy but slightly lower than pusht — structured task |
-| PCA top-2 variance | 66.9% | 14D space concentrates in ~2 effective DOFs — expected for insertion |
-| Contact fraction | 90.7% | Most steps near the insertion site — high-contact task |
+| Action entropy | 4.85 bits/dim | Healthy but slightly lower than pusht; structured task |
+| PCA top-2 variance | 66.9% | 14D space concentrates in ~2 effective DOFs; expected for insertion |
+| Contact fraction | 90.7% | Most steps near the insertion site; high-contact task |
 | Grasps per episode | exactly 1.0 | Perfect grasp detection; every demo picks up the peg once |
 
 ### What this profile tells you
@@ -155,19 +155,19 @@ or frequencies.
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| Timestamp jitter CV | 3.1e-5 | Low but above machine-precision — hardware timing is clean |
+| Timestamp jitter CV | 3.1e-5 | Low but above machine-precision; hardware timing is clean |
 | Dropout rate | 0.0% | No dropped frames |
-| LDLJ (mean) | −24.08 | Worse than sim aloha — expected on real hardware with oscillation noise |
+| LDLJ (mean) | −24.08 | Worse than sim aloha; expected on real hardware with oscillation noise |
 | Jerk spike rate | 1.0% | OK (< 2% threshold); position control is smooth |
 | Velocity discontinuity rate | **1.3%** | **Second real-data point supporting VD-001** (position cmd < 5%) |
 | Action entropy | 4.67 bits/dim | Healthy |
-| Contact fraction | 78.9% | Contact-rich task — consistent with cabinet manipulation |
+| Contact fraction | 78.9% | Contact-rich task; consistent with cabinet manipulation |
 | Grasps per episode | 4.0 | 4 gripper events per episode (door handle grasp, pull open, two more) |
 | **Episode outliers** | **8 / 85** | **Invisible to aggregate metrics** |
 
 ### The documented real catch
 
-`aloha_mobile_cabinet` passes every aggregate check — velocity discontinuity OK,
+`aloha_mobile_cabinet` passes every aggregate check: velocity discontinuity OK,
 jitter OK, spike rate OK, entropy OK. A user inspecting only the summary report
 would conclude this is a clean dataset.
 
@@ -210,7 +210,7 @@ dataset shows real but subtle episode-level variance that simulation hides.
 
 **VD-001 holds on real hardware.** Aggregate vel_disc_rate of 1.29% confirms
 the < 5% position-command claim on a second, independent dataset. The per-episode
-outliers don't change the aggregate verdict — they reveal local corruption.
+outliers don't change the aggregate verdict; they reveal local corruption.
 
 **Temporal metrics are still uninformative.** Jitter CV 3.1e-5 is still very low
 despite being real hardware. This dataset may use locked-timestep playback.

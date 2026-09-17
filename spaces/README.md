@@ -24,9 +24,9 @@ Audit any [LeRobot](https://github.com/huggingface/lerobot) dataset in ~30 secon
 Enter a dataset ID (e.g. `lerobot/pusht`) and get:
 
 - **0–100 health score** with grade (A–F) and certification status
-- **Concrete findings** — frame dropout count, jerk trajectory count, redundant episodes
-- **Keep-fraction recommendation** — how much of the dataset to train on and which strategy to use
-- **Dimension breakdown** — temporal, smoothness, coverage, task structure, dynamics
+- **Concrete findings**: frame dropout count, jerk trajectory count, redundant episodes
+- **Keep-fraction recommendation**: how much of the dataset to train on and which strategy to use
+- **Dimension breakdown**: temporal, smoothness, coverage, task structure, dynamics
 - **Downloadable CalibraReport JSON** for CI pipelines and reproducibility
 
 ## Run locally
@@ -43,5 +43,5 @@ for audits of 30+ public LeRobot datasets with a sortable leaderboard.
 
 ## About
 
-Powered by [Calibra](https://github.com/omertt27/Calibra) — open-source dataset
+Powered by [Calibra](https://github.com/omertt27/Calibra), open-source dataset
 quality tooling for robotics imitation learning.
