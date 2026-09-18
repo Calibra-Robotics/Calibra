@@ -8,6 +8,7 @@ All fixtures are synthetic — no real dataset files required.
 from __future__ import annotations
 
 import json
+import os
 
 import numpy as np
 import pytest
@@ -149,7 +150,7 @@ def test_write_splits_rows_and_header(tmp_path):
         curation, str(tmp_path), source_dataset="/data/ds.h5", dataset_format="hdf5"
     )
 
-    names = {p.rsplit("/", 1)[-1] for p in paths}
+    names = {os.path.basename(p) for p in paths}
     assert names == {
         "calibra_annotations.jsonl",
         "calibra_annotations.manifest.json",
