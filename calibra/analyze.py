@@ -34,6 +34,7 @@ from calibra.analyzers.base import Analyzer
 from calibra.analyzers.blur import BlurAnalyzer
 from calibra.analyzers.calibration_drift import CalibrationDriftAnalyzer
 from calibra.analyzers.camera_freeze import CameraFreezeAnalyzer
+from calibra.analyzers.camera_view import CameraViewMismatchAnalyzer
 from calibra.analyzers.coverage import CoverageEntropyAnalyzer
 from calibra.analyzers.duplicate_frame import DuplicateFrameAnalyzer
 from calibra.analyzers.force_torque import ForceTorqueContactAnalyzer
@@ -75,7 +76,12 @@ _INTEGRITY_CATEGORIES: dict[str, frozenset[str]] = {
     ),
     "Episode structure": frozenset({"action_dropout_rate", "short_episode_fraction"}),
     "Camera feed": frozenset(
-        {"duplicate_frame_rate", "camera_freeze_events", "blurry_episode_fraction"}
+        {
+            "duplicate_frame_rate",
+            "camera_freeze_events",
+            "blurry_episode_fraction",
+            "camera_view_name_mismatch",
+        }
     ),
     "Motion & control": frozenset(
         {"ldlj", "jerk_spike_rate", "velocity_discontinuity_rate", "joint_offset_max_abs"}
@@ -95,6 +101,7 @@ def _combined_analyzers() -> list[Analyzer]:
         DuplicateFrameAnalyzer(),
         CameraFreezeAnalyzer(),
         BlurAnalyzer(),
+        CameraViewMismatchAnalyzer(),
         CalibrationDriftAnalyzer(),
         CoverageEntropyAnalyzer(),
         PhaseBalanceAnalyzer(),
