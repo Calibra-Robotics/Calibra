@@ -55,19 +55,61 @@ _MOVING_TOKENS = frozenset(
 )
 _STATIC_TOKENS = frozenset(
     {
-        "top", "bottom", "front", "back", "rear", "left", "right", "side",
-        "overhead", "birdview", "bird", "high", "low", "center", "centre",
-        "angled", "angle", "diagonal", "agentview", "external", "exo", "exterior",
-        "third", "thirdperson", "fixed", "base", "scene", "room", "table", "corner",
+        "top",
+        "bottom",
+        "front",
+        "back",
+        "rear",
+        "left",
+        "right",
+        "side",
+        "overhead",
+        "birdview",
+        "bird",
+        "high",
+        "low",
+        "center",
+        "centre",
+        "angled",
+        "angle",
+        "diagonal",
+        "agentview",
+        "external",
+        "exo",
+        "exterior",
+        "third",
+        "thirdperson",
+        "fixed",
+        "base",
+        "scene",
+        "room",
+        "table",
+        "corner",
     }
 )
 # Non-informative words stripped before classification; a key made only of these
 # (e.g. "camera_main", "images.rgb") is left UNKNOWN for the signal to resolve.
 _GENERIC_TOKENS = frozenset(
     {
-        "camera", "cam", "image", "images", "img", "obs", "observation",
-        "observations", "rgb", "depth", "color", "colour", "video", "main",
-        "default", "0", "1", "2", "3",
+        "camera",
+        "cam",
+        "image",
+        "images",
+        "img",
+        "obs",
+        "observation",
+        "observations",
+        "rgb",
+        "depth",
+        "color",
+        "colour",
+        "video",
+        "main",
+        "default",
+        "0",
+        "1",
+        "2",
+        "3",
     }
 )
 
@@ -115,9 +157,7 @@ def _iter_camera_obs(ep: Episode):
                 yield key, arr
 
 
-def compute_egomotion_correlation(
-    images: np.ndarray, actions: np.ndarray
-) -> Optional[float]:
+def compute_egomotion_correlation(images: np.ndarray, actions: np.ndarray) -> Optional[float]:
     """Pearson correlation between whole-frame visual activity and action motion.
 
     High when the frame moves with the arm (wrist / eye-in-hand camera), low

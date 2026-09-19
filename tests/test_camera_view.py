@@ -109,9 +109,12 @@ class TestEgomotionCorrelation:
 
     def test_too_few_frames_returns_none(self):
         rng = np.random.default_rng(2)
-        assert compute_egomotion_correlation(
-            rng.random((3, _H, _W, 3)).astype(np.float32), rng.random((3, 6)).astype(np.float32)
-        ) is None
+        assert (
+            compute_egomotion_correlation(
+                rng.random((3, _H, _W, 3)).astype(np.float32), rng.random((3, 6)).astype(np.float32)
+            )
+            is None
+        )
 
 
 # ── CameraViewMismatchAnalyzer ───────────────────────────────────────────────
