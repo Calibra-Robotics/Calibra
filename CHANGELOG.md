@@ -4,6 +4,102 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **Dataset profiles** (`calibra/dataset_profiles.py`). Smoothness and
+  calibration-drift checks exclude the last action dimension as a gripper by
+  default, which silently dropped PushT's `y` axis (its 2-D action is an
+  `(x, y)` target with no gripper). The global default is unchanged; instead the
+  `pusht` profile sets `gripper_dims=[]` and applies automatically to
+  `lerobot/pusht` and `lerobot/pusht_image`. Local copies take
+  `--profile pusht` (on `integrity`, `audit`, `review`, `prune`, `analyze`,
+  `score`; `Pipeline(profile=...)` in Python). Profiles only replace analyzer
+  defaults, never explicit settings. The applied profile is recorded in the new
+  `DiagnosticReport.dataset_profile` field and included in `config_hash` and the
+  cache key. With the profile, PushT's smoothness metrics match the hand-measured
+  reference profile in `calibra/references/README.md` (LDLJ −16.34, jerk spikes
+  4.9%, velocity discontinuities 16.7%).
+- **PushT calibration baselines re-measured** with the profile
+  (`experiments/benign_firing_rate_benchmark.py`, 2026-09-23): `spike_rate`
+  5.8% (was 1.5%), `vel_disc_rate` 1.9% (was 3.9%), `jitter_cv` 0.0% (was 6.8%,
+  stale since the 1% jitter floor). ALOHA was re-measured too and is unchanged.
+  `calibra audit lerobot/pusht` now sits exactly at its baseline.
+- **Profile regime thresholds.** Scoring PushT's `y` axis raises its velocity
+  discontinuity rate to 16.7%, above the global 13% HIGH NOISE cutoff, which
+  made `analyze` recommend 81/206 episodes and drop 125 as "corrupted". That rate
+  is PushT's clean baseline under 10 Hz mouse teleop, not corruption, so the
+  `pusht` profile sets `disc_high=0.25` (about 1.5× the clean rate) via the new
+  `DatasetProfile.regime_thresholds`. `diagnose_regime` applies a report's
+  profile thresholds automatically (explicit `custom_thresholds` still win), and
+  the noise score uses the same thresholds. The global thresholds are unchanged.
+  PushT stays MODERATE NOISE with 175/206 episodes recommended.
+- **Profile `prune` limits** (`DatasetProfile.prune_thresholds`). `prune`'s
+  global Stage 1 limits (spike 0.10, velocity discontinuities 0.25) sit at
+  PushT's own clean p95 (10.4%, 27.5%), so they removed 27 known-clean episodes.
+  The `pusht` profile uses the limits `analyze` already applies to PushT (0.25,
+  0.40), which clear its clean maximum (16.1%, 37.5%): PushT now loses 0
+  episodes in Stage 1 (48 without the profile, the global limits being
+  unchanged). Explicit `--max-spike-rate` / `--max-vel-disc-rate` still win;
+  `--max-vel-disc-rate` now defaults to unset (resolved to 0.25) so `prune` can
+  tell. The profile also reaches `Pi0CompatibilityAnalyzer`'s internal
+  smoothness check (new `gripper_dims` field) and every `calibra serve`
+  endpoint (new optional `profile` request field for local paths).
+
+### Fixed
+
+- **Every `calibra serve` POST endpoint returned 422.** `serve.py` used
+  `from __future__ import annotations` while defining its request models inside
+  `_make_app()`, so FastAPI could not resolve `req: AnalyzeRequest` and expected
+  a `req` query parameter instead of a JSON body. The import is removed; a test
+  now checks every POST endpoint reads a JSON body. `serve` outlier detection
+  also gets the dataset ID for calibration baselines, as `audit` does.
+- **PushT was documented as velocity commands.** Its actions are absolute (x, y)
+  target positions (they correlate 0.99 with the next position, 0.10 with the
+  position change). `calibra/references/README.md` and
+  `scripts/profile_pusht.py` are corrected; the reference metrics were already
+  computed correctly in position mode.
+- **Isaac Lab → GR00T integration crashed on every Isaac Lab file.** The reader
+  emits episode IDs like `demo_21`, but `export_gr00t_manifest`,
+  `recommended_demo_indices`, `rejected_demo_indices`, and `filter_hdf5` parsed
+  them with `int()`. They now accept both `demo_N` and `N`. `filter_hdf5` also
+  keeps the `data` group attributes (robomimic `env_args`), updates `total`, and
+  rewrites `mask/train` / `mask/valid` for the new demo numbering.
+- **`calibra prune --export-dataset` produced unloadable LeRobot datasets.** It
+  wrote one `train-00000-of-00001.parquet` regardless of the source layout, and
+  dropped videos and the episode index. It now follows `info.json`: LeRobot v3
+  gets `data/…/file-000.parquet`, a rewritten `meta/episodes/*.parquet`, the
+  referenced video files, and `tasks.parquet`. LeRobot v2 gets per-episode
+  Parquet and mp4 files. `splits` is an episode range. Verified by loading the
+  exported PushT coreset with `LeRobotDataset` (lerobot 0.4.4) and training on it.
+- **HDF5 `--export-dataset` silently exported every demo** for robomimic /
+  Isaac Lab files, because demos live under `data/demo_N`. Only the kept demos
+  are now copied, with `total` and `mask/` updated.
+- **`calibra audit` never showed calibration baselines.** The "Clean baseline"
+  column always read "unavailable" because the dataset ID was not passed through.
+  Hub datasets with a built-in baseline (e.g. `lerobot/pusht`) now show it.
+- **`calibra prune` (default world-model strategy) was non-deterministic.** JEPA
+  weights and minibatch order were unseeded, so the same input could keep
+  different episodes. `RobotJEPAConfig.seed` (default 0) now fixes both, without
+  touching global RNG state.
+- **Duplicate-frame and camera-freeze checks blocked clean datasets.** A
+  transition counted as a repeat when the *mean* pixel difference was below 0.5,
+  which is also true when a small object moves in a low-resolution frame:
+  `lerobot/pusht_image` got BLOCK on 206/206 episodes although no two consecutive
+  frames are identical. A repeat is now a transition where fewer than 0.05% of
+  pixels changed by more than 2 levels, which separates re-emitted frames from
+  both small motion and live sensor noise. `activity_threshold` is replaced by
+  `pixel_tolerance` and `min_changed_fraction` on both analyzers.
+- **Smoothness metrics depended on the action dtype.** Jerk, velocity
+  discontinuity, and LDLJ were differentiated in whatever dtype the reader
+  returned. With quantised actions (PushT's integer pixel targets), float32
+  rounding broke exact ties at the `k × median` spike boundary, so the same data
+  read by different loaders gave different results (PushT `spike_rate` outliers:
+  7 vs 3), and audit disagreed with its own calibration baseline. Derivatives are
+  now always computed in float64. With default analyzer settings (no dataset
+  profile), `prune` on PushT now removes 48 (was 51) quality failures.
+- **Install hints named the wrong PyPI package** (`calibra[...]`, an unrelated
+  project). They now say `calibra-robotics[...]`.
+
 ## [0.10.1] — CLI fixes
 
 ### Fixed

@@ -36,7 +36,7 @@ Detection: auto-selected when an HDF5 file contains a top-level "data/"
 group whose children start with "demo". Takes priority over the generic
 HDF5Reader because it is registered first.
 
-Dependency: pip install 'calibra[hdf5]'  (h5py)
+Dependency: pip install 'calibra-robotics[hdf5]'  (h5py)
 """
 
 from __future__ import annotations
@@ -62,7 +62,7 @@ def _require_h5py() -> "_h5py":
     except ImportError:
         raise ImportError(
             "h5py is required for the Isaac Lab adapter.\n"
-            "Install it with: pip install 'calibra[hdf5]'"
+            "Install it with: pip install 'calibra-robotics[hdf5]'"
         ) from None
 
 

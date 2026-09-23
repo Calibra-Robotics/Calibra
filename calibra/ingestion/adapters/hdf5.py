@@ -19,7 +19,7 @@ Expects datasets in one of two common robotics conventions:
 If neither convention is detected, a ValueError is raised with a description
 of what was found so the user can write a thin adapter subclass.
 
-Dependency: pip install 'calibra[hdf5]'  (h5py)
+Dependency: pip install 'calibra-robotics[hdf5]'  (h5py)
 """
 
 from __future__ import annotations
@@ -44,7 +44,7 @@ def _require_h5py() -> "_h5py":
         return h5py
     except ImportError:
         raise ImportError(
-            "h5py is required for the HDF5 adapter.\nInstall it with: pip install 'calibra[hdf5]'"
+            "h5py is required for the HDF5 adapter.\nInstall it with: pip install 'calibra-robotics[hdf5]'"
         ) from None
 
 

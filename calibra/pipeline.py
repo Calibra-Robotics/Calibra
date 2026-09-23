@@ -40,7 +40,10 @@ from calibra.schema.report import DiagnosticReport
 
 
 def _config_hash(
-    calibra_version: str, policy_family: Optional[str], analyzer_versions: dict
+    calibra_version: str,
+    policy_family: Optional[str],
+    analyzer_versions: dict,
+    dataset_profile: Optional[str] = None,
 ) -> str:
     """
     Deterministic fingerprint of "what produced this report" — the Calibra
@@ -54,6 +57,9 @@ def _config_hash(
         "policy_family": policy_family or "",
         "analyzers": sorted(analyzer_versions.items()),
     }
+    if dataset_profile:
+        # Only when set, so existing reports without a profile keep their hash.
+        payload["dataset_profile"] = dataset_profile
     blob = json.dumps(payload, sort_keys=True)
     return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16]
 
@@ -99,6 +105,8 @@ class Pipeline:
     mode      : "full" (default) runs every analyzer; "fast" restricts to
                 cheap, linear-time action/timestamp diagnostics (see
                 _fast_analyzers). Ignored when `analyzers` is given.
+    profile   : dataset profile name (see calibra.dataset_profiles). When None,
+                a Hub ID's own profile is applied automatically, if it has one.
     """
 
     def __init__(
@@ -106,7 +114,11 @@ class Pipeline:
         analyzers: Optional[list[Analyzer]] = None,
         world_model: bool = False,
         mode: str = "full",
+        profile: Optional[str] = None,
     ) -> None:
+        from calibra.dataset_profiles import get_profile
+
+        self.profile = get_profile(profile) if profile else None
         if analyzers is not None:
             self.analyzers: list[Analyzer] = analyzers
         elif mode == "fast":
@@ -135,8 +147,17 @@ class Pipeline:
         cache         : optional AuditCache instance. On hit, returns cached
                         result instantly. On miss, runs pipeline and stores result.
         """
+        from calibra.dataset_profiles import apply_profile, profile_for_path
+
+        profile = self.profile or profile_for_path(batch.source_path)
+        profile_name = profile.name if profile else None
+
         if cache is not None:
-            fingerprint = cache.fingerprint(batch, policy_family)
+            # A profile changes analyzer settings, so it is part of the cache key.
+            cache_key = (
+                f"{policy_family or ''}|profile={profile_name}" if profile_name else policy_family
+            )
+            fingerprint = cache.fingerprint(batch, cache_key)
             cached = cache.get(fingerprint)
             if cached is not None:
                 return cached
@@ -151,6 +172,7 @@ class Pipeline:
             analyzers.append(OpenVLACompatibilityAnalyzer())
         if pf_lower and "octo" in pf_lower:
             analyzers.append(OctoCompatibilityAnalyzer())
+        analyzers = apply_profile(analyzers, profile)
 
         capabilities = batch.capabilities
         results = []
@@ -181,7 +203,10 @@ class Pipeline:
             skipped_analyzers=skipped,
             calibra_version=calibra_version,
             analyzer_versions=analyzer_versions,
-            config_hash=_config_hash(calibra_version, policy_family, analyzer_versions),
+            dataset_profile=profile_name,
+            config_hash=_config_hash(
+                calibra_version, policy_family, analyzer_versions, profile_name
+            ),
             generated_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
         )
 

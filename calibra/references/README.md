@@ -12,7 +12,7 @@ fine may be surprisingly clean compared to peers.
 
 ## Cross-dataset comparison
 
-| Metric | pusht (velocity cmd, sim) | aloha insertion (position cmd, sim) | aloha mobile cabinet (position cmd, **hardware**) | Verdict |
+| Metric | pusht (position target, mouse teleop, sim) | aloha insertion (position cmd, sim) | aloha mobile cabinet (position cmd, **hardware**) | Verdict |
 |--------|--------------------------|-------------------------------------|--------------------------------------------------|---------|
 | Episodes / Steps | 206 / 25,650 | 50 / 25,000 | 85 / 127,500 | n/a |
 | Episode length (steps) | mean 125, std 36 | exactly 500 | exactly 1,500 | n/a |
@@ -32,10 +32,13 @@ fine may be surprisingly clean compared to peers.
 
 The velocity discontinuity rate separates cleanly by action space semantics:
 
-- **pusht (velocity commands): 16.7% → CRITICAL**. Human teleoperation of direct
-  velocity inputs allows instantaneous reversals; the robot has no physical
-  inertia constraint at the command level. Frequent direction changes are a
-  structural property of this control mode, not a data quality failure.
+- **pusht (mouse-teleoperated position targets): 16.7% → CRITICAL**. The action
+  is the absolute (x, y) target the operator points at, sampled at 10 Hz, so the
+  step-to-step target change can reverse abruptly with nothing smoothing it at
+  the command level. Frequent direction changes are a structural property of
+  this teleop setup, not a data quality failure. (Earlier versions of this page
+  called these velocity commands; see the correction under
+  [`pusht_velocity_command.json`](#pusht_velocity_commandjson).)
 
 - **aloha (joint positions): 2.4% → WARNING**. Position-command joint targets are
   physically bounded by the previous position; large velocity changes require
@@ -59,7 +62,7 @@ differentiation produces high jerk values from small positional oscillations; at
 10 Hz over ~125 steps, the same physical jerk manifests as a different LDLJ.
 
 **Consequence:** LDLJ is a reliable within-type signal (comparing two 50Hz
-arm datasets, or two velocity-command datasets) but should not be compared across
+arm datasets, or two PushT-style teleop datasets) but should not be compared across
 control modes or frequencies. Do not use the absolute LDLJ value to compare
 pusht-style and aloha-style datasets. Use velocity discontinuity rate and jerk
 spike rate for cross-type comparisons.
@@ -73,9 +76,18 @@ incompatible control frequencies.
 ## [`pusht_velocity_command.json`](pusht_velocity_command.json)
 
 **Dataset:** `lerobot/pusht`  
-**Task:** Push a T-shaped block to a target pose using a 2D velocity-command interface (teleop).  
-**Episodes:** 206 | **Steps:** 25,650 | **Action space:** 2D velocity (dx, dy), no gripper  
+**Task:** Push a T-shaped block to a target pose by pointing a 2D target (mouse teleop).  
+**Episodes:** 206 | **Steps:** 25,650 | **Action space:** 2D absolute target position (x, y) in pixels, no gripper  
 **Origin:** Simulated (Chi et al., 2023, Diffusion Policy paper)
+
+> **Correction (2026-09-23).** This profile was labelled "velocity command" and
+> "(dx, dy)". The data says otherwise: actions span 12–511 px like the agent
+> position, sit ~14 px from it on average, and correlate 0.99 with the next
+> position but 0.10 with the position change. They are absolute position
+> targets. The metrics below were computed in position mode with both axes
+> scored, which is correct; only the label was wrong. The file keeps its name
+> because `calibra compare` loads references by name. The `pusht` dataset
+> profile (`calibra/dataset_profiles.py`) reproduces these numbers.
 
 ### Key numbers
 
@@ -83,10 +95,10 @@ incompatible control frequencies.
 |--------|-------|-------|
 | Timestamp jitter CV | 2.86e-6 | Near machine-precision; sim timestamps are exact |
 | Dropout rate | 0.0% | Simulated, no dropped frames |
-| LDLJ (mean) | −16.34 | Characteristic of human velocity-command teleop; not comparable to position-cmd datasets |
+| LDLJ (mean) | −16.34 | Characteristic of 10 Hz mouse teleop; not comparable to 50 Hz arm datasets |
 | Jerk spike rate | 4.9% | At edge of 5% critical threshold |
-| Velocity discontinuity rate | 16.7% | Structural: p50=16.3%, p95=27.5%; velocity-command artifact |
-| Action entropy | 5.30 bits/dim | Healthy coverage of 2D velocity space |
+| Velocity discontinuity rate | 16.7% | Structural: p50=16.3%, p95=27.5%; teleop artifact |
+| Action entropy | 5.30 bits/dim | Healthy coverage of the 2D target space |
 | Contact fraction | 21.7% | Steps in slow/contact phase (velocity envelope proxy, no gripper) |
 
 ### What this profile tells you
@@ -94,11 +106,11 @@ incompatible control frequencies.
 **Temporal metrics are not informative from sim data.** Jitter and dropout only
 come alive on real hardware. Do not use pusht to calibrate temporal thresholds.
 
-**16.7% velocity discontinuity is the velocity-command floor.** Any velocity-command
+**16.7% velocity discontinuity is the PushT-style teleop floor.** A comparable
 dataset below 10% is meaningfully smoother than this reference. Any dataset above
-25% is outlying even for this control mode.
+25% is outlying even for this setup (the `pusht` profile's regime cutoff).
 
-**LDLJ of −16.34 is the velocity-command reference.** Interpret LDLJ only within
+**LDLJ of −16.34 is the PushT-style reference.** Interpret LDLJ only within
 datasets of the same control mode and frequency.
 
 ---

@@ -193,16 +193,17 @@ def _extract_metrics(report: DiagnosticReport) -> dict:
     return m
 
 
-def _noise_score(m: dict) -> float:
+def _noise_score(m: dict, t: dict) -> float:
     """
     Composite noise score in [0, 1].
 
     Weighted combination of jerk spike rate (primary), velocity discontinuity
-    rate (secondary), and frame dropout fraction (tertiary).
+    rate (secondary), and frame dropout fraction (tertiary), each relative to
+    the HIGH NOISE threshold in effect (global, or from a dataset profile).
     """
     score = (
-        0.50 * min(m["spike_fraction"] / _NOISE_SPIKE_HIGH, 1.0)
-        + 0.35 * min(m["vel_disc_rate"] / _NOISE_DISC_HIGH, 1.0)
+        0.50 * min(m["spike_fraction"] / t["spike_high"], 1.0)
+        + 0.35 * min(m["vel_disc_rate"] / t["disc_high"], 1.0)
         + 0.15 * min(m["dropout_fraction"] / max(_DROPOUT_HIGH, 1e-9), 1.0)
     )
     return round(float(score), 4)
@@ -283,7 +284,9 @@ def diagnose_regime(
 
     custom_thresholds
         Optional overrides for the spike/disc thresholds. Keys:
-        ``spike_low``, ``spike_high``, ``disc_low``, ``disc_high``.
+        ``spike_low``, ``spike_high``, ``disc_low``, ``disc_high``. Applied on
+        top of the thresholds from the report's dataset profile (if any), which
+        are applied on top of the global defaults.
 
     Returns
     -------
@@ -297,11 +300,22 @@ def diagnose_regime(
         "disc_low": _NOISE_DISC_LOW,
         "disc_high": _NOISE_DISC_HIGH,
     }
+    profile_note = ""
+    if report.dataset_profile:
+        from calibra.dataset_profiles import get_profile
+
+        profile_thresholds = get_profile(report.dataset_profile).regime_thresholds
+        if profile_thresholds:
+            t.update(profile_thresholds)
+            overrides = ", ".join(f"{k}={v}" for k, v in sorted(profile_thresholds.items()))
+            profile_note = (
+                f" Thresholds from dataset profile '{report.dataset_profile}': {overrides}."
+            )
     if custom_thresholds:
         t.update(custom_thresholds)
 
     metrics = _extract_metrics(report)
-    ns = _noise_score(metrics)
+    ns = _noise_score(metrics, t)
 
     spike = metrics["spike_fraction"]
     disc = metrics["vel_disc_rate"]
@@ -335,12 +349,13 @@ def diagnose_regime(
             f"so that rare-but-valid episodes are not filtered out."
         )
 
+    metrics["thresholds"] = dict(t)
     return RegimeDiagnosis(
         regime=regime,
         noise_score=ns,
         recommended_config=dict(_REGIME_CONFIGS[regime]),
         evidence=metrics,
-        explanation=explanation,
+        explanation=explanation + profile_note,
     )
 
 

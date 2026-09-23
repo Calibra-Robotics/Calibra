@@ -69,8 +69,8 @@ Integrity Score: 88/100  ·  Status: Warning
   dependent. `jerk_spike_rate`, `ldlj`, and `velocity_discontinuity_rate` are a
   defect for a delicate insertion task and normal for a fast reach or a whipping
   motion. Open the named episodes and decide for your task.
-- **Integrity Score ≥ 80 · Status: Pass** — nothing objective is broken. Below 80,
-  expect to lose episodes in step 4.
+- **Status: Healthy** (Integrity Score ≥ 90): nothing objective is broken.
+  **Warning** (70–89) or **Critical** (below 70): expect to lose episodes in step 4.
 
 **Flags you'll actually use:**
 
@@ -90,9 +90,13 @@ calibra audit lerobot/pusht --policy diffusion --html-out report.html
 ```
 
 `audit` runs four analyzers over every episode with bootstrap confidence intervals
-and per-episode outlier detection, and produces a **Calibra Score** (0–100).
-`--html-out` writes a dashboard with the score broken into Quality, Synchrony,
-Coverage, and Integrity sub-scores.
+and per-episode outlier detection. For Hub datasets with a known-clean baseline
+(e.g. `lerobot/pusht`), it also compares each detector's flag rate to that
+baseline. `--html-out` writes the same diagnostics as a dashboard. It exits 1 when
+any metric is CRITICAL.
+
+The **Calibra Score** (0–100, broken into Quality, Synchrony, Coverage, and Task
+Structure) comes from `calibra score lerobot/pusht` or `calibra analyze`.
 
 **How to read the score:**
 
@@ -136,8 +140,13 @@ shows up as a quality risk, that's the one to fix by hand rather than drop.
 
 ## 4. Select — `calibra prune`
 
+`--export-dataset` needs a local copy, so download the dataset first. A local
+copy has no Hub ID, so pass `--profile pusht` to get the same settings
+`lerobot/pusht` gets automatically (see [Dataset profiles](commands.md#dataset-profiles)):
+
 ```bash
-calibra prune lerobot/pusht --keep 0.25 \
+hf download lerobot/pusht --repo-type dataset --local-dir ./datasets/pusht
+calibra prune ./datasets/pusht --keep 0.25 --policy act --profile pusht \
   --report results/pusht/latest.json \
   --export-dataset ./pusht_coreset
 ```
@@ -147,12 +156,11 @@ calibra prune lerobot/pusht --keep 0.25 \
   CALIBRA PRUNING SUMMARY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Original episodes  : 206
-  Quality failures   : 6    (removed in Stage 1)
-  Diversity pruned   : 148  (removed in Stage 2)
-  Coreset size       : 52   (25.0% of original)
+  Quality failures   : 0  (removed in Stage 1)
+  Diversity pruned   : 154  (removed in Stage 2)
+  Coreset size       : 52  (25.2% of original)
+  Not evaluated      : 0  (passed Stage 1 with no quality metrics)
   Method             : quality_filter + greedy_max_coverage
-────────────────────────────────────────────────────────
-  To use: filter your dataset to the episode IDs in keep_episode_ids.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -165,6 +173,10 @@ calibra prune lerobot/pusht --keep 0.25 \
 2. **Greedy max-coverage** — from the survivors, farthest-point sampling on
    action-space statistics picks the `--keep` fraction of most behaviorally
    distinct episodes. O(N × K); handles ~50k episodes without approximation.
+   This is the selector with `--policy` or `--strategy diversity`. With neither,
+   `prune` defaults to `--strategy world-model`, which keeps the episodes a small
+   learned dynamics model (JEPA, seeded so runs are reproducible) finds most
+   surprising.
 
 **Outputs:**
 
@@ -172,7 +184,7 @@ calibra prune lerobot/pusht --keep 0.25 \
 |---|---|
 | `--out PATH` | `coreset_index.json` — just the kept episode IDs (default). |
 | `--report PATH` | Schema-versioned **CalibraReport JSON** — per-episode verdicts, reason codes (`jerk_spike`, `diversity_pruned`, …), quality scores, SHA-256 content hashes. Use this; it's the stable contract the integrations read. |
-| `--export-dataset DIR` | A materialised, ready-to-train copy of the dataset (LeRobot v1/v2, HDF5). |
+| `--export-dataset DIR` | A materialised, ready-to-train copy of a **local** dataset in its own layout (LeRobot v1/v2/v3 with videos, HDF5 / robomimic including `mask/`). |
 
 **Other knobs:**
 
@@ -186,7 +198,7 @@ calibra prune lerobot/pusht --keep 0.25 \
 ### Picking `--keep`
 
 Don't guess. Run `calibra analyze` (below) once — it recommends a retention fraction
-from the same selector, based on measured state-space redundancy. Then treat that
+from the diversity selector, based on measured state-space redundancy. Then treat that
 number as a **heuristic starting point, not a validated retention curve**. Confirm
 it with the design-partner protocol (`calibra experiment` + `calibra case-study`)
 before you commit a production training run to it.
@@ -198,7 +210,8 @@ before you commit a production training run to it.
 Point your trainer at the exported coreset:
 
 ```bash
-lerobot-train policy=act dataset_repo_id=./pusht_coreset
+lerobot-train --policy.type=act --policy.push_to_hub=false \
+  --dataset.repo_id=local/pusht_coreset --dataset.root=./pusht_coreset
 ```
 
 Or keep your existing training script and filter at load time from the report:
@@ -224,8 +237,8 @@ filter_hdf5("demos.hdf5", "results/franka/latest.json", "demos_coreset.hdf5")
 ## One command instead
 
 `calibra analyze` composes steps 1, 2, and 4 into a single report — trust, quality,
-estimated redundancy, and a training-set recommendation from the same coreset
-selector `calibra prune` uses:
+estimated redundancy, and a training-set recommendation from the diversity
+selector (`calibra prune --strategy diversity`):
 
 ```bash
 calibra analyze lerobot/pusht --policy act
@@ -233,38 +246,44 @@ calibra analyze lerobot/pusht --keep 0.4 --export coreset_index.json
 ```
 
 ```
-────────────────────────────────────────────────────────────
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   CALIBRA ANALYSIS
-────────────────────────────────────────────────────────────
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Dataset
-    Name       : lerobot/pusht
+    Name       : pusht
     Episodes   : 206
     Frames     : 25,650
     Format     : lerobot
-──────────────────────────────────────────────────────────
+    Tasks      : 1 distinct
+    Action dim : 2
+    Policy     : ACT
+────────────────────────────────────────────────────────────
   Integrity
-    ✅ Timestamps & sync    ✅ Episode structure
-    ✅ Camera feed          ✅ Motion & control
-    Integrity score: 95/100 — Healthy
-──────────────────────────────────────────────────────────
-  Quality (Calibra Score)     76.7 / 100   —  Good
-  Coverage / diversity        68.2 / 100
-  Redundancy (estimated)      41.0%  of state-space occupies duplicate regions
-──────────────────────────────────────────────────────────
+    ✅ Timestamps & sync
+    ✅ Episode structure
+    ·   Camera feed  (not evaluated)
+    ❌ Motion & control
+    Integrity score: 69/100 · Critical
+────────────────────────────────────────────────────────────
+  Quality (Calibra Score)    44.6 / 100   ·  Poor
+  Coverage / diversity       47.4 / 100
+  Redundancy (estimated)     3.2%  of state-space occupies duplicate regions
+────────────────────────────────────────────────────────────
   RECOMMENDATION
 
-    Regime             : Redundancy-dominated
-    Training set       : 52 / 206 episodes
-    Expected retention : 25%
+    Regime             : MODERATE NOISE
+    Training set       : 175 / 206 episodes
+    Expected retention : 85%
 
     Reasons:
-      • removes 6 corrupted/low-quality episodes
-      • removes 148 redundant episodes (diversity selection)
+      • removes 31 redundant episodes (diversity selection)
       • preserves behavioral coverage via greedy max-coverage selection
 
     This is a heuristic starting point (~1 - measured redundancy), not a
-    validated retention curve.
-────────────────────────────────────────────────────────────
+    validated retention curve. Run the design-partner protocol
+    (`calibra experiment` + `calibra case-study`) before committing a
+    production training run to this number.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
 Use `analyze` for the first look at a dataset; use the four separate commands when

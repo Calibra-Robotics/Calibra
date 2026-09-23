@@ -18,12 +18,16 @@ from typing import Optional
 import numpy as np
 
 from calibra.analyzers.base import Analyzer
-from calibra.analyzers.duplicate_frame import _find_image_obs
+from calibra.analyzers.duplicate_frame import (
+    _MIN_CHANGED_FRACTION,
+    _PIXEL_TOLERANCE,
+    _find_image_obs,
+    repeated_transitions,
+)
 from calibra.analyzers.task_structure import _threshold_level_upper
 from calibra.schema.episode import Episode, EpisodeBatch
 from calibra.schema.report import AnalyzerResult, ObservedValue, RiskFlag, RiskLevel
 
-_FREEZE_ACTIVITY_THRESHOLD = 0.5  # mean abs pixel diff below this = frozen transition
 _MIN_FREEZE_RUN = 5  # consecutive frozen transitions to count as a freeze event
 _FREEZE_WARNING_FRACTION = 1e-9  # any episode with a freeze event triggers at least WARNING
 _FREEZE_CRITICAL_FRACTION = 0.10  # 10% of checked episodes affected
@@ -40,14 +44,13 @@ def _max_run_length(mask: np.ndarray) -> int:
     return best
 
 
-def _episode_freeze_run(ep: Episode, activity_threshold: float) -> Optional[int]:
+def _episode_freeze_run(
+    ep: Episode, pixel_tolerance: float, min_changed_fraction: float
+) -> Optional[int]:
     images = _find_image_obs(ep)
     if images is None:
         return None
-    from calibra.temporal.drift import compute_visual_activity
-
-    activity = compute_visual_activity(images)
-    return _max_run_length(activity < activity_threshold)
+    return _max_run_length(repeated_transitions(images, pixel_tolerance, min_changed_fraction))
 
 
 @dataclass
@@ -58,9 +61,8 @@ class CameraFreezeAnalyzer(Analyzer):
 
     Parameters
     ----------
-    activity_threshold : mean abs pixel difference below which a frame
-                          transition counts as frozen. Provisional default —
-                          tune against your own camera/exposure settings.
+    pixel_tolerance, min_changed_fraction : when a transition counts as a
+                          repeated frame; see `repeated_transitions`.
     min_freeze_run      : consecutive frozen transitions required to count
                            as a freeze event (isolated duplicates don't count;
                            see DuplicateFrameAnalyzer for that).
@@ -70,7 +72,8 @@ class CameraFreezeAnalyzer(Analyzer):
 
     requires = frozenset({"images"})
 
-    activity_threshold: float = _FREEZE_ACTIVITY_THRESHOLD
+    pixel_tolerance: float = _PIXEL_TOLERANCE
+    min_changed_fraction: float = _MIN_CHANGED_FRACTION
     min_freeze_run: int = _MIN_FREEZE_RUN
     warning_fraction: float = _FREEZE_WARNING_FRACTION
     critical_fraction: float = _FREEZE_CRITICAL_FRACTION
@@ -88,7 +91,8 @@ class CameraFreezeAnalyzer(Analyzer):
             return AnalyzerResult(analyzer_name=self.name)
 
         run_lengths: list[Optional[int]] = [
-            _episode_freeze_run(ep, self.activity_threshold) for ep in batch.episodes
+            _episode_freeze_run(ep, self.pixel_tolerance, self.min_changed_fraction)
+            for ep in batch.episodes
         ]
         checked = [(ep, r) for ep, r in zip(batch.episodes, run_lengths) if r is not None]
 

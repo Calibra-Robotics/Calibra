@@ -80,6 +80,9 @@ def run_review(argv: list[str]) -> None:
         action="store_true",
         help="Print the ranked queue as JSON instead of human-readable text",
     )
+    from calibra.dataset_profiles import add_profile_argument
+
+    add_profile_argument(p)
     args = p.parse_args(argv)
 
     dataset_path = args.path
@@ -107,7 +110,7 @@ def run_review(argv: list[str]) -> None:
     log(f"  {batch.n_episodes} episodes  ·  {batch.n_samples} steps")
     log(f"Running diagnostic pipeline (mode={args.mode}) ...")
     try:
-        report = Pipeline(mode=args.mode).run(batch)
+        report = Pipeline(mode=args.mode, profile=args.profile).run(batch)
     except Exception as exc:
         print(f"error running pipeline: {exc}", file=sys.stderr)
         sys.exit(1)

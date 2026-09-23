@@ -141,6 +141,7 @@ class DiagnosticReport(BaseModel):
     # info, not part of "would this configuration reproduce the same result."
     calibra_version: str = ""
     analyzer_versions: dict[str, str] = {}
+    dataset_profile: Optional[str] = None  # calibra.dataset_profiles name, if one applied
     config_hash: str = ""
     generated_at: str = ""  # ISO 8601 UTC timestamp
 

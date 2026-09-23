@@ -4,6 +4,53 @@ Full documentation for all Calibra CLI commands. For a quick overview see the [R
 
 ---
 
+## Dataset profiles
+
+Some analyzer defaults encode assumptions that do not hold for every dataset. The
+main one: smoothness checks (`ldlj`, `jerk_spike_rate`,
+`velocity_discontinuity_rate`) and calibration drift leave out the **last action
+dimension** as a gripper (`gripper_dims=[-1]`). That suits most arm datasets but
+not PushT, whose 2-D action is an `(x, y)` target with no gripper, so the default
+ignores its `y` axis.
+
+A profile can also set the thresholds `calibra analyze` uses to pick a noise
+regime. The global thresholds were calibrated on 50 Hz arm datasets (ALOHA,
+DROID-100). PushT's actions are absolute `(x, y)` targets from mouse teleop at
+10 Hz, where abrupt direction changes are normal: its clean
+velocity-discontinuity rate is 16.7%, above the global HIGH NOISE cutoff of 13%,
+which would make `analyze` filter normal PushT motion as corruption.
+
+A dataset profile overrides these settings for the datasets it names, without
+changing them for anyone else:
+
+| Profile | Applied automatically to | Settings |
+|---|---|---|
+| `pusht` | `lerobot/pusht`, `lerobot/pusht_image` | `gripper_dims=[]`: score both axes. Regime `disc_high=0.25` (about 1.5× PushT's clean rate) instead of 0.13. `prune` Stage 1 limits `max_spike_rate=0.25`, `max_vel_disc_rate=0.40` instead of 0.10 / 0.25, which sit at PushT's own clean p95 and would cut 27 clean episodes. Smoothness stays in the default position mode, which is correct: PushT actions are absolute target positions, not velocities. |
+
+```bash
+calibra audit lerobot/pusht                     # profile applied automatically
+calibra prune ./datasets/pusht --profile pusht  # local copy: pass it explicitly
+```
+
+- A local copy has no Hub ID, so it only gets the profile with `--profile`.
+  Without it, `./datasets/pusht` is analysed with the defaults and gives
+  different results from `lerobot/pusht`.
+- `--profile` is supported by `integrity`, `audit`, `review`, `prune`,
+  `analyze`, and `score`. In Python: `Pipeline(profile="pusht")`.
+- A profile only replaces *defaults*. An analyzer you configure yourself (e.g.
+  `calibra compare --gripper-dims 0`) keeps your setting, `prune --max-spike-rate`
+  / `--max-vel-disc-rate` beat the profile's limits (and `--policy gr00t` still
+  tightens them), and
+  `diagnose_regime(report, custom_thresholds=...)` overrides the profile's
+  regime thresholds. The regime explanation names the profile when it applied.
+- Reports record the applied profile in `dataset_profile`, and it is part of
+  `config_hash` and the `--cache-dir` key, so profiled and unprofiled results
+  are never mixed up.
+
+Profiles live in `calibra/dataset_profiles.py`.
+
+---
+
 ## `calibra integrity` — "Can I trust this dataset?"
 
 ```bash
@@ -55,36 +102,39 @@ calibra analyze /data/robot_demos --json
 ```
 
 ```
-────────────────────────────────────────────────────────────
+$ calibra analyze lerobot/pusht --policy act
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   CALIBRA ANALYSIS
-────────────────────────────────────────────────────────────
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Dataset
-    Name       : lerobot/pusht
+    Name       : pusht
     Episodes   : 206
     Frames     : 25,650
     Format     : lerobot
-
-──────────────────────────────────────────────────────────
+    Tasks      : 1 distinct
+    Action dim : 2
+    Policy     : ACT
+────────────────────────────────────────────────────────────
   Integrity
     ✅ Timestamps & sync
     ✅ Episode structure
-    ✅ Camera feed
-    ✅ Motion & control
-    Integrity score: 95/100 — Healthy
-──────────────────────────────────────────────────────────
-  Quality (Calibra Score)     76.7 / 100   —  Good
-  Coverage / diversity        68.2 / 100
-  Redundancy (estimated)      41.0%  of state-space occupies duplicate regions
-──────────────────────────────────────────────────────────
+    ·   Camera feed  (not evaluated)
+    ❌ Motion & control
+    Integrity score: 69/100 · Critical
+────────────────────────────────────────────────────────────
+  Quality (Calibra Score)    44.6 / 100   ·  Poor
+  Coverage / diversity       47.4 / 100
+  Redundancy (estimated)     3.2%  of state-space occupies duplicate regions
+────────────────────────────────────────────────────────────
   RECOMMENDATION
 
-    Regime             : Redundancy-dominated
-    Training set       : 52 / 206 episodes
-    Expected retention : 25%
+    Regime             : MODERATE NOISE
+    Training set       : 175 / 206 episodes
+    Expected retention : 85%
 
     Reasons:
-      • removes 6 corrupted/low-quality episodes
-      • removes 148 redundant episodes (diversity selection)
+      • removes 31 redundant episodes (diversity selection)
       • preserves behavioral coverage via greedy max-coverage selection
 
     This is a heuristic starting point (~1 - measured redundancy), not a
@@ -93,10 +143,10 @@ calibra analyze /data/robot_demos --json
     production training run to this number.
 
     Export this coreset: calibra analyze <path> --export coreset_index.json
-────────────────────────────────────────────────────────────
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-The single-command "is this trustworthy, how good is it, what should I train on" report — the same story that otherwise takes three separate commands (`calibra integrity` for trust, `calibra audit`-style scoring for quality, `calibra prune` for a coreset) to assemble by hand. Nothing here is a new metric: it's the existing analyzers, the existing Calibra Score, and the existing regime-adaptive coreset selector (see `calibra prune`), composed into one report object.
+The single-command "is this trustworthy, how good is it, what should I train on" report — the same story that otherwise takes three separate commands (`calibra integrity` for trust, `calibra audit`-style scoring for quality, `calibra prune` for a coreset) to assemble by hand. Nothing here is a new metric: it's the existing analyzers, the existing Calibra Score, and the existing regime-adaptive diversity selector (`calibra prune --strategy diversity`; note that `calibra prune` with no `--policy` defaults to the world-model strategy instead), composed into one report object.
 
 | Flag | Description |
 |---|---|

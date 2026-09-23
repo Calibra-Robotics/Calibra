@@ -9,7 +9,7 @@ The adapter iterates episodes via tfds and converts to EpisodeBatch.
 Timestamps are synthesized from step index × (1/fps) unless the step dict
 contains an explicit "timestamp" key.
 
-Dependency: pip install 'calibra[rlds]'  (tensorflow, tensorflow-datasets)
+Dependency: pip install 'calibra-robotics[rlds]'  (tensorflow, tensorflow-datasets)
 """
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ def _require_tfds() -> tuple["tf", "tfds"]:
     except ImportError:
         raise ImportError(
             "tensorflow and tensorflow-datasets are required for the RLDS adapter.\n"
-            "Install them with: pip install 'calibra[rlds]'"
+            "Install them with: pip install 'calibra-robotics[rlds]'"
         ) from None
 
 

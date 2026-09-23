@@ -174,11 +174,12 @@ def run_analysis(
     policy_family: Optional[str] = None,
     keep_fraction: Optional[float] = None,
     cache=None,
+    profile: Optional[str] = None,
 ) -> AnalysisResult:
     """Pure function: batch in, full analysis out. No argv, no printing —
     the CLI wrapper (run_analyze) and any future caller (web UI, notebook)
     both go through this."""
-    pipeline = Pipeline(analyzers=_combined_analyzers())
+    pipeline = Pipeline(analyzers=_combined_analyzers(), profile=profile)
     report = pipeline.run(batch, policy_family=policy_family, cache=cache)
 
     score_result = compute_score(report)
@@ -424,6 +425,9 @@ def run_analyze(argv: list[str]) -> None:
         default=None,
         help="Cache directory for incremental analysis (see `calibra --cache-dir`)",
     )
+    from calibra.dataset_profiles import add_profile_argument
+
+    add_profile_argument(p)
     args = p.parse_args(argv)
 
     if args.keep is not None and not (0.0 < args.keep <= 1.0):
@@ -463,7 +467,11 @@ def run_analyze(argv: list[str]) -> None:
 
     try:
         result = run_analysis(
-            batch, policy_family=args.policy, keep_fraction=args.keep, cache=cache
+            batch,
+            policy_family=args.policy,
+            keep_fraction=args.keep,
+            cache=cache,
+            profile=args.profile,
         )
     except Exception as exc:
         print(f"error running analysis: {exc}", file=sys.stderr)

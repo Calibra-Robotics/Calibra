@@ -788,7 +788,11 @@ def _get_velocity(ep: Episode, action_type: str, active_dims: list[int]) -> Opti
     k depends on how many derivatives are needed to reach velocity.
     Returns None if the episode is too short or actions are static.
     """
-    acts = ep.actions
+    # Always differentiate in float64. Quantised actions (e.g. PushT's integer
+    # pixel targets) put many jerk values exactly on the k × median boundary, and
+    # float32 rounding breaks those ties differently: the same data read as
+    # float32 vs float64 flagged 7 vs 3 PushT episodes for spike_rate.
+    acts = np.asarray(ep.actions, dtype=np.float64)
     if acts.ndim == 1:
         acts = acts[:, np.newaxis]
 

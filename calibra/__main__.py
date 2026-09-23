@@ -338,6 +338,9 @@ def main() -> None:
         ),
     )
 
+    from calibra.dataset_profiles import add_profile_argument
+
+    add_profile_argument(parser)
     args = parser.parse_args()
 
     reader = None
@@ -350,7 +353,7 @@ def main() -> None:
 
         cache = AuditCache(args.cache_dir)
 
-    pipeline = Pipeline()
+    pipeline = Pipeline(profile=args.profile)
     try:
         report = pipeline.analyze_path(
             args.path,
@@ -364,9 +367,9 @@ def main() -> None:
 
     outliers = None
     if not args.no_anomalies:
-        from calibra.anomalies import find_outliers
+        from calibra.anomalies import calibration_dataset_id, find_outliers
 
-        outliers = find_outliers(report)
+        outliers = find_outliers(report, dataset=calibration_dataset_id(args.path))
 
     if args.html_out:
         from calibra.report_html import generate_html_report

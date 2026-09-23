@@ -96,13 +96,13 @@ def recommended_demo_indices(report_path: Union[str, Path]) -> list[int]:
     Sorted list of integer demo indices to keep.
     """
     verdicts = _load_verdicts(report_path)
-    return sorted(int(eid) for eid in verdicts.get("keep_episode_ids", []))
+    return sorted(_demo_index(eid) for eid in verdicts.get("keep_episode_ids", []))
 
 
 def rejected_demo_indices(report_path: Union[str, Path]) -> list[int]:
     """Return demo indices that were rejected by Calibra."""
     verdicts = _load_verdicts(report_path)
-    return sorted(int(eid) for eid in verdicts.get("reject_episode_ids", []))
+    return sorted(_demo_index(eid) for eid in verdicts.get("reject_episode_ids", []))
 
 
 def rejection_reason_codes(report_path: Union[str, Path]) -> dict[str, list[str]]:
@@ -191,7 +191,7 @@ def export_gr00t_manifest(
     verdicts = _load_verdicts(report_path)
 
     keep_ids_str = verdicts.get("keep_episode_ids", [])
-    keep_indices = sorted(int(eid) for eid in keep_ids_str)
+    keep_indices = sorted(_demo_index(eid) for eid in keep_ids_str)
     demo_ids = [f"demo_{i}" for i in keep_indices]
 
     if out_path is None:
@@ -264,6 +264,8 @@ def filter_hdf5(
             "The 'h5py' package is required for HDF5 filtering.\nInstall it with: pip install h5py"
         ) from None
 
+    from calibra.curation.export import remap_hdf5_mask
+
     keep_indices = recommended_demo_indices(report_path)
     keep_set = set(keep_indices)
 
@@ -276,19 +278,33 @@ def filter_hdf5(
         for key, val in f_src.attrs.items():
             f_dst.attrs[key] = val
 
-        # Copy approved demo groups into a new contiguous numbering
-        new_idx = 0
-        for idx in sorted(keep_set):
-            old_key = f"data/demo_{idx}"
-            if old_key not in f_src:
-                continue
-            new_key = f"data/demo_{new_idx}"
-            f_src.copy(old_key, f_dst, name=new_key)
-            new_idx += 1
+        data_dst = f_dst.create_group("data")
+        if "data" in f_src:
+            for key, val in f_src["data"].attrs.items():
+                data_dst.attrs[key] = val
 
-        # Copy other top-level groups (mask, env, etc.) except data
+        # Copy approved demo groups into a new contiguous numbering
+        renamed: dict[str, str] = {}
+        for idx in sorted(keep_set):
+            old_key = f"demo_{idx}"
+            if f"data/{old_key}" not in f_src:
+                continue
+            new_key = f"demo_{len(renamed)}"
+            f_src.copy(f"data/{old_key}", data_dst, name=new_key)
+            renamed[old_key] = new_key
+
+        # Robomimic-style files record the demo count; keep it in sync
+        for attrs in (f_dst.attrs, data_dst.attrs):
+            if "total" in attrs:
+                attrs["total"] = len(renamed)
+
+        # Train/valid masks name demos, so rewrite them for the new numbering
+        if isinstance(f_src.get("mask"), h5py.Group):
+            remap_hdf5_mask(f_src["mask"], f_dst, renamed)
+
+        # Copy other top-level groups (env, etc.)
         for group_name in f_src:
-            if group_name != "data" and group_name not in f_dst:
+            if group_name not in f_dst:
                 f_src.copy(group_name, f_dst)
 
     return dst
@@ -313,3 +329,12 @@ def _load_verdicts(report_path: Union[str, Path]) -> dict:
             "without per-episode selection verdicts."
         )
     return verdicts
+
+
+def _demo_index(episode_id: str) -> int:
+    """Map a report episode ID to its HDF5 demo index.
+
+    The Isaac Lab reader emits HDF5 group names (``"demo_42"``); older reports
+    and other readers use the bare index (``"42"``). Both map to ``42``.
+    """
+    return int(str(episode_id).removeprefix("demo_"))

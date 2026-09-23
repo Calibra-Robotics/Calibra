@@ -210,6 +210,9 @@ def run_integrity(argv: list[str]) -> None:
             "with --strict."
         ),
     )
+    from calibra.dataset_profiles import add_profile_argument
+
+    add_profile_argument(p)
     args = p.parse_args(argv)
 
     if args.strict and args.policy:
@@ -271,7 +274,7 @@ def run_integrity(argv: list[str]) -> None:
             ControlSmoothnessAnalyzer(),
             CalibrationDriftAnalyzer(),
         ]
-        report = Pipeline(analyzers=analyzers).run(batch)
+        report = Pipeline(analyzers=analyzers, profile=args.profile).run(batch)
     except Exception as exc:
         print(f"error running pipeline: {exc}", file=sys.stderr)
         sys.exit(1)

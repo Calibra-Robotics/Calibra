@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from calibra.analyzers.duplicate_frame import DuplicateFrameAnalyzer
+from calibra.analyzers.duplicate_frame import DuplicateFrameAnalyzer, repeated_transitions
 from calibra.schema.episode import Episode, EpisodeBatch, EpisodeMetadata
 from calibra.schema.report import RiskLevel
 
@@ -70,3 +70,49 @@ class TestDuplicateFrameAnalyzer:
 
     def test_requires_images_capability(self):
         assert DuplicateFrameAnalyzer.requires == frozenset({"images"})
+
+
+# ── repeated_transitions: what counts as a repeated frame ───────────────────
+
+
+def _moving_dot_frames(n_steps: int = 30, size: int = 96) -> np.ndarray:
+    """Static background with a small dot moving 1 px per step (PushT-like)."""
+    frames = np.full((n_steps, size, size, 3), 200, dtype=np.uint8)
+    for t in range(n_steps):
+        frames[t, 40:46, 10 + t : 16 + t] = 30
+    return frames
+
+
+class TestRepeatedTransitions:
+    def test_small_moving_object_is_not_a_repeat(self):
+        # Mean abs diff here is ~0.3 (below the old 0.5 threshold), yet the
+        # camera is clearly live: the old detector blocked PushT for this.
+        frames = _moving_dot_frames()
+        assert np.abs(np.diff(frames.astype(np.float32), axis=0)).mean() < 0.5
+        assert not repeated_transitions(frames).any()
+
+    def test_live_camera_on_still_scene_is_not_a_repeat(self):
+        rng = np.random.default_rng(0)
+        scene = np.full((20, 32, 32, 3), 120.0)
+        noisy = np.clip(scene + rng.normal(0, 2.0, scene.shape), 0, 255).astype(np.uint8)
+        assert not repeated_transitions(noisy).any()
+
+    def test_re_emitted_frame_is_a_repeat(self):
+        frames = _moving_dot_frames()
+        frames[10:15] = frames[10]
+        assert repeated_transitions(frames).tolist() == [9 < t < 14 for t in range(29)]
+
+    def test_float_images_in_unit_range(self):
+        frames = _moving_dot_frames().astype(np.float32) / 255.0
+        frames[5] = frames[4]
+        assert repeated_transitions(frames).tolist() == [t == 4 for t in range(29)]
+
+
+def test_moving_object_dataset_not_flagged():
+    episodes = []
+    for i in range(3):
+        ep = _make_ep(f"ep_{i}")
+        ep.observations["camera_rgb"] = _moving_dot_frames(n_steps=ep.n_steps)
+        episodes.append(ep)
+    flag = DuplicateFrameAnalyzer().analyze(_make_batch(episodes)).flags[0]
+    assert flag.level == RiskLevel.OK

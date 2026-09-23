@@ -97,7 +97,7 @@ def run_prune(argv: list[str]) -> None:
     q.add_argument(
         "--max-vel-disc-rate",
         type=float,
-        default=0.25,
+        default=None,
         help="Max velocity discontinuity fraction (default: 0.25)",
     )
     q.add_argument(
@@ -228,6 +228,9 @@ def run_prune(argv: list[str]) -> None:
             "proceeds directly to coreset selection."
         ),
     )
+    from calibra.dataset_profiles import add_profile_argument
+
+    add_profile_argument(p)
     args = p.parse_args(argv)
 
     if not (0.0 < args.keep <= 1.0):
@@ -267,7 +270,7 @@ def run_prune(argv: list[str]) -> None:
     log("Running diagnostic pipeline ...")
 
     try:
-        report = Pipeline().run(batch, cache=cache)
+        report = Pipeline(profile=args.profile).run(batch, cache=cache)
     except Exception as exc:
         print(f"error running pipeline: {exc}", file=sys.stderr)
         sys.exit(1)
@@ -286,7 +289,23 @@ def run_prune(argv: list[str]) -> None:
     # Apply GR00T-specific defaults before building the selector.
     user_set_spike_rate = args.max_spike_rate is not None
     max_spike_rate = args.max_spike_rate if user_set_spike_rate else 0.10
-    max_vel_disc_rate = args.max_vel_disc_rate
+    user_set_vel_disc = args.max_vel_disc_rate is not None
+    max_vel_disc_rate = args.max_vel_disc_rate if user_set_vel_disc else 0.25
+
+    # A dataset profile can replace the default limits (never explicit flags).
+    if report.dataset_profile:
+        from calibra.dataset_profiles import get_profile
+
+        limits = get_profile(report.dataset_profile).prune_thresholds
+        if not user_set_spike_rate and "max_spike_rate" in limits:
+            max_spike_rate = limits["max_spike_rate"]
+        if not user_set_vel_disc and "max_vel_disc_rate" in limits:
+            max_vel_disc_rate = limits["max_vel_disc_rate"]
+        if limits:
+            log(
+                f"  [profile {report.dataset_profile}] Stage 1 limits: "
+                f"max_spike_rate={max_spike_rate:.2f}, max_vel_disc_rate={max_vel_disc_rate:.2f}"
+            )
     max_dropout = args.max_dropout
     diversity_weight = args.diversity_weight
     entropy_weight = args.entropy_weight

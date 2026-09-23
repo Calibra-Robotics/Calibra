@@ -93,6 +93,18 @@ class EpisodeAnomaly:
         return [f.metric for f in self.flags]
 
 
+def calibration_dataset_id(path: str) -> str | None:
+    """
+    The dataset key to look up calibration baselines for a CLI path argument.
+
+    Hub IDs (``lerobot/pusht``, ``hf://lerobot/pusht``) map to the bare repo ID;
+    local paths return None, since a local copy may have been modified.
+    """
+    from calibra.ingestion.adapters.lerobot import _is_hub_id, _strip_hf_prefix
+
+    return _strip_hf_prefix(path) if _is_hub_id(path) else None
+
+
 def find_outliers(
     report: DiagnosticReport,
     k: float = OUTLIER_K,

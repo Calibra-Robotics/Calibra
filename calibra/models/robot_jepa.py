@@ -45,6 +45,7 @@ class RobotJEPAConfig:
     vicreg_mu: float = 1.0  # covariance loss weight
     grad_clip: float = 1.0
     warmup_epochs: int = 5
+    seed: int = 0  # model init + minibatch order, so the same data gives the same coreset
 
 
 class RobotJEPA:
@@ -161,7 +162,13 @@ class RobotJEPA:
         self._device = self._get_device()
         cfg = self.config
 
-        model = self._build_model(states.shape[1], actions.shape[1]).to(self._device)
+        # Seed a private generator rather than the global RNG. Weights are
+        # initialised on CPU, then moved, so this is device-independent.
+        gen = torch.Generator().manual_seed(cfg.seed)
+        with torch.random.fork_rng(devices=[]):
+            torch.manual_seed(cfg.seed)
+            model = self._build_model(states.shape[1], actions.shape[1])
+        model = model.to(self._device)
         opt = torch.optim.AdamW(model.parameters(), lr=cfg.lr, weight_decay=1e-4)
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
             opt, T_max=cfg.n_epochs, eta_min=cfg.lr * 0.1
@@ -184,7 +191,7 @@ class RobotJEPA:
         self.training_loss_curve = []
 
         for epoch in range(cfg.n_epochs):
-            perm = torch.randperm(N, device=self._device)
+            perm = torch.randperm(N, generator=gen).to(self._device)
             epoch_loss = 0.0
             n_batches = 0
 

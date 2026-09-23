@@ -29,6 +29,8 @@ Across four public robotics datasets, Calibra consistently preserved more rare b
 
 Across three datasets and three policy families (BC-MLP, ACT, Diffusion Policy) at 30% retention, Calibra improves over random by **+24.5%** on average.
 
+Quality scores in this table were recorded at benchmark time (Calibra v0.8.0, on the dataset revisions then on the Hub; PushT had 165 episodes in LeRobot v2 format). Scoring and the datasets have both changed since, so `calibra analyze` on today's `lerobot/pusht` (206 episodes, LeRobot v3) reports a different score.
+
 → [Full benchmark results, ablation tables, and limitations](docs/benchmarks.md)
 
 ---
@@ -68,31 +70,40 @@ Passed (8)
 Integrity Score: 85/100  ·  Status: Warning
 ```
 
-Or run all four steps as one report with `calibra analyze`: integrity, Calibra Score, estimated redundancy, and a training-set recommendation from the same coreset selector `calibra prune` uses:
+Or run all four steps as one report with `calibra analyze`: integrity, Calibra Score, estimated redundancy, and a training-set recommendation from the diversity selector (`calibra prune --strategy diversity`):
 
 ```
 $ calibra analyze lerobot/pusht
 
-────────────────────────────────────────────────────────────
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   CALIBRA ANALYSIS
-────────────────────────────────────────────────────────────
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Dataset
-    Name       : lerobot/pusht
+    Name       : pusht
     Episodes   : 206
     ...
-
-  Quality (Calibra Score)     76.7 / 100   ·  Good
-  Coverage / diversity        68.2 / 100
-  Redundancy (estimated)      41.0%  of state-space occupies duplicate regions
-──────────────────────────────────────────────────────────
+────────────────────────────────────────────────────────────
+  Integrity
+    ✅ Timestamps & sync
+    ✅ Episode structure
+    ·   Camera feed  (not evaluated)
+    ❌ Motion & control
+    Integrity score: 69/100 · Critical
+────────────────────────────────────────────────────────────
+  Quality (Calibra Score)    44.6 / 100   ·  Poor
+  Coverage / diversity       47.4 / 100
+  Redundancy (estimated)     3.2%  of state-space occupies duplicate regions
+────────────────────────────────────────────────────────────
   RECOMMENDATION
 
-    Training set       : 52 / 206 episodes
-    Expected retention : 25%
+    Regime             : MODERATE NOISE
+    Training set       : 175 / 206 episodes
+    Expected retention : 85%
     ...
-    This is a heuristic starting point, not a validated retention curve.
-    Run the design-partner protocol (`calibra experiment` + `calibra
-    case-study`) before committing a production training run to this number.
+    This is a heuristic starting point (~1 - measured redundancy), not a
+    validated retention curve. Run the design-partner protocol
+    (`calibra experiment` + `calibra case-study`) before committing a
+    production training run to this number.
 ```
 
 ---
@@ -117,6 +128,18 @@ calibra analyze lerobot/pusht
 A full pass on one dataset, from install to a trained policy. Every step accepts a
 local path (`.h5`, `.hdf5`, a LeRobot directory) or a HuggingFace Hub ID.
 
+**Dataset profiles.** By default, smoothness checks treat the last action
+dimension as a gripper and leave it out. That is right for most arm datasets but
+not for PushT, whose 2-D action is an `(x, y)` target with no gripper. The
+built-in `pusht` profile scores both axes instead. PushT's mouse teleop at 10 Hz
+also gives it a clean velocity-discontinuity rate (16.7%) above the global
+HIGH NOISE cutoff; the profile judges it against PushT's own clean rate instead,
+so `analyze` does not treat normal PushT motion as corruption, and `prune`'s quality
+filter uses matching limits instead of cutting PushT's clean tail. It applies automatically to
+`lerobot/pusht` and `lerobot/pusht_image`; for a local copy, pass
+`--profile pusht` (supported by `integrity`, `audit`, `review`, `prune`,
+`analyze`, and `score`). Reports record the profile in `dataset_profile`.
+
 ### 1. Trust: `calibra integrity`
 
 ```bash
@@ -132,8 +155,9 @@ HDF5 / LeRobot v1) duplicate, frozen, and blurry camera frames. Read it top-down
 - **Critical / inspect** and everything under **Warnings** are context-dependent:
   jerky motion is a defect for a delicate insertion and normal for a fast reach.
   Open those episodes and decide.
-- **Integrity Score ≥ 80 · Status: Pass** means nothing objective is broken. Below
-  that, expect to lose episodes.
+- **Status: Healthy** (Integrity Score ≥ 90) means nothing objective is broken.
+  **Warning** (70–89) and **Critical** (below 70) mean you should expect to lose
+  or fix episodes. The `CI result` line (and exit code) fails only on `block` findings.
 
 ### 2. Quality: `calibra audit`
 
@@ -141,10 +165,11 @@ HDF5 / LeRobot v1) duplicate, frozen, and blurry camera frames. Read it top-down
 calibra audit lerobot/pusht --html-out report.html
 ```
 
-The full diagnostic: a 0–100 Calibra Score with bootstrap confidence intervals plus
-per-episode outliers. Open `report.html` for the dashboard. A score in the **70s**
-is a normal, usable dataset with redundancy to remove; **80s+** means it is already
-clean and Calibra will help less.
+The full diagnostic: every metric with a bootstrap confidence interval and its
+threshold, per-episode outliers, and a calibration table comparing flag rates to
+known-clean baselines (for Hub datasets that have one). Open `report.html` for the
+dashboard. Exits 1 when any metric is CRITICAL (`--strict` also fails on
+WARNING). For the 0–100 Calibra Score, run `calibra score` or `calibra analyze`.
 
 ### 3. Coverage: `calibra review`
 
@@ -166,14 +191,21 @@ calibra prune lerobot/pusht --keep 0.25 --report results/pusht/latest.json
 
 ```bash
 hf download lerobot/pusht --repo-type dataset --local-dir ./datasets/pusht
-calibra prune ./datasets/pusht --keep 0.25 \
+calibra prune ./datasets/pusht --keep 0.25 --profile pusht \
   --report results/pusht/latest.json \
   --export-dataset ./pusht_coreset
 ```
 
-Two stages: filter quality failures, then greedily pick the most behaviorally
-distinct episodes until `--keep` is hit. `--report` writes a stable JSON of
-per-episode verdicts; `--export-dataset` materialises a ready-to-train copy.
+Two stages: filter quality failures, then select episodes until `--keep` is hit.
+The Stage 2 selector depends on your flags. With `--policy` (e.g. `act`,
+`diffusion`, `gr00t`) or `--strategy diversity`, it greedily picks the most
+behaviorally distinct episodes; that is the selector `calibra analyze` and the
+benchmarks use. With neither flag, it defaults to `--strategy world-model`
+(JEPA surprise), which keeps the episodes a learned dynamics model finds hardest
+to predict. `--report` writes a stable JSON of per-episode verdicts, the coreset
+index is also written to `coreset_index.json`, and `--export-dataset`
+materialises a ready-to-train copy (LeRobot v1/v2/v3 or HDF5, in the source's
+own layout, videos included).
 
 **Annotate mode.** `calibra prune --annotate DIR` keeps *every* episode instead
 of removing any, and writes a per-episode sidecar recording what Calibra would
@@ -184,14 +216,15 @@ on that metadata can then use the weaker episodes rather than discarding them.
 see [Annotate Mode](docs/annotate.md).
 
 Unsure what `--keep` to use? Run `calibra analyze lerobot/pusht` first; it
-recommends a retention fraction from the same selector. It is a heuristic starting
+recommends a retention fraction from the diversity selector. It is a heuristic starting
 point, not a validated retention curve; confirm it with the design-partner
 protocol (`calibra experiment` + `calibra case-study`) before a production run.
 
 ### 5. Train
 
 ```bash
-lerobot-train policy=act dataset_repo_id=./pusht_coreset
+lerobot-train --policy.type=act --policy.push_to_hub=false \
+  --dataset.repo_id=local/pusht_coreset --dataset.root=./pusht_coreset
 ```
 
 Or keep your existing training script and load the coreset directly; see
@@ -250,13 +283,13 @@ Calibra flags episodes that look unusual relative to the rest of the dataset. No
 
 | Detector | Benign firing rate | Episode detection rate | Signal ratio |
 |---|---:|---:|---:|
-| `jitter_cv` | 3.4% | 37.1% | 11× |
+| `jitter_cv` | 0.0% | 37.1% | n/a |
 | `dropout_rate` | 0.0% | 18.8% | n/a |
-| `spike_rate` | 4.7% | 51.2% | 11× |
-| `vel_disc_rate` | 1.9% | 30.5% | 16× |
+| `spike_rate` | 6.9% | 62.9% | 9× |
+| `vel_disc_rate` | 1.0% | 23.8% | 25× |
 | `ldlj` | 0.0% | 50.0% | n/a |
 
-Averaged across `lerobot/pusht` (n=206) and `lerobot/aloha_sim_insertion_scripted` (n=50) with 95% Wilson CIs. Signal ratio is undefined (n/a) when the benign rate is 0%.
+Averaged across `lerobot/pusht` (n=206) and `lerobot/aloha_sim_insertion_scripted` (n=50) with 95% Wilson CIs. Signal ratio is undefined (n/a) when the benign rate is 0%. PushT is measured with its `pusht` dataset profile (both action axes scored; last re-measured 2026-09-23).
 
 **A detected anomaly is not the same as confirmed corruption.** Use `calibra review` to inspect flagged episodes before deciding to drop, downweight, or annotate them.
 
@@ -322,14 +355,18 @@ Random selection picks a clustered subset. Calibra's coverage-based selector spr
 ## LeRobot integration
 
 ```bash
-# 1. Record demos
-lerobot-record --robot-type so100 --repo-id $HF_USER/my_dataset
+# 1. Record demos (see `lerobot-record --help` for your robot's ports and cameras)
+lerobot-record --robot.type=so100_follower --robot.port=/dev/ttyACM0 \
+  --teleop.type=so100_leader --teleop.port=/dev/ttyACM1 \
+  --dataset.repo_id=$HF_USER/my_dataset --dataset.single_task="Pick up the cube"
 
-# 2. Curate and write the report
-calibra prune /path/to/my_dataset --keep 0.3 --report results/my_dataset/latest.json
+# 2. Curate, write the report, and export the coreset
+calibra prune ~/.cache/huggingface/lerobot/$HF_USER/my_dataset --keep 0.3 --policy act \
+  --report results/my_dataset/latest.json --export-dataset ./my_dataset_coreset
 
 # 3. Train on the coreset
-lerobot-train policy=act dataset_repo_id=./my_dataset_coreset
+lerobot-train --policy.type=act --policy.push_to_hub=false \
+  --dataset.repo_id=$HF_USER/my_dataset_coreset --dataset.root=./my_dataset_coreset
 ```
 
 ```python
@@ -352,7 +389,7 @@ filter_hdf5("demos.hdf5", "results/franka/latest.json", "demos_coreset.hdf5")
 
 ```bash
 calibra prune demos.hdf5 --keep 0.3 --policy gr00t --report results/franka/latest.json
-python -m gr00t.train --manifest gr00t_manifest.json --demo-file demos_coreset.hdf5
+python -m gr00t.train --manifest results/franka/gr00t_manifest.json --demo-file demos_coreset.hdf5
 ```
 
 ---
@@ -484,7 +521,7 @@ Calibra is not open to external pull requests or contributions at this time.
 ```bash
 git clone https://github.com/omertt27/Calibra
 pip install -e '.[all,dev]'
-pytest              # 770 tests
+pytest              # 900+ tests
 ruff check .        # zero errors expected
 ```
 

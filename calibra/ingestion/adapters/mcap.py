@@ -12,7 +12,7 @@ Topic mapping convention (configurable via constructor):
 Each MCAP file is treated as one episode. If multiple files are in a
 directory, they become separate episodes.
 
-Dependency: pip install 'calibra[mcap]'  (mcap, mcap-ros2-support)
+Dependency: pip install 'calibra-robotics[mcap]'  (mcap, mcap-ros2-support)
 """
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ def _require_mcap() -> tuple:
     except ImportError:
         raise ImportError(
             "The 'mcap' package is required for the MCAP adapter.\n"
-            "Install it with: pip install 'calibra[mcap]'"
+            "Install it with: pip install 'calibra-robotics[mcap]'"
         ) from None
 
 

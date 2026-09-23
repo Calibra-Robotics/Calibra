@@ -12,6 +12,7 @@ from calibra.anomalies import (
     EpisodeFlag,
     _consecutive_groups,
     _heuristic_label,
+    calibration_dataset_id,
     find_outliers,
     render,
 )
@@ -361,3 +362,17 @@ def test_real_jitter_still_flagged():
     report = _report_from_batch(_jitter_batch(outlier_jitter_std=0.01))
     flagged = [a.episode_idx for a in find_outliers(report) if "jitter_cv" in a.metrics]
     assert flagged == [5]
+
+
+@pytest.mark.parametrize(
+    "path, expected",
+    [
+        ("lerobot/pusht", "lerobot/pusht"),
+        ("hf://lerobot/pusht", "lerobot/pusht"),
+        ("./datasets/pusht", None),
+        ("demos.hdf5", None),
+    ],
+)
+def test_calibration_dataset_id(path, expected):
+    # Hub IDs get the built-in baselines; local copies may differ, so they don't.
+    assert calibration_dataset_id(path) == expected

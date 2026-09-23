@@ -723,3 +723,27 @@ class TestPruneScriptedAutoAdjust:
         src = inspect.getsource(prune_module.run_prune)
         assert "scripted" in src.lower()
         assert "0.30" in src or "_SCRIPTED_AUTO_SPIKE" in src
+
+
+def test_jerk_metrics_independent_of_action_dtype():
+    # Integer-valued actions (like PushT's pixel targets) put jerk values exactly
+    # on the k × median boundary; float32 rounding used to break those ties
+    # differently from float64, so the same PushT data flagged 7 vs 3 episodes.
+    # Derivatives are now always taken in float64, whatever the reader returns.
+    from calibra.analyzers.smoothness import _get_velocity
+
+    rng = np.random.default_rng(0)
+    ts = np.arange(160, dtype=np.float64) * 0.1
+    acts = np.cumsum(rng.integers(-3, 4, (160, 2)), axis=0).astype(np.float64) + 200.0
+    eps = [
+        Episode(
+            metadata=EpisodeMetadata(episode_id="e"),
+            timestamps=ts,
+            observations={},
+            actions=acts.astype(dt),
+        )
+        for dt in (np.float32, np.float64)
+    ]
+    assert _get_velocity(eps[0], "position", [0, 1]).dtype == np.float64
+    for fn in (_episode_jerk_spike_fraction, _episode_vel_disc_fraction, _episode_ldlj):
+        assert fn(eps[0], "position", [0, 1]) == fn(eps[1], "position", [0, 1])

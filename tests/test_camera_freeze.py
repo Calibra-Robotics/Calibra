@@ -95,3 +95,20 @@ class TestCameraFreezeAnalyzer:
         batch = _make_batch([])
         result = CameraFreezeAnalyzer().analyze(batch)
         assert result.flags == []
+
+
+def test_freeze_found_among_small_moving_object_episodes():
+    # PushT-like frames: a small object moves every step, so only the episode
+    # with an injected freeze may be flagged (the old mean-diff check flagged all).
+    episodes = []
+    for i in range(4):
+        ep = _make_ep(f"ep_{i}")
+        frames = np.full((ep.n_steps, 96, 96, 3), 200, dtype=np.uint8)
+        for t in range(ep.n_steps):
+            frames[t, 40:46, 10 + t : 16 + t] = 30
+        if i == 2:
+            frames[5:15] = frames[5]
+        ep.observations["camera_rgb"] = frames
+        episodes.append(ep)
+    raw = CameraFreezeAnalyzer().analyze(_make_batch(episodes)).raw_metrics
+    assert [e["episode_id"] for e in raw["freeze_episodes"]] == ["ep_2"]

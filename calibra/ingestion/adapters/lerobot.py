@@ -28,7 +28,7 @@ load time and memory characteristics. v2/v3 (video-encoded) datasets don't
 support this yet; see `_read_local_v2_duckdb`/`_read_local_v2_pyarrow`.
 
 Dependencies:
-  pip install 'calibra[lerobot]'  (datasets, pyarrow, duckdb, pillow)
+  pip install 'calibra-robotics[lerobot]'  (datasets, pyarrow, duckdb, pillow)
 """
 
 from __future__ import annotations
@@ -59,7 +59,7 @@ def _require_datasets() -> "_hf_datasets":
     except ImportError:
         raise ImportError(
             "The 'datasets' package is required for the LeRobot adapter.\n"
-            "Install it with: pip install 'calibra[lerobot]'"
+            "Install it with: pip install 'calibra-robotics[lerobot]'"
         ) from None
 
 
@@ -71,7 +71,7 @@ def _require_duckdb():
     except ImportError:
         raise ImportError(
             "duckdb is required for fast local LeRobot Parquet scanning.\n"
-            "Install it with: pip install 'calibra[lerobot]'"
+            "Install it with: pip install 'calibra-robotics[lerobot]'"
         ) from None
 
 
@@ -83,7 +83,7 @@ def _require_pillow():
     except ImportError:
         raise ImportError(
             "Pillow is required to decode LeRobot image columns.\n"
-            "Install it with: pip install 'calibra[lerobot]'"
+            "Install it with: pip install 'calibra-robotics[lerobot]'"
         ) from None
 
 

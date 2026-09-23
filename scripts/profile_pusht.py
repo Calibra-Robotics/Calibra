@@ -141,7 +141,7 @@ def main() -> None:
     pipeline = Pipeline(
         analyzers=[
             TemporalAnalyzer(),
-            # pusht actions are (dx, dy) velocity — no discrete gripper dimension.
+            # pusht actions are absolute (x, y) target positions — no gripper dimension.
             # Pass gripper_dims=[] so both action dims are included in smoothness metrics.
             ControlSmoothnessAnalyzer(gripper_dims=[]),
             CoverageEntropyAnalyzer(),

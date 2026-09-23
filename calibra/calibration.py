@@ -230,7 +230,10 @@ class CalibrationRegistry:
 
 
 # ── built-in profiles ─────────────────────────────────────────────────────────
-# Measured by experiments/benign_firing_rate_benchmark.py on 2026-09-10.
+# Measured by experiments/benign_firing_rate_benchmark.py on 2026-09-10;
+# lerobot/pusht re-measured 2026-09-23 with its dataset profile (both action
+# axes scored, see calibra.dataset_profiles) and the jitter_cv noise floor.
+# ALOHA was re-measured the same day and was unchanged.
 # Within-dataset MAD-based outlier rates: even clean datasets have tail episodes.
 # Thresholds: jitter_cv/dropout_rate/spike_rate/vel_disc_rate at 3.0x MAD;
 #             ldlj at 4.0x MAD (higher natural variance across tasks).
@@ -245,13 +248,16 @@ _BUILTIN_PROFILES: list[CalibrationProfile] = [
         detector_version="0.10.0",
         config_hash=None,
         n_episodes=206,
-        n_flagged=14,
-        firing_rate=0.068,
-        ci_lower=0.0409,
-        ci_upper=0.1108,
-        measured_at="2026-09-10",
+        n_flagged=0,
+        firing_rate=0.0,
+        ci_lower=0.0,
+        ci_upper=0.0183,
+        measured_at="2026-09-23",
         provenance="benchmark_run",
-        notes="Within-dataset MAD outlier at 3.0x.",
+        notes=(
+            "Within-dataset MAD outlier at 3.0x. Was 14/206 before the 1% jitter_cv "
+            "floor: PushT timing CV is ~1e-6 (float rounding), so none are flaggable."
+        ),
     ),
     CalibrationProfile(
         dataset="lerobot/pusht",
@@ -275,13 +281,13 @@ _BUILTIN_PROFILES: list[CalibrationProfile] = [
         detector_version="0.10.0",
         config_hash=None,
         n_episodes=206,
-        n_flagged=3,
-        firing_rate=0.0146,
-        ci_lower=0.005,
-        ci_upper=0.0419,
-        measured_at="2026-09-10",
+        n_flagged=12,
+        firing_rate=0.0583,
+        ci_lower=0.0336,
+        ci_upper=0.099,
+        measured_at="2026-09-23",
         provenance="benchmark_run",
-        notes="Within-dataset MAD outlier at 3.0x.",
+        notes="Within-dataset MAD outlier at 3.0x. pusht profile: x and y both scored.",
     ),
     CalibrationProfile(
         dataset="lerobot/pusht",
@@ -290,13 +296,13 @@ _BUILTIN_PROFILES: list[CalibrationProfile] = [
         detector_version="0.10.0",
         config_hash=None,
         n_episodes=206,
-        n_flagged=8,
-        firing_rate=0.0388,
-        ci_lower=0.0198,
-        ci_upper=0.0747,
-        measured_at="2026-09-10",
+        n_flagged=4,
+        firing_rate=0.0194,
+        ci_lower=0.0076,
+        ci_upper=0.0489,
+        measured_at="2026-09-23",
         provenance="benchmark_run",
-        notes="Within-dataset MAD outlier at 3.0x.",
+        notes="Within-dataset MAD outlier at 3.0x. pusht profile: x and y both scored.",
     ),
     CalibrationProfile(
         dataset="lerobot/pusht",

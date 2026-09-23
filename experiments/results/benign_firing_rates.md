@@ -6,25 +6,25 @@ Measured by `experiments/benign_firing_rate_benchmark.py`.
 
 | Detector | Clean flag rate | Detection rate | Signal ratio | Concentration |
 |---|---|---|---|---|
-| jitter_cv | 3.4% | 37.1% | 11× | 62% in top 5 eps |
-| dropout_rate | 0.0% | 18.8% | — | 62% in top 5 eps |
-| spike_rate | 4.7% | 51.2% | 11× | 62% in top 5 eps |
-| vel_disc_rate | 1.9% | 30.5% | 16× | 62% in top 5 eps |
-| ldlj | 0.0% | 50.0% | — | 62% in top 5 eps |
+| jitter_cv | 0.0% | 37.1% | — | 66% in top 5 eps |
+| dropout_rate | 0.0% | 18.8% | — | 66% in top 5 eps |
+| spike_rate | 6.9% | 62.9% | 9× | 66% in top 5 eps |
+| vel_disc_rate | 1.0% | 23.8% | 25× | 66% in top 5 eps |
+| ldlj | 0.0% | 50.0% | — | 66% in top 5 eps |
 
 ## Per-Dataset Results
 
 ### lerobot/pusht (task: pusht, n=206)
 
-Episode flag rate: 24/206 = 11.7%
-Top-5 episode concentration: 24% of flags
+Episode flag rate: 16/206 = 7.8%
+Top-5 episode concentration: 31% of flags
 
 | Detector | Flagged | Rate | 95% CI |
 |---|---|---|---|
-| jitter_cv | 14/206 | 6.8% | (4.1%, 11.1%) |
+| jitter_cv | 0/206 | 0.0% | (0.0%, 1.8%) |
 | dropout_rate | 0/206 | 0.0% | (0.0%, 1.8%) |
-| spike_rate | 3/206 | 1.5% | (0.5%, 4.2%) |
-| vel_disc_rate | 8/206 | 3.9% | (2.0%, 7.5%) |
+| spike_rate | 12/206 | 5.8% | (3.4%, 9.9%) |
+| vel_disc_rate | 4/206 | 1.9% | (0.8%, 4.9%) |
 | ldlj | 0/206 | 0.0% | (0.0%, 1.8%) |
 
 **Corruption detection** (corrupt fraction: 15%)
@@ -33,8 +33,8 @@ Top-5 episode concentration: 24% of flags
 |---|---|---|
 | jitter_cv | 18/30 | 60.0% |
 | dropout_rate | 7/30 | 23.3% |
-| spike_rate | 5/30 | 16.7% |
-| vel_disc_rate | 14/30 | 46.7% |
+| spike_rate | 12/30 | 40.0% |
+| vel_disc_rate | 10/30 | 33.3% |
 | ldlj | 0/30 | 0.0% |
 
 ### lerobot/aloha_sim_insertion_scripted (task: aloha, n=50)

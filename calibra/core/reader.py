@@ -15,7 +15,7 @@ Supports:
   - hf:// URI prefix stripping (but does NOT download from Hub — for Hub datasets
     use LeRobotReader which calls datasets.load_dataset)
 
-Dependencies: pip install 'calibra[lerobot]'  (pyarrow, duckdb)
+Dependencies: pip install 'calibra-robotics[lerobot]'  (pyarrow, duckdb)
 """
 
 from __future__ import annotations
@@ -154,7 +154,7 @@ class LazyDatasetReader:
         except ImportError:
             raise ImportError(
                 "duckdb is required for LazyDatasetReader.\n"
-                "Install it with: pip install 'calibra[lerobot]'"
+                "Install it with: pip install 'calibra-robotics[lerobot]'"
             ) from None
 
         conn = duckdb.connect(":memory:")

@@ -30,7 +30,7 @@ with corresponding rotation matrix R_t ∈ SO(3):
 Output shape is (T−1, 6): one fewer step than the input because the last step
 has no "next" state to compute a delta against.
 
-Dependency: pip install 'calibra[kinematics]'  (scipy>=1.10)
+Dependency: pip install 'calibra-robotics[kinematics]'  (scipy>=1.10)
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ def _require_scipy():
     except ImportError:
         raise ImportError(
             "scipy is required for EEF retargeting.\n"
-            "Install it with: pip install 'calibra[kinematics]'"
+            "Install it with: pip install 'calibra-robotics[kinematics]'"
         ) from None
 
 

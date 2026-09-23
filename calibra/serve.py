@@ -10,8 +10,6 @@ Usage:
     calibra serve --host 0.0.0.0     # expose on all interfaces
 """
 
-from __future__ import annotations
-
 import argparse
 import asyncio
 import time
@@ -65,7 +63,12 @@ def _normalize_flags(report) -> list[dict]:
     return result
 
 
-def _load_report(path: str, policy: Optional[str] = None, fmt: Optional[str] = None):
+def _load_report(
+    path: str,
+    policy: Optional[str] = None,
+    fmt: Optional[str] = None,
+    profile: Optional[str] = None,
+):
     """Synchronously load a dataset and run the full diagnostic pipeline."""
     from calibra.pipeline import Pipeline
 
@@ -74,7 +77,7 @@ def _load_report(path: str, policy: Optional[str] = None, fmt: Optional[str] = N
         from calibra.__main__ import _get_reader
 
         reader = _get_reader(fmt)
-    return Pipeline().analyze_path(path, policy_family=policy, reader=reader)
+    return Pipeline(profile=profile).analyze_path(path, policy_family=policy, reader=reader)
 
 
 # ── application factory ───────────────────────────────────────────────────────
@@ -113,31 +116,49 @@ def _make_app():
 
     class AnalyzeRequest(BaseModel):
         path: str
+        profile: Optional[str] = (
+            None  # dataset profile for a local path (see calibra.dataset_profiles)
+        )
         policy: Optional[str] = None
         format: Optional[str] = None
 
     class CompareRequest(BaseModel):
         path: str
+        profile: Optional[str] = (
+            None  # dataset profile for a local path (see calibra.dataset_profiles)
+        )
         reference: str
         format: Optional[str] = None
 
     class CertifyRequest(BaseModel):
         path: str
+        profile: Optional[str] = (
+            None  # dataset profile for a local path (see calibra.dataset_profiles)
+        )
         reference: Optional[str] = None
         policy: Optional[str] = None
         strict: bool = False
 
     class PredictRequest(BaseModel):
         path: str
+        profile: Optional[str] = (
+            None  # dataset profile for a local path (see calibra.dataset_profiles)
+        )
         policy: Optional[str] = None
         reference: Optional[str] = None
 
     class ScoreRequest(BaseModel):
         path: str
+        profile: Optional[str] = (
+            None  # dataset profile for a local path (see calibra.dataset_profiles)
+        )
         reference: Optional[str] = None
 
     class RecordOutcomeRequest(BaseModel):
         path: str
+        profile: Optional[str] = (
+            None  # dataset profile for a local path (see calibra.dataset_profiles)
+        )
         actual_rate: float
         policy: Optional[str] = None
 
@@ -168,7 +189,7 @@ def _make_app():
         """
 
         def _run():
-            report = _load_report(req.path, req.policy, req.format)
+            report = _load_report(req.path, req.policy, req.format, req.profile)
 
             t = _raw_metrics(report, "temporal_stability")
             s = _raw_metrics(report, "control_smoothness")
@@ -189,9 +210,12 @@ def _make_app():
             # Episode-level outlier detection
             outlier_indices: list[int] = []
             try:
-                from calibra.anomalies import find_outliers
+                from calibra.anomalies import calibration_dataset_id, find_outliers
 
-                outlier_indices = [a.episode_idx for a in find_outliers(report)]
+                outlier_indices = [
+                    a.episode_idx
+                    for a in find_outliers(report, dataset=calibration_dataset_id(req.path))
+                ]
             except Exception:
                 pass
 
@@ -254,7 +278,7 @@ def _make_app():
             from calibra.analyzers.smoothness import ControlSmoothnessAnalyzer
             from calibra.analyzers.task_structure import TaskStructureAnalyzer
             from calibra.analyzers.temporal import TemporalAnalyzer
-            from calibra.anomalies import find_outliers
+            from calibra.anomalies import calibration_dataset_id, find_outliers
             from calibra.compare import (
                 _recommended_actions,
                 _ref_is_sim,
@@ -277,13 +301,14 @@ def _make_app():
                     ControlSmoothnessAnalyzer(),
                     CoverageEntropyAnalyzer(),
                     TaskStructureAnalyzer(),
-                ]
+                ],
+                profile=req.profile,
             )
             report = pipeline.analyze_path(req.path, reader=reader)
 
             your_metrics = metrics_from_report(report)
             ref_metrics = metrics_from_reference(ref_data)
-            outlier_episodes = find_outliers(report)
+            outlier_episodes = find_outliers(report, dataset=calibration_dataset_id(req.path))
 
             _METRIC_LABELS = [
                 ("vel_disc_rate", "Velocity Discontinuity Rate"),
@@ -342,7 +367,7 @@ def _make_app():
             from calibra.pipeline import Pipeline
             from calibra.schema.report import RiskLevel
 
-            report = Pipeline().analyze_path(req.path, policy_family=req.policy)
+            report = Pipeline(profile=req.profile).analyze_path(req.path, policy_family=req.policy)
 
             grade, exit_code = _grade(report)
             if req.strict and exit_code == 1:
@@ -390,7 +415,7 @@ def _make_app():
             from calibra.pipeline import Pipeline
             from calibra.predict import predict_outcome
 
-            report = Pipeline().analyze_path(req.path, policy_family=req.policy)
+            report = Pipeline(profile=req.profile).analyze_path(req.path, policy_family=req.policy)
             result = predict_outcome(report, policy_family=req.policy)
 
             return {
@@ -415,7 +440,7 @@ def _make_app():
             from calibra.pipeline import Pipeline
             from calibra.score import compute_score
 
-            report = Pipeline().analyze_path(req.path)
+            report = Pipeline(profile=req.profile).analyze_path(req.path)
             result = compute_score(report)
 
             return {
@@ -462,7 +487,7 @@ def _make_app():
             from calibra.pipeline import Pipeline
             from calibra.predict import predict_outcome
 
-            report = Pipeline().analyze_path(req.path, policy_family=req.policy)
+            report = Pipeline(profile=req.profile).analyze_path(req.path, policy_family=req.policy)
             pred = predict_outcome(report, policy_family=req.policy)
 
             db = OutcomeDatabase()

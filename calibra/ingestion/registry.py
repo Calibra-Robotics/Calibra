@@ -28,7 +28,7 @@ def detect_reader(path: str) -> type[DatasetReader]:
     raise ValueError(
         f"No reader found for '{path}'.\n"
         f"Registered readers: {registered}\n"
-        "Install optional format dependencies: pip install 'calibra[hdf5]', "
+        "Install optional format dependencies: pip install 'calibra-robotics[hdf5]', "
         "'calibra[lerobot]', 'calibra[rlds]', or 'calibra[mcap]'."
     )
 
