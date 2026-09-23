@@ -4,6 +4,15 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+## [0.11.0] - Dataset profiles and README fixes
+
+Every command in the README was re-run end to end; this release fixes what did
+not work as documented. Highlights: the Isaac Lab → GR00T integration and
+`--export-dataset` produce usable output again (the exported PushT coreset loads
+and trains in LeRobot 0.4.4), `calibra serve` POST endpoints work again, and
+dataset profiles let PushT be analysed correctly without changing any global
+default.
+
 ### Added
 
 - **Dataset profiles** (`calibra/dataset_profiles.py`). Smoothness and
