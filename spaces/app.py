@@ -752,7 +752,7 @@ def _footer(dataset_id: str) -> str:
     return f"""
 <div style="margin-top:16px;border-top:1px solid #313244;padding-top:10px;
             display:flex;justify-content:space-between;font-size:11px;color:#45475a">
-  <span>Powered by <a href="https://github.com/omertt27/Calibra"
+  <span>Powered by <a href="https://github.com/Calibra-Robotics/Calibra"
     style="color:#6c7086;text-decoration:none">Calibra</a> — robotics dataset observability</span>
   <span><a href="https://huggingface.co/datasets/{BENCHMARK_DATASET_ID}"
     style="color:#6c7086;text-decoration:none">Community benchmark →</a></span>
@@ -947,7 +947,7 @@ calibra integrity hf://lerobot/pusht
 calibra audit hf://lerobot/pusht      # quality + coverage scoring
 ```
 
-*Powered by [Calibra](https://github.com/omertt27/Calibra) — open-source robotics dataset
+*Powered by [Calibra](https://github.com/Calibra-Robotics/Calibra) — open-source robotics dataset
 observability*
 """)
 

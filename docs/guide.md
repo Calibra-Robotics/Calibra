@@ -1,7 +1,7 @@
 # Using Calibra
 
 A full pass on one dataset, from install to a trained policy, with annotated output
-at each step. This is the long version of the README's [Using Calibra](https://github.com/omertt27/Calibra#using-calibra)
+at each step. This is the long version of the README's [Using Calibra](https://github.com/Calibra-Robotics/Calibra#using-calibra)
 section.
 
 Every command below accepts either a **local path** (`.h5`, `.hdf5`, a LeRobot

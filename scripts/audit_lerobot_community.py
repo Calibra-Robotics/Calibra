@@ -248,7 +248,7 @@ def _render_leaderboard(results: list[dict], generated_at: str) -> str:
     lines = [
         "# Calibra Community Dataset Quality Benchmark",
         "",
-        f"*Generated {generated_at} by [Calibra](https://github.com/omertt27/Calibra)*",
+        f"*Generated {generated_at} by [Calibra](https://github.com/Calibra-Robotics/Calibra)*",
         "",
         f"Audited **{len(ok_results)}** public LeRobot datasets. "
         f"{'**' + str(len(failed)) + ' datasets failed to load.**' if failed else ''}",

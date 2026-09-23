@@ -16,13 +16,13 @@ import {
 import './App.css'
 
 const LINKS = {
-  github: 'https://github.com/omertt27/Calibra',
+  github: 'https://github.com/Calibra-Robotics/Calibra',
   linkedin: 'https://www.linkedin.com/company/calibrarobotics',
   demo: 'https://huggingface.co/spaces/omert27/robot-dataset-health-check',
-  docs: 'https://github.com/omertt27/Calibra/tree/main/docs',
-  benchmarks: 'https://github.com/omertt27/Calibra#benchmark-results',
-  license: 'https://github.com/omertt27/Calibra/blob/main/LICENSE',
-  licensing: 'https://github.com/omertt27/Calibra/blob/main/LICENSING.md',
+  docs: 'https://github.com/Calibra-Robotics/Calibra/tree/main/docs',
+  benchmarks: 'https://github.com/Calibra-Robotics/Calibra#benchmark-results',
+  license: 'https://github.com/Calibra-Robotics/Calibra/blob/main/LICENSE',
+  licensing: 'https://github.com/Calibra-Robotics/Calibra/blob/main/LICENSING.md',
   pypi: 'https://pypi.org/project/calibra-robotics/',
   productHunt:
     'https://www.producthunt.com/products/calibra-train-with-less-data?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-calibra-cut-robot-training-costs',
@@ -272,7 +272,7 @@ function StarPill() {
 
   useEffect(() => {
     let live = true
-    fetch('https://api.github.com/repos/omertt27/Calibra')
+    fetch('https://api.github.com/repos/Calibra-Robotics/Calibra')
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (live && d && typeof d.stargazers_count === 'number') setStars(d.stargazers_count)

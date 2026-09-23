@@ -4,7 +4,7 @@
 #
 #   jobs:
 #     data-quality:
-#       uses: omertt27/Calibra/.github/workflows/certify.yml@main
+#       uses: Calibra-Robotics/Calibra/.github/workflows/certify.yml@main
 #       with:
 #         dataset: ./demos
 #         reference: aloha
@@ -13,7 +13,7 @@
 # Or inline usage example (copy into your own workflow):
 #
 #   - name: Certify dataset
-#     uses: omertt27/Calibra/.github/actions/certify@main
+#     uses: Calibra-Robotics/Calibra/.github/actions/certify@main
 #     with:
 #       dataset: ./demos
 #       reference: aloha

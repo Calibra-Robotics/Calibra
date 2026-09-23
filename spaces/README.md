@@ -43,5 +43,5 @@ for audits of 30+ public LeRobot datasets with a sortable leaderboard.
 
 ## About
 
-Powered by [Calibra](https://github.com/omertt27/Calibra), open-source dataset
+Powered by [Calibra](https://github.com/Calibra-Robotics/Calibra), open-source dataset
 quality tooling for robotics imitation learning.

@@ -209,7 +209,7 @@ class TestGenerateCard:
     def test_calibra_link_in_footer(self):
         report = _make_report()
         card, _ = generate_card(report)
-        assert "github.com/omerTT/Calibra" in card
+        assert "github.com/Calibra-Robotics/Calibra" in card
 
     def test_version_shown(self):
         from calibra import __version__

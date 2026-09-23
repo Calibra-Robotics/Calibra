@@ -13,7 +13,7 @@
 #         - uses: actions/checkout@v4
 #
 #         - name: Certify dataset
-#           uses: omertt27/Calibra/.github/actions/certify@main
+#           uses: Calibra-Robotics/Calibra/.github/actions/certify@main
 #           with:
 #             dataset: ./demos
 #             reference: aloha
