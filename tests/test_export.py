@@ -276,7 +276,7 @@ class TestExportLeRobotV3:
         return ds
 
     def test_layout_and_episode_index(self, tmp_path):
-        import pyarrow.parquet as pq
+        pq = pytest.importorskip("pyarrow.parquet")
 
         from calibra.curation.export import export_dataset
 
