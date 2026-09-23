@@ -67,7 +67,7 @@ def run_prune(argv: list[str]) -> None:
     p.add_argument(
         "--quality-only",
         action="store_true",
-        help="Stage 1 only — filter quality failures but skip diversity selection",
+        help="Stage 1 only: filter quality failures but skip diversity selection",
     )
     p.add_argument(
         "--format",
@@ -193,9 +193,9 @@ def run_prune(argv: list[str]) -> None:
         help=(
             "Annotate mode (ADR-011): write a training-ready sidecar to DIR instead "
             "of only removing episodes. calibra_annotations.jsonl carries one row per "
-            "episode — disposition (KEEP / DROP / ANNOTATE) plus characterization "
+            "episode: disposition (KEEP / DROP / ANNOTATE) plus characterization "
             "(calibra_score, quality_risk, coverage_value, anomaly_score, redundancy, "
-            "success, n_steps) — with calibra_annotations.manifest.json (schema + "
+            "success, n_steps), with calibra_annotations.manifest.json (schema + "
             "field docs) and the raw calibra_curation_report.json. Redundant episodes "
             "are marked ANNOTATE (keep them if your trainer conditions on the metadata) "
             "rather than dropped."

@@ -48,12 +48,12 @@ FIELD_DOCS: dict[str, str] = {
         "0-100 per-episode cleanliness = 100·(1 - quality_risk). 100 = clean, "
         "0 = maximally risky. Quality-risk only, NOT a per-episode split of the "
         "dataset-level Calibra Score (which also blends coverage and task "
-        "structure) — averaging these rows does not reproduce it."
+        "structure), so averaging these rows does not reproduce it."
     ),
     "quality_risk": (
         "0-1. Higher = more likely a real recording/execution problem. Absolute "
         "(fixed jerk/velocity/dropout/LDLJ thresholds), NOT normalized to this "
-        "dataset — scripted/planner datasets can score uniformly mediocre while "
+        "dataset: scripted/planner datasets can score uniformly mediocre while "
         "being healthy relative to themselves. Compare episodes within the file."
     ),
     "coverage_value": "0-1. Higher = more unique behavioral coverage this episode adds.",
@@ -64,7 +64,7 @@ FIELD_DOCS: dict[str, str] = {
     "redundancy": (
         "0-1 = 1 - coverage_value. Higher = this episode adds little unique "
         "behavioral coverage relative to the rest of the set. The complement of "
-        "coverage_value, not an independent feature — and NOT pairwise "
+        "coverage_value, not an independent feature, and NOT pairwise "
         "duplicate detection."
     ),
     "success": "Episode success flag from the source dataset metadata, if present. null = unknown.",

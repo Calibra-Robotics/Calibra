@@ -7,7 +7,7 @@ Conditions produced:
   random_9k       — 9K random examples from Alpaca-52K (fixed seed 42)
   calibra_sft_9k  — Calibra-selected 9K from results/calibra_sft_9k.json
   alpagasus_9k    — AlpaGasus-filtered 9K (requires local file; see notes below)
-  lima_1k         — LIMA 1K (requires HF login: huggingface-cli login)
+  lima_1k         — LIMA 1K (requires HF login: hf auth login)
 
 AlpaGasus note:
   The AlpaGasus authors did not publish a public HuggingFace dataset.
@@ -170,7 +170,7 @@ def main() -> None:
     except Exception as e:
         print(
             f"  Skipping LIMA: {e}\n"
-            "  Run 'huggingface-cli login' and request access at "
+            "  Run 'hf auth login' and request access at "
             "https://huggingface.co/datasets/GAIR/lima",
             file=sys.stderr,
         )

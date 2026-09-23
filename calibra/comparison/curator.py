@@ -85,7 +85,7 @@ class EpisodeCurator:
             warnings.warn(
                 f"report.n_episodes ({report.n_episodes}) != "
                 f"batch.n_episodes ({batch.n_episodes}). "
-                "Per-episode arrays may be misaligned — curate() results "
+                "Per-episode arrays may be misaligned; curate() results "
                 "should not be trusted.",
                 stacklevel=2,
             )

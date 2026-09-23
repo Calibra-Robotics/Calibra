@@ -253,13 +253,13 @@ def render_analysis(result: AnalysisResult) -> str:
         icon = _LEVEL_ICON[level] if level is not None else "·  "
         suffix = "" if level is not None else "  (not evaluated)"
         lines.append(f"    {icon} {category}{suffix}")
-    lines.append(f"    Integrity score: {result.integrity_score}/100 — {result.integrity_status}")
+    lines.append(f"    Integrity score: {result.integrity_score}/100 · {result.integrity_status}")
 
     lines.append(_THIN)
     q = result.score_result
     cov = q["dimensions"]["coverage_diversity"]
     cov_pct = cov["score"] / cov["max"] * 100 if cov["max"] else 0.0
-    lines.append(f"  Quality (Calibra Score)   {q['total_score']:5.1f} / 100   —  {q['category']}")
+    lines.append(f"  Quality (Calibra Score)   {q['total_score']:5.1f} / 100   ·  {q['category']}")
     lines.append(f"  Coverage / diversity      {cov_pct:5.1f} / 100")
     if result.redundancy is not None:
         lines.append(
@@ -267,10 +267,10 @@ def render_analysis(result: AnalysisResult) -> str:
         )
     elif r.n_episodes < 5:
         lines.append(
-            "  Redundancy (estimated)    n/a — dataset has < 5 episodes (need >= 5 to diagnose)"
+            "  Redundancy (estimated)    n/a: dataset has < 5 episodes (need >= 5 to diagnose)"
         )
     else:
-        lines.append("  Redundancy (estimated)    n/a — requires proprioceptive/state observations")
+        lines.append("  Redundancy (estimated)    n/a: requires proprioceptive/state observations")
 
     lines.append(_THIN)
     lines.append("  RECOMMENDATION")
@@ -471,7 +471,10 @@ def run_analyze(argv: list[str]) -> None:
 
     if args.export:
         if result.prune_result is None:
-            print("error: cannot export — no coreset recommendation was computed", file=sys.stderr)
+            print(
+                "error: cannot export because no coreset recommendation was computed",
+                file=sys.stderr,
+            )
             sys.exit(1)
         with open(args.export, "w") as f:
             json.dump(result.prune_result.to_dict(), f, indent=2)

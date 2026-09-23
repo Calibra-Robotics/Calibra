@@ -145,11 +145,11 @@ def _remediation_advice(metric: str, value: float, verdict: str) -> str:
     prefix = "RE-RECORD: " if is_crit else "Consider: "
     advice = {
         "jerk_spike_rate": (
-            f"{prefix}Move more smoothly — avoid abrupt stops and direction changes. "
+            f"{prefix}Move more smoothly and avoid abrupt stops and direction changes. "
             f"Spike rate {value:.1%} exceeds threshold."
         ),
         "spike_rate": (
-            f"{prefix}Move more smoothly — avoid abrupt stops and direction changes. "
+            f"{prefix}Move more smoothly and avoid abrupt stops and direction changes. "
             f"Spike rate {value:.1%} exceeds threshold."
         ),
         "velocity_discontinuity_rate": (
@@ -161,19 +161,19 @@ def _remediation_advice(metric: str, value: float, verdict: str) -> str:
             f"Discontinuity rate {value:.1%} is too high."
         ),
         "mean_ldlj": (
-            f"{prefix}Slow down and smooth the trajectory — especially during approach and release. "
+            f"{prefix}Slow down and smooth the trajectory, especially during approach and release. "
             f"LDLJ {value:.2f} indicates excessive jerk."
         ),
         "ldlj": (
-            f"{prefix}Slow down and smooth the trajectory — especially during approach and release. "
+            f"{prefix}Slow down and smooth the trajectory, especially during approach and release. "
             f"LDLJ {value:.2f} indicates excessive jerk."
         ),
         "timestamp_dropout_rate": (
-            f"{prefix}Check robot connection — frame dropout detected ({value:.1%} of frames). "
+            f"{prefix}Check robot connection: frame dropout detected ({value:.1%} of frames). "
             "Retry after verifying USB/Ethernet link."
         ),
         "dropout": (
-            f"{prefix}Check robot connection — frame dropout detected ({value:.1%} of frames). "
+            f"{prefix}Check robot connection: frame dropout detected ({value:.1%} of frames). "
             "Retry after verifying USB/Ethernet link."
         ),
         "jitter_cv": (
@@ -181,7 +181,7 @@ def _remediation_advice(metric: str, value: float, verdict: str) -> str:
             "Check for background processes throttling the control loop."
         ),
         "action_entropy": (
-            f"{'Consider varying the demonstration — ' if not is_crit else 'RE-RECORD: '}"
+            f"{'Consider varying the demonstration: ' if not is_crit else 'RE-RECORD: '}"
             f"action entropy {value:.2f} bits/dim is very low. "
             "Try a different grasp or approach path."
         ),
@@ -290,7 +290,7 @@ class WatchSession:
             score_str = f"  score={entry['calibra_score']:.0f}" if "calibra_score" in entry else ""
             wm_str = f"  [wm: {entry['wm_label']}]" if "wm_label" in entry else ""
             print(
-                f"  {icon} [{self.total:>4}] {path.name:<40} {verdict:<4} — {details}{score_str}{wm_str}"
+                f"  {icon} [{self.total:>4}] {path.name:<40} {verdict:<4} · {details}{score_str}{wm_str}"
             )
             if remediation:
                 print(f"       ↳ {remediation}")
@@ -507,7 +507,7 @@ def _stream_watch(session: WatchSession, remediate: bool = False) -> None:
 
         if not session.quiet:
             wm_str = f"  [wm: {entry['wm_label']}]" if "wm_label" in entry else ""
-            print(f"  {icon} [{session.total:>4}] {fname:<40} {verdict:<4} — {details}{wm_str}")
+            print(f"  {icon} [{session.total:>4}] {fname:<40} {verdict:<4} · {details}{wm_str}")
             if remediation:
                 print(f"       ↳ {remediation}")
             if verdict == "FAIL" and session.bell:
@@ -634,7 +634,7 @@ def run_watch(argv: list[str]) -> None:
     )
 
     print("━" * 60)
-    print("  CALIBRA WATCH — real-time data quality monitor")
+    print("  CALIBRA WATCH: real-time data quality monitor")
     print("━" * 60)
     if world_model:
         print("  World-model scoring: ON  (requires 5+ episodes to warm up)")

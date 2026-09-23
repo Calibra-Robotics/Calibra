@@ -54,7 +54,7 @@ def _metric_row(
 ) -> str:
     """Return a markdown table row with a status icon."""
     if value is None:
-        return f"| {name} | — | {unit} | ✅ |"
+        return f"| {name} | n/a | {unit} | ✅ |"
 
     if direction == "higher_worse":
         if value >= crit:
@@ -214,7 +214,7 @@ def generate_card(
 > **{report.dataset_name}** · Profiled on {today} · {report.n_episodes} episodes · {report.n_samples:,} steps · policy: `{policy_str}`
 
 **Certification status:** {status}
-**Calibra Score:** {cs:.1f} / 100 — *{cs_cat}*
+**Calibra Score:** {cs:.1f} / 100 · *{cs_cat}*
 
 | Dimension | Score | Max |
 |-----------|------:|----:|
@@ -243,7 +243,7 @@ def generate_card(
         card += "### Quality Issues\n\n"
         for d in pred["deductions"]:
             sev = "**CRITICAL**" if d["severity"] == "CRITICAL" else "_WARNING_"
-            card += f"- {sev} `{d['metric']}` — {d['reason'][:120]}\n"
+            card += f"- {sev} `{d['metric']}`: {d['reason'][:120]}\n"
         card += "\n"
 
     card += (
@@ -258,24 +258,24 @@ def generate_card(
     if episodes_used is not None:
         n_filtered = report.n_episodes - episodes_used
         note = (
-            f"auto — {n_filtered} failed quality filter"
+            f"auto: {n_filtered} failed quality filter"
             if n_filtered > 0
-            else "auto — all passed quality filter"
+            else "auto: all passed quality filter"
         )
         prov_rows.append(f"| Episodes (quality-passing) | {episodes_used} | {note} |")
     else:
         prov_rows.append(
-            "| Episodes (quality-passing) | — | run `calibra prune --quality-only` to compute |"
+            "| Episodes (quality-passing) | n/a | run `calibra prune --quality-only` to compute |"
         )
 
     if eval_env_type:
         prov_rows.append(
             f"| Evaluation environment type | {eval_env_type} | "
-            f"auto-detected from `{report.format}` format — confirm name/version below |"
+            f"auto-detected from `{report.format}` format; confirm name/version below |"
         )
     else:
         prov_rows.append(
-            "| Evaluation environment type | — | fill in manually (simulator / hardware) |"
+            "| Evaluation environment type | n/a | fill in manually (simulator / hardware) |"
         )
 
     card += "### Dataset Provenance\n\n"
@@ -283,14 +283,14 @@ def generate_card(
     card += "|-------|-------|-------|\n"
     card += "\n".join(prov_rows) + "\n\n"
     card += (
-        "> **`known_defects`** — human-fill only; do not infer from detector output.\n"
+        "> **`known_defects`**: human-fill only; do not infer from detector output.\n"
         "> Run `calibra review` to inspect flagged episodes, then record confirmed defects here:\n"
         ">\n"
         "> ```yaml\n"
         "> known_defects: []\n"
         "> # example:\n"
         "> #   - episode_id: ep_042\n"
-        '> #     defect: "gripper slip — contact force anomaly confirmed in review"\n'
+        '> #     defect: "gripper slip, contact force anomaly confirmed in review"\n'
         "> ```\n\n"
     )
 

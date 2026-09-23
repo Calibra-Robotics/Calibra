@@ -437,6 +437,31 @@ class TestActionStateDivergenceValidation:
         assert div_flags
         assert div_flags[0].level == RiskLevel.CRITICAL
 
+    def test_non_radian_state_is_info_not_critical(self):
+        """Pixel-space state (pusht-like, 0-512) must not be scored in radians."""
+        rng = np.random.default_rng(7)
+        episodes = []
+        for i in range(5):
+            state = rng.uniform(10, 500, (100, 3)).astype(np.float32)
+            actions = state + rng.normal(0, 15, (100, 3)).astype(np.float32)
+            episodes.append(
+                Episode(
+                    metadata=EpisodeMetadata(episode_id=f"ep_{i}"),
+                    timestamps=np.arange(100) * 0.1,
+                    observations={"state": state},
+                    actions=actions,
+                )
+            )
+        batch = EpisodeBatch(
+            episodes=episodes, dataset_name="px", format="hdf5", source_path="/tmp/px"
+        )
+        div_flag, div_raw = ControlSmoothnessAnalyzer()._check_action_state_divergence(batch)
+        assert div_flag is not None
+        assert div_flag.level == RiskLevel.INFO
+        assert div_flag.threshold is None
+        assert div_raw["units_not_radians"] is True
+        assert 0 < div_raw["relative_divergence"] < 0.1
+
     def test_scripted_downgrade_critical_to_warning(self):
         """When scripted signature is detected, CRITICAL divergence → WARNING."""
         rng = np.random.default_rng(7)

@@ -127,9 +127,9 @@ class TestMetricRow:
         row = _metric_row("LDLJ", -18.0, "score", warn=-10.0, crit=-15.0, direction="lower_worse")
         assert "❌" in row
 
-    def test_none_value_renders_dash(self):
+    def test_none_value_renders_na(self):
         row = _metric_row("Missing", None, "fraction", warn=0.02, crit=0.05)
-        assert "—" in row
+        assert "| n/a |" in row
         assert "✅" in row  # missing → pass
 
 

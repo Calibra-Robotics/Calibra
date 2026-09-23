@@ -320,7 +320,7 @@ def diagnose_regime(
         regime = SelectionRegime.HIGH_NOISE
         explanation = (
             f"Pervasive corruption detected (spike={spike:.3f}, disc={disc:.3f}). "
-            f"Quality filtering is a prerequisite — corrupted demonstrations will "
+            f"Quality filtering is a prerequisite; corrupted demonstrations will "
             f"degrade the model regardless of coverage. Apply tight quality thresholds "
             f"before diversity selection."
         )

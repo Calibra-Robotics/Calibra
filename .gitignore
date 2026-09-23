@@ -47,6 +47,9 @@ htmlcov/
 .pytype/
 nosetests.xml
 coverage.xml
+
+# Locally generated Calibra HTML reports (repo root only)
+/report.html
 *.cover
 *.py,cover
 .coverage

@@ -14,7 +14,7 @@ Supported source formats
   ``save_to_disk``.
 
 Hub IDs (``lerobot/pusht``, ``hf://…``) are *not* directly supported — download
-the dataset locally first (``huggingface-cli download``), then run prune + export.
+the dataset locally first (``hf download``), then run prune + export.
 
 All formats re-number episode IDs from 0 to N-1 so the output is a self-contained,
 valid dataset that training scripts (LeRobot ``train.py``, etc.) can consume
@@ -66,7 +66,7 @@ def export_dataset(
         raise ValueError(
             f"Hub IDs are not supported by --export-dataset. "
             f"Download '{source_path}' locally first:\n"
-            f"  huggingface-cli download {source_path} --local-dir ./datasets/{source_path.split('/')[-1]}\n"
+            f"  hf download {source_path} --repo-type dataset --local-dir ./datasets/{source_path.split('/')[-1]}\n"
             f"Then re-run: calibra prune ./datasets/{source_path.split('/')[-1]} "
             f"--keep ... --export-dataset <out>"
         )
@@ -154,7 +154,7 @@ def _export_lerobot_v2(
             tables.append(filtered)
 
     if not tables:
-        raise ValueError("No rows remain after filtering — coreset is empty.")
+        raise ValueError("No rows remain after filtering; coreset is empty.")
 
     combined = pa.concat_tables(tables)
     log(f"  {len(combined)} rows kept from {sum(len(t) for t in tables)} total filtered rows")
@@ -329,7 +329,7 @@ def _export_hdf5(
                 new_key = str(new_idx) if old_key.isdigit() else f"demo_{new_idx}"
                 src_h5.copy(old_key, dst_h5, name=new_key)
             else:
-                log(f"  Warning: episode '{old_key}' not found in source HDF5 — skipping.")
+                log(f"  Warning: episode '{old_key}' not found in source HDF5, skipping.")
 
     log(f"  Wrote {out_file}")
     return out

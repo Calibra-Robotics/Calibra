@@ -270,7 +270,7 @@ def run_cure(argv: list[str]) -> None:
 
     print(
         f"\n{'━' * 56}\n"
-        f"  calibra cure — {batch.dataset_name}\n"
+        f"  calibra cure: {batch.dataset_name}\n"
         f"{'━' * 56}\n"
         f"  Episodes cured    : {cured_count}\n"
         f"  Output directory  : {out_dir.resolve()}\n"

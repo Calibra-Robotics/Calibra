@@ -263,7 +263,7 @@ def _react_symbol(delta: Optional[float], key: str) -> str:
     magnitude = abs(delta)
     threshold = 0.001 if key == "jitter_cv" else (0.005 if "rate" in key else 0.1)
     if magnitude < threshold:
-        return "  —"  # no meaningful response
+        return "  -"  # no meaningful response
     worse = (key in _WORSE_IS_HIGHER and delta > 0) or (key in _WORSE_IS_LOWER and delta < 0)
     if worse:
         return " 🔴" if magnitude > threshold * 5 else " 🟡"
@@ -284,7 +284,7 @@ def render_corruption_report(
 
     lines = [
         thick,
-        f"calibra corrupt — {dataset_name}",
+        f"calibra corrupt: {dataset_name}",
         f"Corruptions: {corruption_str}",
         thick,
         "",
@@ -313,7 +313,7 @@ def render_corruption_report(
     lines += [
         divider,
         "",
-        "Legend:  🔴 strong response  🟡 weak response  🟢 improved  — no response",
+        "Legend:  🔴 strong response  🟡 weak response  🟢 improved  - no response",
         "",
     ]
 

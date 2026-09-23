@@ -399,7 +399,7 @@ def render_prediction(result: dict) -> str:
         f"  Policy   : {result['policy_family']}",
         "",
         _THIN,
-        f"  {icon}  Predicted Success: {score:.0f}%  [range {lo:.0f}%–{hi:.0f}%]  —  {tier}",
+        f"  {icon}  Predicted Success: {score:.0f}%  [range {lo:.0f}%–{hi:.0f}%]  ·  {tier}",
     ]
 
     if emp_w > 0:
@@ -427,7 +427,7 @@ def render_prediction(result: dict) -> str:
                 lines.append(f"     {reason[80:]}")
             lines.append("")
     else:
-        lines.append("  No deductions — dataset metrics are all within acceptable ranges.")
+        lines.append("  No deductions; dataset metrics are all within acceptable ranges.")
         lines.append("")
 
     lines.append(_THIN)

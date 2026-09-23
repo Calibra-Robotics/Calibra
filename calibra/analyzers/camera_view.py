@@ -302,7 +302,7 @@ class CameraViewMismatchAnalyzer(Analyzer):
                             f"footage tracks arm motion more strongly (r={best_static['corr']:.2f}) "
                             f"than the wrist-named stream '{worst_moving['key']}' "
                             f"(r={worst_moving['corr']:.2f}). Within one rig the eye-in-hand "
-                            f"camera should be the most motion-coupled — these names look swapped "
+                            f"camera should be the most motion-coupled, so these names look swapped "
                             f"or mislabeled."
                         ),
                         implication=(
@@ -370,7 +370,7 @@ class CameraViewMismatchAnalyzer(Analyzer):
                             f"frame barely tracks arm motion (r={r:.2f})."
                         ),
                         implication=(
-                            "This may be a fixed camera mislabeled as a wrist view — or simply an "
+                            "This may be a fixed camera mislabeled as a wrist view, or simply an "
                             "episode set where the arm rarely moves. Inspect before relying on the "
                             "viewpoint implied by the name."
                         ),

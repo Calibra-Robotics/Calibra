@@ -299,7 +299,7 @@ def analyze_gap(
             "delta": round(delta_j, 5),
             "risk": level,
             "note": (
-                "Real data has much higher timing jitter than sim — typical for hardware."
+                "Real data has much higher timing jitter than sim; typical for hardware."
                 if real_jitter > sim_jitter
                 else "Unusually noisy sim timestamps."
             ),
@@ -629,7 +629,7 @@ def render_sim2real(result: dict) -> str:
         ]
     else:
         lines += [
-            "  ✗ Critical distribution mismatch — zero-shot transfer is unlikely.",
+            "  ✗ Critical distribution mismatch; zero-shot transfer is unlikely.",
             "  • Collect at minimum 200+ real demonstrations before training.",
             "  • Consider retraining from scratch on real data only.",
             "  • Re-evaluate sim environment fidelity (contact models, friction).",

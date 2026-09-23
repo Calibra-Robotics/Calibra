@@ -216,7 +216,7 @@ def render_prediction(result: dict) -> str:
         f"  Model    : {result['policy_family']}",
         "",
         thin,
-        f"  Predicted Eval Score: {score:.0f}%  [range {lo:.0f}%–{hi:.0f}%]  —  {tier}",
+        f"  Predicted Eval Score: {score:.0f}%  [range {lo:.0f}%–{hi:.0f}%]  ·  {tier}",
     ]
 
     if emp_w > 0:
@@ -240,7 +240,7 @@ def render_prediction(result: dict) -> str:
             lines.append(f"  [{sev}] -{d['penalty']:4.1f}pt  {d['metric']}")
             lines.append(f"     {d['reason']}")
     else:
-        lines.append("  No deductions — aggregate fingerprint is within acceptable ranges.")
+        lines.append("  No deductions; aggregate fingerprint is within acceptable ranges.")
 
     lines += ["", thin, f"  Note: {result['note']}", thick]
     return "\n".join(lines)

@@ -220,7 +220,7 @@ class Pi0CompatibilityAnalyzer(Analyzer):
                         threshold=self.freq_high_warning,
                         interpretation=(
                             f"Mean control frequency {mean_freq:.1f} Hz exceeds "
-                            f"{self.freq_high_warning} Hz — chunks cover < 0.5 s of motion."
+                            f"{self.freq_high_warning} Hz, so chunks cover < 0.5 s of motion."
                         ),
                         implication=(
                             "Very high-frequency data means π0 chunks represent short "

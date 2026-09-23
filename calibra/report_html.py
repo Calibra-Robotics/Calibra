@@ -6,6 +6,7 @@ Converts a DiagnosticReport into an interactive, visual dashboard page.
 
 from __future__ import annotations
 
+import html
 import json
 from pathlib import Path
 from typing import Optional
@@ -123,7 +124,7 @@ def generate_html_report(
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calibra Report — __DATASET_NAME__</title>
+    <title>Calibra Report: __DATASET_NAME__</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -236,7 +237,7 @@ def generate_html_report(
                     </div>
                     <div class="score-meta">
                         <h3>__HEALTH_LABEL__</h3>
-                        <p>Based on __N_FLAGS__ diagnostic flag(s) across all analyzers.</p>
+                        <p>__N_FINDINGS__ warning or critical finding(s) out of __N_FLAGS__ checks across all analyzers.</p>
                     </div>
                 </div>
                 <div class="score-bars">
@@ -344,7 +345,7 @@ def generate_html_report(
             <div id="tab-remediation" class="tab-content hidden flex flex-col gap-6">
                 <div>
                     <h2 class="text-lg font-bold text-white">Suggested Actions</h2>
-                    <p class="text-sm text-slate-400">Starting points for human review, derived from diagnostic flags. These are inspection prompts, not automated fixes — Calibra surfaces what looks unusual, you decide what it means.</p>
+                    <p class="text-sm text-slate-400">Starting points for human review, derived from diagnostic flags. These are inspection prompts, not automated fixes. Calibra surfaces what looks unusual; you decide what it means.</p>
                 </div>
 
                 <div class="bg-slate-900/30 border border-slate-800 rounded-xl p-6 flex flex-col gap-4" id="checklist-container">
@@ -356,7 +357,7 @@ def generate_html_report(
             <div id="tab-outliers" class="tab-content hidden flex flex-col gap-6">
                 <div>
                     <h2 class="text-lg font-bold text-white">Episode Review Queue</h2>
-                    <p class="text-sm text-slate-400">Episodes flagged as statistically unusual (MAD-based outlier detection) — ranked here for human inspection, not automatic removal. An unusual trajectory can just as easily be a recording bug as the most valuable demonstration in the dataset.</p>
+                    <p class="text-sm text-slate-400">Episodes flagged as statistically unusual (MAD-based outlier detection), ranked here for human inspection, not automatic removal. An unusual trajectory can just as easily be a recording bug as the most valuable demonstration in the dataset.</p>
                 </div>
 
                 <div class="border border-slate-800 rounded-xl bg-slate-900/20 overflow-hidden">
@@ -393,12 +394,25 @@ def generate_html_report(
             recollect: { emoji: "🔴", label: "Consider recollecting" },
         };
 
+        // Escape analyzer text and dataset IDs before they go into innerHTML.
+        function esc(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
         function suggestedAction(metric, level) {
             const key = (metric || "").toLowerCase();
-            if (key.includes("timestamp") || key.includes("jitter") || key.includes("dropout") || key.includes("contact")) {
+            // Only recording-pipeline metrics route to "verify". contact_density
+            // and friends describe task structure, not recording faults;
+            // contact_dropout still matches via "dropout".
+            if (key.includes("timestamp") || key.includes("jitter") || key.includes("dropout")) {
                 return ACTIONS.verify;
             }
-            // CRITICAL is a severity signal, not a verdict — diagnostics can't
+            // CRITICAL is a severity signal, not a verdict: diagnostics can't
             // tell a collision from the most valuable demonstration in the
             // dataset, so the default action stays "inspect" either way.
             return ACTIONS.inspect;
@@ -452,22 +466,22 @@ def generate_html_report(
                     badgeClass = "bg-amber-950 border-amber-800 text-amber-400";
                 }
 
-                const thresholdSnippet = f.threshold ? `&middot; <span class="text-slate-400">Threshold:</span> <code class="font-mono text-white">${f.threshold}</code>` : '';
+                const thresholdSnippet = f.threshold != null ? `&middot; <span class="text-slate-400">Threshold:</span> <code class="font-mono text-white">${esc(f.threshold)}</code>` : '';
                 const action = suggestedAction(f.metric, f.level);
 
                 return `
                     <div class="border rounded-xl p-5 flex flex-col gap-3 transition-all duration-300 hover:bg-slate-900/30 ${colorClass}">
                         <div class="flex items-center justify-between gap-3">
-                            <h3 class="font-bold text-white text-base">${f.metric}</h3>
-                            <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${badgeClass}">${f.level}</span>
+                            <h3 class="font-bold text-white text-base">${esc(f.metric)}</h3>
+                            <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${badgeClass}">${esc(f.level)}</span>
                         </div>
                         <div class="text-sm text-slate-300">
-                            <span class="text-slate-400">Observed Value:</span> <code class="font-mono text-white">${f.observed}</code>
+                            <span class="text-slate-400">Observed Value:</span> <code class="font-mono text-white">${esc(f.observed)}</code>
                             ${thresholdSnippet}
                         </div>
                         <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Observation</div>
-                        <p class="text-sm text-slate-300 bg-slate-950/40 p-3 rounded-lg border border-slate-900">${f.interpretation}</p>
-                        <p class="text-xs text-slate-400 border-l-2 border-slate-700 pl-3"><strong>Possible explanations:</strong> ${f.implication}</p>
+                        <p class="text-sm text-slate-300 bg-slate-950/40 p-3 rounded-lg border border-slate-900">${esc(f.interpretation)}</p>
+                        <p class="text-xs text-slate-400 border-l-2 border-slate-700 pl-3"><strong>Possible explanations:</strong> ${esc(f.implication)}</p>
                         <div class="flex items-center gap-2 pt-1 border-t border-slate-900/80 mt-1">
                             <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Suggested Action</span>
                             <span class="text-sm text-white">${action.emoji} ${action.label}</span>
@@ -496,9 +510,9 @@ def generate_html_report(
                 const action = suggestedAction(reasonText, null);
                 return `
                     <tr class="hover:bg-slate-900/20 transition-all">
-                        <td class="px-6 py-4 font-mono font-semibold text-slate-400">${o.index}</td>
-                        <td class="px-6 py-4 font-mono text-white">${o.episode_id}</td>
-                        <td class="px-6 py-4 text-xs text-amber-400 font-medium">${reasonText}</td>
+                        <td class="px-6 py-4 font-mono font-semibold text-slate-400">${esc(o.index)}</td>
+                        <td class="px-6 py-4 font-mono text-white">${esc(o.episode_id)}</td>
+                        <td class="px-6 py-4 text-xs text-amber-400 font-medium">${esc(reasonText)}</td>
                         <td class="px-6 py-4 text-sm text-white whitespace-nowrap">${action.emoji} ${action.label}</td>
                     </tr>
                 `;
@@ -511,7 +525,7 @@ def generate_html_report(
             if (flags.length === 0) {
                 container.innerHTML = `
                     <div class="text-slate-400 text-sm">
-                        No flags raised — nothing queued for review right now.
+                        No flags raised. Nothing is queued for review right now.
                     </div>
                 `;
                 return;
@@ -522,11 +536,11 @@ def generate_html_report(
                 if (f.metric === "ldlj") {
                     inspectText = "High jerk can mean a collision, a recovery behavior, sensor noise, or teleoperation instability. Compare against video for the flagged episodes before deciding whether smoothing or exclusion applies.";
                 } else if (f.metric === "velocity_discontinuity_rate") {
-                    inspectText = "Look for packet drops, communication lag, or sudden joystick/teleop corrections in the flagged episodes — these can look identical in the metric but call for different responses.";
+                    inspectText = "Look for packet drops, communication lag, or sudden joystick/teleop corrections in the flagged episodes. These can look identical in the metric but call for different responses.";
                 } else if (f.metric === "timestamp_jitter_cv" || f.metric === "timestamp_dropout_rate") {
                     inspectText = "Verify dataset recording clocks and check for dropped frames before assuming the underlying demonstration is bad.";
                 } else if (f.metric === "ssl_trajectory_outliers") {
-                    inspectText = "Open the flagged episodes in the 'Episode Review Queue' tab. A trajectory outlier is as likely to be your most valuable demonstration as it is a bad recording — watch before deciding.";
+                    inspectText = "Open the flagged episodes in the 'Episode Review Queue' tab. A trajectory outlier is as likely to be your most valuable demonstration as it is a bad recording, so watch before deciding.";
                 } else if (f.metric === "contact_dropout") {
                     inspectText = "Check contact sensor configuration mapping and calibration in the robot driver pipeline before assuming the episode itself is at fault.";
                 } else {
@@ -540,10 +554,10 @@ def generate_html_report(
                         <input type="checkbox" id="check-${i}" class="mt-1 h-4 w-4 rounded border-slate-800 text-indigo-600 focus:ring-indigo-600 bg-slate-950">
                         <label for="check-${i}" class="flex-1">
                             <span class="flex items-center gap-2">
-                                <span class="block text-sm font-semibold text-white">${f.metric}</span>
+                                <span class="block text-sm font-semibold text-white">${esc(f.metric)}</span>
                                 <span class="text-xs text-slate-300">${action.emoji} ${action.label}</span>
                             </span>
-                            <span class="block text-xs text-slate-400 mt-1">${inspectText}</span>
+                            <span class="block text-xs text-slate-400 mt-1">${esc(inspectText)}</span>
                         </label>
                     </div>
                 `;
@@ -663,27 +677,37 @@ def generate_html_report(
             return "fill-yellow"
         return "fill-red"
 
+    def _js(value) -> str:
+        # JSON is valid JS, but a "</script>" inside a string would end the
+        # script block early, so escape the "</" sequence.
+        return json.dumps(value).replace("</", "<\\/")
+
+    n_findings = len(report.flags_at_level(RiskLevel.CRITICAL)) + len(
+        report.flags_at_level(RiskLevel.WARNING)
+    )
+
     # Do placeholders replacement
     html_content = (
-        html_template.replace("__DATASET_NAME__", report.dataset_name)
-        .replace("__FORMAT__", report.format)
-        .replace("__SOURCE_PATH__", report.source_path)
+        html_template.replace("__DATASET_NAME__", html.escape(report.dataset_name))
+        .replace("__FORMAT__", html.escape(report.format))
+        .replace("__SOURCE_PATH__", html.escape(report.source_path))
         .replace("__N_EPISODES__", str(report.n_episodes))
         .replace("__N_SAMPLES__", f"{report.n_samples:,}")
         .replace("__CRITICAL_COUNT__", str(len(report.flags_at_level(RiskLevel.CRITICAL))))
         .replace("__WARNING_COUNT__", str(len(report.flags_at_level(RiskLevel.WARNING))))
-        .replace("__POLICY_FAMILY__", report.policy_family or "None (Unspecified)")
-        .replace("__FLAGS_DATA__", json.dumps(flags_data))
-        .replace("__OUTLIERS_DATA__", json.dumps(outlier_list))
-        .replace("__LABELS__", json.dumps(labels))
-        .replace("__LDLJ_VALS__", json.dumps(ldlj_vals))
-        .replace("__VEL_VALS__", json.dumps(vel_disc_vals))
-        .replace("__SSL_VALS__", json.dumps(ssl_novelty_vals))
-        .replace("__JITTER_VALS__", json.dumps(jitter_vals))
+        .replace("__POLICY_FAMILY__", html.escape(report.policy_family or "None (Unspecified)"))
+        .replace("__FLAGS_DATA__", _js(flags_data))
+        .replace("__OUTLIERS_DATA__", _js(outlier_list))
+        .replace("__LABELS__", _js(labels))
+        .replace("__LDLJ_VALS__", _js(ldlj_vals))
+        .replace("__VEL_VALS__", _js(vel_disc_vals))
+        .replace("__SSL_VALS__", _js(ssl_novelty_vals))
+        .replace("__JITTER_VALS__", _js(jitter_vals))
         # Health score panel
         .replace("__HEALTH_OVERALL__", str(hs["overall"]))
         .replace("__HEALTH_COLOR__", hs_color)
         .replace("__HEALTH_LABEL__", _health_label(hs["overall"]))
+        .replace("__N_FINDINGS__", str(n_findings))
         .replace("__N_FLAGS__", str(len(report.flags)))
         .replace("__QUALITY__", str(hs["quality"]))
         .replace("__QUALITY_FILL__", _fill_cls(hs["quality"]))

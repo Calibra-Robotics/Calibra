@@ -142,7 +142,7 @@ class GR00TCompatibilityAnalyzer(Analyzer):
                 metric="gr00t.visual_modality",
                 observed=ObservedValue(value=1.0),
                 interpretation="At least one visual modality detected.",
-                implication="Dataset includes camera observations — GR00T visual encoder can be used.",
+                implication="Dataset includes camera observations, so the GR00T visual encoder can be used.",
             )
         return RiskFlag(
             level=RiskLevel.CRITICAL,
@@ -350,7 +350,7 @@ class GR00TCompatibilityAnalyzer(Analyzer):
             implication=(
                 f"Verify that your GR00T robot config's action_head output_dim "
                 f"is set to {modal_dim}. If you are using a custom embodiment, "
-                "this is expected — dismiss this warning after confirming the config."
+                "this is expected; dismiss this warning after confirming the config."
             ),
         ), raw
 

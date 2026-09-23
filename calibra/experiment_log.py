@@ -410,7 +410,7 @@ class ExperimentLog:
         """Render a human-readable matrix-coverage summary across all experiments."""
         coverage = self.matrix_coverage()
         if not coverage:
-            return "Experiment log is empty — no matrix cells recorded yet."
+            return "Experiment log is empty; no matrix cells recorded yet."
 
         lines = ["Design-partner matrix coverage", "─" * 78]
         lines.append(
@@ -494,7 +494,7 @@ class ExperimentLog:
         missing = self.missing_conditions(experiment_id)
         if missing:
             lines.append("─" * 72)
-            lines.append(f"  Protocol incomplete — {len(missing)} condition(s) not yet recorded:")
+            lines.append(f"  Protocol incomplete: {len(missing)} condition(s) not yet recorded:")
             for level, cond in missing:
                 lines.append(f"    {level:.0f}% / {cond}")
         else:

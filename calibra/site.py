@@ -333,7 +333,7 @@ def _render_leaderboard(reports: list[dict], out_dir: Path, title: str) -> None:
 const DATA = {data_json};
 let sortCol = 'score', sortDir = -1;
 
-function fmt(v) {{ return v == null ? '—' : typeof v === 'number' ? v.toFixed(1) : v; }}
+function fmt(v) {{ return v == null ? 'n/a' : typeof v === 'number' ? v.toFixed(1) : v; }}
 function scoreColor(s) {{
   if (s == null) return '#64748b';
   if (s >= 90) return '#22c55e';
@@ -374,7 +374,7 @@ function rowHtml(d, rank) {{
     <td class="py-3 px-3 text-right hidden md:table-cell text-slate-300">${{fmt(d.motion)}}</td>
     <td class="py-3 px-3 text-right hidden lg:table-cell text-slate-300">${{fmt(d.coverage)}}</td>
     <td class="py-3 px-3 text-right hidden lg:table-cell text-slate-300">${{fmt(d.task)}}</td>
-    <td class="py-3 px-3 text-right hidden xl:table-cell text-slate-400">${{d.episodes != null ? d.episodes.toLocaleString() : '—'}}</td>
+    <td class="py-3 px-3 text-right hidden xl:table-cell text-slate-400">${{d.episodes != null ? d.episodes.toLocaleString() : 'n/a'}}</td>
     <td class="py-3 px-3 text-right hidden xl:table-cell text-slate-500 text-xs">${{d.updated}}</td>
   </tr>`;
 }}
@@ -473,8 +473,8 @@ def _render_dataset_page(report: dict, history: list[dict], out_dir: Path) -> No
             unit = mval.get("unit", "")
             mscore = mval.get("score")
             mc = _score_hex(mscore) if mscore is not None else "#64748b"
-            raw_str = f"{raw:.4g} {unit}".strip() if raw is not None else "—"
-            score_str = f"{mscore:.0f}" if mscore is not None else "—"
+            raw_str = f"{raw:.4g} {unit}".strip() if raw is not None else "n/a"
+            score_str = f"{mscore:.0f}" if mscore is not None else "n/a"
             metric_rows += (
                 f'<tr class="text-xs border-b border-slate-800/50">'
                 f'<td class="py-1.5 text-slate-300">{mname}</td>'
@@ -533,7 +533,7 @@ def _render_dataset_page(report: dict, history: list[dict], out_dir: Path) -> No
       </div>"""
     else:
         findings_html = (
-            '<p class="text-slate-500 text-sm py-4">No findings — dataset passed all checks.</p>'
+            '<p class="text-slate-500 text-sm py-4">No findings; dataset passed all checks.</p>'
         )
 
     # ── policy recommendations ────────────────────────────────────────────────
@@ -600,7 +600,7 @@ def _render_dataset_page(report: dict, history: list[dict], out_dir: Path) -> No
             f"Critical failures: {', '.join(critical_failures)}</div>"
         )
 
-    title = f"{repo_id} — Calibra"
+    title = f"{repo_id} · Calibra"
     page = _HEAD.replace("__TITLE__", title)
     page += f"""
 <div class="max-w-5xl mx-auto px-4 py-8">
@@ -629,14 +629,14 @@ def _render_dataset_page(report: dict, history: list[dict], out_dir: Path) -> No
         </div>
         {crit_note}
         <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-1 text-xs text-slate-400">
-          <span>Episodes: <b class="text-slate-200">{ds.get("episodes_total", "—")}</b></span>
-          <span>Frames: <b class="text-slate-200">{f"{ds.get('frames_total', 0):,}" if ds.get("frames_total") else "—"}</b></span>
-          <span>Format: <b class="text-slate-200">{ds.get("dataset_format", "—")}</b></span>
-          <span>Revision: <b class="text-slate-200 font-mono">{(ds.get("revision") or "—")[:8]}</b></span>
-          <span>Rubric: <b class="text-slate-200">{audit.get("scoring_rubric", "—")}</b></span>
+          <span>Episodes: <b class="text-slate-200">{ds.get("episodes_total", "n/a")}</b></span>
+          <span>Frames: <b class="text-slate-200">{f"{ds.get('frames_total', 0):,}" if ds.get("frames_total") else "n/a"}</b></span>
+          <span>Format: <b class="text-slate-200">{ds.get("dataset_format", "n/a")}</b></span>
+          <span>Revision: <b class="text-slate-200 font-mono">{(ds.get("revision") or "n/a")[:8]}</b></span>
+          <span>Rubric: <b class="text-slate-200">{audit.get("scoring_rubric", "n/a")}</b></span>
           <span>Calibra: <b class="text-slate-200">{calibra_ver}</b></span>
           <span>Audited: <b class="text-slate-200">{generated_at}</b></span>
-          <span>Report ID: <b class="text-slate-200 font-mono text-xs">{(meta.get("id") or "—")[:20]}…</b></span>
+          <span>Report ID: <b class="text-slate-200 font-mono text-xs">{(meta.get("id") or "n/a")[:20]}…</b></span>
         </div>
       </div>
     </div>
@@ -710,7 +710,7 @@ def build_site(
 
     reports = _scan_results(results_dir)
     if not reports:
-        print("No reports found — run 'calibra audit-all' first.", file=sys.stderr)
+        print("No reports found; run 'calibra audit-all' first.", file=sys.stderr)
         return
 
     print(f"Building site from {len(reports)} report(s) → {out_dir}", file=sys.stderr)

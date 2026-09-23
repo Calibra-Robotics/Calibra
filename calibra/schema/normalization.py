@@ -155,8 +155,8 @@ def normalize_obs_keys(
             import warnings
 
             warnings.warn(
-                f"normalize_obs_keys: two raw keys map to '{canonical}' "
-                f"— keeping last value. Provide extra_mapping to resolve ambiguity.",
+                f"normalize_obs_keys: two raw keys map to '{canonical}'; "
+                f"keeping last value. Provide extra_mapping to resolve ambiguity.",
                 stacklevel=3,
             )
         result[canonical] = arr

@@ -84,15 +84,15 @@ def test_falls_back_to_experiment_id_when_no_partner(tmp_path):
     log = _log(tmp_path)
     log.record(experiment_id="e1", condition="full", retention_pct=100.0)
     text = generate_case_study(log, "e1")
-    assert "# Calibra Case Study — e1" in text
+    assert "# Calibra Case Study: e1" in text
 
 
 def test_gaps_list_missing_and_incomplete_slots(tmp_path):
     log = _log(tmp_path)
     log.record(experiment_id="e1", condition="full", retention_pct=100.0)  # no gpu_hours/success
     text = generate_case_study(log, "e1")
-    assert "100% / full — recorded but missing" in text
-    assert "25% / random — not recorded" in text
+    assert "100% / full: recorded but missing" in text
+    assert "25% / random: not recorded" in text
 
 
 def test_never_mixes_in_benchmark_simulated_data(tmp_path):

@@ -323,7 +323,7 @@ class OctoCompatibilityAnalyzer(Analyzer):
                     "Octo fine-tuning requires the octo Python package from "
                     "https://github.com/octo-models/octo.",
                     "Non-standard action dims require re-initialising the action head "
-                    "from random weights — budget more compute for convergence.",
+                    "from random weights, so budget more compute for convergence.",
                 ],
             )
         )

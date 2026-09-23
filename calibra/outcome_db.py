@@ -546,7 +546,7 @@ class OutcomeDatabase:
             f"  Mean absolute error (predicted vs actual), all domains: {mae:.1f}%",
         ]
         if n_robotics >= 10:
-            lines.append("  Enough robotics data for weight calibration — run `calibra calibrate`.")
+            lines.append("  Enough robotics data for weight calibration; run `calibra calibrate`.")
         else:
             lines.append(
                 f"  Need {10 - n_robotics} more robotics record(s) for weight calibration."
@@ -584,7 +584,7 @@ def download_global_weights(db: OutcomeDatabase) -> Optional[dict[str, float]]:
     global_weights: dict[str, float] = data.get("weights", {})
     if not global_weights:
         print(
-            "No community weights available yet — the model improves as more users record outcomes.",
+            "No community weights available yet; the model improves as more users record outcomes.",
             file=sys.stderr,
         )
         return None
@@ -618,7 +618,7 @@ def download_global_weights(db: OutcomeDatabase) -> Optional[dict[str, float]]:
     with open(weights_path, "w") as f:
         json.dump({"weights": merged, "source": source, "version": version}, f, indent=2)
 
-    print(f"\nWeights saved to {weights_path} — active on next `calibra predict` run.\n")
+    print(f"\nWeights saved to {weights_path}; active on next `calibra predict` run.\n")
     print("Applied weights (warning-level penalty per metric):")
     for metric, weight in sorted(merged.items()):
         print(f"  {metric:<30} {weight:.2f}")

@@ -319,7 +319,7 @@ def run_benchmark(argv: List[str]) -> None:
         return "(measured)" if source == "measured" else "(simulated)"
 
     header = (
-        "CALIBRA CLOSED-LOOP TRAINING BENCHMARK — MIXED MEASURED/SIMULATED"
+        "CALIBRA CLOSED-LOOP TRAINING BENCHMARK: MIXED MEASURED/SIMULATED"
         if any_measured
         else "CALIBRA CLOSED-LOOP TRAINING BENCHMARK SIMULATION"
     )
@@ -332,13 +332,13 @@ def run_benchmark(argv: List[str]) -> None:
     elif status == "PARTIAL MEASUREMENT":
         status_lines = (
             "  Some figures above are measured, others are still simulated.\n"
-            "  Do not report this as a validated case study yet — run "
+            "  Do not report this as a validated case study yet. Run "
             "`calibra experiment record`\n"
             "  for the remaining (simulated) conditions first.\n"
         )
     else:
         status_lines = (
-            "  No measured results yet — these are predictions, not a case study.\n"
+            "  No measured results yet; these are predictions, not a case study.\n"
             "  Run `calibra experiment record` after real training to upgrade this.\n"
         )
 
@@ -508,7 +508,7 @@ def _render_sweep_report(dataset_name, policy, full_cond, rows, overall_status) 
     lines.append(_THIN)
     lines.append(f"  OVERALL STATUS: {overall_status}")
     if overall_status == "SIMULATED":
-        lines.append("  No measured results yet — this is a prediction, not a case study.")
+        lines.append("  No measured results yet; this is a prediction, not a case study.")
         lines.append("  Run `calibra experiment record` per condition/retention level after")
         lines.append("  real training, then re-run this sweep with --experiment-id.")
     elif overall_status == "PARTIAL MEASUREMENT":

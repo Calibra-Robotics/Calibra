@@ -76,7 +76,7 @@ class SurpriseResult:
                 f"{_THICK}\n"
                 f"  CALIBRA WORLD-MODEL SURPRISE\n"
                 f"{_THICK}\n"
-                f"  torch not installed — world-model scoring requires PyTorch.\n"
+                f"  torch not installed; world-model scoring requires PyTorch.\n"
                 f"  Install: pip install torch\n"
                 f"{_THICK}"
             )
@@ -95,7 +95,7 @@ class SurpriseResult:
 
         if novel:
             lines += [
-                "  NOVEL DYNAMICS  (high surprise, low jerk — KEEP for world model training)",
+                "  NOVEL DYNAMICS  (high surprise, low jerk: KEEP for world model training)",
                 _THIN,
             ]
             for s in novel[:top]:
@@ -109,7 +109,7 @@ class SurpriseResult:
 
         if corrupted:
             lines += [
-                "  CORRUPTED  (high surprise, high jerk — PRUNE)",
+                "  CORRUPTED  (high surprise, high jerk: PRUNE)",
                 _THIN,
             ]
             for s in corrupted[:top]:
@@ -123,7 +123,7 @@ class SurpriseResult:
 
         if redundant:
             lines += [
-                "  REDUNDANT  (low surprise — near-duplicate dynamics)",
+                "  REDUNDANT  (low surprise: near-duplicate dynamics)",
                 _THIN,
                 f"  {len(redundant)} episodes with surprise < {_SURPRISE_HIGH:.2f}",
                 "",
@@ -139,7 +139,7 @@ class SurpriseResult:
             if corrupt_of_high > 0.30:
                 corruption_warning = (
                     f"\n  ⚠️  WARNING: {corrupt_of_high:.0%} of high-surprise episodes are\n"
-                    f"  corrupted — run `calibra certify` to diagnose data quality."
+                    f"  corrupted. Run `calibra certify` to diagnose data quality."
                 )
 
         lines += [

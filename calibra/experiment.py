@@ -141,7 +141,7 @@ def run_experiment(argv: List[str]) -> None:
         description=(
             "Record and report design-partner training experiment results "
             "(full dataset vs. random subset vs. Calibra coreset, at multiple "
-            "retention levels). Stored locally only — never synced to any "
+            "retention levels). Stored locally only, never synced to any "
             "network endpoint."
         ),
     )
@@ -178,7 +178,7 @@ def run_experiment(argv: List[str]) -> None:
         metavar="PCT",
         help=(
             "Fraction of the ORIGINAL dataset actually trained on, 0-100. Use when it "
-            "differs from --retention (the nominal prune target) — e.g. the "
+            "differs from --retention (the nominal prune target), e.g. the "
             "KEEP+ANNOTATE arm, where rescued episodes raise effective retention."
         ),
     )
@@ -258,7 +258,7 @@ def run_experiment(argv: List[str]) -> None:
         help=(
             "Roll a `calibra review --json` file's per-episode assessments up "
             "into mean anomaly / quality-risk / coverage-value. The file must "
-            "cover every episode — run "
+            "cover every episode; run "
             "`calibra review <dataset> --top <n_episodes> -o review.json`."
         ),
     )

@@ -179,7 +179,7 @@ class BlurAnalyzer(Analyzer):
                 implication=(
                     "Blurry frames (motion blur, defocus, or a dirty/misconfigured lens) "
                     "give the policy a degraded or misleading visual observation for that "
-                    "episode. Inspect the flagged episodes before training — this is a "
+                    "episode. Inspect the flagged episodes before training; this is a "
                     "relative comparison within this dataset, not an absolute sharpness "
                     "standard, so a genuinely blurry whole dataset won't self-flag."
                 ),

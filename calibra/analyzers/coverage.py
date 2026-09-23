@@ -173,7 +173,7 @@ class CoverageEntropyAnalyzer(Analyzer):
                 observed=ObservedValue(value=entropy, unit="bits/dim"),
                 interpretation=(
                     f"Action entropy = {entropy:.2f} bits/dim "
-                    f"({n_samples} samples — below reliable estimation threshold)."
+                    f"({n_samples} samples, below reliable estimation threshold)."
                 ),
                 implication=(
                     "Entropy estimate may be unreliable with < "
@@ -207,7 +207,7 @@ class CoverageEntropyAnalyzer(Analyzer):
                 "The dataset's action distribution is narrow."
             ),
             implication=(
-                "Low action entropy indicates mode collapse in demonstrations — "
+                "Low action entropy indicates mode collapse in demonstrations: "
                 "the operator followed similar trajectories each time. Policies "
                 "trained on this data will likely fail on out-of-distribution "
                 "starting configurations. Consider augmenting with recovery "

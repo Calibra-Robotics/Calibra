@@ -497,8 +497,15 @@ class LatentDynamicsAnalyzer(Analyzer):
         # Causal Action-Effect dependency warning
         if action_effect_mi < 0.1:
             mi_level = RiskLevel.WARNING
+            mi_implication = (
+                "Actions explain little of the observed state change. Possible causes: "
+                "actions and observations are misaligned in time, actions use a "
+                "different frame or scale than the state, or state changes are driven "
+                "mostly by the environment rather than the commands."
+            )
         else:
             mi_level = RiskLevel.OK
+            mi_implication = "Actions have a measurable effect on the next state."
 
         flags.append(
             RiskFlag(
@@ -507,7 +514,7 @@ class LatentDynamicsAnalyzer(Analyzer):
                 observed=ObservedValue(value=action_effect_mi, unit="dHSIC"),
                 threshold=0.1,
                 interpretation=f"Causal action-effect dependency is {action_effect_mi:.4f}.",
-                implication=mi_level.value,
+                implication=mi_implication,
             )
         )
 

@@ -292,13 +292,13 @@ def run_certify(argv: list[str]) -> None:
             vd_delta = (your_m["vel_disc_rate"] or 0) - (ref_m["vel_disc_rate"] or 0)
             if vd_delta > 0.05:
                 extra_steps.append(
-                    f"Velocity discontinuity {vd_delta:+.1%} above {args.reference} — "
+                    f"Velocity discontinuity {vd_delta:+.1%} above {args.reference}; "
                     "inspect hardware communication loop."
                 )
             entropy = your_m.get("action_entropy")
             if entropy is not None and entropy < 3.0:
                 extra_steps.append(
-                    f"Action entropy {entropy:.2f} bits/dim < 3.0 — "
+                    f"Action entropy {entropy:.2f} bits/dim < 3.0; "
                     "collect more diverse demonstrations."
                 )
         except Exception as e:

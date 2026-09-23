@@ -196,7 +196,7 @@ def run_integrity(argv: list[str]) -> None:
             "Fail CI (exit 1) on ANY CRITICAL finding, including context-dependent "
             "motion-review ones (ldlj, jerk_spike_rate, velocity_discontinuity_rate). "
             "Default only fails on objective acquisition/format/sync/completeness "
-            "failures — see 'suggested_action' on each finding. Mutually exclusive "
+            "failures; see 'suggested_action' on each finding. Mutually exclusive "
             "with --policy."
         ),
     )

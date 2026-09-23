@@ -179,7 +179,7 @@ def run_retarget(argv: list[str]) -> None:
 
         if pos_key is None or quat_key is None:
             log(
-                f"  skip episode {ep_id!r} — EEF obs keys not found "
+                f"  skip episode {ep_id!r}: EEF obs keys not found "
                 f"(pos_key={pos_key!r}, quat_key={quat_key!r})"
             )
             skipped += 1
@@ -192,7 +192,7 @@ def run_retarget(argv: list[str]) -> None:
         try:
             rel_actions = retarget_episode_eef(eef_pos, eef_quat)  # (T-1, 6)
         except Exception as exc:
-            log(f"  skip episode {ep_id!r} — retarget failed: {exc}")
+            log(f"  skip episode {ep_id!r} (retarget failed: {exc})")
             skipped += 1
             skipped_ids.append(ep_id)
             continue
@@ -232,7 +232,7 @@ def run_retarget(argv: list[str]) -> None:
     shape_str = f"(T{'−1' if not args.pad else ''}, 6)"
     print(
         f"\n{'━' * 56}\n"
-        f"  calibra retarget — {batch.dataset_name}\n"
+        f"  calibra retarget: {batch.dataset_name}\n"
         f"{'━' * 56}\n"
         f"  Episodes converted : {converted}\n"
         f"  Episodes skipped   : {skipped}\n"

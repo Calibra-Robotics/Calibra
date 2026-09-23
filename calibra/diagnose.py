@@ -125,7 +125,7 @@ class DiagnoseResult:
                 f"{self.estimated_success_after:.0f}%  (currently: {self.current_success:.0f}%)"
             )
         else:
-            lines.append("    No targeted collection needed — this failure has other causes.")
+            lines.append("    No targeted collection needed; this failure has other causes.")
             lines.append("    Consider: architecture, training recipe, or environment factors.")
 
         lines.append(_THICK)
@@ -318,7 +318,7 @@ def _build_jepa_features(batch: EpisodeBatch) -> tuple[np.ndarray, list[str]]:
         from calibra.models.robot_jepa import RobotJEPA, RobotJEPAConfig
     except ImportError:
         print(
-            "  [diagnose] torch not available — falling back to action-space features.",
+            "  [diagnose] torch not available, falling back to action-space features.",
             file=sys.stderr,
         )
         feats, ids, _ = _build_training_features(batch)
@@ -585,8 +585,8 @@ def run_diagnose(argv: list[str]) -> None:
         default="action",
         help=(
             "Feature space for coverage analysis. "
-            "'action' (default): action-space mean/std — fast, no torch required. "
-            "'jepa': RobotJEPA latent embeddings — correct for world-model debugging, "
+            "'action' (default): action-space mean/std, fast, no torch required. "
+            "'jepa': RobotJEPA latent embeddings, correct for world-model debugging, "
             "requires torch."
         ),
     )

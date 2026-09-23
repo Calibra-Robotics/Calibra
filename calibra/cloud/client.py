@@ -44,7 +44,7 @@ class CalibraCloudClient:
         except Exception as exc:
             raise CalibraCloudError(
                 f"Could not reach Calibra Cloud ({self.base}). "
-                "The service may not be live yet — check calibra.io for launch updates."
+                "The service may not be live yet; check calibra.io for launch updates."
             ) from exc
 
     def push_report(self, report_json: dict, dataset_name: str) -> str:

@@ -366,7 +366,7 @@ def render_score(result: dict) -> str:
         f"  Episodes : {result['n_episodes']}  ·  Steps: {result['n_samples']}",
         "",
         _THIN,
-        f"  {icon}  {score:.1f} / 100  —  {category}",
+        f"  {icon}  {score:.1f} / 100  ·  {category}",
         _THIN,
         "",
     ]

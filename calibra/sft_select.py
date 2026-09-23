@@ -83,7 +83,7 @@ def run_sft_select(argv: list[str]) -> None:
     p.add_argument(
         "--quality-only",
         action="store_true",
-        help="Stage 1 only — filter quality failures but skip diversity selection",
+        help="Stage 1 only: filter quality failures but skip diversity selection",
     )
     p.add_argument("--min-coherence", type=float, default=0.10)
     p.add_argument("--max-repetition-rate", type=float, default=0.40)

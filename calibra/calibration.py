@@ -77,7 +77,7 @@ class CalibrationProfile:
 
     def source_description(self) -> str:
         """Short string identifying this baseline for display, including provenance tag."""
-        tag = " — initial estimate" if self.provenance == "builtin_estimate" else ""
+        tag = " (initial estimate)" if self.provenance == "builtin_estimate" else ""
         return f"{self.dataset} (n={self.n_episodes}, v{self.detector_version}{tag})"
 
 
@@ -180,7 +180,7 @@ class CalibrationRegistry:
             comparison = "below baseline"
         else:
             comparison = "near baseline"
-        return f"{pct} flag rate (clean baseline {baseline_pct} from {source} — {comparison})"
+        return f"{pct} flag rate (clean baseline {baseline_pct} from {source}: {comparison})"
 
     def save_json(self, path: str) -> None:
         """Write all profiles to a JSON file."""

@@ -205,7 +205,7 @@ class TaskStructureAnalyzer(Analyzer):
                 level=RiskLevel.INFO,
                 metric="grasp_events_per_episode",
                 observed=ObservedValue(value=None),
-                interpretation="No gripper dimension detected — grasp count unavailable.",
+                interpretation="No gripper dimension detected; grasp count unavailable.",
                 implication=(
                     "Specify gripper_dims=[<dim_index>] on TaskStructureAnalyzer "
                     "if the dataset has a gripper."
@@ -303,7 +303,7 @@ class TaskStructureAnalyzer(Analyzer):
                 threshold=self.multimodal_sep_warning,
                 interpretation=(
                     f"Trajectory diversity score {sep_score:.2f} ≥ "
-                    f"{self.multimodal_sep_warning:.2f} — dataset appears to "
+                    f"{self.multimodal_sep_warning:.2f}, so the dataset appears to "
                     f"contain ~{n_modes} distinct trajectory modes."
                 ),
                 implication=(
@@ -324,7 +324,7 @@ class TaskStructureAnalyzer(Analyzer):
                 observed=ObservedValue(value=sep_score),
                 threshold=self.multimodal_sep_warning,
                 interpretation=(
-                    f"Trajectory diversity score {sep_score:.2f} — weak evidence "
+                    f"Trajectory diversity score {sep_score:.2f}: weak evidence "
                     "of multiple strategies. May be within-task variation."
                 ),
                 implication=(
@@ -340,7 +340,7 @@ class TaskStructureAnalyzer(Analyzer):
             observed=ObservedValue(value=sep_score),
             threshold=self.multimodal_sep_info,
             interpretation=(
-                f"Trajectory diversity score {sep_score:.2f} — demonstrations "
+                f"Trajectory diversity score {sep_score:.2f}: demonstrations "
                 "appear to follow a single primary strategy."
             ),
             implication="No multimodal strategy risk detected.",
@@ -434,7 +434,7 @@ class TaskStructureAnalyzer(Analyzer):
             if sep_score is not None and sep_score >= self.multimodal_sep_info:
                 caveats.append(
                     f"Diffusion Policy explicitly models multi-modal action "
-                    f"distributions — it is well-suited for datasets with "
+                    f"distributions, so it is well-suited for datasets with "
                     f"~{n_modes} trajectory modes."
                 )
                 # Multimodal → diffusion is MORE compatible, not less.
@@ -485,7 +485,7 @@ class TaskStructureAnalyzer(Analyzer):
             compatible = True
             if sep_score is not None and sep_score >= self.multimodal_sep_warning:
                 caveats.append(
-                    "Standard BC with MSE loss averages conflicting modes — "
+                    "Standard BC with MSE loss averages conflicting modes, so "
                     "the policy will hover between strategies and succeed at neither."
                 )
                 compatible = False

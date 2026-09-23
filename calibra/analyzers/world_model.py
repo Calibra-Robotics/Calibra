@@ -71,7 +71,7 @@ class WorldModelConsistencyAnalyzer(Analyzer):
         except ImportError:
             return AnalyzerResult(
                 analyzer_name=self.name,
-                raw_metrics={"skipped": "torch not installed — pip install torch"},
+                raw_metrics={"skipped": "torch not installed (pip install torch)"},
             )
 
         if batch.n_episodes < 3:

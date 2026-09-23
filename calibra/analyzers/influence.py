@@ -140,7 +140,10 @@ class InfluenceAnalyzer(Analyzer):
             metric="dataset_influence_score",
             observed=ObservedValue(value=float(np.mean(influence_scores)), unit="influence"),
             interpretation=f"Computed offline learning influence. Top influential episode IDs: {', '.join(top_ids)}",
-            implication="Exposing --strategy influence in calibra prune to target informative coreset selections.",
+            implication=(
+                "Informational only. Run `calibra prune --strategy influence` to build "
+                "a coreset that keeps the most informative episodes."
+            ),
         )
 
         return AnalyzerResult(analyzer_name=self.name, flags=[flag], raw_metrics=raw)

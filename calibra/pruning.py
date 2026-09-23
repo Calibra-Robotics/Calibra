@@ -575,14 +575,14 @@ def _select_world_model(
         self_selector._world_model_backend = "lightweight"
         if surprise_scores:
             print(
-                "  [world-model] torch unavailable — using lightweight "
+                "  [world-model] torch unavailable, using lightweight "
                 "PCA/linear-predictor surprise baseline (v1)",
                 file=sys.stderr,
             )
 
     if not surprise_scores:
         print(
-            "  [world-model] insufficient data for surprise scoring — falling back to random selection",
+            "  [world-model] insufficient data for surprise scoring, falling back to random selection",
             file=sys.stderr,
         )
         self_selector._world_model_backend = "random"

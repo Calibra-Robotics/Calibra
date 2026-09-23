@@ -11,9 +11,12 @@ from calibra.anomalies import EpisodeAnomaly, EpisodeFlag
 from calibra.pipeline import Pipeline
 from calibra.report_html import generate_html_report
 from calibra.schema.episode import Episode, EpisodeBatch, EpisodeMetadata
+from calibra.schema.report import RiskLevel
 
 
-def _make_batch(n_eps: int = 3, n_steps: int = 20) -> EpisodeBatch:
+def _make_batch(
+    n_eps: int = 3, n_steps: int = 20, dataset_name: str = "html_test_ds"
+) -> EpisodeBatch:
     rng = np.random.default_rng(42)
     episodes = []
     for i in range(n_eps):
@@ -34,7 +37,7 @@ def _make_batch(n_eps: int = 3, n_steps: int = 20) -> EpisodeBatch:
         )
     return EpisodeBatch(
         episodes=episodes,
-        dataset_name="html_test_ds",
+        dataset_name=dataset_name,
         format="hdf5",
         source_path="/tmp/html_test.h5",
     )
@@ -75,3 +78,45 @@ class TestReportHTML:
             assert "ep_0" in content
             assert "ssl_trajectory_outliers" in content
             assert "contact_dropout" in content
+
+    def test_untrusted_text_is_escaped(self):
+        batch = _make_batch(dataset_name="<img src=x onerror=alert(1)>")
+        report = Pipeline().run(batch)
+
+        flag = EpisodeFlag(
+            episode_idx=0,
+            episode_id="</script><script>alert(1)</script>",
+            metric="ldlj",
+            observed=-15.0,
+            median=-5.0,
+            deviation_mads=4.5,
+            higher_is_worse=False,
+        )
+        anomaly = EpisodeAnomaly(episode_idx=0, episode_id=flag.episode_id, flags=[flag])
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            out_file = Path(tmpdir) / "report.html"
+            generate_html_report(report, str(out_file), outliers=[anomaly])
+            content = out_file.read_text(encoding="utf-8")
+
+        assert "<img src=x" not in content
+        assert "&lt;img src=x" in content
+        assert "</script><script>alert" not in content
+        assert "function esc(" in content
+
+    def test_finding_count_excludes_ok_and_info(self):
+        report = Pipeline().run(_make_batch())
+        n_findings = len(report.flags_at_level(RiskLevel.CRITICAL)) + len(
+            report.flags_at_level(RiskLevel.WARNING)
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            out_file = Path(tmpdir) / "report.html"
+            generate_html_report(report, str(out_file))
+            content = out_file.read_text(encoding="utf-8")
+
+        assert (
+            f"{n_findings} warning or critical finding(s) out of {len(report.flags)} checks"
+            in content
+        )
+        assert "Calibra Report —" not in content

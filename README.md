@@ -159,7 +159,14 @@ afford to drop. Skim the top of the queue before pruning.
 ### 4. Decide: `calibra prune`
 
 ```bash
-calibra prune lerobot/pusht --keep 0.25 \
+calibra prune lerobot/pusht --keep 0.25 --report results/pusht/latest.json
+```
+
+`--export-dataset` needs a local copy, so download the dataset first:
+
+```bash
+hf download lerobot/pusht --repo-type dataset --local-dir ./datasets/pusht
+calibra prune ./datasets/pusht --keep 0.25 \
   --report results/pusht/latest.json \
   --export-dataset ./pusht_coreset
 ```
@@ -271,13 +278,13 @@ calibra experiment report --experiment-id my-run
 Run a retention sweep:
 
 ```bash
-calibra benchmark --sweep
+calibra benchmark lerobot/pusht --sweep
 ```
 
 Connect measured results to the benchmark:
 
 ```bash
-calibra benchmark --sweep --experiment-id my-run
+calibra benchmark lerobot/pusht --sweep --experiment-id my-run
 ```
 
 Reports distinguish **simulated**, **partially measured**, and **validated case-study** results so estimated compute savings are not confused with measured results.

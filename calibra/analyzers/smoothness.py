@@ -63,9 +63,14 @@ _VEL_DISC_CRITICAL = 0.05
 # Action-state divergence: mean L2 norm of (action_t - state_t).
 # Only computed when episode.observations contains a key that normalizes
 # to "state" or "joint_position" and has the same dimension as the action,
-# AND when action_type == "position" (velocity datasets produce meaningless
-# large values — e.g. pusht_image fired at 14.52 because dx/dy velocity
-# commands were compared to pixel-space position observations).
+# AND when action_type == "position" (velocity commands compared to position
+# observations are meaningless).
+#
+# The thresholds below are in radians. Datasets whose state is in other units
+# (e.g. lerobot/pusht: absolute pixel targets in a 512 px workspace, mean
+# divergence ~14 px = ~3% of the workspace) cannot be scored against them, so
+# when the state leaves the plausible radian range the check reports the
+# divergence as a fraction of the state range at INFO level instead.
 #
 # CALIBRATED from 12 reference profiles (2026-06-15), position control only:
 #
@@ -89,6 +94,8 @@ _VEL_DISC_CRITICAL = 0.05
 # before the WARNING boundary is considered well-calibrated.
 _ACT_STATE_DIV_WARNING = 0.15  # real-hardware tracking error falls below this
 _ACT_STATE_DIV_CRITICAL = 0.35  # only planner waypoint datasets reach this
+# Joint angles stay within one turn; any |state| beyond this is not radians.
+_ACT_STATE_DIV_RADIAN_LIMIT = 2 * np.pi
 
 # ── scripted motion signature thresholds ─────────────────────────────────────
 #
@@ -200,7 +207,7 @@ class ControlSmoothnessAnalyzer(Analyzer):
         if is_scripted and div_flag is not None and div_flag.level == RiskLevel.CRITICAL:
             new_interp = (
                 div_flag.interpretation
-                + " Downgraded from CRITICAL: scripted motion signature detected — "
+                + " Downgraded from CRITICAL: scripted motion signature detected, so "
                 "high tracking error is expected from planner waypoint transitions."
             )
             downgraded = div_flag.model_copy(
@@ -353,7 +360,7 @@ class ControlSmoothnessAnalyzer(Analyzer):
             threshold=self.jerk_spike_warning,
             interpretation=(
                 f"{stat:.1%} of steps have jerk > {self.jerk_spike_k}× "
-                "median jerk — anomalous discontinuities in action sequence."
+                "median jerk: anomalous discontinuities in action sequence."
             ),
             implication=(
                 "Jerk spikes are typically caused by dropped frames, bad episode "
@@ -405,7 +412,7 @@ class ControlSmoothnessAnalyzer(Analyzer):
                     ci_method="bootstrap",
                 ),
                 threshold=self.vel_disc_warning,
-                interpretation="Velocity profile is continuous — no sudden reversals.",
+                interpretation="Velocity profile is continuous with no sudden reversals.",
                 implication="No velocity discontinuity risk detected.",
                 affected_fraction=float(stat),
             ), raw
@@ -487,7 +494,7 @@ class ControlSmoothnessAnalyzer(Analyzer):
                 f"spike_rate={spike_rate:.1%} (>{self.scripted_spike_min:.0%}) "
                 f"with vel_disc_rate={vel_disc:.2%} (<{self.scripted_vel_disc_max:.1%}). "
                 "Motion planners connect waypoints with abrupt starts and stops, "
-                "producing jerk spikes at every transition — but never reverse direction, "
+                "producing jerk spikes at every transition, but never reverse direction, "
                 "so velocity discontinuity stays near zero. "
                 "Human teleoperation shows the opposite pattern."
             ),
@@ -528,7 +535,11 @@ class ControlSmoothnessAnalyzer(Analyzer):
 
         Silently skipped for velocity-command datasets (action_type != "position"):
         comparing velocity commands against position observations always produces
-        meaningless large values (e.g. pusht_image fires at 14.52).
+        meaningless large values.
+
+        When the state is not in radians (|state| > 2π anywhere, e.g. pusht's
+        pixel coordinates), the radian thresholds do not apply; the flag is
+        INFO and reports divergence as a fraction of the state range.
 
         Only fires when the episode has a state-like observation with the
         same dimensionality as the action.
@@ -544,6 +555,8 @@ class ControlSmoothnessAnalyzer(Analyzer):
 
         ep_values: list[Optional[float]] = []
         n_skipped = 0
+        state_min: Optional[np.ndarray] = None
+        state_max: Optional[np.ndarray] = None
 
         for ep in batch.episodes:
             state_arr = None
@@ -566,6 +579,11 @@ class ControlSmoothnessAnalyzer(Analyzer):
             divergence = float(np.mean(np.linalg.norm(act - obs, axis=1)))
             ep_values.append(divergence)
 
+            obs_2d = obs.reshape(len(obs), -1)
+            ep_min, ep_max = obs_2d.min(axis=0), obs_2d.max(axis=0)
+            state_min = ep_min if state_min is None else np.minimum(state_min, ep_min)
+            state_max = ep_max if state_max is None else np.maximum(state_max, ep_max)
+
         valid = [v for v in ep_values if v is not None]
         if not valid or n_skipped == batch.n_episodes:
             return None, None  # metric silently skipped — no paired state obs
@@ -582,10 +600,37 @@ class ControlSmoothnessAnalyzer(Analyzer):
             "episode_values": ep_values,
         }
 
+        state_abs_max = float(max(np.abs(state_min).max(), np.abs(state_max).max()))
+        if state_abs_max > _ACT_STATE_DIV_RADIAN_LIMIT:
+            state_span = float(np.linalg.norm(state_max - state_min))
+            rel = stat / state_span if state_span > 0 else float("nan")
+            raw["units_not_radians"] = True
+            raw["state_abs_max"] = state_abs_max
+            raw["relative_divergence"] = rel
+            flag = RiskFlag(
+                level=RiskLevel.INFO,
+                metric="action_state_divergence",
+                observed=ObservedValue(
+                    value=stat, ci_lower=lo, ci_upper=hi, ci_level=0.95, ci_method="percentile"
+                ),
+                interpretation=(
+                    f"Mean action-state divergence is {stat:.4g} in the dataset's own units, "
+                    f"about {rel:.1%} of the state range. State values reach "
+                    f"{state_abs_max:.4g}, so they are not joint angles in radians and the "
+                    "radian-calibrated thresholds do not apply."
+                ),
+                implication=(
+                    "Not scored. A few percent of the state range is typical tracking lag "
+                    "for absolute position targets. Compare against a clean dataset "
+                    "recorded in the same units to judge it."
+                ),
+            )
+            return flag, raw
+
         if stat < self.act_state_div_warning:
             level = RiskLevel.OK
             interp = (
-                f"Action-state divergence is {stat:.4f} — within expected range "
+                f"Action-state divergence is {stat:.4f}, within the expected range "
                 "for position-control teleoperation. Controller tracking is normal."
             )
             impl = "No command-tracking issue detected."
@@ -615,7 +660,8 @@ class ControlSmoothnessAnalyzer(Analyzer):
                 "severe communication lag / wrong control mode."
             )
             impl = (
-                "If scripted dataset: divergence > 0.35 indicates the planner "
+                f"If scripted dataset: divergence > {self.act_state_div_critical:.2f} "
+                "indicates the planner "
                 "issues positions far ahead of the arm. Verify normalisation and "
                 "coordinate frames. For human teleoperation at this level: "
                 "prune high-divergence episodes and check motor PD parameters."
@@ -627,7 +673,13 @@ class ControlSmoothnessAnalyzer(Analyzer):
             observed=ObservedValue(
                 value=stat, ci_lower=lo, ci_upper=hi, ci_level=0.95, ci_method="percentile"
             ),
-            threshold=self.act_state_div_warning,
+            # Report the threshold that was actually crossed so it matches the
+            # interpretation text.
+            threshold=(
+                self.act_state_div_critical
+                if level == RiskLevel.CRITICAL
+                else self.act_state_div_warning
+            ),
             interpretation=interp,
             implication=impl,
             affected_fraction=float(

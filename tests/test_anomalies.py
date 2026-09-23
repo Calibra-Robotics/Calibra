@@ -336,3 +336,28 @@ def test_render_cluster_range_notation():
     text = render(outliers, n_episodes=30)
     # Cluster of 3 consecutive episodes should produce range notation
     assert "cluster" in text
+
+
+def _jitter_batch(outlier_jitter_std: float, n: int = 20, outlier_idx: int = 5) -> EpisodeBatch:
+    # Near-perfect clocks with slight per-episode variation so MAD > 0.
+    episodes = [_episode(ep_id=f"ep_{i}", jitter_std=1e-9 * (1 + i % 3)) for i in range(n)]
+    episodes[outlier_idx] = _episode(ep_id=f"ep_{outlier_idx}", jitter_std=outlier_jitter_std)
+    return EpisodeBatch(
+        episodes=episodes,
+        dataset_name="jitter",
+        format="hdf5",
+        source_path="/tmp/jitter.h5",
+    )
+
+
+def test_negligible_jitter_not_flagged():
+    # Many MADs above the median, but CV is ~1e-6: float noise, not a fault.
+    report = _report_from_batch(_jitter_batch(outlier_jitter_std=1e-7))
+    flagged = [a for a in find_outliers(report) if "jitter_cv" in a.metrics]
+    assert flagged == []
+
+
+def test_real_jitter_still_flagged():
+    report = _report_from_batch(_jitter_batch(outlier_jitter_std=0.01))
+    flagged = [a.episode_idx for a in find_outliers(report) if "jitter_cv" in a.metrics]
+    assert flagged == [5]

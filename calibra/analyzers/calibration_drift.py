@@ -177,7 +177,7 @@ class CalibrationDriftAnalyzer(Analyzer):
                         observed=ObservedValue(value=None),
                         interpretation=(
                             "No paired action/state observations with a sustained "
-                            "stationary hold were found — calibration drift check skipped."
+                            "stationary hold were found, so the calibration drift check was skipped."
                         ),
                         implication="Calibration drift detection was skipped.",
                     )
@@ -197,7 +197,7 @@ class CalibrationDriftAnalyzer(Analyzer):
                         observed=ObservedValue(value=None),
                         interpretation=(
                             f"Only {n_stable} stable frames found across the dataset "
-                            f"(need >= {self.min_stable_frames}) — too few for a reliable "
+                            f"(need >= {self.min_stable_frames}), too few for a reliable "
                             "per-motor offset estimate."
                         ),
                         implication="Calibration drift detection was skipped.",
@@ -263,8 +263,8 @@ class CalibrationDriftAnalyzer(Analyzer):
                     f"(|mean|/std = {motor['consistency']:.1f})."
                 ),
                 implication=(
-                    "A stable per-motor action/state offset during holds — not during "
-                    "motion — is the signature of a leader/follower calibration drift "
+                    "A stable per-motor action/state offset during holds (not during "
+                    "motion) is the signature of a leader/follower calibration drift "
                     "(see LeRobot issue #3758: an unnoticed joint offset trained fine "
                     "but caused consistent under/overshoot at deployment). This is a "
                     "review signal, not proof of a broken dataset: verify the leader/"

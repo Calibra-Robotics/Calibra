@@ -124,7 +124,7 @@ def _interp_vel_disc(yours: float, ref: float, ref_mode: str, ref_label: str) ->
         else:
             return (
                 f"Smoother than {ref_label}. Unusually clean for "
-                "velocity-command data — verify the control mode.",
+                "velocity-command data; verify the control mode.",
                 "HIGH",
             )
     elif ref_mode == "position":
@@ -176,7 +176,7 @@ def _interp_spike_rate(
 
     if yours_is_scripted and not ref_is_scripted:
         return (
-            f"Yours is a scripted/planner dataset (spike_rate {yours:.1%}) — "
+            f"Yours is a scripted/planner dataset (spike_rate {yours:.1%}), "
             f"significantly higher than human teleop reference {ref_label} "
             f"({ref:.1%}). Planner waypoint transitions produce jerk spikes "
             "at every target switch. This is expected, not a recording defect. "
@@ -271,7 +271,7 @@ def _interp_temporal(yours: float, ref: float, key: str, ref_is_sim: bool) -> tu
             )
         else:
             return (
-                "High dropout. Significant frame loss — likely hardware or "
+                "High dropout. Significant frame loss, likely hardware or "
                 "recording pipeline issue.",
                 "MODERATE",
             )
@@ -291,7 +291,7 @@ def _interp_entropy(yours: float, ref: float, ref_label: str) -> tuple[str, str]
         )
     else:
         return (
-            "Low entropy — possible mode collapse or limited trajectory variation. "
+            "Low entropy: possible mode collapse or limited trajectory variation. "
             "Policy may generalise poorly to out-of-distribution states.",
             "LOW",
         )
@@ -378,7 +378,7 @@ def render_comparison(
     thick = "━" * _WIDTH
     lines = [
         thick,
-        f"calibra compare — {Path(your_path).name}  vs.  {ref_name}",
+        f"calibra compare: {Path(your_path).name}  vs.  {ref_name}",
         thick,
         "",
         f"Reference: {header_ref}",
@@ -400,7 +400,7 @@ def render_comparison(
                 "  Scripted datasets have spike_rate ~20–25% and vel_disc_rate",
                 "  <1.5%. Human teleoperation has spike_rate <1% and higher",
                 "  vel_disc_rate. The spike-rate comparison below is expected",
-                "  to show a large gap — this is structural, not a defect.",
+                "  to show a large gap; this is structural, not a defect.",
                 warn_thick,
                 "",
             ]
@@ -600,7 +600,7 @@ def _recommended_actions(
             ids = ", ".join(str(a.episode_id) for a in jerk_eps[:6])
             suffix = f" (and {len(jerk_eps) - 6} more)" if len(jerk_eps) > 6 else ""
             actions.append(
-                f"Prune episode(s) {ids}{suffix} — jerk outliers detected by MAD analysis."
+                f"Prune episode(s) {ids}{suffix}: jerk outliers detected by MAD analysis."
             )
 
     # High dropout → fix recording pipeline
@@ -749,7 +749,7 @@ def render_community_section(
         label = _COMMUNITY_LABELS.get(key, key)
 
         if val is None or p is None:
-            lines.append(f"  {label:<28} {'n/a':>8}  {'n/a':>8}  {'—':>6}")
+            lines.append(f"  {label:<28} {'n/a':>8}  {'n/a':>8}  {'n/a':>6}")
             continue
 
         higher_better = key in _COMMUNITY_HIGHER_BETTER or key == "ldlj"
@@ -767,7 +767,7 @@ def render_community_section(
             p50_str = f"{p50:.1%}" if p50 is not None else "n/a"
 
         if rank is None:
-            rank_str, status = "—", ""
+            rank_str, status = "n/a", ""
         elif rank >= 75:
             rank_str, status = f"top {100 - rank:.0f}%", "✅"
         elif rank >= 40:
@@ -930,7 +930,7 @@ def run_compare(argv: list[str]) -> None:
         elif community is not None:
             print(
                 f"\n[community] Only {community.get('n', 0)} records in Calibra Cloud for "
-                f"'{args.policy}' — need ≥5 to show percentiles. Record outcomes with "
+                f"'{args.policy}': need ≥5 to show percentiles. Record outcomes with "
                 "`calibra predict --record-outcome RATE` to contribute."
             )
         else:

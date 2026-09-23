@@ -85,7 +85,7 @@ def _action_dim_compatibility(src_dim: int, tgt_dim: int) -> tuple[str, str]:
     if src_dim > tgt_dim:
         return "ADAPT", (
             f"Source has {src_dim}D actions, target has {tgt_dim}D. "
-            "Subset retargeting (drop extra dims) may work — "
+            "Subset retargeting (drop extra dims) may work; "
             "use `calibra retarget` to convert."
         )
     return "DIFFICULT", (

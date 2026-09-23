@@ -174,7 +174,7 @@ class PhaseBalanceAnalyzer(Analyzer):
                 observed=observed,
                 threshold=self.contact_warning,
                 interpretation=(
-                    f"Contact phase is {contact_mean:.1%} of total steps — "
+                    f"Contact phase is {contact_mean:.1%} of total steps, "
                     "adequate representation of the manipulation phase."
                 ),
                 implication="Policy will see sufficient contact-phase examples for generalisation.",
@@ -192,7 +192,7 @@ class PhaseBalanceAnalyzer(Analyzer):
             ),
             implication=(
                 "The policy's BC loss is dominated by approach-phase gradients. "
-                "Contact and grasp steps are underrepresented — the policy will "
+                "Contact and grasp steps are underrepresented, so the policy will "
                 "learn to approach reliably but fail at the critical manipulation "
                 "phase. Fix: augment with contact-phase-only demonstrations, or "
                 "apply per-phase loss weighting (upweight steps where gripper is "

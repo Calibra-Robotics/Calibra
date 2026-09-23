@@ -40,6 +40,13 @@ _OUTLIER_K_BY_METRIC: dict[str, float] = {
     "ldlj": 4.0,  # LDLJ has high natural variance; be more conservative
 }
 
+# Absolute floor below which a higher-is-worse value is never flagged, however
+# many MADs it sits from the median. Without it, a dataset with near-perfect
+# timing (jitter CV ~1e-6, i.e. float rounding) flags episodes on pure noise.
+_MIN_FLAGGABLE_BY_METRIC: dict[str, float] = {
+    "jitter_cv": 0.01,  # 1% step-to-step timing variation
+}
+
 
 @dataclass
 class EpisodeFlag:
@@ -146,6 +153,7 @@ def find_outliers(
             scale = mad
 
         threshold_k = _OUTLIER_K_BY_METRIC.get(label, k)
+        min_flaggable = _MIN_FLAGGABLE_BY_METRIC.get(label)
 
         # Look up benign baseline once per metric (same for all episodes)
         baseline_rate, baseline_src = registry.benign_firing_rate(
@@ -154,6 +162,8 @@ def find_outliers(
 
         for idx, v in enumerate(arr):
             if np.isnan(v):
+                continue
+            if min_flaggable is not None and higher_is_worse and v < min_flaggable:
                 continue
             deviation = (v - median) / scale
             is_anomaly = (higher_is_worse and deviation > threshold_k) or (
@@ -216,13 +226,13 @@ def _heuristic_label(
 
     if group_size >= 3:
         if "jitter_cv" in metrics_seen or "dropout_rate" in metrics_seen:
-            return "cluster — possible sync loss or recording interruption"
-        return "cluster — possible operator fatigue or recording artifact"
+            return "cluster: possible sync loss or recording interruption"
+        return "cluster: possible operator fatigue or recording artifact"
 
     if last_idx >= int(n_episodes * 0.90):
-        return "end of dataset — possible fatigue or equipment drift"
+        return "end of dataset: possible fatigue or equipment drift"
     if first_idx <= int(n_episodes * 0.05):
-        return "start of dataset — possible equipment warm-up artifact"
+        return "start of dataset: possible equipment warm-up artifact"
     if "jitter_cv" in metrics_seen:
         return "possible sync loss or timestamp irregularity"
     if "dropout_rate" in metrics_seen:
@@ -288,7 +298,7 @@ def render(anomalies: list[EpisodeAnomaly], n_episodes: int) -> str:
             baseline_src = entry["baseline_source"]
             if baseline is None:
                 baseline_str = "unavailable"
-                signal = "—"
+                signal = "n/a"
             else:
                 baseline_str = f"{baseline:.1%}"
                 ratio = entry["fraction"] / baseline if baseline > 0 else float("inf")
@@ -305,12 +315,11 @@ def render(anomalies: list[EpisodeAnomaly], n_episodes: int) -> str:
             lines.append(f"  {entry['detector']:<18} {your_pct:>9}  {baseline_str:>14}  {signal}")
         lines.append("")
         lines.append("A flag means this episode is unusual relative to the rest of this")
-        lines.append("dataset — not that it is corrupted. Review flagged episodes before")
+        lines.append("dataset, not that it is corrupted. Review flagged episodes before")
         lines.append("deciding to drop, downweight, or annotate them.")
     else:
         lines.append(
-            "Inspect flagged episodes before training. "
-            "Unusual ≠ corrupted — review before dropping."
+            "Inspect flagged episodes before training. Unusual ≠ corrupted; review before dropping."
         )
     lines.append("─" * 58)
     return "\n".join(lines)
@@ -377,9 +386,9 @@ def concentration_report(anomalies: list[EpisodeAnomaly], n_episodes: int) -> st
     end_cluster = sum(1 for i in idxs if i >= int(n_episodes * 0.90))
     position_note = ""
     if start_cluster >= 2 and start_cluster / n_flagged >= 0.30:
-        position_note = " — concentrated near dataset start"
+        position_note = ", concentrated near dataset start"
     elif end_cluster >= 2 and end_cluster / n_flagged >= 0.30:
-        position_note = " — concentrated near dataset end"
+        position_note = ", concentrated near dataset end"
 
     lines = [
         "─── Concentration Analysis " + "─" * 32,

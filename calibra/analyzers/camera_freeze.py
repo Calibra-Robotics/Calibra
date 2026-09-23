@@ -149,7 +149,7 @@ class CameraFreezeAnalyzer(Analyzer):
                 ),
                 implication=(
                     "A frozen camera segment means the policy would be trained on stale "
-                    "visual input during that window — likely to cause visually-triggered "
+                    "visual input during that window, which is likely to cause visually-triggered "
                     "failures when deployed against a live, moving scene."
                 ),
                 affected_fraction=affected_fraction,

@@ -289,7 +289,7 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(
         prog="calibra",
-        description="Calibra — dataset reliability diagnostics for robotics IL",
+        description="Calibra: dataset reliability diagnostics for robotics IL",
         epilog="Run 'calibra compare <path> <reference>' to compare against a reference profile.",
     )
     parser.add_argument("--version", "-V", action="version", version=f"%(prog)s {__version__}")

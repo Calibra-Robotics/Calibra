@@ -174,7 +174,7 @@ def _find_in_dir(d: Path) -> Path:
         if c.exists():
             return c
     raise FileNotFoundError(
-        f"{d}: none of {', '.join(_DIR_CANDIDATES)} found — "
+        f"{d}: none of {', '.join(_DIR_CANDIDATES)} found; "
         f"point --from-metrics at the metrics file directly"
     )
 
