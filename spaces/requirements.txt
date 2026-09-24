@@ -1,5 +1,2 @@
-calibra-robotics==0.7.1
-datasets>=2.0
-pyarrow>=12.0
-duckdb>=0.9
+calibra-robotics[lerobot]==0.11.0
 huggingface-hub>=0.24

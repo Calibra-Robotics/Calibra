@@ -1,970 +1,516 @@
 """
-Calibra — Dataset Integrity
+Calibra: what should I train on?
 
-Answers the first question robotics practitioners ask about a new dataset:
-"can I trust it?" — before quality, coverage, or optimization matter.
+Public demo of `calibra analyze` on a Hugging Face LeRobot dataset:
+integrity, Calibra Score, noise regime, a per-episode decision
+(KEEP / DROP, or ANNOTATE in annotate mode), and detector firing rates
+checked against known-clean baselines.
 
-Public demo: sample check on up to SAMPLE_EPISODE_CAP episodes.
-Full check: pip install calibra-robotics && calibra integrity hf://<dataset>
+The demo runs on up to SAMPLE_EPISODE_CAP episodes. For the whole dataset:
+    pip install calibra-robotics && calibra analyze <dataset>
 """
 
 from __future__ import annotations
 
+import html
 import json
 import os
 import tempfile
 import threading
-import urllib.parse
 from datetime import datetime, timezone
-from typing import Optional
 
 import gradio as gr
 
-# ── constants ─────────────────────────────────────────────────────────────────
-SAMPLE_EPISODE_CAP = 20
-AUDIT_TIMEOUT_S = 90
-BENCHMARK_DATASET_ID = "omert27/calibra-robot-dataset-quality-benchmark"
-SPACE_URL = "https://huggingface.co/spaces/omert27/robot-dataset-health-check"
+SAMPLE_EPISODE_CAP = 50
+ANALYSIS_TIMEOUT_S = 120
+REPO_URL = "https://github.com/Calibra-Robotics/Calibra"
 
-# ── community stats ───────────────────────────────────────────────────────────
-_COMMUNITY_STATS: Optional[dict] = None
-_CACHE: dict[str, dict] = {}
+# ── analysis ──────────────────────────────────────────────────────────────────
 
 
-def _boot() -> None:
-    global _COMMUNITY_STATS, _CACHE
-    try:
-        from huggingface_hub import hf_hub_download
-
-        stats_path = hf_hub_download(
-            repo_id=BENCHMARK_DATASET_ID, filename="community_stats.json", repo_type="dataset"
-        )
-        with open(stats_path, encoding="utf-8") as f:
-            _COMMUNITY_STATS = json.load(f)
-
-        manifest_path = hf_hub_download(
-            repo_id=BENCHMARK_DATASET_ID, filename="manifest.json", repo_type="dataset"
-        )
-        with open(manifest_path, encoding="utf-8") as f:
-            manifest = json.load(f)
-        for ds in manifest.get("datasets", []):
-            if ds.get("status") == "ok" and ds.get("score") is not None:
-                _CACHE[ds["repository_id"]] = ds
-    except Exception:
-        pass
-
-
-# ── audit ─────────────────────────────────────────────────────────────────────
-
-
-def _hf_revision(repo_id: str) -> Optional[str]:
-    try:
-        from huggingface_hub import HfApi
-
-        return getattr(HfApi().dataset_info(repo_id=repo_id), "sha", None)
-    except Exception:
-        return None
-
-
-def _run_integrity_check(batch) -> dict:
-    """Mirrors `calibra integrity`'s own analyzer set and grouping — kept as a
-    separate Pipeline run (not folded into the main audit below) so Integrity
-    findings never leak into the Quality/Coverage dimension scoring, which
-    routes unmatched metrics into a catch-all bucket (see
-    calibra/schema/scoring.py `route_metric_to_dimension`)."""
-    from calibra.analyzers.blur import BlurAnalyzer
-    from calibra.analyzers.calibration_drift import CalibrationDriftAnalyzer
-    from calibra.analyzers.camera_freeze import CameraFreezeAnalyzer
-    from calibra.analyzers.duplicate_frame import DuplicateFrameAnalyzer
-    from calibra.analyzers.smoothness import ControlSmoothnessAnalyzer
-    from calibra.analyzers.task_structure import TaskStructureAnalyzer
-    from calibra.analyzers.temporal import TemporalAnalyzer
-    from calibra.integrity import _ci_result, _integrity_flags, _integrity_score, _not_evaluated
-    from calibra.pipeline import Pipeline
-    from calibra.schema.report import RiskLevel
-
-    analyzers = [
-        TemporalAnalyzer(),
-        TaskStructureAnalyzer(),
-        DuplicateFrameAnalyzer(),
-        CameraFreezeAnalyzer(),
-        BlurAnalyzer(),
-        ControlSmoothnessAnalyzer(),
-        CalibrationDriftAnalyzer(),
-    ]
-    report = Pipeline(analyzers=analyzers).run(batch)
-    flags = _integrity_flags(report)
-    score, status = _integrity_score(flags)
-    ci_result, ci_reason = _ci_result(flags, strict=False)
-    return {
-        "critical": [f for f in flags if f.level == RiskLevel.CRITICAL],
-        "warnings": [f for f in flags if f.level == RiskLevel.WARNING],
-        "passed": [f for f in flags if f.level == RiskLevel.OK],
-        "not_evaluated": _not_evaluated(report, batch, analyzers),
-        "score": score,
-        "status": status,
-        "ci_result": ci_result,
-        "ci_reason": ci_reason,
-    }
-
-
-def _run_sample_audit(dataset_id: str) -> dict:
+def _analyze(dataset_id: str) -> dict:
+    from calibra import __version__
+    from calibra.analyze import _to_json, run_analysis
+    from calibra.anomalies import calibration_dataset_id, find_outliers, firing_rate_summary
     from calibra.ingestion.registry import load
-    from calibra.pipeline import Pipeline
-    from calibra.report_json import assemble_public_report
-    from calibra.schema.public_report import DatasetInfo, SamplingConfig
+    from calibra.schema.comparison import Disposition
 
-    revision = _hf_revision(dataset_id)
     batch = load(dataset_id)
     n_total = batch.n_episodes
     is_sample = n_total > SAMPLE_EPISODE_CAP
-
     if is_sample:
         batch.episodes = batch.episodes[:SAMPLE_EPISODE_CAP]
         batch._n_samples_hint = None
 
-    integrity = _run_integrity_check(batch)
-    diag = Pipeline().run(batch)
+    result = run_analysis(batch)
+    report = result.report
 
-    dataset_info = DatasetInfo(
-        provider="huggingface",
-        repository_id=dataset_id,
-        revision=revision,
-        dataset_format=diag.format,
-        episodes_total=n_total,
-        episodes_audited=diag.n_episodes,
-        frames_total=diag.n_samples,
-    )
-    public = assemble_public_report(
-        diag,
-        dataset_info=dataset_info,
-        sampling=SamplingConfig(
-            mode="random" if is_sample else "full",
-            fraction=diag.n_episodes / n_total if is_sample else 1.0,
-        ),
+    curation = annotate_counts = None
+    if result.prune_result is not None:
+        curation = result.prune_result.to_curation_report(batch, report=report)
+        annotate_counts = result.prune_result.to_curation_report(
+            batch, redundant_disposition=Disposition.ANNOTATE
+        ).disposition_counts()
+
+    outliers = find_outliers(report, dataset=calibration_dataset_id(dataset_id))
+    firing = firing_rate_summary(outliers, report.n_episodes)
+
+    payload = _to_json(result)
+    payload["sample"] = {"episodes_analyzed": report.n_episodes, "episodes_total": n_total}
+    payload["dataset_profile"] = report.dataset_profile
+    payload["detector_firing_rates"] = firing
+    payload["dispositions"] = (
+        [d.model_dump(mode="json") for d in curation.dispositions] if curation else []
     )
 
-    overall = public.results.overall
     return {
-        "score": overall.score,
-        "grade": overall.grade,
-        "cert": overall.certification,
-        "n_episodes": diag.n_episodes,
-        "n_episodes_total": n_total,
-        "n_samples": diag.n_samples,
-        "fmt": diag.format,
-        "findings": public.results.findings,
-        "dimensions": public.results.dimensions,
+        "result": result,
+        "curation": curation,
+        "annotate_counts": annotate_counts,
+        "firing": firing,
+        "n_total": n_total,
         "is_sample": is_sample,
-        "report_path": _write_temp_report(public, dataset_id),
-        "integrity": integrity,
+        "version": __version__,
+        "report_path": _write_json(payload, dataset_id),
     }
 
 
-def run_audit(dataset_id: str, progress=gr.Progress()):
-    dataset_id = dataset_id.strip()
+def _write_json(payload: dict, dataset_id: str) -> str:
+    slug = dataset_id.replace("/", "_")
+    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    path = os.path.join(tempfile.gettempdir(), f"calibra_analyze_{slug}_{ts}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, default=str)
+    return path
 
+
+def run(dataset_id: str, progress=gr.Progress()):
+    dataset_id = dataset_id.strip().removeprefix("hf://")
     if not dataset_id:
-        raise gr.Error("Enter a dataset ID — e.g. lerobot/pusht")
-
+        raise gr.Error("Enter a dataset ID, e.g. lerobot/pusht")
     parts = dataset_id.split("/")
     if len(parts) != 2 or not all(parts):
         raise gr.Error(
             f"'{dataset_id}' doesn't look like a Hugging Face dataset ID. "
-            "Expected format: org/name  (e.g. lerobot/pusht)"
+            "Expected org/name, e.g. lerobot/pusht"
         )
 
-    # ── cache hit ─────────────────────────────────────────────────────────────
-    if dataset_id in _CACHE:
-        progress(0.3, desc="Found in community benchmark ...")
-        cached = _CACHE[dataset_id]
-        progress(1.0)
-        return (
-            _render_cached_card(dataset_id, cached),
-            None,
-            _make_badge_markdown(cached["score"], cached.get("grade", "?"), dataset_id),
-        )
-
-    # ── live audit ────────────────────────────────────────────────────────────
-    progress(0.10, desc=f"Loading {dataset_id} ...")
-    result: dict = {}
+    progress(0.05, desc=f"Loading {dataset_id} ...")
+    out: dict = {}
     error: list = []
 
     def _worker():
         try:
-            result.update(_run_sample_audit(dataset_id))
+            out.update(_analyze(dataset_id))
         except Exception as exc:
             error.append(str(exc))
 
     thread = threading.Thread(target=_worker, daemon=True)
     thread.start()
     elapsed = 0
-    while thread.is_alive() and elapsed < AUDIT_TIMEOUT_S:
+    while thread.is_alive() and elapsed < ANALYSIS_TIMEOUT_S:
         thread.join(timeout=3)
         elapsed += 3
         progress(
-            min(0.15 + elapsed / AUDIT_TIMEOUT_S * 0.75, 0.90),
-            desc=f"Running quality checks ({elapsed}s) ...",
+            min(0.1 + elapsed / ANALYSIS_TIMEOUT_S * 0.8, 0.9),
+            desc=f"Analyzing ({elapsed}s) ...",
         )
 
     if thread.is_alive():
         raise gr.Error(
-            f"Audit timed out after {AUDIT_TIMEOUT_S}s — dataset may be too large for the demo. "
-            f"Run locally:  calibra audit hf://{dataset_id}"
+            f"Analysis timed out after {ANALYSIS_TIMEOUT_S}s; the dataset may be too large "
+            f"for the demo. Run locally: calibra analyze {dataset_id}"
         )
     if error:
         msg = error[0]
-        if "not found" in msg.lower() or "404" in msg:
-            raise gr.Error(f"Dataset '{dataset_id}' not found on Hugging Face Hub.")
-        if any(k in msg.lower() for k in ("lerobot", "parquet", "episode_index")):
+        low = msg.lower()
+        if "not found" in low or "404" in low:
+            raise gr.Error(f"Dataset '{dataset_id}' not found on the Hugging Face Hub.")
+        if any(k in low for k in ("lerobot", "parquet", "episode_index")):
             raise gr.Error(
-                f"'{dataset_id}' doesn't appear to be a LeRobot dataset. "
-                "This tool audits LeRobot-format datasets only."
+                f"'{dataset_id}' doesn't look like a LeRobot dataset. "
+                "The demo reads LeRobot-format datasets only."
             )
-        raise gr.Error(f"Audit failed: {msg[:300]}")
+        raise gr.Error(f"Analysis failed: {msg[:300]}")
 
-    progress(0.95, desc="Rendering results ...")
+    progress(0.95, desc="Rendering ...")
+    return _render(dataset_id, out), out["report_path"], _episode_rows(out["curation"])
+
+
+# ── rendering ─────────────────────────────────────────────────────────────────
+
+_GREEN, _AMBER, _RED, _BLUE, _MUTED = "#22c55e", "#f59e0b", "#ef4444", "#89b4fa", "#6c7086"
+_STATUS_COLOR = {"Healthy": _GREEN, "Warning": _AMBER, "Critical": _RED}
+_LEVEL_STYLE = {"critical": ("✗", _RED), "warning": ("⚠", _AMBER), "ok": ("✓", _GREEN)}
+_REGIME_NOTE = {
+    "LOW NOISE": "Clean data: selection focuses on removing redundancy.",
+    "MODERATE NOISE": "Some noisy episodes: filter the worst, then select for coverage.",
+    "HIGH NOISE": "Widespread noise: quality filtering matters most.",
+}
+_DISPOSITION_COLOR = {
+    "KEEP": _GREEN,
+    "ANNOTATE": _BLUE,
+    "DOWNWEIGHT": "#cba6f7",
+    "REVIEW": _AMBER,
+    "DROP": _RED,
+}
+
+
+def _esc(s) -> str:
+    return html.escape(str(s))
+
+
+def _label(text: str) -> str:
     return (
-        _render_health_card(dataset_id, result),
-        result.get("report_path"),
-        _make_badge_markdown(result["score"], result["grade"], dataset_id),
+        f'<div style="font-size:11px;color:{_MUTED};text-transform:uppercase;'
+        f'letter-spacing:.06em;margin-bottom:8px">{text}</div>'
     )
 
 
-# ── design tokens ─────────────────────────────────────────────────────────────
-
-_SCORE_BANDS = [(90, "#22c55e"), (75, "#84cc16"), (60, "#f59e0b"), (40, "#f97316"), (0, "#ef4444")]
-_BADGE_COLORS = {"A": "brightgreen", "B": "green", "C": "yellow", "D": "orange", "F": "red"}
-
-_CERT_TEXT = {
-    "pass": ("✓ Certified", "#22c55e"),
-    "provisional": ("~ Provisionally Certified", "#f59e0b"),
-    "fail": ("✗ Not Certified", "#ef4444"),
-}
-
-_SCORE_MEANING = [
-    (90, "Excellent quality — ready for training."),
-    (80, "Good quality — minor issues worth a quick review."),
-    (70, "Generally usable — some quality issues worth reviewing before training."),
-    (60, "Moderate issues — see Recommended Next Steps below."),
-    (40, "Several episodes need review before training — see Recommended Next Steps."),
-    (0, "Many episodes need review before training — see Recommended Next Steps."),
-]
-
-_DIM_LABELS = {
-    "temporal_integrity": "Temporal Consistency",
-    "motion_quality": "Motion Quality",
-    "behavioral_coverage": "Behavioral Coverage",
-    # "Integrity" is reserved for the front-door dataset-trust check above —
-    # this dimension (episode length/phase balance) is renamed to avoid
-    # implying it's part of that layer.
-    "task_integrity": "Task Structure",
-}
-
-_INTEGRITY_STATUS_COLOR = {"Healthy": "#22c55e", "Warning": "#f59e0b", "Critical": "#ef4444"}
-
-_SEV_ORDER = {"critical": 0, "warning": 1, "ok": 2, "info": 3}
+_RULE = '<div style="border-top:1px solid #313244;margin:16px 0"></div>'
 
 
-def _band_color(score: float) -> str:
-    for threshold, color in _SCORE_BANDS:
-        if score >= threshold:
-            return color
-    return "#ef4444"
-
-
-def _score_meaning(score: float) -> str:
-    for threshold, text in _SCORE_MEANING:
-        if score >= threshold:
-            return text
-    return ""
-
-
-def _pct_rank(score: float, distribution: list) -> int:
-    if not distribution:
-        return 50
-    return round(100 * sum(1 for s in distribution if score > s) / len(distribution))
-
-
-# ── badge ─────────────────────────────────────────────────────────────────────
-
-
-def _make_badge_markdown(score: float, grade: str, dataset_id: str) -> str:
-    color = _BADGE_COLORS.get(grade, "lightgrey")
-    message = urllib.parse.quote(f"{grade} · {score:.0f}/100", safe="")
-    label = urllib.parse.quote("Calibra Health", safe="")
-    img_url = f"https://img.shields.io/badge/{label}-{message}-{color}"
-    return f"[![Calibra Health]({img_url})]({SPACE_URL})"
-
-
-# ── similar datasets ──────────────────────────────────────────────────────────
-
-
-def _similar_html(dataset_id: str, score: float) -> str:
-    if not _CACHE:
-        return ""
-    ranked = sorted(
-        ((rid, d) for rid, d in _CACHE.items() if rid != dataset_id),
-        key=lambda x: abs(x[1]["score"] - score),
-    )[:4]
-    if not ranked:
-        return ""
-
-    items = ""
-    for rid, d in ranked:
-        s = d["score"]
-        color = _band_color(s)
-        short = rid.split("/")[-1].replace("_", " ")
-        delta = s - score
-        sign = "+" if delta >= 0 else "−"
-        delta_color = "#22c55e" if delta >= 0 else "#f97316"
-        items += (
-            f'<a href="https://huggingface.co/datasets/{rid}" target="_blank"'
-            f'   style="display:flex;justify-content:space-between;align-items:center;'
-            f'   padding:6px 0;border-bottom:1px solid #313244;text-decoration:none">'
-            f'  <span style="font-size:13px;color:#cdd6f4">{short}</span>'
-            f'  <span style="font-size:13px;color:{color};font-weight:600">'
-            f'    {s:.0f} <span style="color:{delta_color};font-size:11px;font-weight:400">'
-            f"      ({sign}{abs(delta):.0f})</span>"
-            f"  </span>"
-            f"</a>"
-        )
-
+def _header_html(dataset_id: str, out: dict) -> str:
+    r = out["result"].report
+    tags = []
+    if out["is_sample"]:
+        tags.append(f"first {r.n_episodes} of {out['n_total']:,} episodes")
+    if r.dataset_profile:
+        tags.append(f"profile: {_esc(r.dataset_profile)}")
+    tag_html = "".join(
+        f'<span style="font-size:11px;background:#313244;padding:2px 8px;border-radius:10px;'
+        f'color:#a6adc8;margin-left:6px">{t}</span>'
+        for t in tags
+    )
     return f"""
-<div style="border-top:1px solid #313244;margin:14px 0"></div>
-<div style="font-size:11px;color:#6c7086;text-transform:uppercase;letter-spacing:.06em;
-            margin-bottom:8px">Similar datasets</div>
-{items}
-<div style="font-size:11px;color:#45475a;margin-top:6px">
-  Nearest by health score in the community benchmark
+<div style="font-size:20px;font-weight:700;color:#cdd6f4">{_esc(dataset_id)}{tag_html}</div>
+<div style="font-size:13px;color:{_MUTED};margin-top:4px">
+  {r.n_episodes:,} episodes analyzed &nbsp;·&nbsp; {r.n_samples:,} frames &nbsp;·&nbsp; {_esc(r.format)}
 </div>
 """
 
 
-# ── percentile section ────────────────────────────────────────────────────────
+def _integrity_html(res) -> str:
+    from calibra.analyze import _worst_level
 
-
-def _percentile_section(score: float, dimensions: dict) -> str:
-    if not _COMMUNITY_STATS:
-        return ""
-
-    overall_dist = _COMMUNITY_STATS.get("scores", [])
-    dim_dists = _COMMUNITY_STATS.get("dimension_distributions", {})
-    n = _COMMUNITY_STATS.get("n_datasets", 0)
-    overall_pct = _pct_rank(score, overall_dist)
-    top_pct = 100 - overall_pct
-
-    if top_pct <= 10:
-        headline, hcolor = f"Top {top_pct}% of audited datasets", "#22c55e"
-    elif top_pct <= 30:
-        headline, hcolor = f"Top {top_pct}% of audited datasets", "#84cc16"
-    elif top_pct <= 60:
-        headline, hcolor = f"Better than {overall_pct}% of audited datasets", "#f59e0b"
-    else:
-        headline, hcolor = f"Bottom {100 - overall_pct}% of audited datasets", "#f97316"
-
-    dim_rows = ""
-    for dim_key, dim_result in sorted(dimensions.items()):
-        dist = dim_dists.get(dim_key, [])
-        if not dist:
+    color = _STATUS_COLOR.get(res.integrity_status, _MUTED)
+    rows = ""
+    for category, flags in res.integrity_by_category.items():
+        level = _worst_level(flags)
+        if level is None:
+            rows += (
+                f'<div style="margin:5px 0;color:{_MUTED};font-size:14px">'
+                f"⬚ {category} <span style='font-size:12px'>(not evaluated)</span></div>"
+            )
             continue
-        pct = _pct_rank(dim_result.score, dist)
-        top = 100 - pct
-        color = _band_color(dim_result.score)
-        label = _DIM_LABELS.get(dim_key, dim_key.replace("_", " ").title())
-        if top <= 33:
-            rank_str, rcolor = f"▲ top {top}%", "#22c55e"
-        elif pct <= 33:
-            rank_str, rcolor = f"▼ bottom {pct}%", "#ef4444"
-        else:
-            rank_str, rcolor = "≈ middle", "#f59e0b"
-
-        dim_rows += (
-            f'<div style="display:flex;justify-content:space-between;align-items:center;'
-            f'padding:4px 0;border-bottom:1px solid #313244">'
-            f'<span style="font-size:13px;color:#a6adc8">{label}</span>'
-            f'<div style="display:flex;align-items:center;gap:12px">'
-            f'<span style="font-size:13px;color:{color};font-weight:600">{dim_result.score:.0f}</span>'
-            f'<span style="font-size:12px;color:{rcolor};min-width:100px;text-align:right">'
-            f"{rank_str}</span>"
-            f"</div></div>"
+        icon, c = _LEVEL_STYLE[level.value.lower()]
+        details = "".join(
+            f'<div style="color:{_MUTED};font-size:12px;margin:2px 0 0 24px">'
+            f"{_esc(f.interpretation)}</div>"
+            for f in flags
+            if f.level.value not in ("OK", "INFO")
         )
-
+        rows += (
+            f'<div style="margin:5px 0;font-size:14px;color:#cdd6f4">'
+            f'<span style="color:{c};display:inline-block;width:20px">{icon}</span>{category}'
+            f"{details}</div>"
+        )
     return f"""
-<div style="border-top:1px solid #313244;margin:14px 0"></div>
-<div style="font-size:11px;color:#6c7086;text-transform:uppercase;letter-spacing:.06em;
-            margin-bottom:8px">Community Rank</div>
-<div style="font-size:30px;font-weight:800;color:{hcolor};margin-bottom:8px">{headline}</div>
-<div style="background:#313244;border-radius:4px;height:8px;width:100%;
-            margin-bottom:14px;overflow:hidden">
-  <div style="background:{hcolor};height:100%;width:{overall_pct}%"></div>
-</div>
-{dim_rows}
-<div style="font-size:11px;color:#45475a;margin-top:8px">
-  Percentiles based on {n} audited public LeRobot datasets —
-  sample grows as the <a href="https://huggingface.co/datasets/{BENCHMARK_DATASET_ID}"
-  style="color:#6c7086">community benchmark</a> expands.
-</div>
-"""
-
-
-# ── integrity (front door) ──────────────────────────────────────────────────
-
-_INTEGRITY_ICON = {
-    "critical": ("✗", "#ef4444"),
-    "warning": ("⚠", "#f59e0b"),
-    "passed": ("✓", "#22c55e"),
-}
-
-
-def _integrity_row(f, kind: str) -> str:
-    from calibra.integrity import _suggested_action
-
-    icon, color = _INTEGRITY_ICON[kind]
-    text = f.interpretation
-    if kind == "critical":
-        text += f' <span style="color:#6c7086">[{_suggested_action(f).upper()}]</span>'
-    row = (
-        f'<div style="display:flex;gap:10px;align-items:flex-start;margin:5px 0">'
-        f'<span style="color:{color};font-size:14px;min-width:16px;margin-top:1px">{icon}</span>'
-        f'<span style="color:#cdd6f4;font-size:14px">{text}'
-    )
-    if kind != "passed":
-        row += f'<div style="color:#6c7086;font-size:12px;margin-top:1px">{f.implication}</div>'
-    row += "</span></div>"
-    return row
-
-
-def _integrity_html(integrity: dict) -> str:
-    status = integrity["status"]
-    color = _INTEGRITY_STATUS_COLOR.get(status, "#6c7086")
-    critical, warnings, passed = integrity["critical"], integrity["warnings"], integrity["passed"]
-    not_evaluated = integrity.get("not_evaluated") or []
-    ci_result = integrity.get("ci_result", "Passed")
-    ci_color = "#ef4444" if ci_result == "Failed" else "#22c55e"
-
-    rows = "".join(_integrity_row(f, "critical") for f in critical)
-    rows += "".join(_integrity_row(f, "warning") for f in warnings)
-    rows += "".join(_integrity_row(f, "passed") for f in passed)
-    if not rows:
-        rows = (
-            '<div style="color:#6c7086;font-size:13px">'
-            "No integrity checks applicable to this dataset's modalities.</div>"
-        )
-
-    not_evaluated_html = ""
-    if not_evaluated:
-        items = "".join(
-            f'<div style="color:#6c7086;font-size:12px;margin:3px 0">'
-            f"⬚ {item['check']}: {item['reason']}</div>"
-            for item in not_evaluated
-        )
-        not_evaluated_html = f"""
-<div style="font-size:11px;color:#6c7086;text-transform:uppercase;letter-spacing:.06em;margin-top:12px">
-  Not Evaluated
-</div>
-{items}
-"""
-
-    return f"""
-<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
-  <div style="font-size:11px;color:#6c7086;text-transform:uppercase;letter-spacing:.06em">
-    Dataset Integrity — can I trust this?
-  </div>
-  <div style="font-size:13px;font-weight:700;color:{color}">{status} · {integrity["score"]}/100</div>
+<div style="display:flex;justify-content:space-between;align-items:baseline">
+  {_label("2 · Integrity: can I trust it?")}
+  <span style="padding:2px 10px;border-radius:10px;font-size:12px;font-weight:700;
+               background:{color}22;border:1px solid {color};color:{color}">
+    {_esc(res.integrity_status)}</span>
 </div>
 {rows}
-{not_evaluated_html}
-<div style="font-size:12px;color:{ci_color};margin-top:10px">CI result: {ci_result}</div>
-<div style="border-top:1px solid #313244;margin:16px 0"></div>
 """
 
 
-# ── checklist ─────────────────────────────────────────────────────────────────
-
-
-def _non_integrity_findings(findings: list) -> list:
-    """Excludes metrics already surfaced in the Integrity section above, so a
-    timestamp/sync issue isn't shown twice under two different headings."""
-    from calibra.integrity import _INTEGRITY_METRICS
-
-    return [f for f in findings if f.metric not in _INTEGRITY_METRICS]
-
-
-def _findings_header_html(findings: list) -> str:
-    n = sum(1 for f in findings if f.severity in ("critical", "warning"))
-    if not n:
-        return ""
-    return (
-        '<div style="font-size:11px;color:#6c7086;text-transform:uppercase;'
-        'letter-spacing:.06em;margin-bottom:8px">Quality &amp; Coverage Findings</div>'
+def _details_html(res) -> str:
+    """Aggregate scores, collapsed on purpose: they are not yet validated
+    against training outcomes and shift between Calibra versions, so the
+    card leads with decisions and baseline comparisons instead."""
+    q = res.score_result
+    cov = q["dimensions"]["coverage_diversity"]
+    cov_pct = cov["score"] / cov["max"] * 100 if cov["max"] else 0.0
+    redundancy = f"{res.redundancy:.1%}" if res.redundancy is not None else "n/a"
+    rows = [
+        ("Calibra Score", f"{q['total_score']:.1f} / 100 ({_esc(q['category'])})"),
+        ("Coverage", f"{cov_pct:.1f} / 100"),
+        ("Redundancy (estimated)", f"{redundancy} of state space in duplicate regions"),
+        ("Integrity score", f"{res.integrity_score} / 100"),
+    ]
+    items = "".join(
+        f'<div style="display:flex;justify-content:space-between;padding:4px 0;'
+        f'border-bottom:1px solid #313244;font-size:13px">'
+        f'<span style="color:#a6adc8">{k}</span><span style="color:#cdd6f4">{v}</span></div>'
+        for k, v in rows
     )
-
-
-def _checklist_html(findings: list, n_ep: int) -> str:
-    problems = sorted(
-        [f for f in findings if f.severity in ("critical", "warning")],
-        key=lambda f: _SEV_ORDER.get(f.severity, 9),
-    )[:8]
-
-    if not problems:
-        return (
-            '<div style="display:flex;gap:10px;align-items:center">'
-            '<span style="color:#22c55e;font-size:16px">✓</span>'
-            '<span style="color:#cdd6f4;font-size:14px">No quality issues detected</span>'
-            "</div>"
-        )
-
-    rows = []
-    for f in problems:
-        color = "#ef4444" if f.severity == "critical" else "#f59e0b"
-        if f.affected_fraction is not None and n_ep > 0:
-            n = max(1, round(f.affected_fraction * n_ep))
-            text = f"{n} episode{'s' if n != 1 else ''} — {f.message}"
-        else:
-            text = f.message
-        rows.append(
-            f'<div style="display:flex;gap:10px;align-items:flex-start;margin:5px 0">'
-            f'<span style="color:{color};font-size:15px;min-width:16px;margin-top:1px">⚠</span>'
-            f'<span style="color:#cdd6f4;font-size:14px">{text}</span>'
-            f"</div>"
-        )
-    return "\n".join(rows)
-
-
-# ── recommended next steps ──────────────────────────────────────────────────────
-#
-# Findings route into a conservative action taxonomy. "Consider recollecting"
-# only ever fires for a broad-based (majority-of-dataset), CRITICAL sync/
-# integrity failure — never for jerk, duration, or rare-behavior findings,
-# which stay in "Inspect" regardless of severity. An unusual trajectory can
-# be a recording bug or the most valuable demonstration in the dataset;
-# Calibra can't tell which, so it surfaces and ranks, it doesn't decide.
-
-_VERIFY_METRICS = {
-    "timestamp_jitter_cv",
-    "timestamp_dropout_rate",
-    "action_dropout_rate",
-    "contact_dropout",
-    "camera_physics_drift",
-    "action_obs_misalignment",
-}
-_REDUNDANCY_METRICS = {"transition_redundancy"}
-
-# key -> (emoji, color, label)
-_NEXT_STEP_STYLE = {
-    "recollect": ("🔴", "#ef4444", "Consider recollecting"),
-    "verify": ("🟠", "#f97316", "Verify"),
-    "inspect": ("🟡", "#f59e0b", "Inspect"),
-    "redundancy": ("🔵", "#89b4fa", "Review"),
-}
-
-_NEXT_STEP_DETAIL = {
-    "recollect": "episode{s} — recording pipeline issue, not an isolated anomaly",
-    "verify": "episode{s} with possible recording anomalies",
-    "inspect": "unusual episode{s}",
-    "redundancy": "highly similar demonstration{s}",
-}
-
-
-def _categorize_finding(f) -> str:
-    if f.metric in _REDUNDANCY_METRICS:
-        return "redundancy"
-    if f.metric in _VERIFY_METRICS:
-        if f.severity == "critical" and (f.affected_fraction or 0) >= 0.5:
-            return "recollect"
-        return "verify"
-    return "inspect"
-
-
-def _next_steps_html(findings: list, n_ep: int) -> str:
-    problems = [f for f in findings if f.severity in ("critical", "warning")]
-    if not problems:
-        return (
-            '<div style="display:flex;gap:10px;align-items:center">'
-            '<span style="color:#22c55e;font-size:16px">✓</span>'
-            '<span style="color:#cdd6f4;font-size:14px">'
-            "Dataset is otherwise healthy — no next steps flagged</span>"
-            "</div>"
-        )
-
-    buckets: dict[str, list] = {"recollect": [], "verify": [], "inspect": [], "redundancy": []}
-    for f in problems:
-        buckets[_categorize_finding(f)].append(f)
-
-    rows = []
-    for key in ("recollect", "verify", "inspect", "redundancy"):
-        items = buckets[key]
-        if not items:
-            continue
-        items.sort(key=lambda f: (_SEV_ORDER.get(f.severity, 9), -(f.affected_fraction or 0)))
-        primary = items[0]
-        n = None
-        if primary.affected_fraction is not None and n_ep > 0:
-            n = max(1, round(primary.affected_fraction * n_ep))
-
-        emoji, color, label = _NEXT_STEP_STYLE[key]
-        if n:
-            detail = _NEXT_STEP_DETAIL[key].format(s="s" if n != 1 else "")
-            text = f"{n} {detail}"
-        else:
-            text = primary.message
-
-        rows.append(
-            f'<div style="display:flex;gap:10px;align-items:flex-start;margin:5px 0">'
-            f'<span style="min-width:16px;margin-top:1px">{emoji}</span>'
-            f'<span style="color:#cdd6f4;font-size:14px">'
-            f'<span style="color:{color};font-weight:600">{label}</span> {text}</span>'
-            f"</div>"
-        )
-    return "\n".join(rows)
-
-
-# ── optional coreset ──────────────────────────────────────────────────────────
-
-_STRATEGY_RATIONALE = {
-    "light quality filter": "Removes only the clearest outliers — coverage and diversity are preserved.",
-    "quality filter": "Trims noisy or low-quality episodes while keeping most of the dataset's diversity.",
-    "hybrid (quality + diversity)": "Balances quality filtering with diversity preservation to avoid overfitting.",
-    "heavy quality filter": "Keeps only episodes that clearly pass quality and diversity checks.",
-}
-
-
-def _coreset_html(
-    score: float, findings: list, n_ep: int, n_total: int, is_sample: bool, dataset_id: str
-) -> str:
-    n_issues = sum(1 for f in findings if f.severity in ("critical", "warning"))
-    if score >= 88 and n_issues == 0:
-        keep_pct, strategy = 90, "light quality filter"
-    elif score >= 75:
-        keep_pct, strategy = 70, "quality filter"
-    elif score >= 60:
-        keep_pct, strategy = 50, "hybrid (quality + diversity)"
-    elif score >= 40:
-        keep_pct, strategy = 35, "hybrid (quality + diversity)"
-    else:
-        keep_pct, strategy = 20, "heavy quality filter"
-
-    keep_n = max(1, round(n_total * keep_pct / 100))
-    sample_note = (
-        (
-            f' <span style="color:#6c7086;font-size:11px">— estimate from {n_ep}/{n_total} ep sample</span>'
-        )
-        if is_sample
-        else ""
-    )
-    rationale = _STRATEGY_RATIONALE.get(strategy, "")
-
     return f"""
-<div style="background:#181825;border:1px solid #313244;border-radius:10px;
-            padding:16px 18px;margin-top:14px">
-  <div style="font-size:13px;font-weight:600;color:#cdd6f4;margin-bottom:4px">
-    Build a smaller training set
+<details>
+  <summary style="cursor:pointer;font-size:12px;color:{_MUTED}">Aggregate scores</summary>
+  <div style="margin-top:8px">{items}</div>
+  <div style="font-size:12px;color:{_MUTED};margin-top:8px">
+    These summarize many signals into one number. They are not yet validated against
+    policy performance and change between Calibra versions, so compare datasets with
+    the decisions and baseline rates above, not with these scores.
   </div>
-  <div style="font-size:12px;color:#6c7086;margin-bottom:10px">
-    Optional — after reviewing the episodes flagged above, Calibra can build a
-    quality- and coverage-aware coreset.
-  </div>
-  <div style="font-size:14px;color:#cdd6f4;font-weight:500">
-    Keep ~{keep_pct}% &nbsp;·&nbsp; {keep_n:,} episodes &nbsp;·&nbsp; {strategy}{sample_note}
-  </div>
-  <div style="margin-top:4px;font-size:12px;color:#a6adc8">{rationale}</div>
-  <div style="margin-top:10px;font-size:12px;color:#6c7086">
-    <code style="background:#313244;padding:3px 8px;border-radius:4px">
-      calibra prune hf://{dataset_id} --keep {keep_pct / 100:.2f}</code>
-  </div>
+</details>
+"""
+
+
+def _decision_html(dataset_id: str, out: dict) -> str:
+    res = out["result"]
+    pr, curation = res.prune_result, out["curation"]
+    if pr is None or curation is None:
+        return (
+            _label("1 · Decision: what should I train on?")
+            + f'<div style="color:{_MUTED};font-size:14px">Needs at least 5 episodes '
+            "to diagnose a regime and recommend a training set.</div>"
+        )
+
+    regime = ""
+    if res.regime_diagnosis is not None:
+        from calibra.strategy import _REGIME_LABELS
+
+        name = _REGIME_LABELS[res.regime_diagnosis.regime]
+        regime = (
+            f'<div style="font-size:13px;color:#a6adc8;margin-bottom:10px">'
+            f'Regime <b style="color:#cdd6f4">{name}</b>: {_REGIME_NOTE.get(name, "")}</div>'
+        )
+
+    counts = curation.disposition_counts()
+    n = sum(counts.values()) or 1
+    bar = "".join(
+        f'<div title="{k}: {v}" style="width:{v / n * 100:.2f}%;background:{_DISPOSITION_COLOR.get(k, _MUTED)}"></div>'
+        for k, v in sorted(counts.items(), key=lambda kv: kv[0] != "KEEP")
+    )
+    legend = " &nbsp; ".join(
+        f'<span style="color:{_DISPOSITION_COLOR.get(k, _MUTED)}">■</span> {k} {v}'
+        for k, v in sorted(counts.items(), key=lambda kv: kv[0] != "KEEP")
+    )
+
+    reasons = []
+    if pr.n_quality_failures:
+        reasons.append(f"{pr.n_quality_failures} fail quality limits (noise, spikes, dropouts)")
+    if pr.n_diversity_pruned:
+        reasons.append(f"{pr.n_diversity_pruned} are redundant with episodes already kept")
+    reasons_html = "".join(
+        f'<div style="font-size:13px;color:#a6adc8;margin:2px 0">• DROP: {r}</div>' for r in reasons
+    )
+
+    annotate_note = ""
+    ann = out["annotate_counts"] or {}
+    if ann.get("ANNOTATE"):
+        annotate_note = (
+            f'<div style="font-size:13px;color:#a6adc8;margin-top:8px">'
+            f'<span style="color:{_BLUE}">Annotate mode</span> keeps the {ann["ANNOTATE"]} '
+            f"redundant episodes in the training set, tagged with their characterization "
+            f"for a metadata-aware trainer, and drops only the {ann.get('DROP', 0)} "
+            f"quality failures.</div>"
+        )
+
+    keep = f"{res.keep_fraction:.2f}"
+    return f"""
+{_label("1 · Decision: what should I train on?")}
+{regime}
+<div style="font-size:30px;font-weight:800;color:#cdd6f4">
+  {pr.n_kept:,} <span style="font-size:16px;color:{_MUTED};font-weight:400">
+  of {pr.n_original:,} episodes kept ({pr.keep_fraction_actual:.0%})</span></div>
+<div style="display:flex;height:10px;border-radius:5px;overflow:hidden;margin:10px 0 6px">{bar}</div>
+<div style="font-size:12px;color:#a6adc8;margin-bottom:8px">{legend}</div>
+{reasons_html}
+{annotate_note}
+<div style="font-size:12px;color:{_MUTED};margin-top:10px">
+  A heuristic starting point (about 1 minus measured redundancy), not a validated retention
+  curve. The per-episode table below shows every decision and its reason.
+</div>
+<div style="background:#181825;border-radius:8px;padding:10px 14px;margin-top:12px;
+            font-size:12px;font-family:monospace;color:#cdd6f4;line-height:1.7">
+  calibra prune {_esc(dataset_id)} --keep {keep} --export-dataset ./coreset<br>
+  calibra prune {_esc(dataset_id)} --keep {keep} --annotate ./annotations
 </div>
 """
 
 
-# ── card wrapper ──────────────────────────────────────────────────────────────
+def _signal(entry: dict) -> tuple[str, str]:
+    """Same wording as `calibra audit`'s calibration context table."""
+    baseline = entry["benign_baseline_rate"]
+    if baseline is None:
+        return "no clean baseline yet", _MUTED
+    ratio = entry["fraction"] / baseline if baseline > 0 else float("inf")
+    if abs(entry["fraction"] - baseline) < 0.005:
+        return "within normal range", _GREEN
+    if ratio >= 2.0:
+        return f"{ratio:.1f}× above baseline", _AMBER
+    if ratio <= 0.5:
+        return "below baseline", _GREEN
+    return "near baseline", _GREEN
 
 
-def _card_wrapper(inner: str) -> str:
+def _calibration_html(out: dict) -> str:
+    firing = out["firing"]
+    if not firing:
+        return (
+            _label("3 · Unusual episodes vs. clean baselines")
+            + f'<div style="color:{_GREEN};font-size:14px">✓ No episode is a statistical '
+            "outlier within this dataset.</div>"
+        )
+    rows = ""
+    for e in firing:
+        text, color = _signal(e)
+        base = (
+            f"{e['benign_baseline_rate']:.1%}" if e["benign_baseline_rate"] is not None else "n/a"
+        )
+        rows += (
+            f"<tr><td style='padding:4px 8px 4px 0'>{_esc(e['detector'])}</td>"
+            f"<td style='text-align:right;padding:4px 8px'>{e['fraction']:.1%}</td>"
+            f"<td style='text-align:right;padding:4px 8px'>{base}</td>"
+            f"<td style='padding:4px 0 4px 8px;color:{color}'>{text}</td></tr>"
+        )
+    return f"""
+{_label("3 · Unusual episodes vs. clean baselines")}
+<table style="width:100%;font-size:13px;color:#cdd6f4;border-collapse:collapse">
+  <tr style="color:{_MUTED};font-size:11px;text-align:left">
+    <th style="padding:4px 8px 4px 0">Detector</th><th style="text-align:right;padding:4px 8px">Flagged</th>
+    <th style="text-align:right;padding:4px 8px">Clean baseline</th><th style="padding:4px 0 4px 8px">Signal</th>
+  </tr>
+  {rows}
+</table>
+<div style="font-size:12px;color:{_MUTED};margin-top:8px">
+  A flag means an episode is unusual within this dataset, not that it is corrupted.
+  Baselines are firing rates measured on known-clean datasets (PushT, ALOHA so far).
+</div>
+"""
+
+
+def _footer_html(dataset_id: str, out: dict) -> str:
+    full = (
+        f"Demo analyzed the first {out['result'].report.n_episodes} episodes. "
+        if out["is_sample"]
+        else ""
+    )
+    return f"""
+<div style="font-size:13px;color:#a6adc8">{full}Run it on the whole dataset or your own data:</div>
+<div style="background:#181825;border-radius:8px;padding:10px 14px;margin-top:8px;
+            font-size:13px;font-family:monospace;color:#cdd6f4">
+  pip install 'calibra-robotics[lerobot]'<br>calibra analyze {_esc(dataset_id)}
+</div>
+<div style="margin-top:14px;font-size:11px;color:#45475a">
+  Calibra v{_esc(out["version"])} ·
+  <a href="{REPO_URL}" style="color:{_MUTED}">github.com/Calibra-Robotics/Calibra</a>
+</div>
+"""
+
+
+def _render(dataset_id: str, out: dict) -> str:
+    res = out["result"]
+    inner = (
+        _header_html(dataset_id, out)
+        + _RULE
+        + _decision_html(dataset_id, out)
+        + _RULE
+        + _integrity_html(res)
+        + _RULE
+        + _calibration_html(out)
+        + _RULE
+        + _details_html(res)
+        + _RULE
+        + _footer_html(dataset_id, out)
+    )
     return (
         "<div style=\"font-family:'Inter','Segoe UI',sans-serif;background:#1e1e2e;"
-        'border-radius:14px;padding:24px 28px;color:#cdd6f4;max-width:780px">' + inner + "</div>"
+        'border-radius:14px;padding:24px 28px;color:#cdd6f4;max-width:820px">' + inner + "</div>"
     )
 
 
-def _score_header(
-    dataset_id: str,
-    score: float,
-    grade: str,
-    cert: str,
-    n_episodes: int,
-    n_frames: int,
-    fmt: str,
-    sample_tag: str = "",
-) -> str:
-    color = _band_color(score)
-    cert_label, cert_color = _CERT_TEXT.get(cert, ("Unknown", "#6b7280"))
-    meaning = _score_meaning(score)
-    return f"""
-<div style="font-size:11px;color:#6c7086;letter-spacing:.06em;margin-bottom:10px">
-  QUALITY &amp; COVERAGE SCORE
-</div>
-<div style="display:flex;align-items:flex-start;gap:24px;margin-bottom:18px">
-  <div>
-    <div style="font-size:11px;color:#6c7086;text-transform:uppercase;
-                letter-spacing:.06em;margin-bottom:4px">Score</div>
-    <div>
-      <span style="font-size:68px;font-weight:800;color:{color};line-height:1">{score:.0f}</span>
-      <span style="font-size:18px;color:#6c7086"> / 100</span>
-    </div>
-    <div style="font-size:13px;color:#a6adc8;margin-top:6px;max-width:260px">{meaning}</div>
-    <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
-      <span style="font-size:11px;color:#6c7086">grade {grade}</span>
-      <span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;
-                   background:{cert_color}22;border:1px solid {cert_color};color:{cert_color}">
-        {cert_label}
-      </span>
-    </div>
-  </div>
-  <div style="margin-left:auto;text-align:right;font-size:13px;color:#6c7086;line-height:2">
-    <div><span style="color:#a6adc8">{dataset_id}</span>{sample_tag}</div>
-    <div>{n_episodes:,} episodes &nbsp;·&nbsp; {n_frames:,} frames</div>
-    <div>{fmt}</div>
-  </div>
-</div>
-<div style="border-top:1px solid #313244;margin-bottom:14px"></div>
-"""
+_REASON_TEXT = {"diversity_pruned": "redundant with kept episodes"}
+_EPISODE_COLUMNS = ["episode", "decision", "reason", "quality_risk", "coverage_value", "anomaly"]
 
 
-def _full_audit_block(dataset_id: str) -> str:
-    return f"""
-<div style="border-top:1px solid #313244;margin:16px 0 12px"></div>
-<div style="font-size:11px;color:#6c7086;text-transform:uppercase;letter-spacing:.06em;
-            margin-bottom:8px">Full Audit</div>
-<div style="font-size:13px;color:#a6adc8;margin-bottom:8px">
-  Demo analyzes up to {SAMPLE_EPISODE_CAP} episodes.
-  For all episodes, per-episode verdicts, and a certifiable report:
-</div>
-<div style="background:#181825;border-radius:8px;padding:10px 14px;font-size:13px;
-            font-family:monospace;color:#cdd6f4">
-  pip install calibra-robotics<br>
-  calibra audit hf://{dataset_id}
-</div>
-"""
+def _episode_rows(curation) -> list[list]:
+    if curation is None:
+        return []
+
+    def fmt(x):
+        return None if x is None else round(x, 3)
+
+    rows = [
+        [
+            d.episode_id,
+            d.disposition.value,
+            "; ".join(_REASON_TEXT.get(r, r) for r in d.reasons),
+            fmt(d.quality_risk),
+            fmt(d.coverage_value),
+            fmt(d.anomaly_score),
+        ]
+        for d in curation.dispositions
+    ]
+    # Decisions that remove an episode first, then by quality risk.
+    rows.sort(key=lambda r: (r[1] == "KEEP", -(r[3] or 0)))
+    return rows
 
 
-def _footer(dataset_id: str) -> str:
-    return f"""
-<div style="margin-top:16px;border-top:1px solid #313244;padding-top:10px;
-            display:flex;justify-content:space-between;font-size:11px;color:#45475a">
-  <span>Powered by <a href="https://github.com/Calibra-Robotics/Calibra"
-    style="color:#6c7086;text-decoration:none">Calibra</a> — robotics dataset observability</span>
-  <span><a href="https://huggingface.co/datasets/{BENCHMARK_DATASET_ID}"
-    style="color:#6c7086;text-decoration:none">Community benchmark →</a></span>
-</div>
-"""
-
-
-# ── full render ───────────────────────────────────────────────────────────────
-
-
-def _render_health_card(dataset_id: str, r: dict) -> str:
-    n_ep = r["n_episodes"]
-    n_total = r["n_episodes_total"]
-    is_sample = r["is_sample"]
-    sample_tag = (
-        (
-            f' <span style="font-size:11px;background:#313244;padding:2px 8px;'
-            f'border-radius:10px;color:#a6adc8">sample {n_ep}/{n_total} ep</span>'
-        )
-        if is_sample
-        else ""
-    )
-
-    quality_findings = _non_integrity_findings(r["findings"])
-
-    inner = (
-        _integrity_html(r["integrity"])
-        + _score_header(
-            dataset_id,
-            r["score"],
-            r["grade"],
-            r["cert"],
-            n_total,
-            r["n_samples"],
-            r["fmt"],
-            sample_tag,
-        )
-        + _findings_header_html(quality_findings)
-        + _checklist_html(quality_findings, n_ep)
-        + _percentile_section(r["score"], r["dimensions"])
-        + _similar_html(dataset_id, r["score"])
-        + '<div style="border-top:1px solid #313244;margin:14px 0"></div>'
-        + '<div style="font-size:11px;color:#6c7086;text-transform:uppercase;'
-        'letter-spacing:.06em;margin-bottom:8px">Recommended Next Steps</div>'
-        + _next_steps_html(r["findings"], n_ep)
-        + _coreset_html(r["score"], r["findings"], n_ep, n_total, is_sample, dataset_id)
-        + _full_audit_block(dataset_id)
-        + _footer(dataset_id)
-    )
-    return _card_wrapper(inner)
-
-
-def _render_cached_card(dataset_id: str, cached: dict) -> str:
-    score = cached["score"]
-    grade = cached.get("grade", "?")
-    cert = cached.get("certification", "")
-    n_ep = cached.get("n_episodes") or 0
-    n_fr = cached.get("n_frames") or 0
-    n_iss = cached.get("n_critical") or 0
-
-    class _Dim:
-        def __init__(self, s):
-            self.score = s
-
-    dim_objs = {
-        k: _Dim(v["score"])
-        for k, v in (cached.get("dimensions") or {}).items()
-        if isinstance(v, dict) and v.get("score") is not None
-    }
-
-    cached_tag = (
-        ' <span style="font-size:11px;background:#313244;padding:2px 8px;'
-        'border-radius:10px;color:#a6adc8">full audit cached</span>'
-    )
-    issue_line = (
-        (
-            f'<div style="color:#f59e0b;font-size:13px;margin-top:6px">'
-            f"{n_iss} quality issue{'s' if n_iss != 1 else ''} detected</div>"
-        )
-        if n_iss
-        else (
-            '<div style="color:#22c55e;font-size:13px;margin-top:6px">No quality issues detected</div>'
-        )
-    )
-    detail_link = (
-        f'<div style="font-size:13px;color:#a6adc8;margin-bottom:14px">'
-        f"  Full per-episode results in the "
-        f'  <a href="https://huggingface.co/datasets/{BENCHMARK_DATASET_ID}"'
-        f'     style="color:#89b4fa">community benchmark dataset →</a>'
-        f"</div>"
-    )
-
-    integrity_note = (
-        '<div style="background:#181825;border:1px solid #313244;border-radius:8px;'
-        'padding:10px 14px;margin-bottom:14px;font-size:12px;color:#a6adc8">'
-        "This cached result predates the Integrity check — timestamp/sync, "
-        "episode completeness, duplicate frames, camera freeze, blur, and "
-        "jittery/jerky motion. "
-        "<code style='background:#313244;padding:1px 5px;border-radius:3px'>"
-        f"calibra integrity hf://{dataset_id}</code> runs it directly.</div>"
-    )
-
-    inner = (
-        integrity_note
-        + _score_header(dataset_id, score, grade, cert, n_ep, n_fr, "lerobot", cached_tag)
-        + issue_line
-        + "<br>"
-        + detail_link
-        + _percentile_section(score, dim_objs)
-        + _similar_html(dataset_id, score)
-        + _full_audit_block(dataset_id)
-        + _footer(dataset_id)
-    )
-    return _card_wrapper(inner)
-
-
-def _write_temp_report(public, dataset_id: str) -> str:
-    slug = dataset_id.replace("/", "_")
-    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    path = os.path.join(tempfile.gettempdir(), f"calibra_{slug}_{ts}.json")
-    public.write(path)
-    return path
-
-
-# ── Gradio UI ─────────────────────────────────────────────────────────────────
+# ── UI ────────────────────────────────────────────────────────────────────────
 
 EXAMPLES = [
     ["lerobot/pusht"],
     ["lerobot/aloha_sim_insertion_human"],
     ["lerobot/xarm_lift_medium"],
-    ["lerobot/aloha_static_coffee"],
-    ["lerobot/unitreeh1_fold_clothes"],
+    ["lerobot/droid_100"],
 ]
 
-_boot()
-
 with gr.Blocks(
-    title="Calibra — Dataset Integrity",
+    title="Calibra Dataset Decisions",
     theme=gr.themes.Default(primary_hue="violet"),
     css="""
     .gr-button-primary { background: #7c3aed !important; border-color: #7c3aed !important; }
     footer { display: none !important; }
     """,
 ) as demo:
-    gr.Markdown("""
-# Calibra — Dataset Integrity
+    gr.Markdown(f"""
+# Calibra Dataset Decisions
 
-**Before diversity or coreset selection, can you trust this dataset?**
-
-Enter a LeRobot dataset ID. Calibra checks Integrity first — timestamp
-consistency, episode completeness, duplicate frames, camera freeze, blur,
-jittery/jerky motion — then Quality and Coverage. Pre-checked datasets
-return instantly from the benchmark cache.
+**What should I train on?** Calibra is a robotics dataset decision layer. Enter a LeRobot dataset ID and it decides,
+for every episode, whether to **keep, drop, or annotate** it before training, and shows the
+evidence: **integrity** checks and detector rates compared with **known-clean baselines**. The demo analyzes up to
+{SAMPLE_EPISODE_CAP} episodes.
 """)
 
     with gr.Row():
-        inp = gr.Textbox(
-            label="LeRobot Dataset ID",
-            placeholder="lerobot/pusht",
-            scale=5,
-        )
-        btn = gr.Button("Check Integrity", variant="primary", scale=1, min_width=140)
-
-    out_html = gr.HTML()
-    out_download = gr.File(label="Download Full Report (JSON)")
-    out_badge = gr.Textbox(
-        label="README badge — paste into your dataset card",
-        interactive=False,
-        visible=False,
-    )
+        inp = gr.Textbox(label="LeRobot dataset ID", placeholder="lerobot/pusht", scale=5)
+        btn = gr.Button("Analyze", variant="primary", scale=1, min_width=140)
 
     gr.Examples(examples=EXAMPLES, inputs=inp, label="Try these")
 
-    gr.Markdown("""
+    out_html = gr.HTML()
+    out_table = gr.Dataframe(
+        headers=_EPISODE_COLUMNS,
+        label="Per-episode decisions (removed episodes first)",
+        interactive=False,
+        wrap=True,
+    )
+    out_file = gr.File(label="Download full analysis (JSON)")
+
+    gr.Markdown(f"""
 ---
-**What gets checked**
+**How it works**
 
-| Layer | Checks | Answers |
-|-------|--------|---------|
-| **Integrity** (first) | Timestamp consistency, sensor sync, episode completeness, duplicate frames, camera freeze, blur, jerky/jittery motion (LDLJ, jerk spikes, velocity discontinuities) | Can I trust this dataset? |
-| Quality | Action-state tracking error, scripted-vs-teleop motion signature | Is this data clean? |
-| Coverage | Trajectory diversity, redundancy fraction, entropy | Does my robot see enough variety? |
-| Task Structure | Episode length distribution, phase balance, inactivity periods | Are episodes complete and well-formed? |
+| Step | Question | Command |
+|---|---|---|
+| 1. Integrity | Can I trust this dataset? | `calibra integrity` |
+| 2. Quality | Which episodes are clean? | `calibra audit` |
+| 3. Coverage | Which episodes are distinct? | `calibra review` |
+| 4. Decide | Keep, drop, downweight, review, or annotate, then export. | `calibra prune` |
 
-After Integrity comes Quality, Coverage, and — for building smaller training
-sets — Optimization.
+`calibra analyze` runs all four and is what this demo shows. Datasets with a known
+quirk get a **dataset profile** automatically (e.g. PushT's 2-D action has no gripper).
 
-**Full check locally** (all episodes, per-episode verdicts, certifiable report):
-```bash
-pip install calibra-robotics
-calibra integrity hf://lerobot/pusht
-calibra audit hf://lerobot/pusht      # quality + coverage scoring
-```
-
-*Powered by [Calibra](https://github.com/Calibra-Robotics/Calibra) — open-source robotics dataset
-observability*
+[GitHub]({REPO_URL}) · `pip install calibra-robotics`
 """)
 
-    def _with_badge_visible(dataset_id):
-        html, download, badge = run_audit(dataset_id)
-        return html, download, gr.update(value=badge, visible=badge is not None)
-
-    btn.click(
-        fn=_with_badge_visible,
-        inputs=inp,
-        outputs=[out_html, out_download, out_badge],
-    )
-    inp.submit(
-        fn=_with_badge_visible,
-        inputs=inp,
-        outputs=[out_html, out_download, out_badge],
-    )
+    btn.click(fn=run, inputs=inp, outputs=[out_html, out_file, out_table])
+    inp.submit(fn=run, inputs=inp, outputs=[out_html, out_file, out_table])
 
 if __name__ == "__main__":
     demo.launch()

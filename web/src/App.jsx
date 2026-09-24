@@ -711,8 +711,8 @@ function App() {
             <Reveal as="div" className="demo-copy">
               <h2>Inspect a public LeRobot dataset without installing anything.</h2>
               <p>
-                Enter a Hub dataset ID to see integrity checks, quality findings, community
-                comparisons, and a recommended keep fraction.
+                Enter a Hub dataset ID to see which episodes to keep, drop, or annotate,
+                with integrity checks and detector rates compared against clean baselines.
               </p>
               <a className="button button-primary" href={LINKS.demo} target="_blank" rel="noreferrer">
                 Open the live demo <ExternalLink size={16} />
@@ -723,7 +723,7 @@ function App() {
                 <span><i /><i /><i /></span>
                 huggingface.co/spaces/omert27/robot-dataset-health-check
               </div>
-              <img src={`${import.meta.env.BASE_URL}hf-space.png`} alt="Calibra Robot Dataset Health Check on Hugging Face Spaces" />
+              <img src={`${import.meta.env.BASE_URL}hf-space.png`} alt="Calibra Dataset Decisions on Hugging Face Spaces" />
             </Reveal>
           </div>
         </section>

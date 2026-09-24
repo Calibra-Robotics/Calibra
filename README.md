@@ -238,12 +238,12 @@ Or keep your existing training script and load the coreset directly; see
 
 No installation required.
 
-🔗 [Calibra: Dataset Integrity](https://huggingface.co/spaces/omert27/robot-dataset-health-check) (Hugging Face Space)
+🔗 [Calibra Dataset Decisions](https://huggingface.co/spaces/omert27/robot-dataset-health-check) (Hugging Face Space)
 
-- Check any LeRobot dataset's integrity: timestamps, sync, completeness, duplicate/frozen/blurry frames, jittery motion
-- See its Quality & Coverage score and percentile
-- Compare against community benchmarks
-- Download a full audit report
+- See which episodes of any LeRobot dataset to keep, drop, or annotate, and why
+- Check integrity: timestamps, sync, episode structure, camera feed, motion and control
+- Compare detector rates against known-clean baselines
+- Download the per-episode decisions as JSON
 
 ---
 
