@@ -36,12 +36,13 @@ const NAV_LINKS = [
   { href: LINKS.docs, label: 'Docs' },
 ]
 
-const INTEGRITY_CHECKS = [
-  { label: 'Schema', detail: '165 episodes · 25,650 frames', ok: true },
-  { label: 'Timestamps', detail: 'monotonic, no gaps', ok: true },
-  { label: 'Action bounds', detail: 'within declared limits', ok: true },
-  { label: 'Camera frames', detail: '3 episodes with decode errors', ok: false },
-  { label: 'Reward signal', detail: 'present · dense', ok: true },
+// Trimmed from real `calibra analyze lerobot/pusht` and `calibra audit` output (v0.11.0).
+const ANALYZE_LINES = [
+  { label: 'Dataset', detail: '206 episodes · 25,650 frames', ok: true },
+  { label: 'Timestamps & sync', detail: 'passed', ok: true },
+  { label: 'Episode structure', detail: 'passed', ok: true },
+  { label: 'Motion & control', detail: 'jerk above generic limits', ok: false },
+  { label: 'vs. clean baseline', detail: 'spike rate 5.8% · within normal range', ok: true },
 ]
 
 const STATS = [
@@ -293,7 +294,7 @@ function StarPill() {
 function HeroTerminal() {
   const [typed, setTyped] = useState('')
   const [showResults, setShowResults] = useState(false)
-  const CMD = 'calibra integrity lerobot/pusht'
+  const CMD = 'calibra analyze lerobot/pusht'
   const done = typed.length >= CMD.length
 
   useEffect(() => {
@@ -320,7 +321,7 @@ function HeroTerminal() {
     <Reveal as="div" className="hero-terminal" delay={220}>
       <div className="hero-terminal-bar">
         <span><i /><i /><i /></span>
-        calibra integrity
+        calibra analyze
       </div>
       <div className="hero-terminal-body">
         <p className="ht-cmd">
@@ -329,7 +330,7 @@ function HeroTerminal() {
         </p>
         {showResults && (
           <div className="ht-results">
-            {INTEGRITY_CHECKS.map((check) => (
+            {ANALYZE_LINES.map((check) => (
               <p className={check.ok ? 'ht-ok' : 'ht-warn'} key={check.label}>
                 {check.ok ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
                 {check.label}
@@ -337,7 +338,7 @@ function HeroTerminal() {
               </p>
             ))}
             <p className="ht-score">
-              <strong>integrity score 0.98</strong> ready to train
+              <strong>train on 175 / 206</strong> 31 redundant episodes dropped
             </p>
           </div>
         )}
@@ -557,10 +558,9 @@ function App() {
           <HeroTrajectories />
           <div className="container hero-grid">
             <div className="hero-copy">
-              <span className="hero-kicker">Open source · runs on your machine</span>
               <h1>Stop wasting <span className="accent-word">GPU hours</span> on robot data.</h1>
               <p>
-                Calibra is an open source robotics dataset intelligence layer. It audits
+                Calibra is an open source robotics dataset decision layer. It audits
                 integrity, measures quality and coverage, and tells you what data to keep, drop,
                 review, or annotate before training, so you train on less data, preserve the
                 behaviors that matter, and understand every decision before spending compute.

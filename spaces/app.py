@@ -134,7 +134,12 @@ def run(dataset_id: str, progress=gr.Progress()):
         raise gr.Error(f"Analysis failed: {msg[:300]}")
 
     progress(0.95, desc="Rendering ...")
-    return _render(dataset_id, out), out["report_path"], _episode_rows(out["curation"])
+    # Table and download start hidden so the idle page isn't empty boxes.
+    return (
+        _render(dataset_id, out),
+        gr.update(value=out["report_path"], visible=True),
+        gr.update(value=_episode_rows(out["curation"]), visible=True),
+    )
 
 
 # ── rendering ─────────────────────────────────────────────────────────────────
@@ -489,8 +494,9 @@ evidence: **integrity** checks and detector rates compared with **known-clean ba
         label="Per-episode decisions (removed episodes first)",
         interactive=False,
         wrap=True,
+        visible=False,
     )
-    out_file = gr.File(label="Download full analysis (JSON)")
+    out_file = gr.File(label="Download full analysis (JSON)", visible=False)
 
     gr.Markdown(f"""
 ---
