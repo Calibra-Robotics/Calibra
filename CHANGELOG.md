@@ -44,9 +44,12 @@ All notable changes to Calibra are documented here.
   259 KB fixture) and fails when any flag level, regime, headline metric or
   kept/dropped episode changes. Intended changes regenerate the golden file
   with `CALIBRA_UPDATE_GOLDEN=1 pytest tests/regression`.
-- **Evidence review workflow** (`.github/workflows/evidence-review.yml`). An
-  advisory Claude Code reviewer comments on PRs that change golden results,
-  thresholds, profiles or reference data without evidence.
+- **Evidence rules for GitHub Copilot code review**
+  (`.github/copilot-instructions.md`, plus path-specific rules in
+  `.github/instructions/` for claims and for references, golden results and
+  profiles). Copilot's advisory review flags PRs that change golden results,
+  thresholds, profiles, claims or reference data without evidence. It needs no
+  repository secret, unlike the Claude Code workflow it replaces.
 - `.github/CODEOWNERS` for verdict-affecting code, a dataset profile proposal
   issue form, and contribution docs describing the evidence standard.
 

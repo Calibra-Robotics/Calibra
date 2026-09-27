@@ -44,9 +44,10 @@ requests open.
 - **Include reproducibility details:** commands, seeds, dataset revision and
   expected outputs.
 
-Each pull request also gets an automated evidence review that comments on
-missing evidence against these rules. It is advisory; the tests and the
-benchmark regression check are what block a merge.
+Each pull request also gets a GitHub Copilot code review that checks it against
+these rules (`.github/copilot-instructions.md` and `.github/instructions/`). It
+is advisory; the tests and the benchmark regression check are what block a
+merge.
 
 ### Dataset profiles
 
