@@ -25,7 +25,7 @@ changing them for anyone else:
 
 | Profile | Applied automatically to | Settings |
 |---|---|---|
-| `pusht` | `lerobot/pusht`, `lerobot/pusht_image` | `gripper_dims=[]`: score both axes. Regime `disc_high=0.25` (about 1.5× PushT's clean rate) instead of 0.13. `prune` Stage 1 limits `max_spike_rate=0.25`, `max_vel_disc_rate=0.40` instead of 0.10 / 0.25, which sit at PushT's own clean p95 and would cut 27 clean episodes. Smoothness stays in the default position mode, which is correct: PushT actions are absolute target positions, not velocities. |
+| `pusht` | `lerobot/pusht`, `lerobot/pusht_image` | `gripper_dims=[]`: score both axes. Regime `disc_high=0.25` (about 1.5× PushT's clean rate) instead of 0.13. `prune` Stage 1 limits `max_spike_rate=0.25`, `max_vel_disc_rate=0.40` instead of 0.10 / 0.25, which sit at PushT's own clean p95 and remove clean PushT episodes. Smoothness stays in the default position mode, which is correct: PushT actions are absolute target positions, not velocities. |
 
 ```bash
 calibra audit lerobot/pusht                     # profile applied automatically

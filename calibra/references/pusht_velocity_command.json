@@ -7,7 +7,6 @@
     "modalities": [
       "state"
     ],
-    "control_mode": "velocity",
     "note": "Observation-only profile. No threshold calibration. These distributions are Calibra's first real-data reference point."
   },
   "episode_structure": {
@@ -69,14 +68,18 @@
       "p90": 0.0,
       "p95": 0.0
     },
+    "temporal_stability/per_episode_drift_lag_frames": {
+      "n": 0,
+      "note": "no valid values"
+    },
     "control_smoothness/per_episode_ldlj": {
       "n": 206,
       "mean": -16.340008,
       "std": 1.1442,
       "min": -19.261448,
-      "max": -12.561095,
+      "max": -12.561094,
       "p5": -18.010439,
-      "p10": -17.722711,
+      "p10": -17.72271,
       "p25": -17.154484,
       "p50": -16.367387,
       "p75": -15.651133,
@@ -85,31 +88,45 @@
     },
     "control_smoothness/per_episode_spike_rate": {
       "n": 206,
-      "mean": 0.049391,
-      "std": 0.027743,
+      "mean": 0.049462,
+      "std": 0.027685,
       "min": 0.0,
       "max": 0.16129,
       "p5": 0.013924,
       "p10": 0.019202,
-      "p25": 0.029251,
-      "p50": 0.046256,
-      "p75": 0.0625,
+      "p25": 0.029412,
+      "p50": 0.046512,
+      "p75": 0.063702,
       "p90": 0.083046,
       "p95": 0.104099
     },
     "control_smoothness/per_episode_vel_disc_rate": {
       "n": 206,
-      "mean": 0.167176,
-      "std": 0.066837,
+      "mean": 0.166956,
+      "std": 0.06661,
       "min": 0.02963,
       "max": 0.375,
       "p5": 0.051756,
       "p10": 0.077778,
       "p25": 0.122137,
-      "p50": 0.163394,
+      "p50": 0.162883,
       "p75": 0.213592,
-      "p90": 0.248134,
+      "p90": 0.245862,
       "p95": 0.275348
+    },
+    "control_smoothness/per_episode_act_state_div": {
+      "n": 206,
+      "mean": 23.239321,
+      "std": 4.524453,
+      "min": 13.476257,
+      "max": 37.399792,
+      "p5": 15.845807,
+      "p10": 17.55725,
+      "p25": 20.165945,
+      "p50": 23.140917,
+      "p75": 25.695633,
+      "p90": 29.203964,
+      "p95": 32.081469
     },
     "coverage_entropy/per_episode_length": {
       "n": 206,
@@ -153,21 +170,34 @@
       "dropout.mean_dropout_fraction": 0.0,
       "dropout.ci_lower": 0.0,
       "dropout.ci_upper": 0.0,
-      "dropout.dropout_k": 3.0
+      "dropout.dropout_k": 3.0,
+      "action_dropout.mean_zero_action_fraction": 0.0,
+      "action_dropout.ci_lower": 0.0,
+      "action_dropout.ci_upper": 0.0,
+      "action_dropout.zero_threshold": 6.987505,
+      "action_dropout.state_inconsistency_used": 1.0
     },
     "control_smoothness": {
       "ldlj.mean_ldlj": -16.340008,
       "ldlj.ci_lower": -16.507588,
       "ldlj.ci_upper": -16.190959,
       "ldlj.n_episodes": 206.0,
-      "jerk_spikes.mean_spike_fraction": 0.049391,
-      "jerk_spikes.ci_lower": 0.045759,
-      "jerk_spikes.ci_upper": 0.052977,
+      "jerk_spikes.mean_spike_fraction": 0.049462,
+      "jerk_spikes.ci_lower": 0.045851,
+      "jerk_spikes.ci_upper": 0.053051,
       "jerk_spikes.spike_k": 5.0,
-      "vel_discontinuities.mean_disc_fraction": 0.167176,
-      "vel_discontinuities.ci_lower": 0.158285,
-      "vel_discontinuities.ci_upper": 0.17586,
-      "vel_discontinuities.threshold": 0.2
+      "vel_discontinuities.mean_disc_fraction": 0.166956,
+      "vel_discontinuities.ci_lower": 0.15796,
+      "vel_discontinuities.ci_upper": 0.175849,
+      "vel_discontinuities.threshold": 0.2,
+      "action_state_divergence.mean_divergence": 23.239321,
+      "action_state_divergence.ci_lower": 14.790678,
+      "action_state_divergence.ci_upper": 32.690354,
+      "action_state_divergence.n_episodes": 206.0,
+      "action_state_divergence.n_skipped": 0.0,
+      "action_state_divergence.units_not_radians": 1.0,
+      "action_state_divergence.state_abs_max": 510.957886,
+      "action_state_divergence.relative_divergence": 0.034209
     },
     "coverage_entropy": {
       "action_entropy.entropy_bits_per_dim": 5.30033,
@@ -219,31 +249,49 @@
       "interpretation": "Timestamp dropout rate is within acceptable range."
     },
     {
+      "analyzer": "temporal_stability",
+      "metric": "action_dropout_rate",
+      "level": "OK",
+      "observed": 0.0,
+      "ci_lower": 0.0,
+      "ci_upper": 0.0,
+      "interpretation": "Action-dropout rate is within acceptable range."
+    },
+    {
       "analyzer": "control_smoothness",
       "metric": "ldlj",
       "level": "CRITICAL",
-      "observed": -16.340007977423447,
-      "ci_lower": -16.507588383484713,
-      "ci_upper": -16.190959310962388,
+      "observed": -16.34000797489651,
+      "ci_lower": -16.507588375857587,
+      "ci_upper": -16.19095930475879,
       "interpretation": "Mean LDLJ = -16.34 across 206 episodes (threshold: >-10). Action trajectories contain significant jerk."
     },
     {
       "analyzer": "control_smoothness",
       "metric": "jerk_spike_rate",
       "level": "WARNING",
-      "observed": 0.04939147629191933,
-      "ci_lower": 0.04575932045258025,
-      "ci_upper": 0.05297696976982751,
-      "interpretation": "4.9% of steps have jerk > 5.0\u00d7 median jerk \u2014 anomalous discontinuities in action sequence."
+      "observed": 0.04946185971340376,
+      "ci_lower": 0.04585118847190572,
+      "ci_upper": 0.05305051707863245,
+      "interpretation": "4.9% of steps have jerk > 5.0\u00d7 median jerk: anomalous discontinuities in action sequence."
     },
     {
       "analyzer": "control_smoothness",
       "metric": "velocity_discontinuity_rate",
       "level": "CRITICAL",
-      "observed": 0.1671760112782681,
-      "ci_lower": 0.15828544073800488,
-      "ci_upper": 0.17586022765555512,
+      "observed": 0.1669558075994595,
+      "ci_lower": 0.15795972995063773,
+      "ci_upper": 0.17584870257859603,
       "interpretation": "16.7% of steps show velocity change > 20% of peak velocity."
+    },
+    {
+      "analyzer": "control_smoothness",
+      "metric": "action_state_divergence",
+      "level": "INFO",
+      "observed": 23.239320657785658,
+      "ci_lower": 14.79067838191986,
+      "ci_upper": 32.690354347229004,
+      "interpretation": "Mean action-state divergence is 23.24 in the dataset's own units, about 3.4% of the state range. State values reach 511, so they are not joint angles in radians and the radian-calibrated thresholds do not apply."
     },
     {
       "analyzer": "coverage_entropy",
@@ -297,7 +345,7 @@
       "observed": null,
       "ci_lower": null,
       "ci_upper": null,
-      "interpretation": "No gripper dimension detected \u2014 grasp count unavailable."
+      "interpretation": "No gripper dimension detected; grasp count unavailable."
     },
     {
       "analyzer": "task_structure",
@@ -306,7 +354,7 @@
       "observed": 0.45530184752578917,
       "ci_lower": null,
       "ci_upper": null,
-      "interpretation": "Trajectory diversity score 0.46 \u2014 weak evidence of multiple strategies. May be within-task variation."
+      "interpretation": "Trajectory diversity score 0.46: weak evidence of multiple strategies. May be within-task variation."
     },
     {
       "analyzer": "task_structure",

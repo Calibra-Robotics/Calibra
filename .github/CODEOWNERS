@@ -1,0 +1,22 @@
+# Code that decides what data is kept, dropped or flagged needs maintainer review.
+# Last matching pattern wins, so the catch-all comes first.
+
+*                             @omertt27
+
+# Verdict-affecting code: analyzer defaults, regime and prune thresholds,
+# dispositions, dataset profiles and their evidence.
+/calibra/analyzers/           @omertt27
+/calibra/strategy.py          @omertt27
+/calibra/pruning.py           @omertt27
+/calibra/prune.py             @omertt27
+/calibra/anomalies.py         @omertt27
+/calibra/annotate.py          @omertt27
+/calibra/schema/              @omertt27
+/calibra/dataset_profiles.py  @omertt27
+/calibra/references/          @omertt27
+/calibra/claims/              @omertt27
+
+# The review process itself.
+/.github/                     @omertt27
+/CONTRIBUTING.md              @omertt27
+/docs/contributing.md         @omertt27

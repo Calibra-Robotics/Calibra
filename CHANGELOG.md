@@ -4,6 +4,33 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **Evidence-gated dataset profiles.** Every profile now carries a
+  `ProfileEvidence` record (dataset revision, sampling rate, action space,
+  reference run, clean baseline, justification, reproduction command). Tests
+  fail if it is incomplete, if the baseline disagrees with the cited reference
+  file, or if a profile's prune limits would cut its own clean episodes.
+- **Benchmark regression gate** (`tests/regression/`, its own CI step). Runs
+  analyze and prune on a frozen copy of `lerobot/pusht` (revision `7628202a`,
+  259 KB fixture) and fails when any flag level, regime, headline metric or
+  kept/dropped episode changes. Intended changes regenerate the golden file
+  with `CALIBRA_UPDATE_GOLDEN=1 pytest tests/regression`.
+- **Evidence review workflow** (`.github/workflows/evidence-review.yml`). An
+  advisory Claude Code reviewer comments on PRs that change golden results,
+  thresholds, profiles or reference data without evidence.
+- `.github/CODEOWNERS` for verdict-affecting code, a dataset profile proposal
+  issue form, and contribution docs describing the evidence standard.
+
+### Changed
+
+- **Refreshed the PushT reference** (`calibra/references/pusht_velocity_command.json`).
+  It predated the float64 differentiation fix in the smoothness analyzer, so its
+  means were stale: spike rate 4.939% → 4.946%, velocity discontinuity rate
+  16.718% → 16.696%. p95 and max, which the profile thresholds rest on, are
+  unchanged, so no verdict moves. The stale `control_mode: velocity` label is
+  dropped (PushT actions are position targets).
+
 ## [0.11.0] - Dataset profiles and README fixes
 
 Every command in the README was re-run end to end; this release fixes what did
@@ -44,7 +71,7 @@ default.
   PushT stays MODERATE NOISE with 175/206 episodes recommended.
 - **Profile `prune` limits** (`DatasetProfile.prune_thresholds`). `prune`'s
   global Stage 1 limits (spike 0.10, velocity discontinuities 0.25) sit at
-  PushT's own clean p95 (10.4%, 27.5%), so they removed 27 known-clean episodes.
+  PushT's own clean p95 (10.4%, 27.5%), so they removed clean PushT episodes.
   The `pusht` profile uses the limits `analyze` already applies to PushT (0.25,
   0.40), which clear its clean maximum (16.1%, 37.5%): PushT now loses 0
   episodes in Stage 1 (48 without the profile, the global limits being

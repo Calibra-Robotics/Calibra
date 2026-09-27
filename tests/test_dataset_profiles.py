@@ -239,3 +239,73 @@ class TestPruneLimits:
     def test_no_profile_keeps_global_limits(self, monkeypatch, tmp_path, capsys):
         err = self._limits(monkeypatch, tmp_path, capsys, "./datasets/pusht")
         assert "[profile" not in err
+
+
+class TestProfileEvidence:
+    """Every profile must carry evidence that matches its reference run."""
+
+    @pytest.fixture(params=sorted(PROFILES))
+    def profile(self, request):
+        return PROFILES[request.param]
+
+    @staticmethod
+    def _reference(profile):
+        import json
+        from pathlib import Path
+
+        import calibra
+
+        path = Path(calibra.__file__).parent / "references" / profile.evidence.reference
+        assert path.is_file(), f"{profile.name}: reference {path} does not exist"
+        return json.loads(path.read_text())
+
+    def test_evidence_is_complete(self, profile):
+        ev = profile.evidence
+        assert ev is not None, f"profile {profile.name!r} has no ProfileEvidence"
+        for name in ("dataset_revision", "action_space", "justification", "reproduce"):
+            assert getattr(ev, name).strip(), f"{profile.name}: empty {name}"
+        assert ev.sampling_rate_hz > 0
+        assert ev.clean_baseline, f"{profile.name}: empty clean_baseline"
+
+    def test_dataset_revision_is_pinned(self, profile):
+        rev = profile.evidence.dataset_revision
+        assert len(rev) == 40 and all(c in "0123456789abcdef" for c in rev), (
+            f"{profile.name}: dataset_revision must be a full Hub commit SHA, got {rev!r}"
+        )
+
+    def test_reference_matches_its_dataset(self, profile):
+        ref = self._reference(profile)
+        assert ref["meta"]["dataset"] in profile.datasets
+
+    def test_baseline_matches_reference(self, profile):
+        dists = self._reference(profile)["per_episode_distributions"]
+        for metric, stats in profile.evidence.clean_baseline.items():
+            measured = dists[f"control_smoothness/per_episode_{metric}"]
+            for stat, value in stats.items():
+                assert value == pytest.approx(measured[stat], abs=1e-6), (
+                    f"{profile.name}: clean_baseline {metric}.{stat}={value} "
+                    f"but the reference measured {measured[stat]}"
+                )
+
+    def test_prune_limits_clear_clean_data(self, profile):
+        # A profile's Stage 1 limits must not cut the clean episodes they were set on.
+        baseline = profile.evidence.clean_baseline
+        limit_to_metric = {"max_spike_rate": "spike_rate", "max_vel_disc_rate": "vel_disc_rate"}
+        for key, limit in profile.prune_thresholds.items():
+            metric = limit_to_metric[key]
+            assert metric in baseline, f"{profile.name}: {key} has no {metric} baseline"
+            assert limit > baseline[metric]["max"], (
+                f"{profile.name}: {key}={limit} would cut clean episodes "
+                f"(clean max {baseline[metric]['max']})"
+            )
+
+    def test_regime_high_thresholds_sit_above_clean_mean(self, profile):
+        # HIGH NOISE must not fire on the dataset's own clean average.
+        baseline = profile.evidence.clean_baseline
+        key_to_metric = {"spike_high": "spike_rate", "disc_high": "vel_disc_rate"}
+        for key, value in profile.regime_thresholds.items():
+            if key not in key_to_metric:
+                continue
+            metric = key_to_metric[key]
+            assert metric in baseline, f"{profile.name}: {key} has no {metric} baseline"
+            assert value > baseline[metric]["mean"]

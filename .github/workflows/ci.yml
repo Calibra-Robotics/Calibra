@@ -37,5 +37,10 @@ jobs:
         run: python scripts/generate_claims_doc.py --check
 
       - name: Test
-        run: pytest tests/ -v --tb=short --cov=calibra --cov-report=term-missing --cov-report=xml
+        run: pytest tests/ -v --tb=short --ignore=tests/regression --cov=calibra --cov-report=term-missing --cov-report=xml
+
+      # Verdicts and prune decisions on frozen real PushT data. A failure means a
+      # change moved Calibra's decisions; see tests/regression/test_benchmark_regression.py.
+      - name: Benchmark regression
+        run: pytest tests/regression -v --tb=short
 

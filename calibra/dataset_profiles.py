@@ -25,6 +25,16 @@ Resolution
   it automatically.
 * Local copies carry no reliable dataset identity, so pass it explicitly:
   ``calibra prune ./datasets/pusht --profile pusht``.
+
+Evidence
+--------
+Every profile carries a ``ProfileEvidence`` record: the dataset revision it was
+measured on, sampling rate, action space, the clean baseline behind its
+thresholds, and the command that reproduces that baseline. The baseline must
+match the reference file under ``calibra/references/`` it cites, and each
+threshold must clear the clean data it was set on.
+``tests/test_dataset_profiles.py`` enforces all of this, so a profile cannot be
+added on intuition alone.
 """
 
 from __future__ import annotations
@@ -34,6 +44,25 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from calibra.analyzers.base import Analyzer
+
+
+@dataclass(frozen=True)
+class ProfileEvidence:
+    """The measurements a profile's settings rest on."""
+
+    # Hub revision (commit SHA or tag) the baseline was measured on.
+    dataset_revision: str
+    sampling_rate_hz: float
+    action_space: str
+    # Reference file in calibra/references/ holding the full baseline run.
+    reference: str
+    # Clean per-episode rates from that reference, as
+    # {metric: {stat: value}}, e.g. {"vel_disc_rate": {"mean": 0.167, "max": 0.375}}.
+    clean_baseline: dict
+    # Why each setting departs from the global default.
+    justification: str
+    # Command that regenerates the reference file.
+    reproduce: str
 
 
 @dataclass(frozen=True)
@@ -48,6 +77,7 @@ class DatasetProfile:
     # max_vel_disc_rate) when the user does not pass the matching --max-* flag.
     prune_thresholds: dict = field(default_factory=dict, compare=False)
     notes: str = field(default="", compare=False)
+    evidence: Optional[ProfileEvidence] = field(default=None, compare=False)
 
 
 PROFILES: dict[str, DatasetProfile] = {
@@ -61,13 +91,34 @@ PROFILES: dict[str, DatasetProfile] = {
         # outlying" line) instead of the global 0.13.
         regime_thresholds={"disc_high": 0.25},
         # The global prune limits (spike 0.10, vel_disc 0.25) sit at PushT's own
-        # clean p95 (10.4%, 27.5%), so they cut 27 known-clean episodes. Use the
+        # clean p95 (10.4%, 27.5%), so they remove clean PushT episodes. Use the
         # limits `analyze` applies to PushT (MODERATE NOISE regime), which clear
         # its clean maximum (16.1%, 37.5%).
         prune_thresholds={"max_spike_rate": 0.25, "max_vel_disc_rate": 0.40},
         notes=(
             "2-D absolute (x, y) target position, no gripper: score smoothness on both "
             "axes, and judge velocity discontinuities against PushT's own clean rate."
+        ),
+        evidence=ProfileEvidence(
+            dataset_revision="7628202a2180972f291ba1bc6723834921e72c19",
+            sampling_rate_hz=10.0,
+            action_space="2-D absolute (x, y) target position in pixels, mouse teleop, no gripper",
+            reference="pusht_velocity_command.json",
+            clean_baseline={
+                "spike_rate": {"mean": 0.049462, "p95": 0.104099, "max": 0.16129},
+                "vel_disc_rate": {"mean": 0.166956, "p95": 0.275348, "max": 0.375},
+            },
+            justification=(
+                "gripper_dims=(): the last action dim is the y target, not a gripper. "
+                "disc_high=0.25: the clean mean (16.7%) is above the global 0.13, so "
+                "HIGH NOISE starts at ~1.5x the clean mean. Prune limits: the global "
+                "limits sit at the clean p95 and remove clean episodes; 0.25/0.40 "
+                "clear the clean max (16.1%, 37.5%)."
+            ),
+            reproduce=(
+                "python scripts/profile_pusht.py --dataset lerobot/pusht "
+                "--out calibra/references/pusht_velocity_command.json"
+            ),
         ),
     ),
 }
