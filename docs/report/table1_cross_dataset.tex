@@ -2,6 +2,8 @@
 \centering
 \caption{Calibra observability metrics across 15 public imitation-learning datasets.
 Scripted datasets are marked $\dagger$.
+$^\ddagger$pusht\_image has the same actions as pusht (it adds image
+observations), so the two are reported as one dataset.
 Spike and VelDisc are mean per-episode rates (\%).
 LDLJ is mean log dimensionless jerk (more negative = less smooth).}
 \label{tab:cross_dataset}
@@ -23,8 +25,7 @@ aloha\_static\_cups\_open       & position & 50     & 0.30  & 6.44  & 4.0e-06 & 
 \midrule
 BridgeData\_V2                  & velocity & 50{,}415 & 0.71 & \textbf{80.48} & 1.0e-06 & -13.79 \\
 droid\_100                      & position & 100    & 4.55  & 7.08  & 6.0e-06 & -19.39 \\
-pusht\_image                    & position & 206    & 4.95  & 16.70 & 3.0e-06 & -16.34 \\
-pusht                           & position & 206    & 4.95  & 16.70 & 3.0e-06 & -16.34 \\
+pusht / pusht\_image$^\ddagger$ & position & 206    & 4.95  & 16.70 & 3.0e-06 & -16.34 \\
 svla\_so100\_pickplace          & position & 50     & 1.09  & 6.73  & 9.0e-06 & -20.11 \\
 svla\_so100\_stacking           & position & 56     & 1.02  & 1.65  & 9.0e-06 & -19.61 \\
 \bottomrule

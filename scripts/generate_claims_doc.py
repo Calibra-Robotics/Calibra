@@ -165,6 +165,21 @@ def _render_claim(claim: dict, lines: list[str]) -> None:
             lines.append(f"| `{ds}` | {obs} | {supports} | {date} | {notes} |")
         lines.append("")
 
+    retracted = claim.get("retracted_evidence", [])
+    if retracted:
+        lines += ["**Retracted evidence** (not counted toward confidence):", ""]
+        lines.append("| Dataset | Observed | Retracted | Reason |")
+        lines.append("|---------|----------|-----------|--------|")
+        for e in retracted:
+            obs = e.get("observed", "n/a")
+            if isinstance(obs, float):
+                obs = f"{obs:.4g}"
+            reason = e.get("retraction_reason", "").replace("|", "\\|")
+            lines.append(
+                f"| `{e.get('dataset', '?')}` | {obs} | {e.get('retracted', '')} | {reason} |"
+            )
+        lines.append("")
+
     falsification = claim.get("falsification", {})
     if falsification.get("condition"):
         lines += [

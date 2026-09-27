@@ -54,6 +54,20 @@ All notable changes to Calibra are documented here.
   `position` from that metadata.
 - PushT episode outliers in `calibra/references/README.md`: 27 / 206 → 16 / 206.
   27 reproduces only on June 2026 code (x axis only, float32).
+- **Claims registry corrected.** PushT is position control, so it was never
+  evidence for the velocity-class claims JS-002, JS-004, VD-002 and VD-003, and
+  `pusht_image` (the same data) was never a second dataset. Those entries, and
+  two BridgeData-vs-PushT comparisons that assumed both were velocity control
+  (JS-003, LDLJ-002), move to a new `retracted_evidence` list with a date and
+  reason. Confidence: JS-004 and VD-003 MEDIUM → LOW-MODERATE, LDLJ-002
+  STRONG → HIGH; no status changes. LDLJ-001 and ENT-001 keep their PushT
+  evidence with dated corrections to its reasoning. Three stale values
+  (ENT-001 for two ALOHA datasets, VD-001 for aloha_mobile_cabinet) now match
+  their references and still support their claims.
+- **Claim values are checked against references**
+  (`tests/test_claims_references.py`): every numeric evidence entry must match
+  its dataset's reference file. `docs/claims.md` shows retracted evidence.
+- The report's cross-dataset table lists pusht and pusht_image as one row.
 
 ## [0.11.0] - Dataset profiles and README fixes
 

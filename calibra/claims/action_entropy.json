@@ -15,21 +15,21 @@
           "observed": 5.3,
           "supports": true,
           "date": "2026-06-15",
-          "notes": "2D velocity-command, entropy 5.30 bits/dim — healthy coverage across push target space"
+          "notes": "2D velocity-command, entropy 5.30 bits/dim — healthy coverage across push target space [Corrected 2026-09-27: pusht actions are 2-D absolute target positions, not velocity commands.]"
         },
         {
           "dataset": "lerobot/aloha_sim_insertion_human",
-          "observed": 4.45,
+          "observed": 4.846443,
           "supports": true,
           "date": "2026-06-15",
-          "notes": "14-DOF position-command, entropy 4.45 bits/dim — moderate coverage for a constrained peg-insertion task"
+          "notes": "14-DOF position-command, entropy 4.45 bits/dim — moderate coverage for a constrained peg-insertion task [Corrected 2026-09-27: observed 4.45 came from an earlier run; the committed reference (calibra/references/aloha_sim_insertion_human.json) measures 4.846443. Still supports.]"
         },
         {
           "dataset": "lerobot/aloha_mobile_cabinet",
-          "observed": 4.24,
+          "observed": 4.672671,
           "supports": true,
           "date": "2026-06-15",
-          "notes": "14-DOF position-command real hardware, entropy 4.24 bits/dim — narrower distribution than sim but above warning threshold"
+          "notes": "14-DOF position-command real hardware, entropy 4.24 bits/dim — narrower distribution than sim but above warning threshold [Corrected 2026-09-27: observed 4.24 came from an earlier run; the committed reference (calibra/references/aloha_mobile_cabinet.json) measures 4.672671. Still supports.]"
         },
         {
           "dataset": "lerobot/droid_100",
@@ -123,7 +123,7 @@
           }
         ]
       },
-      "last_updated": "2026-06-29"
+      "last_updated": "2026-09-27"
     },
     {
       "id": "ENT-002",
@@ -216,7 +216,8 @@
         "condition": "A task where PCA top-2 variance > 0.95 but the policy requires all DOF for task completion",
         "pending_tests": []
       },
-      "last_updated": "2026-06-29"
+      "last_updated": "2026-06-29",
+      "reference_metric": "coverage_entropy/pca_variance.top2_fraction"
     }
   ]
 }

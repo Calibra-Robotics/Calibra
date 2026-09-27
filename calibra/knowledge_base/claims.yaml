@@ -13,8 +13,8 @@ claims:
     evidence_count: 13
     evidence_datasets:
       - lerobot/pusht  # ✓ 5.3
-      - lerobot/aloha_sim_insertion_human  # ✓ 4.45
-      - lerobot/aloha_mobile_cabinet  # ✓ 4.24
+      - lerobot/aloha_sim_insertion_human  # ✓ 4.846443
+      - lerobot/aloha_mobile_cabinet  # ✓ 4.672671
       - lerobot/droid_100  # ✓ 4.24
       - nvidia/BridgeData2_LeRobot_v3  # ✓ 1.98
       - lerobot/aloha_mobile_shrimp  # ✓ 4.321012
@@ -84,12 +84,10 @@ claims:
     metric: "spike_rate"
     class: "velocity"
     status: "falsified"
-    confidence: "LOW"
+    confidence: "NOT VALIDATED"
     assertion: "Velocity-command datasets have jerk spike rate in the range 2–8% due to frequent direction reversals"
-    evidence_count: 3
+    evidence_count: 1
     evidence_datasets:
-      - lerobot/pusht  # ✓ 0.049
-      - lerobot/pusht_image  # ✓ 0.077552
       - nvidia/BridgeData2_LeRobot_v3  # ✗ 0.0071
     falsification: "A second velocity-command dataset with rate < 0.01 or > 0.12"
 
@@ -99,26 +97,26 @@ claims:
     status: "active_hypothesis"
     confidence: "LOW"
     assertion: "Jerk spike rate is more robust to cross-frequency comparison than LDLJ, because the 5x-median threshold self-adapts to episode scale"
-    evidence_count: 3
+    evidence_count: 2
     evidence_datasets:
       - lerobot/pusht + lerobot/aloha_sim_insertion_human  # ✓ pusht=4.9% (10Hz, 2D), aloha=0.69% (50Hz, 14D)
       - lerobot/droid_100 vs lerobot/aloha_sim_insertion_human  # ✓ droid_100=4.5% (15Hz, 7D position), aloha=0.69% (50Hz, 14D position)
-      - nvidia/BridgeData2_LeRobot_v3 vs lerobot/pusht_velocity_command  # ✗ bridgedata2=0.71% (5Hz, 7D velocity), pusht=4.9% (10Hz, 2D velocity)
     falsification: "Two datasets of same control mode with 3x+ frequency difference showing inverted spike rates"
+    pending_tests:
+      - Two velocity-command datasets at different control frequencies
 
   - id: "JS-004"
     metric: "spike_rate"
     class: "velocity"
     status: "active_hypothesis"
-    confidence: "MEDIUM"
+    confidence: "LOW-MODERATE"
     assertion: "Velocity-command spike rate using the 5x-median threshold is frequency-dependent: ~10Hz datasets produce 2–8% spike rates; ≤5Hz datasets produce < 1% because the elevated median jerk raises the threshold"
-    evidence_count: 3
+    evidence_count: 1
     evidence_datasets:
-      - lerobot/pusht  # ✓ 0.049
-      - lerobot/pusht_image  # ✓ 0.077552
       - nvidia/BridgeData2_LeRobot_v3  # ✓ 0.0071
     falsification: "A ≤5Hz velocity-command dataset with spike rate > 0.02, OR a ~10Hz velocity-command dataset with spike rate < 0.01"
     pending_tests:
+      - A ~10 Hz velocity-command human-teleop dataset
       - Any second 5Hz velocity-command dataset
 
   - id: "LDLJ-001"
@@ -141,13 +139,10 @@ claims:
     metric: "ldlj"
     class: "any"
     status: "active_hypothesis"
-    confidence: "STRONG"
+    confidence: "HIGH"
     assertion: "LDLJ may be valid for within-type comparison (same control mode, similar frequency)"
-    evidence_count: 11
+    evidence_count: 8
     evidence_datasets:
-      - lerobot/pusht_image  # ✓ -16.012659
-      - lerobot/pusht_velocity_command  # ✓ -16.340008
-      - nvidia/BridgeData2_LeRobot_v3  # ✗ -13.788
       - lerobot/aloha_sim_transfer_cube_human  # ✓ -20.015224
       - lerobot/aloha_static_battery  # ✓ -22.102043
       - lerobot/aloha_static_candy  # ✓ -22.282415
@@ -157,6 +152,8 @@ claims:
       - lerobot/svla_so100_pickplace  # ✓ -20.105093
       - lerobot/svla_so100_stacking  # ✓ -19.61111
     falsification: "Two datasets of same type where LDLJ fails to distinguish a known-worse dataset (e.g. one with injected noise) from a clean one"
+    pending_tests:
+      - Two independent velocity-command datasets at similar control frequency
 
   - id: "PAI-001"
     metric: "pretraining_alignment_index"
@@ -231,7 +228,7 @@ claims:
     evidence_count: 13
     evidence_datasets:
       - lerobot/aloha_sim_insertion_human  # ✓ 0.024
-      - lerobot/aloha_mobile_cabinet  # ✓ 0.013
+      - lerobot/aloha_mobile_cabinet  # ✓ 0.008364
       - lerobot/aloha_sim_insertion_scripted  # ✓ 0.0075
       - lerobot/aloha_sim_transfer_cube_scripted  # ✓ 0.0075
       - lerobot/droid_100  # ✗ 0.071
@@ -249,12 +246,10 @@ claims:
     metric: "velocity_discontinuity_rate"
     class: "velocity"
     status: "falsified"
-    confidence: "LOW"
+    confidence: "NOT VALIDATED"
     assertion: "Velocity-command datasets have velocity discontinuity rate in the range 10–20% due to unconstrained instantaneous reversals in human teleop"
-    evidence_count: 3
+    evidence_count: 1
     evidence_datasets:
-      - lerobot/pusht  # ✓ 0.167
-      - lerobot/pusht_image  # ✓ 0.111068
       - nvidia/BridgeData2_LeRobot_v3  # ✗ 0.8048
     falsification: "A second velocity-command dataset with rate < 0.08 or > 0.25"
 
@@ -262,13 +257,12 @@ claims:
     metric: "velocity_discontinuity_rate"
     class: "velocity"
     status: "active_hypothesis"
-    confidence: "MEDIUM"
+    confidence: "LOW-MODERATE"
     assertion: "Velocity-command datasets at ~10Hz have velocity discontinuity rate in the range 10–20%; at ≤5Hz the rate exceeds 50% due to coarse step resolution"
-    evidence_count: 3
+    evidence_count: 1
     evidence_datasets:
-      - lerobot/pusht  # ✓ 0.167
-      - lerobot/pusht_image  # ✓ 0.111
       - nvidia/BridgeData2_LeRobot_v3  # ✓ 0.8048
     falsification: "A ≤5Hz velocity-command dataset with rate < 0.30, OR a ~10Hz velocity-command dataset with rate > 0.25"
     pending_tests:
+      - A ~10 Hz velocity-command human-teleop dataset
       - Any second 5Hz velocity-command dataset

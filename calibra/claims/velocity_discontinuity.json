@@ -18,10 +18,10 @@
         },
         {
           "dataset": "lerobot/aloha_mobile_cabinet",
-          "observed": 0.013,
+          "observed": 0.008364,
           "supports": true,
           "date": "2026-06-15",
-          "notes": "Real hardware, mobile ALOHA, 14-DOF, 50Hz, cabinet manipulation. Aggregate rate 1.29% (well within 5%). Episode-level analysis found 7 outlier episodes with elevated vel_disc_rate (max: ep_54 at 4.8× MAD above median). Second real-data point supporting claim."
+          "notes": "Real hardware, mobile ALOHA, 14-DOF, 50Hz, cabinet manipulation. Aggregate rate 1.29% (well within 5%). Episode-level analysis found 7 outlier episodes with elevated vel_disc_rate (max: ep_54 at 4.8× MAD above median). Second real-data point supporting claim. [Corrected 2026-09-27: observed 0.013 came from an earlier run; the committed reference (calibra/references/aloha_mobile_cabinet.json) measures 0.008364. Still supports.]"
         },
         {
           "dataset": "lerobot/aloha_sim_insertion_scripted",
@@ -106,7 +106,7 @@
         "threshold": 0.08,
         "pending_tests": []
       },
-      "last_updated": "2026-06-29"
+      "last_updated": "2026-09-27"
     },
     {
       "id": "VD-002",
@@ -117,20 +117,6 @@
       "confidence": "LOW",
       "status": "falsified",
       "evidence": [
-        {
-          "dataset": "lerobot/pusht",
-          "observed": 0.167,
-          "supports": true,
-          "date": "2026-06-15",
-          "notes": "Simulated, 2D velocity command (dx,dy), ~10Hz, push task"
-        },
-        {
-          "dataset": "lerobot/pusht_image",
-          "observed": 0.111068,
-          "supports": true,
-          "date": "2026-06-18",
-          "notes": "Velocity-command 2D sim, ~10Hz, 206 episodes, image-conditioned demonstrations. Vel disc rate 11.1% — within the 10–20% range. Second velocity-command data point; alongside pusht (16.7%), confirms that velocity-command datasets cluster in the 10–20% range for 2D planar tasks. Upgrades claim confidence."
-        },
         {
           "dataset": "nvidia/BridgeData2_LeRobot_v3",
           "observed": 0.8048,
@@ -146,7 +132,27 @@
         "pending_tests": [],
         "note": "Formally falsified by BridgeData2 (5Hz). VD-002 should be replaced with frequency-qualified successor claims: one for ~10Hz datasets, one for ≤5Hz."
       },
-      "last_updated": "2026-06-18"
+      "last_updated": "2026-09-27",
+      "retracted_evidence": [
+        {
+          "dataset": "lerobot/pusht",
+          "observed": 0.167,
+          "supports": true,
+          "date": "2026-06-15",
+          "notes": "Simulated, 2D velocity command (dx,dy), ~10Hz, push task",
+          "retracted": "2026-09-27",
+          "retraction_reason": "lerobot/pusht actions are 2-D absolute target positions (position control), not velocity commands (calibra/references/README.md), so it is not evidence for a velocity-class claim (SPEC: evidence rule 3)."
+        },
+        {
+          "dataset": "lerobot/pusht_image",
+          "observed": 0.111068,
+          "supports": true,
+          "date": "2026-06-18",
+          "notes": "Velocity-command 2D sim, ~10Hz, 206 episodes, image-conditioned demonstrations. Vel disc rate 11.1% — within the 10–20% range. Second velocity-command data point; alongside pusht (16.7%), confirms that velocity-command datasets cluster in the 10–20% range for 2D planar tasks. Upgrades claim confidence.",
+          "retracted": "2026-09-27",
+          "retraction_reason": "lerobot/pusht_image has the same actions as lerobot/pusht; its old reference scored only the x axis in float32. Profiled correctly it matches pusht exactly, so it is not a second dataset."
+        }
+      ]
     },
     {
       "id": "VD-003",
@@ -157,20 +163,6 @@
       "confidence": "LOW",
       "status": "active_hypothesis",
       "evidence": [
-        {
-          "dataset": "lerobot/pusht",
-          "observed": 0.167,
-          "supports": true,
-          "date": "2026-06-18",
-          "notes": "10Hz velocity-command, 2D, 206 episodes. 16.7% — within 10-20% range for ~10Hz."
-        },
-        {
-          "dataset": "lerobot/pusht_image",
-          "observed": 0.111,
-          "supports": true,
-          "date": "2026-06-18",
-          "notes": "10Hz velocity-command, 2D, 206 episodes. 11.1% — within 10-20% range for ~10Hz."
-        },
         {
           "dataset": "nvidia/BridgeData2_LeRobot_v3",
           "observed": 0.8048,
@@ -183,12 +175,36 @@
         "condition": "A ≤5Hz velocity-command dataset with rate < 0.30, OR a ~10Hz velocity-command dataset with rate > 0.25",
         "pending_tests": [
           {
+            "dataset": "A ~10 Hz velocity-command human-teleop dataset",
+            "reason": "Retracted 2026-09-27: the PushT entries were position control, so the ~10 Hz half of this claim has no valid evidence."
+          },
+          {
             "dataset": "Any second 5Hz velocity-command dataset",
             "reason": "Single 5Hz data point (BridgeData2). Need a second to confirm the >50% pattern."
           }
         ]
       },
-      "last_updated": "2026-06-18"
+      "last_updated": "2026-09-27",
+      "retracted_evidence": [
+        {
+          "dataset": "lerobot/pusht",
+          "observed": 0.167,
+          "supports": true,
+          "date": "2026-06-18",
+          "notes": "10Hz velocity-command, 2D, 206 episodes. 16.7% — within 10-20% range for ~10Hz.",
+          "retracted": "2026-09-27",
+          "retraction_reason": "lerobot/pusht actions are 2-D absolute target positions (position control), not velocity commands (calibra/references/README.md), so it is not evidence for a velocity-class claim (SPEC: evidence rule 3)."
+        },
+        {
+          "dataset": "lerobot/pusht_image",
+          "observed": 0.111,
+          "supports": true,
+          "date": "2026-06-18",
+          "notes": "10Hz velocity-command, 2D, 206 episodes. 11.1% — within 10-20% range for ~10Hz.",
+          "retracted": "2026-09-27",
+          "retraction_reason": "lerobot/pusht_image has the same actions as lerobot/pusht; its old reference scored only the x axis in float32. Profiled correctly it matches pusht exactly, so it is not a second dataset."
+        }
+      ]
     }
   ]
 }

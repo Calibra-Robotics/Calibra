@@ -156,6 +156,28 @@ Simulated datasets count as evidence for claims about simulation (class: `sim`)
 or claims with class: `any`. They do not count as evidence for claims about
 real hardware (class: `hardware`).
 
+### Evidence must match its reference
+
+An entry's `observed` value must agree with the reference file for its dataset
+in `calibra/references/`, at the precision the entry records.
+`tests/test_claims_references.py` enforces this. By default the claim's
+`metric` picks the reference field; a claim about a different quantity names
+it with `"reference_metric": "<analyzer>/<aggregate key>"` (e.g. ENT-002 uses
+`coverage_entropy/pca_variance.top2_fraction`). When a reference is
+regenerated, update the entries that cite it in the same change.
+
+### Retracting evidence
+
+An entry that was never valid evidence (wrong class, a duplicate of another
+dataset, a confounded comparison) is not deleted. Move it to the claim's
+`retracted_evidence` list with `"retracted": "YYYY-MM-DD"` and a
+`"retraction_reason"`. Retracted entries do not count toward confidence and
+stay visible in `docs/claims.md`. If a retraction leaves part of an assertion
+without evidence, add the missing test to `pending_tests`.
+
+An entry that is valid but whose notes reasoned from a wrong fact keeps its
+place; append `[Corrected YYYY-MM-DD: ...]` to its notes instead.
+
 ---
 
 ## What falsifies a claim

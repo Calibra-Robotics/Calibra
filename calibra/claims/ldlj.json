@@ -14,14 +14,14 @@
           "observed": -20.43,
           "supports": true,
           "date": "2026-06-15",
-          "notes": "50Hz, 14-DOF position control. Scores WORSE than pusht despite being physically smoother — confirms cross-mode incomparability"
+          "notes": "50Hz, 14-DOF position control. Scores WORSE than pusht despite being physically smoother — confirms cross-mode incomparability [Corrected 2026-09-27: pusht is also position control, so this is a cross-frequency (10 vs 50 Hz) comparison, not cross-mode.]"
         },
         {
           "dataset": "lerobot/pusht",
           "observed": -16.34,
           "supports": true,
           "date": "2026-06-15",
-          "notes": "~10Hz, 2D velocity command. Scores BETTER than aloha despite being a jerkier control mode — anomalous direction confirms the claim"
+          "notes": "~10Hz, 2D velocity command. Scores BETTER than aloha despite being a jerkier control mode — anomalous direction confirms the claim [Corrected 2026-09-27: pusht is position control (2-D target positions), not velocity. It still supports the claim through the ~5x frequency gap to aloha (10 vs 50 Hz), not through a control-mode difference.]"
         },
         {
           "dataset": "lerobot/aloha_sim_insertion_scripted",
@@ -42,21 +42,21 @@
           "observed": -19.393163,
           "supports": true,
           "date": "2026-06-18",
-          "notes": "DROID, 7-DOF position-command, 15Hz, 100 episodes of real hardware teleoperation. LDLJ −19.39 at 15Hz vs aloha −20.43 at 50Hz — a gap of only 1.0 unit despite 3.3× frequency difference. Within same control mode, frequency has limited LDLJ impact. Contrast with cross-mode gap: pusht (velocity) −16.34 vs aloha (position) −20.43 = 4.1 units gap despite a smaller frequency difference. Confirms that the control-mode dimension dominates over frequency for LDLJ divergence. Resolves pending test for 'low-frequency position-command dataset'."
+          "notes": "DROID, 7-DOF position-command, 15Hz, 100 episodes of real hardware teleoperation. LDLJ −19.39 at 15Hz vs aloha −20.43 at 50Hz — a gap of only 1.0 unit despite 3.3× frequency difference. Within same control mode, frequency has limited LDLJ impact. Contrast with cross-mode gap: pusht (velocity) −16.34 vs aloha (position) −20.43 = 4.1 units gap despite a smaller frequency difference. Confirms that the control-mode dimension dominates over frequency for LDLJ divergence. Resolves pending test for 'low-frequency position-command dataset'. [Corrected 2026-09-27: pusht is position control, so the pusht-vs-aloha gap is within-mode at a 5x frequency difference. The conclusion that control mode dominates frequency is not supported by this pair.]"
         },
         {
           "dataset": "nvidia/BridgeData2_LeRobot_v3",
           "observed": -13.788,
           "supports": true,
           "date": "2026-06-18",
-          "notes": "BridgeData V2, 7-DOF velocity-command, 5Hz. LDLJ −13.79 vs pusht (velocity, 10Hz) at −16.34 — a 2.55-unit gap within the same control mode at 2x frequency difference. Cross-mode gap (velocity vs position): pusht −16.34 vs aloha −20.43 = 4.1 units. Shows that both frequency AND control mode contribute to LDLJ divergence. Further supports LDLJ-001: LDLJ is not a valid cross-dataset comparator even within the same control mode when frequencies differ ≥2x."
+          "notes": "BridgeData V2, 7-DOF velocity-command, 5Hz. LDLJ −13.79 vs pusht (velocity, 10Hz) at −16.34 — a 2.55-unit gap within the same control mode at 2x frequency difference. Cross-mode gap (velocity vs position): pusht −16.34 vs aloha −20.43 = 4.1 units. Shows that both frequency AND control mode contribute to LDLJ divergence. Further supports LDLJ-001: LDLJ is not a valid cross-dataset comparator even within the same control mode when frequencies differ ≥2x. [Corrected 2026-09-27: pusht is position control, so BridgeData2 vs pusht crosses control mode and frequency; the 'within the same control mode' reading does not hold. The entry still supports LDLJ-001 as a cross-mode, cross-frequency divergence.]"
         }
       ],
       "falsification": {
         "condition": "Two datasets with different control modes where LDLJ ranks them in the physically expected order (position smoother than velocity) AND control frequencies differ > 2x",
         "pending_tests": []
       },
-      "last_updated": "2026-06-18"
+      "last_updated": "2026-09-27"
     },
     {
       "id": "LDLJ-002",
@@ -67,27 +67,6 @@
       "confidence": "STRONG",
       "status": "active_hypothesis",
       "evidence": [
-        {
-          "dataset": "lerobot/pusht_image",
-          "observed": -16.012659,
-          "supports": true,
-          "date": "2026-06-18",
-          "notes": "Velocity-command 2D sim, ~10Hz, 206 episodes, image-conditioned demonstrations. LDLJ −16.01, consistent with pusht_velocity_command (−16.34). First of two matched velocity-command datasets for within-type comparison."
-        },
-        {
-          "dataset": "lerobot/pusht_velocity_command",
-          "observed": -16.340008,
-          "supports": true,
-          "date": "2026-06-18",
-          "notes": "Velocity-command 2D sim, ~10Hz, 206 episodes. LDLJ −16.34. Second of two matched velocity-command datasets. Gap to pusht_image: only 0.33 units. Both datasets same control mode and frequency — LDLJ agrees to within 2%, supporting LDLJ's validity for within-type comparison. Resolves pending test 'Two velocity-command datasets with different operator quality'. Caveat: pusht_image and pusht are variants of the same task, not truly independent; evidence strength upgrades from zero to LOW-MODERATE only."
-        },
-        {
-          "dataset": "nvidia/BridgeData2_LeRobot_v3",
-          "observed": -13.788,
-          "supports": false,
-          "date": "2026-06-18",
-          "notes": "BridgeData V2 (velocity, 5Hz) LDLJ −13.79 vs pusht (velocity, 10Hz) −16.34 = 2.55-unit gap within the same control class. LDLJ-002 asserts within-type comparison is valid 'at similar frequency'. BridgeData2 shows that even a 2x frequency difference within velocity-command datasets produces a meaningful LDLJ divergence. This partially challenges LDLJ-002: within-type validity requires frequency matching (≤2x), not just the same control class. The condition 'similar frequency' in LDLJ-002 is validated rather than falsified — the claim's frequency qualifier is confirmed necessary."
-        },
         {
           "dataset": "lerobot/aloha_sim_transfer_cube_human",
           "observed": -20.015224,
@@ -147,9 +126,43 @@
       ],
       "falsification": {
         "condition": "Two datasets of same type where LDLJ fails to distinguish a known-worse dataset (e.g. one with injected noise) from a clean one",
-        "pending_tests": []
+        "pending_tests": [
+          {
+            "dataset": "Two independent velocity-command datasets at similar control frequency",
+            "reason": "The pusht/pusht_image pair that resolved this was the same data (retracted 2026-09-27)."
+          }
+        ]
       },
-      "last_updated": "2026-06-29"
+      "last_updated": "2026-09-27",
+      "retracted_evidence": [
+        {
+          "dataset": "lerobot/pusht_image",
+          "observed": -16.012659,
+          "supports": true,
+          "date": "2026-06-18",
+          "notes": "Velocity-command 2D sim, ~10Hz, 206 episodes, image-conditioned demonstrations. LDLJ −16.01, consistent with pusht_velocity_command (−16.34). First of two matched velocity-command datasets for within-type comparison.",
+          "retracted": "2026-09-27",
+          "retraction_reason": "lerobot/pusht_image has the same actions as lerobot/pusht; its old reference scored only the x axis in float32. Profiled correctly it matches pusht exactly, so it is not a second dataset."
+        },
+        {
+          "dataset": "lerobot/pusht_velocity_command",
+          "observed": -16.340008,
+          "supports": true,
+          "date": "2026-06-18",
+          "notes": "Velocity-command 2D sim, ~10Hz, 206 episodes. LDLJ −16.34. Second of two matched velocity-command datasets. Gap to pusht_image: only 0.33 units. Both datasets same control mode and frequency — LDLJ agrees to within 2%, supporting LDLJ's validity for within-type comparison. Resolves pending test 'Two velocity-command datasets with different operator quality'. Caveat: pusht_image and pusht are variants of the same task, not truly independent; evidence strength upgrades from zero to LOW-MODERATE only.",
+          "retracted": "2026-09-27",
+          "retraction_reason": "Its support was the match with lerobot/pusht_image, which is the same data."
+        },
+        {
+          "dataset": "nvidia/BridgeData2_LeRobot_v3",
+          "observed": -13.788,
+          "supports": false,
+          "date": "2026-06-18",
+          "notes": "BridgeData V2 (velocity, 5Hz) LDLJ −13.79 vs pusht (velocity, 10Hz) −16.34 = 2.55-unit gap within the same control class. LDLJ-002 asserts within-type comparison is valid 'at similar frequency'. BridgeData2 shows that even a 2x frequency difference within velocity-command datasets produces a meaningful LDLJ divergence. This partially challenges LDLJ-002: within-type validity requires frequency matching (≤2x), not just the same control class. The condition 'similar frequency' in LDLJ-002 is validated rather than falsified — the claim's frequency qualifier is confirmed necessary.",
+          "retracted": "2026-09-27",
+          "retraction_reason": "Compares a 5 Hz velocity-command dataset with lerobot/pusht, which is position control, not velocity. The comparison crosses control mode and frequency at once, so it cannot isolate either."
+        }
+      ]
     }
   ]
 }
