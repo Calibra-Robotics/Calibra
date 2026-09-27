@@ -16,6 +16,13 @@ All notable changes to Calibra are documented here.
   2–4 supporting datasets is MODERATE. The code had labelled 2 as LOW (below
   1's LOW-MODERATE) and 3–4 as an undocumented MEDIUM. JS-003, PAI-001 and
   TEMP-003 (2 supporting datasets each) move LOW → MODERATE.
+- **aloha_mobile_cabinet numbers in `calibra/references/README.md`** quoted
+  the first reference run (2026-06-15, 5387172), which excluded only dim 13 and
+  scored the left gripper as motion. They now match the committed reference
+  (both grippers excluded), which reproduces on current code: LDLJ −24.08 →
+  −24.70, spikes 1.0% → 0.42%, velocity discontinuities 1.3% → 0.84%, jitter
+  3.1e-5 → 3.0e-5, contact 78.9% → 78.8%. The 8 / 85 outliers reproduce
+  exactly (same episodes) and are unchanged.
 
 ### Added
 

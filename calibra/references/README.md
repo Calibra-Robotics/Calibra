@@ -18,13 +18,13 @@ fine may be surprisingly clean compared to peers.
 | Episode length (steps) | mean 125, std 36 | exactly 500 | exactly 1,500 | n/a |
 | Control frequency | ~10 Hz | 50 Hz | 50 Hz | n/a |
 | Action dim | 2 | 14 | 14 | n/a |
-| Jitter CV | 2.9e-6 | 1.1e-5 | 3.1e-5 | Sim and hardware similar here |
+| Jitter CV | 2.9e-6 | 1.1e-5 | 3.0e-5 | Sim and hardware similar here |
 | Dropout | 0.0% | 0.0% | 0.0% | n/a |
-| **LDLJ (mean)** | **−16.34** | **−20.43** | **−24.08** | All CRITICAL (see note) |
-| **Jerk spike rate** | **4.9% WARNING** | **0.69% OK** | **1.0% OK** | Position cmd consistently cleaner |
-| **Velocity disc. rate** | **16.7% CRITICAL** | **2.4% WARNING** | **1.3% OK** | Clean separation by control mode |
+| **LDLJ (mean)** | **−16.34** | **−20.43** | **−24.70** | All CRITICAL (see note) |
+| **Jerk spike rate** | **4.9% WARNING** | **0.69% OK** | **0.42% OK** | Position cmd consistently cleaner |
+| **Velocity disc. rate** | **16.7% CRITICAL** | **2.4% WARNING** | **0.84% OK** | Clean separation by control mode |
 | Action entropy (bits/dim) | 5.30 | 4.85 | 4.67 | All healthy |
-| Contact fraction | 21.7% | 90.7% | 78.9% | Task-type difference |
+| Contact fraction | 21.7% | 90.7% | 78.8% | Task-type difference |
 | Grasps per episode | none (no gripper) | 1.0 | 4.0 | Task structure detected correctly |
 | **Episode outliers (Calibra)** | **16 / 206** | **n/a (fixed length)** | **8 / 85** | Aggregate-invisible corruption |
 
@@ -172,15 +172,21 @@ or frequencies.
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| Timestamp jitter CV | 3.1e-5 | Low but above machine-precision; hardware timing is clean |
+| Timestamp jitter CV | 3.0e-5 | Low but above machine-precision; hardware timing is clean |
 | Dropout rate | 0.0% | No dropped frames |
-| LDLJ (mean) | −24.08 | Worse than sim aloha; expected on real hardware with oscillation noise |
-| Jerk spike rate | 1.0% | OK (< 2% threshold); position control is smooth |
-| Velocity discontinuity rate | **1.3%** | **Second real-data point supporting VD-001** (position cmd < 5%) |
+| LDLJ (mean) | −24.70 | Worse than sim aloha; expected on real hardware with oscillation noise |
+| Jerk spike rate | 0.42% | OK (< 2% threshold); position control is smooth |
+| Velocity discontinuity rate | **0.84%** | **Second real-data point supporting VD-001** (position cmd < 5%) |
 | Action entropy | 4.67 bits/dim | Healthy |
-| Contact fraction | 78.9% | Contact-rich task; consistent with cabinet manipulation |
+| Contact fraction | 78.8% | Contact-rich task; consistent with cabinet manipulation |
 | Grasps per episode | 4.0 | 4 gripper events per episode (door handle grasp, pull open, two more) |
 | **Episode outliers** | **8 / 85** | **Invisible to aggregate metrics** |
+
+Metrics are from `aloha_mobile_cabinet.json`, which excludes both grippers
+(`--gripper-dims 6,13`). An earlier version of this table quoted the first
+reference run, which excluded only dim 13 and so scored the left gripper as
+motion. The outliers come from `calibra lerobot/aloha_mobile_cabinet`, which
+still uses that default (see below).
 
 ### The documented real catch
 
@@ -203,7 +209,9 @@ ep_81         vel_disc_rate 3.8× MAD    → end of dataset (fatigue / drift)
 ```
 
 **ep_54** deviates 4.8× MAD from the per-episode median on velocity discontinuity
-rate. The aggregate vel_disc_rate is 1.29% (well within the 2% OK threshold), which
+rate. The aggregate vel_disc_rate in the same run is 1.29% (well within the 2% OK
+threshold; this CLI run excludes only the last action dim, so the left gripper
+counts as motion, while the reference above excludes both and measures 0.84%), which
 means this outlier episode contributes noise that the average absorbs. A policy
 trained on this dataset would see spurious high-discontinuity targets from ep_54
 with no warning from any aggregate diagnostic.
@@ -225,10 +233,10 @@ curator = EpisodeCurator(strategy="remove")
 (perfect timing, no hardware noise) are not representative of real hardware. This
 dataset shows real but subtle episode-level variance that simulation hides.
 
-**VD-001 holds on real hardware.** Aggregate vel_disc_rate of 1.29% confirms
+**VD-001 holds on real hardware.** Aggregate vel_disc_rate of 0.84% confirms
 the < 5% position-command claim on a second, independent dataset. The per-episode
 outliers don't change the aggregate verdict; they reveal local corruption.
 
-**Temporal metrics are still uninformative.** Jitter CV 3.1e-5 is still very low
+**Temporal metrics are still uninformative.** Jitter CV 3.0e-5 is still very low
 despite being real hardware. This dataset may use locked-timestep playback.
 Need BridgeData V2 or DROID to see real hardware timing noise.
