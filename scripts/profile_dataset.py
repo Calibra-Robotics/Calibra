@@ -58,6 +58,7 @@ import numpy as np
 _REPO = Path(__file__).parent.parent
 sys.path.insert(0, str(_REPO))
 
+from calibra.analyzers.base import parse_gripper_dims  # noqa: E402
 from calibra.analyzers.coverage import CoverageEntropyAnalyzer  # noqa: E402
 from calibra.analyzers.smoothness import ControlSmoothnessAnalyzer  # noqa: E402
 from calibra.analyzers.task_structure import TaskStructureAnalyzer  # noqa: E402
@@ -215,10 +216,7 @@ def main() -> None:
         reader = _get_reader(args.format)
 
     # Resolve gripper dims
-    gripper_dims: list[int] = [-1]
-    if args.gripper_dims is not None:
-        raw = args.gripper_dims.strip()
-        gripper_dims = [int(x) for x in raw.split(",") if x.strip()] if raw else []
+    gripper_dims = parse_gripper_dims(args.gripper_dims)
 
     log(f"Loading {dataset!r} ...")
     try:
@@ -260,9 +258,9 @@ def main() -> None:
     report = pipeline.run(batch)
     log("Pipeline complete.")
 
-    # A Hub ID's dataset profile replaces analyzer defaults inside Pipeline.run,
-    # and an explicit --gripper-dims equal to the default is indistinguishable
-    # from it. Record the gripper dims actually applied, not the flag as passed.
+    # A Hub ID's dataset profile replaces the default gripper dims inside
+    # Pipeline.run when --gripper-dims is omitted. Record the dims actually
+    # applied, not the default the analyzer was built with.
     if report.dataset_profile:
         from calibra.dataset_profiles import apply_profile, get_profile
 

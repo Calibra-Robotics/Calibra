@@ -29,7 +29,7 @@ from typing import Optional
 
 import numpy as np
 
-from calibra.analyzers.base import Analyzer
+from calibra.analyzers.base import Analyzer, default_gripper_dims
 from calibra.schema.episode import EpisodeBatch
 from calibra.schema.report import (
     AnalyzerResult,
@@ -77,7 +77,7 @@ class Pi0CompatibilityAnalyzer(Analyzer):
     freq_low_warning: float = _FREQ_LOW_WARNING
     freq_high_warning: float = _FREQ_HIGH_WARNING
     known_action_dims: set[int] = field(default_factory=lambda: set(_KNOWN_ACTION_DIMS))
-    gripper_dims: list[int] = field(default_factory=lambda: [-1])
+    gripper_dims: list[int] = field(default_factory=default_gripper_dims)
 
     @property
     def name(self) -> str:

@@ -357,6 +357,7 @@ def render_corruption_report(
 def run_corrupt(argv: list[str]) -> None:
     import argparse
 
+    from calibra.analyzers.base import parse_gripper_dims
     from calibra.analyzers.coverage import CoverageEntropyAnalyzer
     from calibra.analyzers.smoothness import ControlSmoothnessAnalyzer
     from calibra.analyzers.task_structure import TaskStructureAnalyzer
@@ -438,10 +439,7 @@ def run_corrupt(argv: list[str]) -> None:
     if cfg.is_empty():
         p.error("Specify at least one corruption flag (e.g. --drop-frames 0.10)")
 
-    gripper_dims: list[int] = [-1]
-    if args.gripper_dims is not None:
-        raw = args.gripper_dims.strip()
-        gripper_dims = [int(x) for x in raw.split(",") if x.strip()] if raw else []
+    gripper_dims = parse_gripper_dims(args.gripper_dims)
 
     reader = None
     if args.format:

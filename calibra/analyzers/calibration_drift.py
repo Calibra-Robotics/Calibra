@@ -34,7 +34,7 @@ from typing import Optional
 
 import numpy as np
 
-from calibra.analyzers.base import Analyzer
+from calibra.analyzers.base import Analyzer, default_gripper_dims
 from calibra.schema.episode import Episode, EpisodeBatch
 from calibra.schema.report import AnalyzerResult, ObservedValue, RiskFlag, RiskLevel
 
@@ -127,7 +127,7 @@ class CalibrationDriftAnalyzer(Analyzer):
 
     requires = frozenset({"proprio"})
 
-    gripper_dims: list[int] = field(default_factory=lambda: [-1])
+    gripper_dims: list[int] = field(default_factory=default_gripper_dims)
     stable_vel_frac: float = _STABLE_VEL_FRAC
     min_stable_run: int = _MIN_STABLE_RUN
     min_stable_frames: int = _MIN_STABLE_FRAMES

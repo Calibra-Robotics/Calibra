@@ -346,3 +346,31 @@ class TestCompareAgainstProfiledReference:
 
     def test_rougher_than_baseline_is_flagged(self):
         assert "Rougher than pusht's clean baseline" in self._render(0.30)
+
+
+class TestExplicitGripperDims:
+    """An explicit gripper_dims is the caller's choice, even when it equals the default."""
+
+    def test_parse_gripper_dims(self):
+        from calibra.analyzers.base import DefaultGripperDims, parse_gripper_dims
+
+        assert isinstance(parse_gripper_dims(None), DefaultGripperDims)
+        assert parse_gripper_dims(None) == [-1]
+        explicit = parse_gripper_dims("-1")
+        assert explicit == [-1] and not isinstance(explicit, DefaultGripperDims)
+        assert parse_gripper_dims("") == []
+        assert parse_gripper_dims("6,13") == [6, 13]
+
+    def test_explicit_default_value_survives_profile(self):
+        explicit = ControlSmoothnessAnalyzer(gripper_dims=[-1])
+        out = apply_profile([explicit, ControlSmoothnessAnalyzer()], PROFILES["pusht"])
+        assert out[0].gripper_dims == [-1]  # kept: the caller asked for it
+        assert out[1].gripper_dims == []  # replaced: left at the default
+
+    def test_explicit_default_value_reaches_the_pipeline(self):
+        # Excluding the y axis explicitly on a profiled Hub ID drops its spikes,
+        # exactly as on an unprofiled local copy.
+        explicit = Pipeline(analyzers=[ControlSmoothnessAnalyzer(gripper_dims=[-1])])
+        report = explicit.run(_batch("lerobot/pusht"))
+        assert report.dataset_profile == "pusht"
+        assert _spike_rate(report) == 0.0

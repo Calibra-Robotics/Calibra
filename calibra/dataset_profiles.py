@@ -43,7 +43,7 @@ import dataclasses
 from dataclasses import dataclass, field
 from typing import Optional
 
-from calibra.analyzers.base import Analyzer
+from calibra.analyzers.base import Analyzer, DefaultGripperDims
 
 
 @dataclass(frozen=True)
@@ -153,7 +153,9 @@ def apply_profile(analyzers: list[Analyzer], profile: Optional[DatasetProfile]) 
         return list(analyzers)
     out: list[Analyzer] = []
     for analyzer in analyzers:
-        if _is_default(analyzer, "gripper_dims"):
+        # Only the marked default is replaced: an explicit gripper_dims, even
+        # one equal to [-1], is the caller's choice.
+        if isinstance(getattr(analyzer, "gripper_dims", None), DefaultGripperDims):
             analyzer = dataclasses.replace(analyzer, gripper_dims=list(profile.gripper_dims))
         out.append(analyzer)
     return out
@@ -172,16 +174,3 @@ def add_profile_argument(parser) -> None:
             "pass it for a local copy, e.g. --profile pusht for ./datasets/pusht."
         ),
     )
-
-
-def _is_default(analyzer: Analyzer, name: str) -> bool:
-    if not dataclasses.is_dataclass(analyzer):
-        return False
-    fld = next((f for f in dataclasses.fields(analyzer) if f.name == name), None)
-    if fld is None:
-        return False
-    if fld.default_factory is not dataclasses.MISSING:
-        default = fld.default_factory()
-    else:
-        default = fld.default
-    return getattr(analyzer, name) == default

@@ -23,6 +23,14 @@ All notable changes to Calibra are documented here.
   −24.70, spikes 1.0% → 0.42%, velocity discontinuities 1.3% → 0.84%, jitter
   3.1e-5 → 3.0e-5, contact 78.9% → 78.8%. The 8 / 85 outliers reproduce
   exactly (same episodes) and are unchanged.
+- **An explicit `--gripper-dims` now survives a dataset profile.** Profiles
+  replaced any `gripper_dims` equal to the default `[-1]`, so asking for `-1`
+  explicitly on a profiled Hub ID (e.g. `lerobot/pusht`) was silently
+  overridden. Analyzers now default to a marked `DefaultGripperDims([-1])`,
+  which behaves identically but is the only value a profile replaces.
+  `compare`, `corrupt` and `scripts/profile_dataset.py` share one
+  `parse_gripper_dims` helper. No default behavior changes (the benchmark
+  regression gate is unchanged).
 
 ### Added
 

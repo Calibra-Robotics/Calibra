@@ -11,6 +11,30 @@ from calibra.schema.episode import EpisodeBatch
 from calibra.schema.report import AnalyzerResult
 
 
+class DefaultGripperDims(list):
+    """
+    The default ``gripper_dims`` ([-1], the last action dim), marked as such.
+
+    It behaves exactly like ``[-1]``; the distinct type only lets a dataset
+    profile (calibra.dataset_profiles.apply_profile) replace a default the
+    caller never chose while leaving an explicit ``[-1]`` alone.
+    """
+
+
+def default_gripper_dims() -> list[int]:
+    return DefaultGripperDims([-1])
+
+
+def parse_gripper_dims(raw: Optional[str]) -> list[int]:
+    """
+    Parse a ``--gripper-dims`` value: ``None`` (flag omitted) keeps the default,
+    ``""`` means no gripper, ``"6,13"`` lists the dims to exclude.
+    """
+    if raw is None:
+        return default_gripper_dims()
+    return [int(x) for x in raw.split(",") if x.strip()]
+
+
 class Analyzer(ABC):
     """
     Stateless diagnostic unit.

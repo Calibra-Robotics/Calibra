@@ -37,7 +37,7 @@ from typing import Optional
 
 import numpy as np
 
-from calibra.analyzers.base import Analyzer
+from calibra.analyzers.base import Analyzer, default_gripper_dims
 from calibra.analyzers.temporal import _bootstrap_ci  # reuse bootstrap helper
 from calibra.schema.episode import Episode, EpisodeBatch
 from calibra.schema.report import (
@@ -143,7 +143,7 @@ class ControlSmoothnessAnalyzer(Analyzer):
     """
 
     action_type: str = "position"
-    gripper_dims: list[int] = field(default_factory=lambda: [-1])
+    gripper_dims: list[int] = field(default_factory=default_gripper_dims)
     jerk_spike_k: float = 5.0
     ldlj_warning: float = _LDLJ_WARNING
     ldlj_critical: float = _LDLJ_CRITICAL

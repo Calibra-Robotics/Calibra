@@ -820,6 +820,7 @@ def render_community_section(
 def run_compare(argv: list[str]) -> None:
     import argparse
 
+    from calibra.analyzers.base import parse_gripper_dims
     from calibra.analyzers.coverage import CoverageEntropyAnalyzer
     from calibra.analyzers.smoothness import ControlSmoothnessAnalyzer
     from calibra.analyzers.task_structure import TaskStructureAnalyzer
@@ -880,10 +881,7 @@ def run_compare(argv: list[str]) -> None:
         reader = _get_reader(args.format)
 
     # resolve gripper dims
-    gripper_dims: list[int] = [-1]  # default: last dim
-    if args.gripper_dims is not None:
-        raw = args.gripper_dims.strip()
-        gripper_dims = [int(x) for x in raw.split(",") if x.strip()] if raw else []
+    gripper_dims = parse_gripper_dims(args.gripper_dims)
 
     def log(msg: str) -> None:
         print(msg, file=sys.stderr, flush=True)
