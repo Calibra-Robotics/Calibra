@@ -108,7 +108,29 @@ def _interp_vel_disc(yours: float, ref: float, ref_mode: str, ref_label: str) ->
     delta = yours - ref
     rel = abs(delta) / max(abs(ref), 1e-9)
 
-    if ref_mode == "velocity":
+    if ref_mode == "profiled":
+        # The reference was profiled under a dataset profile because its clean
+        # rate departs from its control mode's norm (PushT: 10 Hz mouse-teleop
+        # position targets, ~17% clean). Judge against that baseline, not the
+        # class-wide thresholds below.
+        if rel < 0.30:
+            return (
+                f"Similar to {ref_label}. Within its measured clean range.",
+                "HIGH",
+            )
+        elif delta > 0:
+            return (
+                f"Rougher than {ref_label}'s clean baseline. Investigate abrupt "
+                "teleop corrections, command noise, or timestamp misalignment.",
+                "HIGH",
+            )
+        else:
+            return (
+                f"Smoother than {ref_label}'s clean baseline. Verify the action "
+                "semantics and control frequency match the reference.",
+                "HIGH",
+            )
+    elif ref_mode == "velocity":
         if rel < 0.30:
             return (
                 f"Similar to {ref_label}. Within the expected range for "
@@ -138,8 +160,8 @@ def _interp_vel_disc(yours: float, ref: float, ref_mode: str, ref_label: str) ->
                 f"Significantly rougher than {ref_label}. "
                 "If using position commands: investigate control noise or "
                 "abrupt operator corrections. "
-                "If using velocity commands: compare to pusht instead "
-                "(expected ~16%).",
+                "If your actions are low-rate 2-D target positions from mouse "
+                "teleop: compare to pusht instead (clean rate ~17%).",
                 "HIGH",
             )
         else:
@@ -364,6 +386,12 @@ def render_comparison(
     meta = ref_data.get("meta", {})
     ref_label = meta.get("dataset", ref_name)
     ref_mode = meta.get("control_mode", "unknown")
+    # A reference profiled under a dataset profile has its own clean baseline:
+    # interpret against it, and show only class-agnostic claims, since the
+    # class-wide claims do not describe it.
+    ref_profile = meta.get("dataset_profile")
+    interp_mode = "profiled" if ref_profile else ref_mode
+    claims_class = "unknown" if ref_profile else ref_mode
     ref_n_eps = meta.get("n_episodes", "?")
     ref_action_dim = meta.get("action_dim")
     ref_is_sim = _ref_is_sim(ref_metrics)
@@ -423,7 +451,7 @@ def render_comparison(
     y, r = your_metrics["vel_disc_rate"], ref_metrics["vel_disc_rate"]
     delta = (y - r) if y is not None and r is not None else None
     if y is not None and r is not None:
-        interp, conf = _interp_vel_disc(y, r, ref_mode, ref_name)
+        interp, conf = _interp_vel_disc(y, r, interp_mode, ref_name)
     else:
         interp, conf = "Could not compute.", ""
     lines.append(
@@ -435,7 +463,7 @@ def render_comparison(
             _pct(delta),
             _delta_arrow(delta),
             interp,
-            _claims.evidence_line("vel_disc_rate", ref_mode),
+            _claims.evidence_line("vel_disc_rate", claims_class),
             conf,
         )
     )
@@ -464,7 +492,7 @@ def render_comparison(
             _pct(delta),
             _delta_arrow(delta),
             interp,
-            _claims.evidence_line("spike_rate", ref_mode),
+            _claims.evidence_line("spike_rate", claims_class),
             conf,
         )
     )
@@ -557,7 +585,7 @@ def render_comparison(
             f"{delta:+.2f} bits/dim" if delta is not None else "n/a",
             _delta_arrow(delta),
             interp,
-            _claims.evidence_line("action_entropy", ref_mode),
+            _claims.evidence_line("action_entropy", claims_class),
             conf,
         )
     )

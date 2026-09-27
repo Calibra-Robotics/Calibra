@@ -309,3 +309,40 @@ class TestProfileEvidence:
             metric = key_to_metric[key]
             assert metric in baseline, f"{profile.name}: {key} has no {metric} baseline"
             assert value > baseline[metric]["mean"]
+
+
+class TestCompareAgainstProfiledReference:
+    """`calibra compare x pusht` judges against PushT's own clean baseline."""
+
+    @staticmethod
+    def _render(vel_disc: float) -> str:
+        from calibra.compare import load_reference, metrics_from_reference, render_comparison
+
+        ref = load_reference("pusht_velocity_command")
+        ref_metrics = metrics_from_reference(ref)
+        return render_comparison(
+            your_path="./datasets/pusht_copy",
+            your_metrics={**ref_metrics, "vel_disc_rate": vel_disc},
+            your_n_episodes=206,
+            your_action_dim=2,
+            ref_data=ref,
+            ref_metrics=ref_metrics,
+            ref_name="pusht",
+        )
+
+    def test_reference_is_profiled_position_data(self):
+        from calibra.compare import load_reference
+
+        for name in ("pusht_velocity_command", "pusht_image"):
+            meta = load_reference(name)["meta"]
+            assert meta["control_mode"] == "position"
+            assert meta["gripper_dims"] == []
+            assert meta["dataset_profile"] == "pusht"
+
+    def test_pusht_like_data_reads_as_similar(self):
+        out = self._render(0.167)
+        assert "Within its measured clean range" in out
+        assert "Significantly rougher" not in out
+
+    def test_rougher_than_baseline_is_flagged(self):
+        assert "Rougher than pusht's clean baseline" in self._render(0.30)

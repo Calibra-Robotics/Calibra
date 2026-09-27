@@ -4,6 +4,15 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`calibra compare <dataset> pusht`** judged velocity discontinuities with the
+  position-command thresholds calibrated on arm datasets once the PushT
+  reference was correctly labelled `position`, so PushT-like data (~17%) read
+  as "significantly rougher than pusht". References produced under a dataset
+  profile are now interpreted against their own clean baseline, and only
+  class-agnostic claims are shown next to them.
+
 ### Added
 
 - **Evidence-gated dataset profiles.** Every profile now carries a
