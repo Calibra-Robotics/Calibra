@@ -4,8 +4,8 @@
 
 Calibra's output decides which robot episodes are kept, dropped or sent to
 training. A threshold that looks reasonable but was never measured can silently
-remove good data. So anyone will be able to propose a change, but only
-reproducible, benchmarked, reviewed changes get merged.
+remove good data. Anyone can propose a change. Only reproducible, benchmarked,
+reviewed changes get merged.
 
 ## Current status: pull requests are not open yet
 
@@ -21,13 +21,15 @@ Until then, you can contribute through issues:
   with your measurements. A maintainer writes the profile, credits you, and
   holds it to the standards below.
 - **Feature ideas:** [open a feature request](https://github.com/Calibra-Robotics/Calibra/issues/new?template=feature_request.yml).
+- **Security issues:** do not open a public issue. Follow
+  [`SECURITY.md`](https://github.com/Calibra-Robotics/Calibra/blob/main/SECURITY.md).
 
 ## What every merged change must meet
 
 These apply to maintainers today and will apply to all contributors once pull
 requests open.
 
-- **Tests for every change.** No exceptions for "small" changes.
+- **Tests for every code change.** No exceptions for "small" changes.
 - **Threshold changes need empirical evidence,** not intuition: the dataset, the
   measured distribution, and why the new value is right.
 - **Scoring and pruning changes need before and after benchmarks** on the
@@ -73,4 +75,5 @@ cd Calibra
 pip install -e ".[dev]"
 pytest tests/ -v --tb=short
 ruff check . && ruff format --check .
+python scripts/generate_claims_doc.py --check
 ```
