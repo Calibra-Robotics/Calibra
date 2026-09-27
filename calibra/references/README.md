@@ -26,7 +26,12 @@ fine may be surprisingly clean compared to peers.
 | Action entropy (bits/dim) | 5.30 | 4.85 | 4.67 | All healthy |
 | Contact fraction | 21.7% | 90.7% | 78.9% | Task-type difference |
 | Grasps per episode | none (no gripper) | 1.0 | 4.0 | Task structure detected correctly |
-| **Episode outliers (Calibra)** | **27 / 206** | **n/a (fixed length)** | **8 / 85** | Aggregate-invisible corruption |
+| **Episode outliers (Calibra)** | **16 / 206** | **n/a (fixed length)** | **8 / 85** | Aggregate-invisible corruption |
+
+PushT outliers: `calibra lerobot/pusht` on revision `7628202a` (pusht profile,
+both axes). The earlier 27 / 206 came from June 2026 code that scored the x axis
+only and differentiated in float32; it reproduces on that code but not on
+current code.
 
 ### Verdict: Outcome 1, velocity discontinuity threshold is correctly calibrated
 

@@ -30,6 +30,21 @@ All notable changes to Calibra are documented here.
   16.718% → 16.696%. p95 and max, which the profile thresholds rest on, are
   unchanged, so no verdict moves. The stale `control_mode: velocity` label is
   dropped (PushT actions are position targets).
+- **Regenerated the `pusht_image` reference.** The old file reproduces exactly
+  on its original code (8762669), which scored only the x axis (the y target
+  was excluded as a "gripper"), differentiated in float32, and labelled the
+  data `velocity` without using that label. `lerobot/pusht_image` has the same
+  actions as `lerobot/pusht`; profiled correctly (position, both axes) its
+  smoothness distributions match PushT exactly (spike 7.76% → 4.95%, velocity
+  discontinuities 11.11% → 16.70%, LDLJ −16.01 → −16.34).
+- **Reference metadata is now authoritative.** `scripts/profile_pusht.py`
+  records `control_mode`, `gripper_dims` and `dataset_profile`, and
+  `scripts/profile_dataset.py` records the gripper dims actually applied (a
+  dataset profile can replace an explicit `--gripper-dims` equal to the
+  default). The paper table's Ctrl column for both PushT rows now reads
+  `position` from that metadata.
+- PushT episode outliers in `calibra/references/README.md`: 27 / 206 → 16 / 206.
+  27 reproduces only on June 2026 code (x axis only, float32).
 
 ## [0.11.0] - Dataset profiles and README fixes
 

@@ -260,6 +260,23 @@ def main() -> None:
     report = pipeline.run(batch)
     log("Pipeline complete.")
 
+    # A Hub ID's dataset profile replaces analyzer defaults inside Pipeline.run,
+    # and an explicit --gripper-dims equal to the default is indistinguishable
+    # from it. Record the gripper dims actually applied, not the flag as passed.
+    if report.dataset_profile:
+        from calibra.dataset_profiles import apply_profile, get_profile
+
+        applied = apply_profile(
+            [ControlSmoothnessAnalyzer(gripper_dims=gripper_dims)],
+            get_profile(report.dataset_profile),
+        )[0].gripper_dims
+        if applied != gripper_dims:
+            log(
+                f"  [profile {report.dataset_profile}] gripper_dims {gripper_dims} "
+                f"replaced by {applied}"
+            )
+        gripper_dims = list(applied)
+
     ep_lengths = [ep.n_steps for ep in batch.episodes]
     ep_durations = [ep.duration_s for ep in batch.episodes]
     action_dim = batch.episodes[0].action_dim if batch.episodes else None
@@ -277,6 +294,7 @@ def main() -> None:
             "modalities": sorted(batch.modalities),
             "control_mode": args.control_mode,
             "gripper_dims": gripper_dims,
+            "dataset_profile": report.dataset_profile,
             "note": note,
         },
         "episode_structure": {

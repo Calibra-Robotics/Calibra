@@ -138,12 +138,13 @@ def main() -> None:
         log(f"  action_dim={ep0.action_dim}  modalities={sorted(batch.modalities)}")
 
     log("Running Calibra pipeline ...")
+    # pusht actions are absolute (x, y) target positions — no gripper dimension.
+    # Pass gripper_dims=[] so both action dims are included in smoothness metrics.
+    smoothness = ControlSmoothnessAnalyzer(action_type="position", gripper_dims=[])
     pipeline = Pipeline(
         analyzers=[
             TemporalAnalyzer(),
-            # pusht actions are absolute (x, y) target positions — no gripper dimension.
-            # Pass gripper_dims=[] so both action dims are included in smoothness metrics.
-            ControlSmoothnessAnalyzer(gripper_dims=[]),
+            smoothness,
             CoverageEntropyAnalyzer(),
             TaskStructureAnalyzer(),
         ]
@@ -161,6 +162,10 @@ def main() -> None:
             "n_steps_total": batch.n_samples,
             "action_dim": batch.episodes[0].action_dim if batch.episodes else None,
             "modalities": sorted(batch.modalities),
+            # The settings the smoothness metrics were computed with.
+            "control_mode": smoothness.action_type,
+            "gripper_dims": list(smoothness.gripper_dims),
+            "dataset_profile": report.dataset_profile,
             "note": (
                 "Observation-only profile. No threshold calibration. "
                 "These distributions are Calibra's first real-data reference point."

@@ -7,6 +7,9 @@
     "modalities": [
       "state"
     ],
+    "control_mode": "position",
+    "gripper_dims": [],
+    "dataset_profile": "pusht",
     "note": "Observation-only profile. No threshold calibration. These distributions are Calibra's first real-data reference point."
   },
   "episode_structure": {
