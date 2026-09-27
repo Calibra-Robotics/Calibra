@@ -49,7 +49,7 @@ maximum-coverage algorithm that scales to 500k+ episodes; and (4) closes the
 prediction loop by blending heuristic scoring with empirically observed
 training outcomes stored in a local database.
 
-We profile 16 standard robotic datasets (ALOHA, DROID, BridgeData~V2, PushT,
+We profile 15 standard robotic datasets (ALOHA, DROID, BridgeData~V2, PushT,
 SO-100) spanning five hardware platforms. Across three real datasets and
 three policy architectures (BC-MLP, ACT, Diffusion Policy) at fixed 30\%
 retention with 5 seeds each, Calibra's coreset selector reduces held-out
@@ -64,7 +64,7 @@ universally-best method. In a controlled synthetic benchmark with injected
 corruption, pruning to a 30\% coreset preserves 98\% success rate (vs.\ 62\%
 for random pruning) while saving 70\% of training compute --- and, in
 proportion, the energy drawn by training --- relative to full-dataset
-training. On the 7 of the 16 profiled datasets with an independently
+training. On the 7 of the 15 profiled datasets with an independently
 published ground-truth policy success rate, Calibra's offline predictor
 shows a positive but not statistically significant rank association with
 actual policy success (Spearman $\rho = 0.60$, $p = 0.15$, $n = 7$; exact
@@ -539,7 +539,7 @@ evidence.}
 \label{sec:predictor_exp}
 
 \paragraph{Setup.}
-We profiled 16 standard robotic datasets (Table~\ref{tab:datasets}) using
+We profiled 15 standard robotic datasets (Table~\ref{tab:datasets}) using
 \texttt{scripts/profile\_dataset.py}. Of these, 7 (ALOHA sim $\times$4, PushT
 image, Mobile ALOHA $\times$2) have a policy success rate reported
 unambiguously in the original dataset paper; we treat this as the primary,
@@ -572,7 +572,7 @@ Spearman exact $p$ is computed over all $7! = 5040$ permutations.}
 \textbf{Metric} & \textbf{Value} & \textbf{$p$ (asympt.)} & \textbf{$p$ (exact)} \\
 \midrule
 Spearman $\rho$ & 0.600 & 0.154 & 0.165 \\
-Pearson $r$ & 0.140 & 0.766 & --- \\
+Pearson $r$ & 0.174 & 0.710 & --- \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -588,7 +588,7 @@ $\rho$ between 0.41 and 0.71, and no leave-one-out subset reaches
 significance either. We therefore report this correlation as an exploratory,
 promising-but-unsettled signal that Calibra's heuristic ranking of dataset
 quality tracks downstream policy performance, not a validated predictor.
-Pearson $r = 0.140$ ($p = 0.766$) is much weaker than the rank correlation,
+Pearson $r = 0.174$ ($p = 0.710$) is much weaker than the rank correlation,
 consistent with a non-linear or noisy relationship between data quality and
 policy success at this sample size. Expanding the verified evaluation set
 well beyond $n = 7$ -- starting with a control-mode-aware rubric that lets
@@ -633,7 +633,9 @@ The exact selector becomes infeasible past $\sim$50k episodes.
 
 \begin{table}[h]
 \centering
-\caption{All 16 reference datasets profiled in Calibra. \textbf{Corr.} marks
+\caption{All 15 reference datasets profiled in Calibra.
+$^\ddagger$pusht\_image has the same actions as pusht (it adds image
+observations), so the two are listed once. \textbf{Corr.} marks
 use in the predictor correlation study of Section~\ref{sec:predictor_exp}:
 V~=~verified (in the primary $n=7$ statistic), E~=~extension (unverified
 success rate, not in the headline statistic), X~=~excluded (see
@@ -646,8 +648,7 @@ published success rate located.}
 \toprule
 \textbf{Dataset} & \textbf{Control} & \textbf{Hardware} & \textbf{Episodes} & \textbf{Corr.} \\
 \midrule
-pusht\_image                & velocity & sim  & 206    & V \\
-pusht\_velocity\_command    & velocity & sim  & 206    & --- \\
+pusht\_image$^\ddagger$     & position & sim  & 206    & V \\
 aloha\_sim\_insertion\_human        & position & sim  & 50     & V \\
 aloha\_sim\_insertion\_scripted     & position & sim  & 50     & V \\
 aloha\_sim\_transfer\_cube\_human   & position & sim  & 50     & V \\

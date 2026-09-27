@@ -71,7 +71,7 @@ We evaluated Calibra's offline training success prediction rubric (`calibra pred
 Initial study using 7 fully verified dataset–success-rate pairs (ALOHA sim × 4, PushT image, Mobile ALOHA × 2):
 
 *   **Spearman ρ = 0.600**  (p = 0.154, asymptotic; p = 0.165, exact permutation over all 5040 orderings — **not significant at p < 0.05**)
-*   **Pearson r = 0.140**  (p = 0.766)
+*   **Pearson r = 0.174**  (p = 0.710; was 0.140 / 0.766 before the 2026-09-27 regeneration of the pusht_image reference, which moved its predicted score from 85.4 to 90.6 without changing any rank, so ρ and both p-values above are unchanged)
 *   Leave-one-out sensitivity: dropping any single dataset moves ρ between 0.41 and 0.71; no leave-one-out subset reaches significance either.
 
 > ⚠️ **Correction (2026-08-14):** an earlier version of this document reported ρ = 0.5971 with p = 0.0146. Re-running `experiments/predict_correlation_study.py --no-estimates` against the current code and reference data reproduces ρ ≈ 0.60, but the p-value was wrong — 0.0146 is the correct asymptotic p-value for ρ = 0.597 at **n = 16** (the total reference-profile count), not n = 7 (the actual size of the verified correlation set), i.e. it used the wrong degrees of freedom. At the correct n = 7 this correlation is **not** statistically significant. Treat it as an exploratory signal, not a validated predictor.
