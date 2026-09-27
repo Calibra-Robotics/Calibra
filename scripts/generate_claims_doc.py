@@ -35,10 +35,8 @@ _STATUS_EMOJI = {
 _CONFIDENCE_BADGE = {
     "STRONG": "🟢 STRONG",
     "HIGH": "🟢 HIGH",
-    "MEDIUM": "🟡 MEDIUM",
     "MODERATE": "🟡 MODERATE",
     "LOW-MODERATE": "🟠 LOW-MODERATE",
-    "LOW": "🟠 LOW",
     "NOT VALIDATED": "⬜ NOT VALIDATED",
 }
 

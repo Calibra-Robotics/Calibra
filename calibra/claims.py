@@ -7,12 +7,14 @@ Each claim records:
   - what would falsify it
   - its current confidence level
 
-Confidence levels reflect evidence count, not subjective belief:
-  HIGH           >= 5 supporting datasets, no counter-evidence
-  MODERATE       2–4 supporting datasets
-  LOW-MODERATE   1 supporting dataset
-  LOW            no real-data evidence (synthetic fixtures only)
-  NOT VALIDATED  claim has been made but zero datasets tested
+Confidence levels reflect supporting-evidence count, not subjective belief
+(the scale in calibra/claims/SPEC.md; counter-evidence opens a review instead
+of lowering confidence):
+  STRONG         10+ supporting datasets
+  HIGH           5–9
+  MODERATE       2–4
+  LOW-MODERATE   1
+  NOT VALIDATED  0
 
 When a new dataset is profiled, check whether it supports or falsifies active claims.
 Update the relevant JSON file accordingly.
@@ -48,10 +50,8 @@ def _derive_confidence(claim: dict) -> str:
         return "NOT VALIDATED"
     if n == 1:
         return "LOW-MODERATE"
-    if n <= 2:
-        return "LOW"  # 2 points — not enough for MODERATE
     if n <= 4:
-        return "MEDIUM"  # 3–4 points — MEDIUM per roadmap table
+        return "MODERATE"
     if n <= 9:
         return "HIGH"
     return "STRONG"

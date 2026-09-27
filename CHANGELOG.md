@@ -12,6 +12,10 @@ All notable changes to Calibra are documented here.
   as "significantly rougher than pusht". References produced under a dataset
   profile are now interpreted against their own clean baseline, and only
   class-agnostic claims are shown next to them.
+- **Claim confidence now follows the SPEC scale** (`calibra/claims/SPEC.md`):
+  2–4 supporting datasets is MODERATE. The code had labelled 2 as LOW (below
+  1's LOW-MODERATE) and 3–4 as an undocumented MEDIUM. JS-003, PAI-001 and
+  TEMP-003 (2 supporting datasets each) move LOW → MODERATE.
 
 ### Added
 

@@ -79,3 +79,23 @@ def test_every_retraction_is_explained():
                 assert entry.get("retracted") and entry.get("retraction_reason"), (
                     f"{claim['id']}: retracted {entry['dataset']} without a date and reason"
                 )
+
+
+@pytest.mark.parametrize(
+    "n_supporting, expected",
+    [
+        (0, "NOT VALIDATED"),
+        (1, "LOW-MODERATE"),
+        (2, "MODERATE"),
+        (4, "MODERATE"),
+        (5, "HIGH"),
+        (9, "HIGH"),
+        (10, "STRONG"),
+    ],
+)
+def test_confidence_follows_spec_scale(n_supporting, expected):
+    # The scale is the table in calibra/claims/SPEC.md; counter-evidence never counts.
+    from calibra.claims import _derive_confidence
+
+    evidence = [{"supports": True}] * n_supporting + [{"supports": False}]
+    assert _derive_confidence({"evidence": evidence}) == expected

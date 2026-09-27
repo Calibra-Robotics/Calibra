@@ -95,7 +95,7 @@ claims:
     metric: "spike_rate"
     class: "any"
     status: "active_hypothesis"
-    confidence: "LOW"
+    confidence: "MODERATE"
     assertion: "Jerk spike rate is more robust to cross-frequency comparison than LDLJ, because the 5x-median threshold self-adapts to episode scale"
     evidence_count: 2
     evidence_datasets:
@@ -159,7 +159,7 @@ claims:
     metric: "pretraining_alignment_index"
     class: "any"
     status: "active_hypothesis"
-    confidence: "LOW"
+    confidence: "MODERATE"
     assertion: "Datasets with a Pre-training Alignment Index (PAI) above 80% achieve significantly higher downstream policy success rates with fewer fine-tuning epochs when using pre-trained foundation models."
     evidence_count: 2
     evidence_datasets:
@@ -211,7 +211,7 @@ claims:
     metric: "dropout_rate"
     class: "any"
     status: "active_hypothesis"
-    confidence: "LOW"
+    confidence: "MODERATE"
     assertion: "Current dropout_rate thresholds (warning: 1%, critical: 5%) are calibrated from synthetic fixtures only and have not been validated on real hardware"
     evidence_count: 2
     evidence_datasets:

@@ -126,7 +126,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 #### TEMP-003 — any
 
 **Status:** 🔬 active hypothesis  
-**Confidence:** 🟠 LOW  
+**Confidence:** 🟡 MODERATE  
 **Class:** `any`  
 **Source:** `calibra/claims/temporal_stability.json`  
 
@@ -293,7 +293,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 #### PAI-001 — any
 
 **Status:** 🔬 active hypothesis  
-**Confidence:** 🟠 LOW  
+**Confidence:** 🟡 MODERATE  
 **Class:** `any`  
 **Source:** `calibra/claims/pretraining_alignment.json`  
 
@@ -386,7 +386,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 #### JS-003 — any
 
 **Status:** 🔬 active hypothesis  
-**Confidence:** 🟠 LOW  
+**Confidence:** 🟡 MODERATE  
 **Class:** `any`  
 **Source:** `calibra/claims/jerk_spike.json`  
 
