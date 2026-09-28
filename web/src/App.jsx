@@ -19,7 +19,8 @@ const LINKS = {
   github: 'https://github.com/Calibra-Robotics/Calibra',
   linkedin: 'https://www.linkedin.com/company/calibrarobotics',
   demo: 'https://huggingface.co/spaces/omert27/robot-dataset-health-check',
-  docs: 'https://github.com/Calibra-Robotics/Calibra/tree/main/docs',
+  docs: 'https://calibra-robotics.github.io/Calibra/',
+  commands: 'https://calibra-robotics.github.io/Calibra/commands/',
   benchmarks: 'https://github.com/Calibra-Robotics/Calibra#benchmark-results',
   license: 'https://github.com/Calibra-Robotics/Calibra/blob/main/LICENSE',
   licensing: 'https://github.com/Calibra-Robotics/Calibra/blob/main/LICENSING.md',
@@ -674,7 +675,7 @@ function App() {
                 <li><CheckCircle2 size={18} /> CI-friendly, deterministic analysis</li>
                 <li><CheckCircle2 size={18} /> No upload, account, or API key required</li>
               </ul>
-              <a className="text-link" href={LINKS.docs} target="_blank" rel="noreferrer">Explore the commands <ArrowRight size={16} /></a>
+              <a className="text-link" href={LINKS.commands} target="_blank" rel="noreferrer">Explore the commands <ArrowRight size={16} /></a>
             </Reveal>
             <CoverageGraphic />
           </div>
