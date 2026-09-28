@@ -1,7 +1,7 @@
 # Calibra
 
 <p align="center">
-  <img src="logo.svg" alt="Calibra — train on less robot data, spend less compute" width="480"/>
+  <img src="logo.svg" alt="Calibra: train on less robot data, spend less compute" width="480"/>
 </p>
 
 **Stop wasting GPU hours on robot data that doesn't improve your policy.**
