@@ -1,0 +1,27 @@
+# Runs the same fast checks as CI before each commit.
+#   pip install -e ".[dev]" && pre-commit install
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+        args: ["--unsafe"]  # mkdocs.yml uses !!python/name tags
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.1
+    hooks:
+      - id: ruff
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: claims-doc
+        name: claims documentation ratio
+        entry: python scripts/generate_claims_doc.py --check
+        language: system
+        pass_filenames: false
+        files: ^(calibra/claims/|scripts/generate_claims_doc\.py|docs/claims\.md)
