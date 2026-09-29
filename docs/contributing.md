@@ -7,26 +7,21 @@ training. A threshold that looks reasonable but was never measured can silently
 remove good data. Anyone can propose a change. Only reproducible, benchmarked,
 reviewed changes get merged.
 
-## How to contribute
+## Current status: not accepting outside contributions yet
 
-- **Pull requests:** fork the repository, branch from `main`, and open a pull
-  request. On your first pull request a bot asks you to sign the
-  [Contributor License Agreement](https://github.com/Calibra-Robotics/Calibra/blob/main/CLA.md);
-  you sign once by replying with the comment it gives you. For anything larger
-  than a bug fix, open an issue first so we can agree on the approach before
-  you write the code.
-- **Bug reports:** [open a bug report](https://github.com/Calibra-Robotics/Calibra/issues/new?template=bug_report.yml).
-- **Dataset profile proposals:** if Calibra misjudges a dataset you know well,
-  [propose a profile](https://github.com/Calibra-Robotics/Calibra/issues/new?template=dataset_profile.yml)
-  with your measurements, or open a pull request with the profile and its
-  evidence.
-- **Feature ideas:** [open a feature request](https://github.com/Calibra-Robotics/Calibra/issues/new?template=feature_request.yml).
-- **Security issues:** do not open a public issue. Follow
+Issues, discussions and external pull requests are closed, and pull requests
+from outside the project are closed automatically.
+
+- **Security issues:** report them privately by following
   [`SECURITY.md`](https://github.com/Calibra-Robotics/Calibra/blob/main/SECURITY.md).
+- **A bug, or a dataset Calibra misjudges:** email **omertahtoko@gmail.com**.
+  For a dataset, include your measurements; a maintainer writes the profile,
+  credits you, and holds it to the standards below.
 
-## What every merged change must meet
+## What every change must meet
 
-These apply to everyone, maintainers included.
+These apply to the maintainer's own commits today and will apply to all
+contributors once pull requests open.
 
 - **Tests for every code change.** No exceptions for "small" changes.
 - **Threshold changes need empirical evidence,** not intuition: the dataset, the
@@ -34,7 +29,7 @@ These apply to everyone, maintainers included.
 - **Scoring and pruning changes need before and after benchmarks** on the
   reference datasets.
 - **No silent behavior changes.** A change that moves any verdict, score or
-  prune count says so in the pull request and the changelog.
+  prune count says so in the commit message and the changelog.
 - **Global defaults are harder to change than dataset profiles.** A quirk of one
   dataset goes in a profile in `calibra/dataset_profiles.py`, never in a
   global default that would shift every other dataset's results.
@@ -43,16 +38,15 @@ These apply to everyone, maintainers included.
 - **Include reproducibility details:** commands, seeds, dataset revision and
   expected outputs.
 
-Each pull request also gets a GitHub Copilot code review that checks it against
-these rules (`.github/copilot-instructions.md` and `.github/instructions/`). It
-is advisory. What blocks a merge is CI (tests on Python 3.10 to 3.13, lint,
-the type-check ratchet, the claims check and the benchmark regression check)
-and a code owner's approval.
+CI runs on every push to `main`: tests on Python 3.10 to 3.13, lint, the
+type-check ratchet, the claims check and the benchmark regression check. Run
+the same checks locally before pushing (see below); `pre-commit` covers the
+fast ones. Pull requests, when they open, also get an advisory GitHub Copilot
+review against these rules (`.github/copilot-instructions.md` and
+`.github/instructions/`).
 
-Pull requests are squash-merged, so the pull request title becomes the commit
-message. Use the [Conventional Commits](https://www.conventionalcommits.org/)
-style the history already follows (`fix(profiles): ...`, `feat: ...`,
-`docs: ...`).
+Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/)
+(`fix(profiles): ...`, `feat: ...`, `docs: ...`).
 
 ### Dataset profiles
 
@@ -86,5 +80,5 @@ python scripts/mypy_ratchet.py
 
 `scripts/mypy_ratchet.py` fails if a change adds type errors. The codebase is
 not type-clean yet; if your change removes errors, lower `BASELINE` in that
-script in the same pull request. Test coverage must stay at or above
+script in the same commit. Test coverage must stay at or above
 `fail_under` in `pyproject.toml`.

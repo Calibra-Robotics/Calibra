@@ -45,7 +45,8 @@ available. Contact **omertahtoko@gmail.com**.
 
 ## Contributions
 
-Contributors sign the [Contributor License Agreement](CLA.md) before their
-first pull request is merged. It lets the project distribute contributions
-under the BSL, under Apache 2.0 after the Change Date, and under commercial
-licenses. You keep the copyright in your work.
+External pull requests are not accepted yet. When they open, contributors
+will sign the [Contributor License Agreement](CLA.md) before their first pull
+request is merged. It lets the project distribute contributions under the BSL,
+under Apache 2.0 after the Change Date, and under commercial licenses.
+Contributors keep the copyright in their work.

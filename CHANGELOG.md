@@ -6,15 +6,16 @@ All notable changes to Calibra are documented here.
 
 ### Changed
 
-- **External pull requests are open.** Contributors sign a Contributor License
-  Agreement (`CLA.md`) once, via a bot comment on their first pull request.
-  `GOVERNANCE.md` describes who decides what and response-time expectations.
+- **Outside contributions are closed for now:** issues and discussions are
+  turned off, and a workflow closes external pull requests automatically with
+  a pointer to the contact email. A draft Contributor License Agreement
+  (`CLA.md`) is kept for when contributions open. `GOVERNANCE.md` describes
+  who decides what.
 - **CI now also runs on Python 3.13, fails if the mypy error count rises**
   above its baseline (`scripts/mypy_ratchet.py`), and **fails if test coverage
   drops below 58%** (measured with only the dev extra installed, as in CI).
-- Added `pre-commit` hooks, Dependabot for GitHub Actions and pip,
-  `CITATION.cff`, and an issue-template config that sends security reports to
-  private vulnerability reporting. `SECURITY.md` and `CODE_OF_CONDUCT.md` now
+- Added `pre-commit` hooks and `CITATION.cff`. `SECURITY.md` now points to
+  private vulnerability reporting, and `SECURITY.md` and `CODE_OF_CONDUCT.md`
   name a contact.
 
 ### Fixed
@@ -33,8 +34,6 @@ All notable changes to Calibra are documented here.
   a key `certify --json` does not emit) and now comes from `calibra score`.
   The comment is truncated to fit GitHub's size limit, and a comment that
   cannot be posted no longer fails the job.
-- **Dependabot raised `>=` minimum versions** in `pyproject.toml`; it now only
-  bumps exact pins.
 - **`calibra compare <dataset> pusht`** judged velocity discontinuities with the
   position-command thresholds calibrated on arm datasets once the PushT
   reference was correctly labelled `position`, so PushT-like data (~17%) read

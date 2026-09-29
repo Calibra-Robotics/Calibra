@@ -1,0 +1,26 @@
+name: Close external pull requests
+
+# Outside contributions are not open yet (see CONTRIBUTING.md). Close external
+# pull requests with a pointer to the contact email.
+# pull_request_target is safe here: this job never checks out PR code.
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  close:
+    name: Close external pull request
+    if: >-
+      !contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'),
+      github.event.pull_request.author_association)
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr close "$PR_URL" --comment "Thanks for your interest in Calibra! We are not accepting outside contributions yet, so this pull request has been closed automatically. For a bug or a dataset Calibra misjudges, email omertahtoko@gmail.com. See [CONTRIBUTING.md](https://github.com/Calibra-Robotics/Calibra/blob/main/CONTRIBUTING.md)."

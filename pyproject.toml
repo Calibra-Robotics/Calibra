@@ -16,8 +16,6 @@ dependencies = [
 [project.urls]
 Documentation = "https://calibra-robotics.github.io/Calibra/"
 Repository = "https://github.com/Calibra-Robotics/Calibra"
-"Bug Tracker" = "https://github.com/Calibra-Robotics/Calibra/issues"
-
 [project.scripts]
 calibra = "calibra.__main__:main"
 
