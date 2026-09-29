@@ -73,7 +73,7 @@ jobs:
       # A called workflow starts in a fresh job, so a local dataset path only
       # exists after checking out the caller's repository.
       - name: Check out caller repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Set up Python
         uses: actions/setup-python@v6
