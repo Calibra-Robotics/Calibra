@@ -41,7 +41,7 @@ Apache conversion.
 
 If your intended use is restricted by the Additional Use Grant — for example,
 you want to offer Calibra as part of a hosted product — a commercial license is
-available. Contact **omertahtoko@gmail.com**.
+available. Contact **omertahtaci05@gmail.com**.
 
 ## Contributions
 

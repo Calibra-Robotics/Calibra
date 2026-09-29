@@ -516,22 +516,41 @@ Camera-frame checks (`duplicate_frame_rate`, `camera_freeze_events`, `blurry_epi
 
 ## Citation
 
-*Available after paper release.*
+Until the paper is out, cite the software. GitHub's **Cite this repository**
+button reads [`CITATION.cff`](CITATION.cff), or use:
+
+```bibtex
+@misc{tahtaci2026calibra,
+  author = {Tahtacı, Ömer},
+  title  = {Calibra: Offline Dataset Observability and Coreset Selection for Robotic Imitation Learning},
+  year   = {2026},
+  url    = {https://github.com/Calibra-Robotics/Calibra}
+}
+```
 
 ---
 
 ## Contributing
 
-Calibra is not open to external pull requests or contributions at this time.
+Calibra is not accepting outside contributions yet: issues, discussions and
+pull requests are closed. Report security issues privately as described in
+[SECURITY.md](SECURITY.md); for anything else, such as a bug or a dataset
+Calibra misjudges, email omertahtaci05@gmail.com. See
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Development
 
 ```bash
 git clone https://github.com/Calibra-Robotics/Calibra
+cd Calibra
 pip install -e '.[all,dev]'
-pytest              # 900+ tests
-ruff check .        # zero errors expected
+pre-commit install              # ruff, format and claims checks on every commit
+pytest                          # 1,000+ tests
+python scripts/mypy_ratchet.py  # fails if a change adds type errors
 ```
+
+The standards every change must meet, including evidence for threshold and
+scoring changes, are in [docs/contributing.md](docs/contributing.md).
 
 ---
 

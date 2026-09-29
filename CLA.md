@@ -67,7 +67,7 @@ You represent that:
   received permission to make Contributions on behalf of that employer, or
   your employer has waived such rights for your Contributions. If your
   employer owns what You write, it may need to sign a corporate CLA; contact
-  the Maintainer at omertahtoko@gmail.com before contributing.
+  the Maintainer at omertahtaci05@gmail.com before contributing.
 - Each of Your Contributions is Your original creation, or You identify in the
   pull request any third-party material it includes, with its license.
 - You will notify the Maintainer if any of these representations becomes

@@ -14,7 +14,7 @@ from outside the project are closed automatically.
 
 - **Security issues:** report them privately by following
   [`SECURITY.md`](https://github.com/Calibra-Robotics/Calibra/blob/main/SECURITY.md).
-- **A bug, or a dataset Calibra misjudges:** email **omertahtoko@gmail.com**.
+- **A bug, or a dataset Calibra misjudges:** email **omertahtaci05@gmail.com**.
   For a dataset, include your measurements; a maintainer writes the profile,
   credits you, and holds it to the standards below.
 

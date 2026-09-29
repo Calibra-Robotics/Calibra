@@ -23,4 +23,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          gh pr close "$PR_URL" --comment "Thanks for your interest in Calibra! We are not accepting outside contributions yet, so this pull request has been closed automatically. For a bug or a dataset Calibra misjudges, email omertahtoko@gmail.com. See [CONTRIBUTING.md](https://github.com/Calibra-Robotics/Calibra/blob/main/CONTRIBUTING.md)."
+          gh pr close "$PR_URL" --comment "Thanks for your interest in Calibra! We are not accepting outside contributions yet, so this pull request has been closed automatically. For a bug or a dataset Calibra misjudges, email omertahtaci05@gmail.com. See [CONTRIBUTING.md](https://github.com/Calibra-Robotics/Calibra/blob/main/CONTRIBUTING.md)."

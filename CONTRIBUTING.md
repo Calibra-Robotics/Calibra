@@ -7,7 +7,7 @@ closed automatically.
 - **Security issues:** report them privately as described in
   [SECURITY.md](SECURITY.md).
 - **Anything else** (a bug, a dataset Calibra misjudges, a commercial license):
-  email **omertahtoko@gmail.com**.
+  email **omertahtaci05@gmail.com**.
 
 The standards every change must meet, and how dataset profiles are evidenced,
 are in [docs/contributing.md](docs/contributing.md). How decisions are made is
