@@ -8,7 +8,8 @@ with instructions, and you sign once by replying to it.
 
 Not ready to write code? Bug reports, feature ideas and dataset profile
 proposals are welcome as
-[issues](https://github.com/Calibra-Robotics/Calibra/issues/new/choose).
+[issues](https://github.com/Calibra-Robotics/Calibra/issues/new/choose), and
+questions as [discussions](https://github.com/Calibra-Robotics/Calibra/discussions).
 Report security issues privately as described in [SECURITY.md](SECURITY.md),
 not as public issues.
 
