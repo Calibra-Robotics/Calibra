@@ -103,73 +103,82 @@ runs:
   steps:
     - name: Install Calibra
       shell: bash
+      env:
+        CALIBRA_VERSION: ${{ inputs.calibra-version }}
       run: |
-        if [ -n "${{ inputs.calibra-version }}" ]; then
-          pip install "calibra-robotics[hdf5,lerobot,kinematics]==${{ inputs.calibra-version }}" --quiet
+        if [ -n "$CALIBRA_VERSION" ]; then
+          pip install "calibra-robotics[hdf5,lerobot,kinematics]==$CALIBRA_VERSION" --quiet
         else
           pip install "calibra-robotics[hdf5,lerobot,kinematics]" --quiet
         fi
         calibra --version
 
+    # Inputs reach the scripts through env, never ${{ }} interpolation, so a
+    # dataset path or argument cannot inject shell commands.
     - name: Run calibra certify
       id: certify
       shell: bash
+      env:
+        DATASET: ${{ inputs.dataset }}
+        REFERENCE: ${{ inputs.reference }}
+        POLICY: ${{ inputs.policy }}
+        FORMAT: ${{ inputs.format }}
+        STRICT: ${{ inputs.strict }}
+        EXTRA_ARGS: ${{ inputs.extra-args }}
       run: |
-        ARGS="${{ inputs.dataset }}"
-
-        if [ -n "${{ inputs.reference }}" ]; then
-          ARGS="$ARGS --reference ${{ inputs.reference }}"
-        fi
-        if [ -n "${{ inputs.policy }}" ]; then
-          ARGS="$ARGS --policy ${{ inputs.policy }}"
-        fi
-        if [ -n "${{ inputs.format }}" ]; then
-          ARGS="$ARGS --format ${{ inputs.format }}"
-        fi
-        if [ "${{ inputs.strict }}" = "true" ]; then
-          ARGS="$ARGS --strict"
-        fi
-        if [ -n "${{ inputs.extra-args }}" ]; then
-          ARGS="$ARGS ${{ inputs.extra-args }}"
+        args=("$DATASET")
+        if [ -n "$REFERENCE" ]; then args+=(--reference "$REFERENCE"); fi
+        if [ -n "$POLICY" ]; then args+=(--policy "$POLICY"); fi
+        if [ -n "$FORMAT" ]; then args+=(--format "$FORMAT"); fi
+        if [ "$STRICT" = "true" ]; then args+=(--strict); fi
+        if [ -n "$EXTRA_ARGS" ]; then
+          read -ra extra <<< "$EXTRA_ARGS"
+          args+=("${extra[@]}")
         fi
 
-        # Capture JSON output for structured parsing
-        JSON_OUTPUT=$(calibra certify $ARGS --json 2>/dev/null) || true
+        # Capture JSON output for structured parsing. set +e so the real exit
+        # code survives (composite steps run under bash -e).
+        JSON_FILE="$RUNNER_TEMP/calibra-certify.json"
+        set +e
+        calibra certify "${args[@]}" --json > "$JSON_FILE"
         EXIT_CODE=$?
+        set -e
 
         # Also print human-readable output
-        calibra certify $ARGS || true
+        calibra certify "${args[@]}" || true
 
-        GRADE=$(echo "$JSON_OUTPUT" | python3 -c \
-          "import sys,json; d=json.load(sys.stdin); print(d.get('grade','UNKNOWN'))" \
-          2>/dev/null || echo "UNKNOWN")
-        REPORT=$(echo "$JSON_OUTPUT" | python3 -c \
-          "import sys,json; d=json.load(sys.stdin); print(json.dumps(d))" \
-          2>/dev/null || echo "{}")
+        GRADE=$(python3 -c \
+          "import sys,json; print(json.load(open(sys.argv[1])).get('grade','UNKNOWN'))" \
+          "$JSON_FILE" 2>/dev/null || echo "UNKNOWN")
+        REPORT=$(python3 -c \
+          "import sys,json; print(json.dumps(json.load(open(sys.argv[1]))))" \
+          "$JSON_FILE" 2>/dev/null || echo "{}")
 
-        echo "grade=$GRADE"         >> $GITHUB_OUTPUT
-        echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
-        echo "report_json=$REPORT"  >> $GITHUB_OUTPUT
+        echo "grade=$GRADE"         >> "$GITHUB_OUTPUT"
+        echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+        echo "report_json=$REPORT"  >> "$GITHUB_OUTPUT"
 
         echo "::notice title=Calibra Certification::Grade: $GRADE (exit $EXIT_CODE)"
-        exit $EXIT_CODE
+        # Exit 1 (warnings) only fails when strict, and --strict already
+        # turns it into 2.
+        if [ "$EXIT_CODE" -ge 2 ]; then exit "$EXIT_CODE"; fi
 
     - name: Run calibra score
       id: score
       if: always()
       shell: bash
+      env:
+        DATASET: ${{ inputs.dataset }}
+        POLICY: ${{ inputs.policy }}
+        FORMAT: ${{ inputs.format }}
       run: |
-        ARGS="${{ inputs.dataset }}"
-        if [ -n "${{ inputs.format }}" ]; then
-          ARGS="$ARGS --format ${{ inputs.format }}"
-        fi
-        if [ -n "${{ inputs.policy }}" ]; then
-          ARGS="$ARGS --policy ${{ inputs.policy }}"
-        fi
+        args=("$DATASET")
+        if [ -n "$FORMAT" ]; then args+=(--format "$FORMAT"); fi
+        if [ -n "$POLICY" ]; then args+=(--policy "$POLICY"); fi
 
-        SCORE_JSON=$(calibra score $ARGS --json 2>/dev/null) || true
+        SCORE_JSON=$(calibra score "${args[@]}" --json 2>/dev/null) || true
         SCORE=$(echo "$SCORE_JSON" | python3 -c \
           "import sys,json; d=json.load(sys.stdin); print(d.get('total_score', 'n/a'))" \
           2>/dev/null || echo "n/a")
-        echo "score=$SCORE" >> $GITHUB_OUTPUT
+        echo "score=$SCORE" >> "$GITHUB_OUTPUT"
         echo "::notice title=Calibra Score::Score: $SCORE / 100"
