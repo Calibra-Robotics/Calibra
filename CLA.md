@@ -1,27 +1,39 @@
 # Calibra Individual Contributor License Agreement
 
+**Version 1.0**
+
 > **DRAFT: not yet in effect.** This text is adapted from the Apache Software
 > Foundation Individual CLA and has not been reviewed by a lawyer. It must be
 > reviewed and finalized before any external contribution is merged.
 
-Thank you for your interest in contributing to Calibra ("the Project"),
-maintained by Ömer Tahtacı ("the Maintainer"). This agreement clarifies the
-intellectual property license granted with contributions, so that the Project
-can be distributed under the Business Source License 1.1, converted to the
-Apache License 2.0 on its Change Date, and offered under commercial licenses.
+Thank you for your interest in contributing to Calibra ("the Project"). This
+agreement clarifies the intellectual property license granted with
+contributions, so that the Project can be distributed under the Business
+Source License 1.1, under the Apache License 2.0 from the Change Date set in
+the Project's `LICENSE` file, and under commercial licenses.
 
 You accept this agreement by commenting on your pull request:
 
 > I have read the CLA Document and I hereby sign the CLA
 
+The CLA bot records your GitHub username and account ID, the pull request, the
+comment, and the time you signed. Signatures are stored per version of this
+agreement, so each one shows which version was accepted.
+
 ## 1. Definitions
+
+**"The Maintainer"** means Ömer Tahtacı, the licensor of the Project, and the
+Maintainer's successors and assigns, including any entity that later owns or
+maintains the Project.
 
 **"You"** means the individual who submits a Contribution.
 
 **"Contribution"** means any original work of authorship, including any
 modifications or additions to existing work, that You intentionally submit to
-the Maintainer for inclusion in the Project, through a pull request, issue,
-comment or any other form of electronic, verbal or written communication.
+the Maintainer for inclusion in the Project, including through pull requests,
+issue trackers or other Project-managed communication channels, but excluding
+any communication conspicuously marked or otherwise designated in writing by
+You as "Not a Contribution."
 
 ## 2. Copyright license
 
@@ -53,7 +65,9 @@ You represent that:
 - You are legally entitled to grant the above licenses.
 - If your employer has rights to intellectual property You create, You have
   received permission to make Contributions on behalf of that employer, or
-  your employer has waived such rights for your Contributions.
+  your employer has waived such rights for your Contributions. If your
+  employer owns what You write, it may need to sign a corporate CLA; contact
+  the Maintainer at omertahtoko@gmail.com before contributing.
 - Each of Your Contributions is Your original creation, or You identify in the
   pull request any third-party material it includes, with its license.
 - You will notify the Maintainer if any of these representations becomes
@@ -69,3 +83,9 @@ applicable law or agreed to in writing, You provide Your Contributions on an
 
 You retain ownership of the copyright in Your Contributions. This agreement is
 a license, not an assignment.
+
+## 7. Changes to this agreement
+
+A new version of this agreement applies only to Contributions submitted after
+You sign that version. Contributions You submitted under an earlier version
+stay licensed under it.

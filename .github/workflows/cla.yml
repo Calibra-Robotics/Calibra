@@ -1,7 +1,9 @@
 name: CLA
 
 # Contributors sign CLA.md once by commenting on their pull request.
-# Signatures are stored on the unprotected `cla-signatures` branch.
+# Signatures are stored on the unprotected `cla-signatures` branch, one file
+# per CLA version. When CLA.md changes materially, bump its version and point
+# path-to-signatures at a new file, so everyone signs the new text.
 # pull_request_target is safe here: this job never checks out PR code.
 
 on:
@@ -30,6 +32,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           path-to-document: https://github.com/Calibra-Robotics/Calibra/blob/main/CLA.md
-          path-to-signatures: signatures/cla.json
+          path-to-signatures: signatures/cla-v1.json
           branch: cla-signatures
           allowlist: omertt27,dependabot[bot],Copilot
