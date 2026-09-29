@@ -70,6 +70,11 @@ jobs:
       score: ${{ steps.score.outputs.score }}
 
     steps:
+      # A called workflow starts in a fresh job, so a local dataset path only
+      # exists after checking out the caller's repository.
+      - name: Check out caller repository
+        uses: actions/checkout@v5
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -80,37 +85,55 @@ jobs:
           pip install "calibra-robotics[hdf5,lerobot,kinematics]" --quiet
           calibra --version
 
+      # Inputs reach the scripts through env, never ${{ }} interpolation, so a
+      # dataset path or argument cannot inject shell commands.
       - name: Run calibra certify
         id: certify
+        env:
+          DATASET: ${{ inputs.dataset }}
+          REFERENCE: ${{ inputs.reference }}
+          POLICY: ${{ inputs.policy }}
+          FORMAT: ${{ inputs.format }}
+          STRICT: ${{ inputs.strict }}
         run: |
-          ARGS="${{ inputs.dataset }}"
-          [ -n "${{ inputs.reference }}" ] && ARGS="$ARGS --reference ${{ inputs.reference }}"
-          [ -n "${{ inputs.policy }}"    ] && ARGS="$ARGS --policy ${{ inputs.policy }}"
-          [ -n "${{ inputs.format }}"    ] && ARGS="$ARGS --format ${{ inputs.format }}"
-          [ "${{ inputs.strict }}" = "true" ] && ARGS="$ARGS --strict"
+          args=("$DATASET")
+          if [ -n "$REFERENCE" ]; then args+=(--reference "$REFERENCE"); fi
+          if [ -n "$POLICY" ]; then args+=(--policy "$POLICY"); fi
+          if [ -n "$FORMAT" ]; then args+=(--format "$FORMAT"); fi
+          if [ "$STRICT" = "true" ]; then args+=(--strict); fi
 
-          JSON=$(calibra certify $ARGS --json 2>/dev/null) || true
+          # set +e so the real exit code survives (run steps use bash -e).
+          JSON_FILE="$RUNNER_TEMP/calibra-certify.json"
+          set +e
+          calibra certify "${args[@]}" --json > "$JSON_FILE"
           EXIT_CODE=$?
-          calibra certify $ARGS || true
+          set -e
+          calibra certify "${args[@]}" || true
 
-          GRADE=$(echo "$JSON" | python3 -c \
-            "import sys,json; print(json.load(sys.stdin).get('grade','UNKNOWN'))" 2>/dev/null \
-            || echo "UNKNOWN")
-          echo "grade=$GRADE" >> $GITHUB_OUTPUT
+          GRADE=$(python3 -c \
+            "import sys,json; print(json.load(open(sys.argv[1])).get('grade','UNKNOWN'))" \
+            "$JSON_FILE" 2>/dev/null || echo "UNKNOWN")
+          echo "grade=$GRADE" >> "$GITHUB_OUTPUT"
           echo "::notice title=Calibra::Grade: $GRADE"
-          exit $EXIT_CODE
+          # Exit 1 (warnings) only fails when strict, and --strict already
+          # turns it into 2.
+          if [ "$EXIT_CODE" -ge 2 ]; then exit "$EXIT_CODE"; fi
 
       - name: Run calibra score
         id: score
         if: always()
+        env:
+          DATASET: ${{ inputs.dataset }}
+          POLICY: ${{ inputs.policy }}
+          FORMAT: ${{ inputs.format }}
         run: |
-          ARGS="${{ inputs.dataset }}"
-          [ -n "${{ inputs.format }}" ] && ARGS="$ARGS --format ${{ inputs.format }}"
-          [ -n "${{ inputs.policy }}" ] && ARGS="$ARGS --policy ${{ inputs.policy }}"
+          args=("$DATASET")
+          if [ -n "$FORMAT" ]; then args+=(--format "$FORMAT"); fi
+          if [ -n "$POLICY" ]; then args+=(--policy "$POLICY"); fi
 
-          JSON=$(calibra score $ARGS --json 2>/dev/null) || true
+          JSON=$(calibra score "${args[@]}" --json 2>/dev/null) || true
           SCORE=$(echo "$JSON" | python3 -c \
             "import sys,json; print(json.load(sys.stdin).get('total_score','n/a'))" 2>/dev/null \
             || echo "n/a")
-          echo "score=$SCORE" >> $GITHUB_OUTPUT
+          echo "score=$SCORE" >> "$GITHUB_OUTPUT"
           echo "::notice title=Calibra Score::$SCORE / 100"

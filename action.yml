@@ -33,75 +33,111 @@ inputs:
 
 outputs:
   status:
-    description: Certification result (CERTIFIED, PROVISIONALLY_CERTIFIED, NOT_CERTIFIED)
+    description: Certification result (CERTIFIED, PROVISIONALLY_CERTIFIED, NOT_CERTIFIED, ERROR)
     value: ${{ steps.certify.outputs.status }}
   score:
     description: Composite Calibra score (0-100)
-    value: ${{ steps.certify.outputs.score }}
+    value: ${{ steps.score.outputs.score }}
 
+# Inputs and step outputs reach scripts through env, never ${{ }} interpolation
+# inside `run` or `script`: a dataset path or report text must not be able to
+# inject shell commands or JavaScript.
 runs:
   using: composite
   steps:
     - name: Install calibra-robotics
       shell: bash
+      env:
+        CALIBRA_VERSION: ${{ inputs.calibra-version }}
       run: |
-        if [ "${{ inputs.calibra-version }}" = "latest" ]; then
+        if [ "$CALIBRA_VERSION" = "latest" ]; then
           pip install 'calibra-robotics[lerobot]' --quiet
         else
-          pip install "calibra-robotics[lerobot]==${{ inputs.calibra-version }}" --quiet
+          pip install "calibra-robotics[lerobot]==$CALIBRA_VERSION" --quiet
         fi
 
     - name: Run calibra certify
       id: certify
       shell: bash
+      env:
+        DATASET: ${{ inputs.dataset-path }}
+        POLICY: ${{ inputs.policy }}
+        REFERENCE: ${{ inputs.reference }}
       run: |
-        ARGS="${{ inputs.dataset-path }}"
-        [ -n "${{ inputs.policy }}" ]    && ARGS="$ARGS --policy ${{ inputs.policy }}"
-        [ -n "${{ inputs.reference }}" ] && ARGS="$ARGS --reference ${{ inputs.reference }}"
-        [ "${{ inputs.strict }}" = "true" ] && ARGS="$ARGS --strict"
+        args=("$DATASET")
+        if [ -n "$POLICY" ]; then args+=(--policy "$POLICY"); fi
+        if [ -n "$REFERENCE" ]; then args+=(--reference "$REFERENCE"); fi
 
-        # Run and capture both output and exit code
-        OUTPUT=$(calibra certify $ARGS --json 2>&1) || EXIT_CODE=$?
-        EXIT_CODE=${EXIT_CODE:-0}
+        # Run without --strict so the exit code maps exactly onto the grade
+        # (0/1/2, see calibra/certify.py); strict is applied in the last step.
+        # set +e so the real exit code survives (composite steps run under bash -e).
+        REPORT_FILE="$RUNNER_TEMP/calibra-certify.txt"
+        set +e
+        calibra certify "${args[@]}" > "$REPORT_FILE"
+        EXIT_CODE=$?
+        set -e
+        cat "$REPORT_FILE"
 
-        echo "json_output<<EOF" >> $GITHUB_OUTPUT
-        echo "$OUTPUT" >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
+        case "$EXIT_CODE" in
+          0) STATUS=CERTIFIED ;;
+          1) STATUS=PROVISIONALLY_CERTIFIED ;;
+          2) if [ -s "$REPORT_FILE" ]; then STATUS=NOT_CERTIFIED; else STATUS=ERROR; fi ;;
+          *) STATUS=ERROR ;;
+        esac
 
-        # Parse status from JSON
-        STATUS=$(echo "$OUTPUT" | python3 -c "
-        import sys, json
-        try:
-            data = json.load(sys.stdin)
-            print(data.get('status', 'UNKNOWN'))
-        except Exception:
-            statuses = {0: 'CERTIFIED', 1: 'PROVISIONALLY_CERTIFIED', 2: 'NOT_CERTIFIED'}
-            print(statuses.get($EXIT_CODE, 'UNKNOWN'))
-        " 2>/dev/null || echo "UNKNOWN")
-
-        SCORE=$(echo "$OUTPUT" | python3 -c "
-        import sys, json
-        try:
-            data = json.load(sys.stdin)
-            print(data.get('score', ''))
-        except Exception:
-            print('')
-        " 2>/dev/null || echo "")
-
-        echo "status=$STATUS" >> $GITHUB_OUTPUT
-        echo "score=$SCORE"   >> $GITHUB_OUTPUT
-        echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
-
+        echo "status=$STATUS"            >> "$GITHUB_OUTPUT"
+        echo "exit_code=$EXIT_CODE"      >> "$GITHUB_OUTPUT"
+        echo "report_file=$REPORT_FILE"  >> "$GITHUB_OUTPUT"
         echo "Calibra certification: $STATUS"
 
+    - name: Run calibra score
+      id: score
+      if: always() && steps.certify.outputs.status != 'ERROR'
+      shell: bash
+      env:
+        DATASET: ${{ inputs.dataset-path }}
+        POLICY: ${{ inputs.policy }}
+      run: |
+        args=("$DATASET")
+        if [ -n "$POLICY" ]; then args+=(--policy "$POLICY"); fi
+
+        SCORE_JSON=$(calibra score "${args[@]}" --json 2>/dev/null) || true
+        SCORE=$(echo "$SCORE_JSON" | python3 -c \
+          "import sys,json; print(round(json.load(sys.stdin)['total_score'], 1))" \
+          2>/dev/null || echo "")
+        echo "score=$SCORE" >> "$GITHUB_OUTPUT"
+
+    # A comment that cannot be posted (e.g. a read-only token on a fork PR)
+    # must not hide the certification result, so this step may fail.
     - name: Post PR comment
       if: inputs.post-comment == 'true' && github.event_name == 'pull_request'
+      continue-on-error: true
       uses: actions/github-script@v7
+      env:
+        CALIBRA_STATUS: ${{ steps.certify.outputs.status }}
+        CALIBRA_SCORE: ${{ steps.score.outputs.score }}
+        CALIBRA_DATASET: ${{ inputs.dataset-path }}
+        CALIBRA_REPORT_FILE: ${{ steps.certify.outputs.report_file }}
       with:
         script: |
-          const status = '${{ steps.certify.outputs.status }}';
-          const score  = '${{ steps.certify.outputs.score }}';
-          const path   = '${{ inputs.dataset-path }}';
+          const fs = require('fs');
+          const status = process.env.CALIBRA_STATUS || 'UNKNOWN';
+          const score  = process.env.CALIBRA_SCORE;
+          const path   = process.env.CALIBRA_DATASET;
+
+          // GitHub rejects comments over 65,536 characters.
+          const MAX_REPORT = 60000;
+          let report = '';
+          try {
+            report = fs.readFileSync(process.env.CALIBRA_REPORT_FILE, 'utf8');
+          } catch (e) {
+            report = '(certification report not available)';
+          }
+          if (report.length > MAX_REPORT) {
+            report = report.slice(0, MAX_REPORT) + '\n... (truncated; run locally for the full report)';
+          }
+          // Keep the report inside its code fence.
+          report = report.replace(/```/g, "'''");
 
           const icons = {
             'CERTIFIED':               '✅',
@@ -118,11 +154,11 @@ runs:
             `**Dataset:** \`${path}\``,
             `**Status:** ${status.replace(/_/g, ' ')}${scoreStr}`,
             ``,
-            `<details><summary>Full certification output</summary>`,
+            `<details><summary>Full certification report</summary>`,
             ``,
-            `\`\`\``,
-            `${{ steps.certify.outputs.json_output }}`,
-            `\`\`\``,
+            '```',
+            report,
+            '```',
             `</details>`,
             ``,
             `*Run \`calibra certify ${path}\` locally for the full report.*`,
@@ -155,9 +191,17 @@ runs:
             });
           }
 
-    - name: Fail on NOT_CERTIFIED
-      if: steps.certify.outputs.exit_code == '2'
+    - name: Fail on certification result
       shell: bash
+      env:
+        EXIT_CODE: ${{ steps.certify.outputs.exit_code }}
+        STRICT: ${{ inputs.strict }}
       run: |
-        echo "Dataset failed Calibra certification. See report above."
-        exit 2
+        if [ "$EXIT_CODE" -ge 2 ]; then
+          echo "Dataset failed Calibra certification. See report above."
+          exit 2
+        fi
+        if [ "$STRICT" = "true" ] && [ "$EXIT_CODE" -eq 1 ]; then
+          echo "Dataset has certification warnings and strict is on. See report above."
+          exit 2
+        fi

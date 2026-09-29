@@ -19,6 +19,22 @@ All notable changes to Calibra are documented here.
 
 ### Fixed
 
+- **The certify GitHub Actions never failed a job.** In
+  `.github/actions/certify` and the reusable `.github/workflows/certify.yml`,
+  `$(calibra certify ...) || true` followed by `EXIT_CODE=$?` always read 0, so
+  NOT CERTIFIED datasets passed and `strict` had no effect. Both now fail on
+  NOT CERTIFIED, and on warnings when `strict` is on.
+- **The reusable certify workflow could not see local datasets:** it never
+  checked out the caller's repository. It now does.
+- **The root `action.yml` interpolated the report into its PR-comment script,**
+  so report text containing a backtick or `${` broke the script or ran as
+  JavaScript. All three certify entry points now pass inputs and outputs
+  through environment variables. Its `score` output was always empty (it read
+  a key `certify --json` does not emit) and now comes from `calibra score`.
+  The comment is truncated to fit GitHub's size limit, and a comment that
+  cannot be posted no longer fails the job.
+- **Dependabot raised `>=` minimum versions** in `pyproject.toml`; it now only
+  bumps exact pins.
 - **`calibra compare <dataset> pusht`** judged velocity discontinuities with the
   position-command thresholds calibrated on arm datasets once the PushT
   reference was correctly labelled `position`, so PushT-like data (~17%) read
