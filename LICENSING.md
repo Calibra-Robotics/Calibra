@@ -45,5 +45,7 @@ available. Contact **omertahtoko@gmail.com**.
 
 ## Contributions
 
-By contributing, you agree your contributions are licensed under the same terms
-as the project.
+Contributors sign the [Contributor License Agreement](CLA.md) before their
+first pull request is merged. It lets the project distribute contributions
+under the BSL, under Apache 2.0 after the Change Date, and under commercial
+licenses. You keep the copyright in your work.

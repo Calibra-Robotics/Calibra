@@ -7,27 +7,26 @@ training. A threshold that looks reasonable but was never measured can silently
 remove good data. Anyone can propose a change. Only reproducible, benchmarked,
 reviewed changes get merged.
 
-## Current status: pull requests are not open yet
+## How to contribute
 
-We are not accepting external pull requests yet. We will open them once a
-Contributor License Agreement is in place, so that the rights to contributed
-code are clear before any of it is merged.
-
-Until then, you can contribute through issues:
-
+- **Pull requests:** fork the repository, branch from `main`, and open a pull
+  request. On your first pull request a bot asks you to sign the
+  [Contributor License Agreement](https://github.com/Calibra-Robotics/Calibra/blob/main/CLA.md);
+  you sign once by replying with the comment it gives you. For anything larger
+  than a bug fix, open an issue first so we can agree on the approach before
+  you write the code.
 - **Bug reports:** [open a bug report](https://github.com/Calibra-Robotics/Calibra/issues/new?template=bug_report.yml).
 - **Dataset profile proposals:** if Calibra misjudges a dataset you know well,
   [propose a profile](https://github.com/Calibra-Robotics/Calibra/issues/new?template=dataset_profile.yml)
-  with your measurements. A maintainer writes the profile, credits you, and
-  holds it to the standards below.
+  with your measurements, or open a pull request with the profile and its
+  evidence.
 - **Feature ideas:** [open a feature request](https://github.com/Calibra-Robotics/Calibra/issues/new?template=feature_request.yml).
 - **Security issues:** do not open a public issue. Follow
   [`SECURITY.md`](https://github.com/Calibra-Robotics/Calibra/blob/main/SECURITY.md).
 
 ## What every merged change must meet
 
-These apply to maintainers today and will apply to all contributors once pull
-requests open.
+These apply to everyone, maintainers included.
 
 - **Tests for every code change.** No exceptions for "small" changes.
 - **Threshold changes need empirical evidence,** not intuition: the dataset, the
@@ -46,8 +45,14 @@ requests open.
 
 Each pull request also gets a GitHub Copilot code review that checks it against
 these rules (`.github/copilot-instructions.md` and `.github/instructions/`). It
-is advisory; the tests and the benchmark regression check are what block a
-merge.
+is advisory. What blocks a merge is CI (tests on Python 3.10 to 3.13, lint,
+the type-check ratchet, the claims check and the benchmark regression check)
+and a code owner's approval.
+
+Pull requests are squash-merged, so the pull request title becomes the commit
+message. Use the [Conventional Commits](https://www.conventionalcommits.org/)
+style the history already follows (`fix(profiles): ...`, `feat: ...`,
+`docs: ...`).
 
 ### Dataset profiles
 
@@ -74,7 +79,12 @@ is the worked example.
 git clone https://github.com/Calibra-Robotics/Calibra.git
 cd Calibra
 pip install -e ".[dev]"
+pre-commit install          # ruff, format and claims checks on every commit
 pytest tests/ -v --tb=short
-ruff check . && ruff format --check .
-python scripts/generate_claims_doc.py --check
+python scripts/mypy_ratchet.py
 ```
+
+`scripts/mypy_ratchet.py` fails if a change adds type errors. The codebase is
+not type-clean yet; if your change removes errors, lower `BASELINE` in that
+script in the same pull request. Test coverage must stay at or above
+`fail_under` in `pyproject.toml`.

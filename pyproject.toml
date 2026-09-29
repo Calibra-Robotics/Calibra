@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "calibra-robotics"
 version = "0.11.0"
-description = "Dataset reliability and risk profiling for robotics imitation learning"
+description = "Dataset observability and coreset selection for robotics imitation learning"
 license = {text = "BSL-1.1"}
 requires-python = ">=3.10"
 dependencies = [
@@ -27,7 +27,7 @@ lerobot     = ["datasets>=2.0", "pyarrow>=12.0", "duckdb>=0.9", "pillow>=9.0"]
 rlds        = ["tensorflow>=2.12", "tensorflow-datasets>=4.9"]
 mcap        = ["mcap>=0.0.10", "mcap-ros2-support>=0.0.3"]
 kinematics  = ["scipy>=1.10"]
-dev         = ["pytest>=7.0", "pytest-cov", "ruff", "mypy"]
+dev         = ["pytest>=7.0", "pytest-cov", "ruff", "mypy==2.3.1", "pre-commit"]
 watch       = ["watchdog>=3.0"]
 vlm         = ["torch>=2.0", "torchvision>=0.15", "transformers>=4.28", "pillow>=9.0"]
 experiments = ["torch>=2.0", "matplotlib>=3.5", "pandas>=1.5", "scipy>=1.10"]
@@ -49,9 +49,15 @@ target-version = "py310"
 select = ["E4", "E7", "E9", "F", "I"]
 
 [tool.mypy]
-python_version = "3.10"
-strict = true
+# Not strict yet: CI ratchets the error count down (scripts/mypy_ratchet.py).
+# 3.12, not 3.10: current numpy stubs use `type` statements, which mypy only
+# parses for 3.12+. Ruff's py310 target still guards 3.10 syntax.
+python_version = "3.12"
 ignore_missing_imports = true
+
+[tool.coverage.report]
+# Measured with only the dev extra installed, as in CI.
+fail_under = 58
 
 [tool.pytest.ini_options]
 markers = [

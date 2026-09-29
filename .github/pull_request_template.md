@@ -1,6 +1,7 @@
 <!--
-External pull requests are not open yet; see CONTRIBUTING.md.
-To propose a dataset profile, open a "Dataset profile proposal" issue instead.
+Thanks for contributing. Please read CONTRIBUTING.md first.
+On your first pull request a bot will ask you to sign the CLA.
+Use a Conventional Commits title, e.g. "fix(profiles): ...".
 -->
 
 ## What this changes

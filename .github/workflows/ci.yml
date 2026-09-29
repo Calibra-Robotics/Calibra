@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - uses: actions/checkout@v5
@@ -33,6 +33,11 @@ jobs:
       - name: Format Check
         run: ruff format --check .
 
+      # One Python version only: the error count depends on the environment.
+      - name: Type check (ratchet)
+        if: matrix.python-version == '3.12'
+        run: python scripts/mypy_ratchet.py
+
       - name: Verify Claims Documentation Ratio
         run: python scripts/generate_claims_doc.py --check
 
@@ -43,4 +48,3 @@ jobs:
       # change moved Calibra's decisions; see tests/regression/test_benchmark_regression.py.
       - name: Benchmark regression
         run: pytest tests/regression -v --tb=short
-

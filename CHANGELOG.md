@@ -4,6 +4,19 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- **External pull requests are open.** Contributors sign a Contributor License
+  Agreement (`CLA.md`) once, via a bot comment on their first pull request.
+  `GOVERNANCE.md` describes who decides what and response-time expectations.
+- **CI now also runs on Python 3.13, fails if the mypy error count rises**
+  above its baseline (`scripts/mypy_ratchet.py`), and **fails if test coverage
+  drops below 58%** (measured with only the dev extra installed, as in CI).
+- Added `pre-commit` hooks, Dependabot for GitHub Actions and pip,
+  `CITATION.cff`, and an issue-template config that sends security reports to
+  private vulnerability reporting. `SECURITY.md` and `CODE_OF_CONDUCT.md` now
+  name a contact.
+
 ### Fixed
 
 - **`calibra compare <dataset> pusht`** judged velocity discontinuities with the
