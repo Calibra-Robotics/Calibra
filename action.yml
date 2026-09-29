@@ -112,7 +112,7 @@ runs:
     - name: Post PR comment
       if: inputs.post-comment == 'true' && github.event_name == 'pull_request'
       continue-on-error: true
-      uses: actions/github-script@v7
+      uses: actions/github-script@v9
       env:
         CALIBRA_STATUS: ${{ steps.certify.outputs.status }}
         CALIBRA_SCORE: ${{ steps.score.outputs.score }}
