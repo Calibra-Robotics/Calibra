@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "calibra-ee"
+version = "0.12.0.dev0"
+description = "Calibra Cloud extension for the Calibra core (not published to PyPI)"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+dependencies = ["calibra-robotics"]
+
+[project.entry-points."calibra.plugins"]
+ee = "calibra_ee.plugin:register"
+
+[tool.hatch.build.targets.wheel]
+packages = ["calibra_ee"]

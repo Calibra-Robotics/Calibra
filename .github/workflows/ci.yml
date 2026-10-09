@@ -48,3 +48,47 @@ jobs:
       # change moved Calibra's decisions; see tests/regression/test_benchmark_regression.py.
       - name: Benchmark regression
         run: pytest tests/regression -v --tb=short
+
+  # ADR-012: what goes to PyPI is the Apache core only, and it runs on its own.
+  core-dist:
+    name: Core distribution excludes ee/
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Build sdist and wheel
+        run: pip install build && python -m build
+
+      - name: No ee/ files in either artifact
+        run: |
+          if unzip -l dist/*.whl | grep -E '\see/|calibra_ee'; then exit 1; fi
+          if tar tzf dist/*.tar.gz | grep -E '/ee/|calibra_ee'; then exit 1; fi
+
+      - name: Wheel works without calibra_ee
+        run: |
+          python -m venv /tmp/core
+          /tmp/core/bin/pip install dist/*.whl
+          /tmp/core/bin/calibra --version
+          /tmp/core/bin/python -c "import calibra.plugins as p; assert not p.get_registry().commands"
+          /tmp/core/bin/calibra whoami && exit 1 || test $? -eq 2
+
+  ee:
+    name: ee/ extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install core and extension
+        run: pip install -e ".[dev]" -e ee/
+
+      - name: Test
+        run: pytest ee/tests -v --tb=short

@@ -6,6 +6,24 @@ All notable changes to Calibra are documented here.
 
 ### Changed
 
+- **Calibra Cloud code moved out of the core into `ee/`** (ADR-012), ahead of
+  relicensing the core under Apache 2.0. `calibra/cloud/` is now
+  `ee/calibra_ee/cloud/` and `server/` is now `ee/server/`; neither is
+  published to PyPI. The core finds them through a new `calibra.plugins` entry
+  point (`calibra/plugins.py`).
+  - `calibra login`, `logout`, `whoami` and `cloud` are available only with
+    the extension installed (`pip install -e ee/`). Without it they exit 2
+    with an explanation.
+  - **The core no longer contacts Calibra Cloud on its own.** Recording an
+    outcome stays local (`~/.calibra/outcomes.jsonl`); the anonymous outcome
+    sync, the community percentiles printed after
+    `calibra predict --record-outcome`, and badge registration after
+    `calibra card --push` now run only with the extension. Dataset cards use
+    the static shields.io badge unless the extension provides a live one.
+    `calibra compare --community` and `calibra calibrate --global` still reach
+    the service, because the user asks for them explicitly.
+  - `predict_outcome()` accepts an `outcome_source` for empirical blending;
+    the local outcome store remains the default.
 - **Outside contributions are closed for now:** issues and discussions are
   turned off, and a workflow closes external pull requests automatically with
   a pointer to the contact email. A draft Contributor License Agreement

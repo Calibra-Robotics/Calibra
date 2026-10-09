@@ -1,4 +1,4 @@
-"""calibra.cloud.auth — token storage and identity for Calibra Cloud."""
+"""calibra_ee.cloud.auth — token storage and identity for Calibra Cloud."""
 
 from __future__ import annotations
 

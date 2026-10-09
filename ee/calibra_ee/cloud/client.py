@@ -1,4 +1,4 @@
-"""calibra.cloud.client — HTTP client for the Calibra Cloud API."""
+"""calibra_ee.cloud.client — HTTP client for the Calibra Cloud API."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-from calibra.cloud.auth import get_token
+from calibra_ee.cloud.auth import get_token
 
 _DEFAULT_BASE = "https://app.calibra.io"
 

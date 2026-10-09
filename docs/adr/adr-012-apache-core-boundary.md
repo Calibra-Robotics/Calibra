@@ -86,6 +86,20 @@ weights, badges, public registry) is not in the published wheel
 project website, built by Vercel and optionally served by `calibra serve`; it
 talks only to the GitHub API and is not part of the commercial layer.
 
+### 6. Three more network calls outside `outcome_db` (found during implementation)
+
+A search for `urllib` and the service hostnames in `calibra/` found:
+
+- `card.py`: after `calibra card --push`, a POST registering the badge status
+  with `outcomes.calibra.ai/v1/badge`, and a card badge pointing at that
+  service whenever a dataset ID is given.
+- `predict.py`: after `calibra predict --record-outcome`, a GET of community
+  percentiles from `app.calibra.io`, printed to stderr.
+- `compare.py`: `calibra compare --community` fetches the same percentiles.
+
+The test suite exercised the automatic ones: a sandboxed run before this change
+showed dozens of blocked connections to `outcomes.calibra.ai`.
+
 ---
 
 ## Decision
@@ -121,7 +135,7 @@ plugin and do not exist in a core-only install.
 | Zone | Modules |
 |---|---|
 | **Apache core** | `ingestion/`, `core/`, `schema/`, `analyzers/`, `metrics/`, `kinematics/`, `temporal/`, `pipeline`, `integrity`, `audit`, `audit_all`, `review`, `watch`, `prune`, `pruning`, `curation/`, `annotate`, `assessment`, `anomalies`, `calibration`, `claims` and the claims/references/knowledge base data, `compare`, `comparison/`, `certify`, `corrupt`, `score`, `report_html`, `report_json`, `cache`, `dataset_profiles`, `integrations/`, local `serve` dashboard, and the local part of `outcome_db` |
-| **Commercial (`ee/`)** | `cloud/`, outcome sync and community weights download (from `outcome_db`), `server/` |
+| **Commercial (`ee/`)** | `cloud/`, outcome sync (from `outcome_db`), community context after recording an outcome (from `predict`), badge registration and live badges (from `card`), `server/` |
 | **Apache core (Option A, see below)** | `predict` rubric, `strategy` |
 | **Commercial extension point** | outcome-data calibration for `predict` (hosted or customer-specific outcome sources) |
 
@@ -166,10 +180,19 @@ as a new outcome source without touching the Apache code.
 ### Network behaviour of the core
 
 An Apache core should not send data over the network unless the user asks it
-to. With sync moved to `calibra_ee`, a core-only install makes no calls to
-`calibra.ai` or `calibra.io`. Whether recording an outcome with the plugin
-installed syncs by default or requires opt-in is left to the commercial layer,
-but the current opt-out default should be revisited when it moves.
+to. The rule applied:
+
+- **Calls the user did not ask for move to `calibra_ee`:** outcome sync, the
+  community context printed after recording an outcome, and badge
+  registration. A core-only install never makes them.
+- **Calls behind an explicit flag stay in the core:** `calibra compare
+  --community` and `calibra calibrate --global` (`download_global_weights`).
+  The user requested the network call by passing the flag. This amends the
+  original plan, which moved `download_global_weights` to `calibra_ee`.
+
+Whether recording an outcome with the extension installed syncs by default or
+requires opt-in is left to the commercial layer, but the current opt-out
+default should be revisited.
 
 ---
 
@@ -179,16 +202,19 @@ but the current opt-out default should be revisited when it moves.
    `ee/calibra_ee/cloud/` and `server/` to `ee/server/`. Update `vercel.json`
    and `[tool.vercel] entrypoint` if the server deployment depends on the old
    path.
-2. Split `outcome_db.py`: keep the local store in the core; move
-   `_sync_authenticated`, the anonymous sync and `download_global_weights` to
-   `calibra_ee/sync.py`. Remove the `cloud.auth` import from the core.
+2. Split `outcome_db.py`: keep the local store and `download_global_weights`
+   in the core; move `_sync_authenticated` and the anonymous sync to
+   `calibra_ee/sync.py`. Remove the `cloud.auth` import from the core. Move the
+   badge registration and community context the same way (finding 6).
 3. Add the `calibra.plugins` entry point group; register the `login`,
-   `logout`, `whoami`, `cloud` and `calibrate --global` commands from
-   `calibra_ee`. Remove their branches from `__main__.py`.
+   `logout`, `whoami` and `cloud` commands from `calibra_ee`, plus hooks for
+   recorded outcomes, pushed cards and badge URLs. Remove the command branches
+   from `__main__.py`.
 4. Apply Option A: add the outcome-source parameter to `predict_outcome`
    (the local outcome store stays the core default) and keep `__init__.py`
    unchanged.
-5. Move the sync tests in `tests/test_outcome_db.py` to `ee/tests/`.
+5. Test the sync code in `ee/tests/`. (`tests/test_outcome_db.py` had no
+   sync tests to move.)
 6. Add two CI guards:
    - **wheel check:** build the wheel, install it in a clean environment
      without `calibra_ee`, assert no `ee/` or `calibra_ee` files are inside,
@@ -201,6 +227,13 @@ but the current opt-out default should be revisited when it moves.
 
 Before step 7, confirm that no third party (employer, university) holds rights
 to any part of the code. The git history shows a single author.
+
+**Status (2026-10-10):** steps 1 to 6 are implemented. Two details beyond the
+plan: the sdist also had to exclude `ee/` (`[tool.hatch.build.targets.sdist]`,
+since hatch puts the whole repository in the sdist by default), and
+`calibra login` and the other cloud commands print an explanation and exit 2
+in a core-only install instead of being parsed as a dataset path. Step 7 is
+not started.
 
 ---
 

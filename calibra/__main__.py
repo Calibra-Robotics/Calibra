@@ -53,34 +53,14 @@ from calibra import __version__
 from calibra.pipeline import Pipeline
 from calibra.schema.report import RiskLevel
 
+# Provided by the calibra_ee extension, not the core. Named here only so the
+# CLI can explain why they are missing instead of treating them as a path.
+_EXTENSION_COMMANDS = ("login", "logout", "whoami", "cloud")
+
 
 def main() -> None:
     if len(sys.argv) > 1 and sys.argv[1] in ("--version", "-V"):
         print(f"calibra {__version__}")
-        return
-
-    if len(sys.argv) > 1 and sys.argv[1] == "login":
-        from calibra.cloud.auth import run_login
-
-        run_login()
-        return
-
-    if len(sys.argv) > 1 and sys.argv[1] == "logout":
-        from calibra.cloud.auth import run_logout
-
-        run_logout()
-        return
-
-    if len(sys.argv) > 1 and sys.argv[1] == "whoami":
-        from calibra.cloud.auth import run_whoami
-
-        run_whoami()
-        return
-
-    if len(sys.argv) > 1 and sys.argv[1] == "cloud":
-        from calibra.cloud.push import run_cloud
-
-        run_cloud(sys.argv[2:])
         return
 
     if len(sys.argv) > 1 and sys.argv[1] == "site":
@@ -286,6 +266,22 @@ def main() -> None:
                 )
                 print("Or use `calibra calibrate --global` to download community weights now.")
         return
+
+    # Commands added by installed extensions (ADR-012).
+    if len(sys.argv) > 1 and not sys.argv[1].startswith("-"):
+        from calibra.plugins import get_registry
+
+        handler = get_registry().commands.get(sys.argv[1])
+        if handler is not None:
+            handler(sys.argv[2:])
+            return
+        if sys.argv[1] in _EXTENSION_COMMANDS:
+            print(
+                f"error: `calibra {sys.argv[1]}` is a Calibra Cloud command and is not part "
+                "of the open-source core.",
+                file=sys.stderr,
+            )
+            sys.exit(2)
 
     parser = argparse.ArgumentParser(
         prog="calibra",

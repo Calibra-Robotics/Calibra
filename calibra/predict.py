@@ -47,10 +47,13 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from calibra.pipeline import Pipeline
 from calibra.schema.report import DiagnosticReport, RiskLevel
+
+if TYPE_CHECKING:
+    from calibra.outcome_db import OutcomeSource
 
 _WIDTH = 60
 _THICK = "━" * _WIDTH
@@ -200,12 +203,14 @@ def predict_outcome(
     report: DiagnosticReport,
     policy_family: Optional[str] = None,
     use_outcome_db: bool = True,
+    outcome_source: Optional[OutcomeSource] = None,
 ) -> dict:
     """
     Compute the predicted training outcome from a DiagnosticReport.
 
     When use_outcome_db=True (default), blends the heuristic score with
-    empirically observed outcomes from similar past datasets stored in
+    empirically observed outcomes from similar past datasets. They come from
+    `outcome_source` if given, otherwise from the local store at
     ~/.calibra/outcomes.jsonl.
 
     Returns a dict with predicted_score, tier, deductions, and metric_values.
@@ -279,7 +284,7 @@ def predict_outcome(
         try:
             from calibra.outcome_db import OutcomeDatabase
 
-            db = OutcomeDatabase()
+            db = outcome_source if outcome_source is not None else OutcomeDatabase()
             fp = {k: v for k, v in metrics.items() if v is not None}
             similar = db.find_similar(fp, policy_family=policy_family)
             if similar:
@@ -469,81 +474,6 @@ def _exit_code(tier: str) -> int:
     return 1
 
 
-# ── community context ─────────────────────────────────────────────────────────
-
-
-def _estimate_pct(val: float, p: dict) -> Optional[float]:
-    """Linear interpolation of percentile rank from p25/p50/p75/p90 landmarks."""
-    p25, p50, p75, p90 = p.get("p25"), p.get("p50"), p.get("p75"), p.get("p90")
-    if None in (p25, p50, p75, p90):
-        return None
-    if val <= p25:
-        return max(0.0, 25.0 * val / p25) if p25 != 0 else 25.0
-    if val <= p50:
-        return 25.0 + 25.0 * (val - p25) / max(p50 - p25, 1e-9)
-    if val <= p75:
-        return 50.0 + 25.0 * (val - p50) / max(p75 - p50, 1e-9)
-    if val <= p90:
-        return 75.0 + 15.0 * (val - p75) / max(p90 - p75, 1e-9)
-    return 90.0
-
-
-def _print_community_context(metrics: dict[str, float], policy_family: str) -> None:
-    """Fetch community percentiles and print a 1-2 line community comparison to stderr."""
-    import os
-    import urllib.request
-
-    base = os.environ.get("CALIBRA_CLOUD_URL", "https://app.calibra.io")
-    url = f"{base}/v1/percentiles?policy_family={policy_family}"
-    try:
-        req = urllib.request.Request(url, headers={"Accept": "application/json"})
-        with urllib.request.urlopen(req, timeout=3) as resp:
-            data = json.loads(resp.read())
-    except Exception:
-        return
-
-    n_community = data.get("n", 0)
-    if n_community < 5:
-        return
-
-    percentiles = data.get("percentiles", {})
-    # For each metric, estimate percentile rank (direction-aware)
-    _lower_better = {"spike_rate", "vel_disc_rate", "dropout_rate", "jitter_cv", "jepa_surprise"}
-    _higher_better = {"action_entropy", "contact_phase_fraction"}
-    # ldlj: higher (less negative) = better
-
-    highlights: list[str] = []
-    for key, val in metrics.items():
-        p = percentiles.get(key)
-        if p is None:
-            continue
-        pct = _estimate_pct(val, p)
-        if pct is None:
-            continue
-        # Convert raw percentile to "better than X%" framing
-        if key in _lower_better:
-            better_pct = 100.0 - pct  # lower value = better = higher rank
-        else:
-            better_pct = pct  # higher value = better
-        highlights.append((key, better_pct))
-
-    if not highlights:
-        return
-
-    highlights.sort(key=lambda x: abs(x[1] - 50), reverse=True)
-    print(
-        f"  Community: {n_community} datasets in Calibra Cloud for '{policy_family}'.",
-        file=sys.stderr,
-    )
-    for key, better_pct in highlights[:2]:
-        rank_str = (
-            f"better than {better_pct:.0f}%"
-            if better_pct >= 50
-            else f"worse than {100 - better_pct:.0f}%"
-        )
-        print(f"    {key}: {rank_str} of community", file=sys.stderr)
-
-
 # ── CLI entry point ───────────────────────────────────────────────────────────
 
 
@@ -669,11 +599,7 @@ def run_predict(argv: list[str]) -> None:
                 f"error={abs(result['heuristic_score'] / 100.0 - actual_rate) * 100:.1f}%"
             )
             log(f"  {db.summary()}")
-            log(
-                "  Outcome recorded locally."
-                " Run `calibra login` to sync outcomes to the global prediction model."
-            )
-            _print_community_context(result["metric_values"], result["policy_family"])
+            log("  Outcome recorded locally (~/.calibra/outcomes.jsonl).")
         except Exception as exc:
             log(f"  Warning: could not record outcome: {exc}")
 

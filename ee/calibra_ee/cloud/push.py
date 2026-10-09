@@ -1,4 +1,4 @@
-"""calibra.cloud.push — CLI handler for `calibra cloud push`."""
+"""calibra_ee.cloud.push — CLI handler for `calibra cloud push`."""
 
 from __future__ import annotations
 
@@ -40,8 +40,8 @@ def run_cloud(argv: list[str]) -> None:
 
 
 def _push(args: argparse.Namespace) -> None:
-    from calibra.cloud.client import CalibraCloudClient, CalibraCloudError
     from calibra.pipeline import Pipeline
+    from calibra_ee.cloud.client import CalibraCloudClient, CalibraCloudError
 
     try:
         client = CalibraCloudClient()

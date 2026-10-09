@@ -28,8 +28,6 @@ Exit codes
 from __future__ import annotations
 
 import argparse
-import json
-import os
 import sys
 from datetime import date
 from typing import Optional
@@ -94,37 +92,24 @@ def _count_quality_passing(batch, report) -> Optional[int]:
         return None
 
 
-def _register_badge_with_cloud(dataset_id: str, status: str) -> None:
-    """POST certification status to the Calibra badge server (silent, non-blocking)."""
-    import urllib.request
+_STATIC_BADGES = {
+    "CERTIFIED": "https://img.shields.io/badge/Calibra-CERTIFIED-brightgreen",
+    "PROVISIONALLY_CERTIFIED": "https://img.shields.io/badge/Calibra-PROVISIONAL-yellow",
+    "NOT_CERTIFIED": "https://img.shields.io/badge/Calibra-NOT%20CERTIFIED-red",
+}
 
-    no_sync = os.environ.get("CALIBRA_NO_CLOUD_SYNC", "")
-    if no_sync.lower() in ("1", "true"):
-        return
 
-    endpoint = (
-        os.environ.get("CALIBRA_CLOUD_ENDPOINT", "https://outcomes.calibra.ai").rstrip("/")
-        + "/v1/badge"
-    )
+def _badge_url(dataset_id: Optional[str], status_key: str) -> str:
+    """Static shields.io badge, unless an installed extension serves a live one (ADR-012)."""
+    if dataset_id:
+        from calibra.plugins import get_registry
 
-    try:
-        payload = json.dumps(
-            {
-                "dataset_id": dataset_id,
-                "status": status,
-                "calibra_version": __version__,
-            }
-        ).encode("utf-8")
-        req = urllib.request.Request(
-            endpoint,
-            data=payload,
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=3):
-            pass
-    except Exception:
-        pass
+        live = get_registry().badge_url
+        if live is not None:
+            url = live(dataset_id, status_key)
+            if url:
+                return url
+    return _STATIC_BADGES[status_key]
 
 
 def generate_card(
@@ -159,16 +144,7 @@ def generate_card(
         status = "NOT CERTIFIED"
         status_key = "NOT_CERTIFIED"
 
-    if dataset_id:
-        _badge_url = f"https://outcomes.calibra.ai/badge/{dataset_id}"
-        badge = f"![Calibra: {status}]({_badge_url})"
-    else:
-        _static = {
-            "CERTIFIED": "https://img.shields.io/badge/Calibra-CERTIFIED-brightgreen",
-            "PROVISIONALLY_CERTIFIED": "https://img.shields.io/badge/Calibra-PROVISIONAL-yellow",
-            "NOT_CERTIFIED": "https://img.shields.io/badge/Calibra-NOT%20CERTIFIED-red",
-        }
-        badge = f"![Calibra: {status}]({_static[status_key]})"
+    badge = f"![Calibra: {status}]({_badge_url(dataset_id, status_key)})"
 
     today = date.today().isoformat()
     policy_str = policy_family or "generic"
@@ -364,7 +340,9 @@ def push_to_hub(card_text: str, repo_id: str, status_key: str = "CERTIFIED") -> 
         repo_type="dataset",
     )
     print(f"  Quality card pushed to https://huggingface.co/datasets/{repo_id}")
-    _register_badge_with_cloud(repo_id, status_key)
+    from calibra.plugins import emit
+
+    emit("card_pushed", repo_id, status_key)
 
 
 # ── CLI entry point ───────────────────────────────────────────────────────────

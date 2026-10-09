@@ -36,8 +36,12 @@ all         = ["calibra-robotics[hdf5,lerobot,rlds,mcap,kinematics,watch,vlm,exp
 [tool.hatch.build.targets.wheel]
 packages = ["calibra"]
 
+# ee/ is separately licensed and never published to PyPI (ADR-012).
+[tool.hatch.build.targets.sdist]
+exclude = ["ee/"]
+
 [tool.vercel]
-entrypoint = "server.main:app"
+entrypoint = "ee.server.main:app"
 
 [tool.ruff]
 line-length = 100
@@ -45,6 +49,9 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["calibra", "calibra_ee"]
 
 [tool.mypy]
 # Not strict yet: CI ratchets the error count down (scripts/mypy_ratchet.py).

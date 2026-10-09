@@ -33,7 +33,7 @@ import time
 import urllib.request
 import uuid
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Protocol
 
 import numpy as np
 
@@ -181,6 +181,27 @@ class OutcomeRecord:
 _DEFAULT_DB_PATH = Path.home() / ".calibra" / "outcomes.jsonl"
 
 
+class OutcomeSource(Protocol):
+    """
+    Where predict_outcome() gets empirical outcomes for blending.
+
+    OutcomeDatabase (local) is the default. Other sources, such as hosted or
+    customer-specific outcome data, implement the same two methods (ADR-012).
+    """
+
+    def find_similar(
+        self,
+        fingerprint: dict[str, float],
+        policy_family: Optional[str] = None,
+    ) -> list[tuple[OutcomeRecord, float]]: ...
+
+    def blend_prediction(
+        self,
+        heuristic_score: float,
+        similar: list[tuple[OutcomeRecord, float]],
+    ) -> tuple[float, float]: ...
+
+
 class OutcomeDatabase:
     """
     Persistent store of (fingerprint → observed_success_rate) pairs.
@@ -254,156 +275,11 @@ class OutcomeDatabase:
         )
         self._records.append(rec)
         self._append(rec)
-        self._maybe_sync_to_cloud(rec)
+        # Network sync, if any, is an installed extension's job (ADR-012).
+        from calibra.plugins import emit
+
+        emit("outcome_recorded", rec)
         return rec
-
-    # ── cloud sync ────────────────────────────────────────────────────────────
-
-    def _get_installation_id(self) -> str:
-        """Return a stable anonymous installation UUID, generating one on first call.
-
-        Persisted in ~/.calibra/config.json so the same ID is reused across
-        invocations. Allows server-side deduplication without identifying the user.
-        """
-        config_path = Path.home() / ".calibra" / "config.json"
-        try:
-            config_path.parent.mkdir(parents=True, exist_ok=True)
-            if config_path.exists():
-                with open(config_path) as f:
-                    data = json.load(f)
-                if "installation_id" in data:
-                    return data["installation_id"]
-            else:
-                data = {}
-            installation_id = str(uuid.uuid4())
-            data["installation_id"] = installation_id
-            with open(config_path, "w") as f:
-                json.dump(data, f)
-            return installation_id
-        except Exception:
-            # If we can't persist, return a session-only ID rather than crashing.
-            return str(uuid.uuid4())
-
-    def _print_telemetry_notice_once(self) -> None:
-        """Print a one-time notice to stderr about anonymized telemetry sync."""
-        config_path = Path.home() / ".calibra" / "config.json"
-        try:
-            config_path.parent.mkdir(parents=True, exist_ok=True)
-            data: dict = {}
-            if config_path.exists():
-                with open(config_path) as f:
-                    data = json.load(f)
-            if data.get("telemetry_notice_shown"):
-                return
-            import sys
-
-            print(
-                "\n[calibra] Anonymized training outcomes are synced to calibra.ai to "
-                "improve global\n"
-                "          prediction accuracy. No paths, filenames, or identifiable data "
-                "are sent.\n"
-                "          Set CALIBRA_NO_CLOUD_SYNC=1 to opt out.\n",
-                file=sys.stderr,
-            )
-            data["telemetry_notice_shown"] = True
-            with open(config_path, "w") as f:
-                json.dump(data, f)
-        except Exception:
-            pass
-
-    def _maybe_sync_to_cloud(self, record: OutcomeRecord) -> None:
-        """POST an outcome fingerprint to the cloud endpoint.
-
-        Authenticated users (after `calibra login`): syncs to the authenticated
-        endpoint — full record, tied to your account, improves your team's model.
-
-        Unauthenticated users: syncs anonymized metric values only to the public
-        aggregation endpoint, which improves the global heuristic for everyone.
-        Opt out by setting CALIBRA_NO_CLOUD_SYNC=1.
-
-        Failures are always silent (3-second timeout, never blocks the CLI).
-        """
-        no_sync = os.environ.get("CALIBRA_NO_CLOUD_SYNC", "")
-        if no_sync.lower() in ("1", "true"):
-            return
-
-        try:
-            from calibra import __version__ as _version
-        except ImportError:
-            _version = "unknown"
-
-        # Prefer authenticated sync when a token is available
-        try:
-            from calibra.cloud.auth import get_token
-
-            token = get_token()
-        except Exception:
-            token = None
-
-        if token:
-            self._sync_authenticated(record, token, _version)
-        else:
-            self._sync_anonymous(record, _version)
-
-    def _sync_authenticated(self, record: OutcomeRecord, token: str, version: str) -> None:
-        endpoint = (
-            os.environ.get("CALIBRA_CLOUD_URL", "https://app.calibra.io")
-            + "/api/outcomes/authenticated"
-        )
-        try:
-            payload = json.dumps(
-                {
-                    "fingerprint": record.fingerprint,
-                    "predicted_score": record.predicted_score,
-                    "actual_success_rate": record.actual_success_rate,
-                    "policy_family": record.policy_family,
-                    "n_episodes": record.n_episodes,
-                    "dataset_name": record.dataset_name,
-                    "calibra_version": version,
-                    "domain": record.domain,
-                }
-            ).encode("utf-8")
-            req = urllib.request.Request(
-                endpoint,
-                data=payload,
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {token}",
-                },
-                method="POST",
-            )
-            with urllib.request.urlopen(req, timeout=3):
-                pass
-            logger.debug("Authenticated cloud sync succeeded")
-        except Exception as exc:
-            logger.debug("Authenticated cloud sync failed (non-fatal): %s", exc)
-
-    def _sync_anonymous(self, record: OutcomeRecord, version: str) -> None:
-        self._print_telemetry_notice_once()
-        endpoint = os.environ.get("CALIBRA_CLOUD_ENDPOINT", "https://outcomes.calibra.ai/v1/record")
-        try:
-            payload = json.dumps(
-                {
-                    "installation_id": self._get_installation_id(),
-                    "fingerprint": record.fingerprint,
-                    "predicted_score": record.predicted_score,
-                    "actual_success_rate": record.actual_success_rate,
-                    "policy_family": record.policy_family,
-                    "calibra_version": version,
-                    "domain": record.domain,
-                }
-            ).encode("utf-8")
-            req = urllib.request.Request(
-                endpoint,
-                data=payload,
-                headers={"Content-Type": "application/json"},
-                method="POST",
-            )
-            with urllib.request.urlopen(req, timeout=3):
-                pass
-            logger.debug("Anonymous cloud sync succeeded to %s", endpoint)
-        except Exception as exc:
-            logger.debug("Anonymous cloud sync failed (non-fatal): %s", exc)
 
     def find_similar(
         self,
