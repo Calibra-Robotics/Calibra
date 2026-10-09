@@ -66,5 +66,6 @@ nav:
     - "ADR-009: Two-phase pipeline": adr/adr-009-two-phase-pipeline.md
     - "ADR-010: Claims references parity": adr/adr-010-claims-references-parity.md
     - "ADR-011: Dataset decision layer": adr/adr-011-dataset-decision-layer.md
+    - "ADR-012: Apache core boundary": adr/adr-012-apache-core-boundary.md
   - Blog Post: hf_blog_post.md
   - Contributing: contributing.md
