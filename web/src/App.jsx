@@ -759,7 +759,7 @@ function App() {
             </a>
             <a href={LINKS.github} target="_blank" rel="noreferrer">GitHub</a>
             <a href={LINKS.docs} target="_blank" rel="noreferrer">Docs</a>
-            <a href={LINKS.licensing} target="_blank" rel="noreferrer">BSL 1.1</a>
+            <a href={LINKS.licensing} target="_blank" rel="noreferrer">Apache 2.0</a>
           </div>
         </div>
       </footer>

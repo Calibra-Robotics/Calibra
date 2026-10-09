@@ -8,6 +8,7 @@ authors:
     affiliation: "Independent Researcher"
 repository-code: "https://github.com/Calibra-Robotics/Calibra"
 url: "https://calibra-robotics.github.io/Calibra/"
+license: Apache-2.0
 license-url: "https://github.com/Calibra-Robotics/Calibra/blob/main/LICENSE"
 version: "0.11.0"
 date-released: "2026-09-23"

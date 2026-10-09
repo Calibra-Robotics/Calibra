@@ -22,4 +22,4 @@ a new ADR written to replace it; the original is never deleted.
 | [ADR-009](adr-009-two-phase-pipeline.md) | Two-phase pipeline: Phase 1 analysis then Phase 2 comparison | Accepted |
 | [ADR-010](adr-010-claims-references-parity.md) | Claims/references parity rule | Accepted |
 | [ADR-011](adr-011-dataset-decision-layer.md) | Dataset decision layer: analysis outputs support both pruning and metadata annotation | Accepted |
-| [ADR-012](adr-012-apache-core-boundary.md) | Apache 2.0 core and separately licensed commercial code | Proposed |
+| [ADR-012](adr-012-apache-core-boundary.md) | Apache 2.0 core and separately licensed commercial code | Accepted |

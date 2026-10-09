@@ -1,6 +1,6 @@
 # ADR-012: Apache 2.0 Core and Separately Licensed Commercial Code
 
-**Status:** Proposed  
+**Status:** Accepted  
 **Date:** 2026-10-09  
 **Deciders:** Calibra core team
 
@@ -232,8 +232,13 @@ to any part of the code. The git history shows a single author.
 plan: the sdist also had to exclude `ee/` (`[tool.hatch.build.targets.sdist]`,
 since hatch puts the whole repository in the sdist by default), and
 `calibra login` and the other cloud commands print an explanation and exit 2
-in a core-only install instead of being parsed as a dataset path. Step 7 is
-not started.
+in a core-only install instead of being parsed as a dataset path.
+
+**Status (2026-10-10):** step 7 is done in the repository: `LICENSE` is the
+Apache 2.0 text, a `NOTICE` file states the `ee/` exception, and README,
+LICENSING.md, CITATION.cff, `pyproject.toml` and open-core-boundary.md are
+updated. `CLA.md` needed no change (its grant already covers Apache 2.0). The
+first Apache release is v0.12.0.
 
 ---
 
@@ -283,7 +288,7 @@ policies require an OSI license. Rejected.
 ## References
 
 - [open-core-boundary.md](../open-core-boundary.md): feature-level boundary and rules of thumb
-- [LICENSING.md](../../LICENSING.md): current BSL 1.1 terms
+- [LICENSING.md](../../LICENSING.md): licensing terms (BSL 1.1 when this ADR was written)
 - `calibra/__init__.py`, `calibra/analyze.py`, `calibra/card.py`, `calibra/benchmark.py`: the module-level couplings listed above
 - `calibra/outcome_db.py`: local store and network sync (split target)
 - `calibra/cloud/`, `server/main.py`: commercial code to move

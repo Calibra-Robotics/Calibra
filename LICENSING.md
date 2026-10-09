@@ -1,52 +1,53 @@
 # Licensing
 
-Calibra is **source-available and local-first**, licensed under the
-[Business Source License 1.1](LICENSE). This page explains what that means in
-plain English. The [LICENSE](LICENSE) file is the authoritative legal text; if
+Calibra is **open source and local-first**, licensed under the
+[Apache License 2.0](LICENSE). This page explains what that means in plain
+English. The [LICENSE](LICENSE) file is the authoritative legal text; if
 anything here conflicts with it, the LICENSE file wins.
 
 ## TL;DR
 
-| You want to… | Allowed under BSL 1.1? |
+| You want to… | Allowed? |
 |---|---|
-| Use Calibra for research (labs, academic work, papers) | ✅ Yes, free |
-| Use Calibra internally at a company (audit/curate/predict on your own data) | ✅ Yes, free |
-| Read, modify, and fork the source | ✅ Yes |
-| Run it in CI, on your own machines or your own cloud | ✅ Yes, free |
-| Resell Calibra as a **hosted or managed service** to third parties | ❌ Requires a commercial license |
-| Offer Calibra's functionality to others **over a network** as a product | ❌ Requires a commercial license |
+| Use Calibra for research (labs, academic work, papers) | ✅ Yes |
+| Use Calibra at a company, on your own data, in CI or production pipelines | ✅ Yes |
+| Read, modify and fork the source | ✅ Yes |
+| Redistribute Calibra or ship it inside your own product | ✅ Yes, keep the license and [NOTICE](NOTICE) |
+| Run Calibra as a hosted service for others | ✅ Yes |
 
-The single restriction is the **Additional Use Grant** in the LICENSE: you may
-use Calibra for your own internal business purposes, but you may not use it to
-provide a hosted or managed service that lets third parties access Calibra's
-functionality over a network. Everything else — research, internal use,
-modification, self-hosting — is unrestricted.
+Apache 2.0 is an [OSI-approved](https://opensource.org/license/apache-2-0)
+open-source license. It also includes an explicit patent grant from
+contributors.
 
-## Change Date
+## What is covered
 
-On **2030-06-30**, Calibra automatically converts to the
-[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) (OSI-approved
-open source). From that date the hosting restriction disappears for the
-then-current and all prior versions.
+Everything in this repository **except the `ee/` directory** is licensed under
+Apache 2.0. That is everything in the `calibra-robotics` package on PyPI: the
+analyzers, integrity checks, `audit`, `review`, `watch`, `prune` and annotate
+mode, dataset adapters, the prediction rubric, the CLI and the local dashboard.
 
-## Is this "open source"?
+## The `ee/` directory
 
-No — not in the [Open Source Initiative](https://opensource.org/osd) sense,
-which forbids field-of-use restrictions. BSL restricts one field of use (hosted
-resale), so the accurate term is **source-available**. The full source is public,
-inspectable, and reproducible; it simply isn't OSI open source until the 2030
-Apache conversion.
+`ee/` holds the Calibra Cloud extension (account login, cloud upload, outcome
+sync and the hosted API). It is licensed separately under the terms in
+[ee/LICENSE](ee/LICENSE), is not published to PyPI, and is not needed to use
+Calibra. The open-source core never imports it; see
+[ADR-012](docs/adr/adr-012-apache-core-boundary.md).
 
-## Commercial licensing
+## Earlier versions
 
-If your intended use is restricted by the Additional Use Grant — for example,
-you want to offer Calibra as part of a hosted product — a commercial license is
-available. Contact **omertahtaci05@gmail.com**.
+Calibra versions up to and including 0.11.x were released under the Business
+Source License 1.1. Those releases keep their original terms, which convert to
+Apache 2.0 on 2030-06-30. Upgrading to the current version gives you the
+Apache 2.0 terms now.
+
+## Commercial support
+
+For support, custom work or the Calibra Cloud extension, contact
+**omertahtaci05@gmail.com**.
 
 ## Contributions
 
 External pull requests are not accepted yet. When they open, contributors
 will sign the [Contributor License Agreement](CLA.md) before their first pull
-request is merged. It lets the project distribute contributions under the BSL,
-under Apache 2.0 after the Change Date, and under commercial licenses.
-Contributors keep the copyright in their work.
+request is merged. Contributors keep the copyright in their work.

@@ -4,7 +4,7 @@
   <a href="https://github.com/Calibra-Robotics/Calibra/actions/workflows/ci.yml"><img src="https://github.com/Calibra-Robotics/Calibra/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
   <a href="https://calibra-robotics.github.io/Calibra/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" alt="Docs"/></a>
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"/></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-BSL_1.1-blue.svg" alt="License"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"/></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-v0.11.0-informational" alt="Changelog"/></a>
 </p>
 
@@ -556,4 +556,4 @@ scoring changes, are in [docs/contributing.md](docs/contributing.md).
 
 ## License
 
-[Business Source License 1.1](LICENSE): free for research and internal use, converts to Apache 2.0 on 2030-06-30. Commercial hosting requires a separate license. See [LICENSE](LICENSE) and [LICENSING.md](LICENSING.md). Contact: omertahtaci05@gmail.com
+[Apache License 2.0](LICENSE). Calibra is open source: use, modify, self-host and redistribute it, including commercially. The Calibra Cloud extension in [`ee/`](ee/) is licensed separately and is not part of the `calibra-robotics` package. See [LICENSING.md](LICENSING.md). Contact: omertahtaci05@gmail.com

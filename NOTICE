@@ -1,0 +1,7 @@
+Calibra
+Copyright 2026 omerTT
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE),
+except for the contents of the ee/ directory, which are licensed separately
+under the terms in ee/LICENSE and are not distributed with the calibra-robotics
+package.

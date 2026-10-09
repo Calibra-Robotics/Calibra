@@ -1,14 +1,16 @@
 # Open-Core Boundary (decision doc)
 
-**Status:** decision recorded, not yet acted on. There is currently **one public
-repository** and **no paid tier**. This doc exists so that *when a new feature is
-built, we know which side of the line it belongs on* — and so we don't
-accidentally wall off something that drives adoption.
+**Status:** the code boundary is in place
+([ADR-012](adr/adr-012-apache-core-boundary.md)). The core is licensed under
+**Apache 2.0**; existing Calibra Cloud code lives in the separately licensed
+`ee/` directory of the same public repository. There is **no paid tier**. This
+doc exists so that *when a new feature is built, we know which side of the line
+it belongs on*, and so we don't accidentally wall off something that drives
+adoption.
 
 **Do not build a private repo or paid features on speculation.** The trigger for
-actually splitting is a **real paying customer** whose need forces the boundary,
-not a roadmap date. Until then, everything ships in the public source-available
-core.
+building a paid feature is a **real paying customer** whose need forces it, not a
+roadmap date. Until then, new work ships in the open-source core.
 
 ## Guiding principle
 
@@ -20,7 +22,7 @@ The public core must be enough for a lab to fully inspect, reproduce, and trust
 the science. The paid layer is about *organizational* workflows — multi-user,
 persistent, hosted, governed — not about gating the core capability.
 
-## Public core (source-available, the adoption engine)
+## Public core (Apache 2.0, the adoption engine)
 
 Keep these public. They are what earns trust and drives adoption; walling any of
 them off would damage the wedge.
@@ -65,8 +67,6 @@ These are organizational-workflow features — defer until a customer needs one.
 
 - Creating the private repository
 - Building any paid feature above
-- Drafting commercial-license terms beyond the existing contact line
-- Engaging an IP lawyer to review the BSL grant / contributor ownership
+- Drafting commercial terms for `ee/` beyond the existing contact line
 
-The existing README contact line for commercial licensing is sufficient to field
-an inbound request. The first real request is the signal to start this work.
+The existing README contact line is sufficient to field an inbound request. The first real request is the signal to start this work.

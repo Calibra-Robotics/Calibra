@@ -6,6 +6,11 @@ All notable changes to Calibra are documented here.
 
 ### Changed
 
+- **Calibra is now licensed under the Apache License 2.0** (previously Business
+  Source License 1.1). It is OSI open source with no restriction on hosting.
+  The `ee/` directory keeps its own license and is not part of the
+  `calibra-robotics` package; see `NOTICE` and `LICENSING.md`. Releases up to
+  0.11.x keep their BSL terms.
 - **Calibra Cloud code moved out of the core into `ee/`** (ADR-012), ahead of
   relicensing the core under Apache 2.0. `calibra/cloud/` is now
   `ee/calibra_ee/cloud/` and `server/` is now `ee/server/`; neither is
