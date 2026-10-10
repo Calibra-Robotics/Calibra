@@ -4,6 +4,8 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+## [0.12.0] - Apache 2.0 core
+
 ### Changed
 
 - **Calibra is now licensed under the Apache License 2.0** (previously Business

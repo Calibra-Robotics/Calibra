@@ -1,5 +1,5 @@
 """
-Human-reviewed evidence schema (ADR-012).
+Human-reviewed evidence schema.
 
 Provides the vocabulary for the fourth layer of the detection pipeline:
 

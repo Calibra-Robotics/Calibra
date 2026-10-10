@@ -5,7 +5,7 @@
   <a href="https://calibra-robotics.github.io/Calibra/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" alt="Docs"/></a>
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"/></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-v0.11.0-informational" alt="Changelog"/></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-v0.12.0-informational" alt="Changelog"/></a>
 </p>
 
 <p align="center"><b>Train robot policies with up to 75% less data.</b></p>
@@ -450,7 +450,14 @@ result = selector.select(batch, report)
 
 ## Roadmap
 
-**v0.11.0 (current), Dataset profiles:** per-dataset analyzer settings
+**v0.12.0 (current), Apache 2.0 core:** the core is now licensed under the
+Apache License 2.0. Calibra Cloud code (login, cloud upload, outcome sync, the
+hosted API) moved to the separately licensed `ee/` directory, and the core no
+longer contacts Calibra Cloud unless you ask it to. See
+[ADR-012](docs/adr/adr-012-apache-core-boundary.md) and
+[CHANGELOG.md](CHANGELOG.md).
+
+**v0.11.0, Dataset profiles:** per-dataset analyzer settings
 (`calibra/dataset_profiles.py`) replace global defaults where they do not fit a
 dataset, starting with PushT (both action axes scored, its own noise-regime and
 `prune` limits, re-measured calibration baselines). Also fixes the Isaac Lab →
@@ -463,7 +470,7 @@ empirically-measured benign firing rates for each detector on known-clean LeRobo
 datasets (PushT n=206, ALOHA n=50), so flagged episodes can be compared against a
 baseline rather than treated as absolute. `AnomalySummary` (schema 1.2.0) exposes
 per-detector context (baseline, concentration, detection rate) in the public JSON
-report. Human-reviewed `FindingCharacterization` evidence schema (ADR-012) provides
+report. Human-reviewed `FindingCharacterization` evidence schema provides
 the vocabulary to distinguish true corruption from unusual-but-valid episodes. See
 [CHANGELOG.md](CHANGELOG.md).
 
