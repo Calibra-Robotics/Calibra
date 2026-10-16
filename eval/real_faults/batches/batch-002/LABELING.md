@@ -71,35 +71,36 @@ Also observed while preparing batch-003: on an incompletely downloaded ALOHA cop
 file missing), `calibra integrity` correctly blocked on `video_missing_rate` (25% of episode ×
 camera pairs). Download artifact, not a dataset fault, so not labeled.
 
-## Human spot-check (2026-10-17)
+## Non-expert spot-check (2026-10-17, provisional, not expert-verified)
 
 Reviewer: omerTT (project maintainer, no H1 hardware experience), blind to the AI label until
-each decision was saved. 9 of 30 rows checked; those rows carry `[human-checked 2026-10-17 ...]`
+each decision was saved. 9 of 30 rows checked; those rows carry `[non-expert spot-check 2026-10-17, provisional, ...]`
 in `notes`. The other 21 remain AI first pass.
 
-Agreement with the AI first pass: 5 / 9.
+Agreement with the AI first pass: 5 / 9. Internal observation only, not a validated accuracy metric.
 
 | ep | AI first pass | Human | Note |
 |---:|---|---|---|
-| 6 | clean | acquisition_fault (low confidence) | original of the ep 26 duplicate; human labels both copies as faulty |
+| 6 | clean | acquisition_fault (low confidence), recorded as clean | original of the ep 26 duplicate; the reviewer marked both copies, the extra-copy convention keeps the original clean |
 | 12 | clean | execution_failure (low confidence) | human judged the object not in the bin at the end; AI read it as in the bin |
 | 0 | unsure | clean (low confidence) | 6 Hz state oscillation is not visible in video |
 | 21 | unsure | clean (low confidence) | same |
 
 Ep 26 (the duplicate) and ep 7 agree with the AI first pass.
 
-**Labeling convention, unresolved.** `_check_duplicate_episodes` flags only the later copy
-(26), treating the first as the canonical demo. The human label marks the original (6) as a
-fault too, so the `duplicate` detector now scores recall 1/2 instead of 1/1. The labels are
-kept as the human gave them; decide the convention (one fault per duplicate group vs every
-member) before the next batch, and write it into the protocol in `README.md`.
+**Duplicate convention (decided 2026-10-17).** Only extra copies are faults: the first
+episode of an identical group is the original and stays clean (see `README.md`). Ep 6 is
+therefore recorded as clean and ep 26 as `acquisition_fault` / `duplicate_episode`; the
+reviewer's original decision on ep 6 is kept in its `notes`. Under the every-copy reading the
+reviewer first used, the `duplicate` detector would score recall 1/2; the 1/1 below depends on
+this convention.
 
-Re-score with human labels (`snapshots/lerobot__unitreeh1_rearrange_objects__0.12.0.json`):
+Re-score (`snapshots/lerobot__unitreeh1_rearrange_objects__0.12.0.json`):
 
 | Detector | TP/FP/FN |
 |---|---|
-| blocked / duplicate | 1/0/1 |
-| short_outlier, stage1_fail, video_fault, quality_risk>=0.5 | 0/0/2 |
-| anomaly_score>=0.8 | 2/3/0 (ep 6 and 26 share values, so both hits are coincidental) |
+| blocked / duplicate | 1/0/0 |
+| short_outlier, stage1_fail, video_fault, quality_risk>=0.5 | 0/0/1 |
+| anomaly_score>=0.8 | 1/4/0 (ep 26 shares ep 6's values, so the hit is coincidental) |
 
 Unsure now 5 (was 7).

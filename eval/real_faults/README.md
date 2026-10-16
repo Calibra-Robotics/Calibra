@@ -68,6 +68,11 @@ lerobot-dataset-viz --repo-id lerobot/pusht --root ./data/pusht --episode-index 
 | `clean` | nothing notable |
 | `unsure` | can't tell; excluded from scoring |
 
+**Duplicates:** when two or more episodes are identical, the first one (lowest episode
+index) is the original and is labeled on its own merits; each additional copy is
+`acquisition_fault` with `fault_type` `duplicate_episode`. This matches what
+`duplicate_episode_fraction` flags, and duplicate recall is only meaningful under it.
+
 `fault_type` is a short free tag (`frozen_camera`, `timestamp_gap`,
 `teleop_glitch`, ...). Use `notes` for the evidence (timestamp, camera), so a
 second labeler can check it. Where possible have a second person label a

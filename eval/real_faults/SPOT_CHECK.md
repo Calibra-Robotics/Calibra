@@ -1,7 +1,10 @@
-# Human spot-check of the AI first-pass labels
+# Non-expert spot-check of the AI first-pass labels
 
-**Done 2026-10-17** (reviewer omerTT, through a blinded review page): 18 / 24 agree with the AI
-first pass (PushT 6/8, Unitree H1 5/9, ALOHA 7/7), 4 decisions at low confidence. Disagreements
+**Done 2026-10-17, provisional, not expert-verified** (reviewer omerTT, the maintainer, with no
+hands-on experience of these robots, through a blinded review page): 18 / 24 decisions matched
+the AI first pass (PushT 6/8, Unitree H1 5/9, ALOHA 7/7), 4 at low confidence. This is an
+internal observation, not a validated accuracy metric. The reviewer does not consider these
+labels trustworthy; expert verification is still needed, ideally from a design partner. Disagreements
 and the re-scores are in each batch's `LABELING.md`.
 
 All three batches were labeled by an AI first pass. Checking these 24 episodes (about 15
@@ -11,7 +14,7 @@ They cover every non-clean label, the borderline cases, and a few plain clean on
 For each episode: open it, decide the label yourself **before** reading the AI label in
 `sheet.csv`, then compare. If you disagree, edit `label` / `notes` in that batch's
 `sheet.csv` and replace the `[AI first pass, needs human check]` prefix with
-`[human-checked]`. Then re-run `score` for the batch.
+`[non-expert spot-check]`. Then re-run `score` for the batch.
 
 Viewer (needs LeRobot installed; `--root` points at the local copy):
 

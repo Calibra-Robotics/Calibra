@@ -50,14 +50,14 @@ product gap is that local copies silently lose their profile.
 - No acquisition faults exist in this sample, so recall is not measurable on
   PushT (a rendered simulation). Real-robot datasets are needed for that.
 
-## Human spot-check (2026-10-17)
+## Non-expert spot-check (2026-10-17, provisional, not expert-verified)
 
 Reviewer: omerTT (project maintainer, not a PushT specialist), blind to the AI label until each
 decision was saved. 8 of 50 rows checked (every non-clean AI label, the borderline cases and two
-plain controls); those rows carry `[human-checked 2026-10-17 ...]` in `notes`. The other 42
+plain controls); those rows carry `[non-expert spot-check 2026-10-17, provisional, ...]` in `notes`. The other 42
 remain AI first pass.
 
-Agreement with the AI first pass: 6 / 8.
+Agreement with the AI first pass: 6 / 8. Internal observation only, not a validated accuracy metric.
 
 | ep | AI first pass | Human | Note |
 |---:|---|---|---|
