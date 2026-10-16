@@ -23,7 +23,11 @@ Resolution
 ----------
 * Hub IDs listed in a profile (``lerobot/pusht``, ``hf://lerobot/pusht``) get
   it automatically.
-* Local copies carry no reliable dataset identity, so pass it explicitly:
+* Local copies carry no dataset ID. A profile is applied automatically when the
+  copy can be identified with confidence (``detect_local_profile``): its
+  ``hf download`` revision is the one the profile was measured on, or its
+  dataset card links a covered Hub ID. A matching directory name alone only
+  prints a hint. Otherwise pass it explicitly:
   ``calibra prune ./datasets/pusht --profile pusht``.
 
 Evidence
@@ -40,7 +44,9 @@ added on intuition alone.
 from __future__ import annotations
 
 import dataclasses
+import re
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Optional
 
 from calibra.analyzers.base import Analyzer, DefaultGripperDims
@@ -135,13 +141,98 @@ def get_profile(name: str) -> DatasetProfile:
 
 
 def profile_for_path(path: str) -> Optional[DatasetProfile]:
-    """The profile a Hub ID uses automatically, or None (including local paths)."""
+    """
+    The profile a dataset uses automatically: by Hub ID, or for a local copy
+    when ``detect_local_profile`` identifies it with confidence. None otherwise.
+    """
     from calibra.anomalies import calibration_dataset_id
 
     dataset_id = calibration_dataset_id(path)
-    if dataset_id is None:
-        return None
-    return next((p for p in PROFILES.values() if dataset_id in p.datasets), None)
+    if dataset_id is not None:
+        return next((p for p in PROFILES.values() if dataset_id in p.datasets), None)
+    return detect_local_profile(path).profile
+
+
+@dataclass(frozen=True)
+class LocalProfileDetection:
+    profile: Optional[DatasetProfile] = None  # set only for a confident match
+    reason: Optional[str] = None  # why the profile applies, or a hint when it does not
+
+
+_CARD_REPO_RE = re.compile(
+    r"(?:huggingface\.co/datasets/|[?&]path=)([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)"
+)
+
+
+def detect_local_profile(path: str) -> LocalProfileDetection:
+    """
+    Identify a known dataset from a local copy's own files.
+
+    Local copies carry no dataset ID, so a profile used to be silently skipped
+    for them (on lerobot/pusht that meant 48 Stage-1 drops instead of 0). Two
+    signals are confident enough to apply a profile:
+
+    1. ``hf download`` cache: the commit SHA recorded for the downloaded files
+       equals the revision a profile's evidence was measured on.
+    2. The dataset card (README.md) links a Hub ID the profile covers
+       (``huggingface.co/datasets/<org>/<name>`` or ``path=<org>/<name>``).
+
+    A directory named like a profiled dataset (e.g. ``pusht``) is only a hint:
+    nothing is applied and the reason suggests ``--profile``.
+    """
+    root = Path(path).expanduser()
+    if not root.is_dir():
+        return LocalProfileDetection()
+
+    revisions = _downloaded_revisions(root)
+    for profile in PROFILES.values():
+        ev = profile.evidence
+        if ev is not None and ev.dataset_revision in revisions:
+            return LocalProfileDetection(
+                profile,
+                f"downloaded at revision {ev.dataset_revision[:8]}, the revision the "
+                f"'{profile.name}' profile was measured on",
+            )
+
+    card = root / "README.md"
+    if card.is_file():
+        try:
+            text = card.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            text = ""
+        for repo in _CARD_REPO_RE.findall(text):
+            for profile in PROFILES.values():
+                if repo in profile.datasets:
+                    return LocalProfileDetection(
+                        profile,
+                        f"dataset card names {repo}, covered by the '{profile.name}' profile",
+                    )
+
+    name = root.resolve().name.lower()
+    for profile in PROFILES.values():
+        if any(ds.split("/")[-1].lower() == name for ds in profile.datasets):
+            return LocalProfileDetection(
+                None,
+                f"directory '{root.name}' looks like a dataset covered by the "
+                f"'{profile.name}' profile; if it is, pass --profile {profile.name}",
+            )
+    return LocalProfileDetection()
+
+
+def _downloaded_revisions(root: Path) -> set[str]:
+    """Commit SHAs recorded by `hf download` for files in a local copy."""
+    revisions: set[str] = set()
+    download = root / ".cache" / "huggingface" / "download"
+    if not download.is_dir():
+        return revisions
+    for meta in download.rglob("*.metadata"):
+        try:
+            first = meta.read_text(encoding="utf-8").splitlines()[0].strip()
+        except (OSError, IndexError, UnicodeDecodeError):
+            continue
+        if re.fullmatch(r"[0-9a-f]{40}", first):
+            revisions.add(first)
+    return revisions
 
 
 def apply_profile(analyzers: list[Analyzer], profile: Optional[DatasetProfile]) -> list[Analyzer]:

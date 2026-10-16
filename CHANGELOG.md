@@ -6,6 +6,15 @@ All notable changes to Calibra are documented here.
 
 ### Changed
 
+- **Local dataset copies get their dataset profile automatically** when they
+  can be identified from their own files: the `hf download` revision equals the
+  revision a profile was measured on, or the dataset card links a covered Hub
+  ID. Previously only Hub IDs did, so `calibra prune ./pusht` silently used the
+  global Stage-1 limits and dropped 48 clean PushT episodes (0 with the
+  profile). The applied profile and the evidence are printed and stored in the
+  report (`dataset_profile_reason`); a directory named like a profiled dataset
+  only prints a `--profile` hint. An explicit `--profile` still wins.
+
 - **`short_episode_fraction` no longer flags fixed-length recordings.** The lower
   fence is now `Q1 − 1.5 × max(IQR, 0.25 × median)`. Datasets recorded at a few
   fixed lengths have IQR = 0, which put the fence at Q1: on

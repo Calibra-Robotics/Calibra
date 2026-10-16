@@ -374,3 +374,71 @@ class TestExplicitGripperDims:
         report = explicit.run(_batch("lerobot/pusht"))
         assert report.dataset_profile == "pusht"
         assert _spike_rate(report) == 0.0
+
+
+class TestLocalCopyDetection:
+    """Local copies have no Hub ID; identify them from their own files."""
+
+    PUSHT_REV = "7628202a2180972f291ba1bc6723834921e72c19"
+
+    def _hf_download(self, root, revision):
+        meta = root / ".cache" / "huggingface" / "download" / "meta"
+        meta.mkdir(parents=True)
+        (meta / "info.json.metadata").write_text(f"{revision}\nsome-etag\n1792152122.36\n")
+
+    def test_download_revision_matches_profile_evidence(self, tmp_path):
+        from calibra.dataset_profiles import detect_local_profile
+
+        root = tmp_path / "anything"
+        self._hf_download(root, self.PUSHT_REV)
+        d = detect_local_profile(str(root))
+        assert d.profile is PROFILES["pusht"]
+        assert "7628202a" in d.reason
+        assert profile_for_path(str(root)) is PROFILES["pusht"]
+
+    def test_other_revision_is_not_applied(self, tmp_path):
+        from calibra.dataset_profiles import detect_local_profile
+
+        root = tmp_path / "some_dataset"
+        self._hf_download(root, "0" * 40)
+        assert detect_local_profile(str(root)).profile is None
+
+    def test_dataset_card_naming_a_covered_repo(self, tmp_path):
+        from calibra.dataset_profiles import detect_local_profile
+
+        root = tmp_path / "copy"
+        root.mkdir()
+        (root / "README.md").write_text(
+            "See https://huggingface.co/datasets/lerobot/pusht_image for details."
+        )
+        d = detect_local_profile(str(root))
+        assert d.profile is PROFILES["pusht"]
+        assert "lerobot/pusht_image" in d.reason
+
+    def test_card_naming_an_uncovered_repo(self, tmp_path):
+        from calibra.dataset_profiles import detect_local_profile
+
+        root = tmp_path / "copy"
+        root.mkdir()
+        (root / "README.md").write_text("visualize?path=lerobot/aloha_static_battery")
+        assert detect_local_profile(str(root)).profile is None
+
+    def test_directory_name_is_only_a_hint(self, tmp_path):
+        from calibra.dataset_profiles import detect_local_profile
+
+        root = tmp_path / "pusht"
+        root.mkdir()
+        d = detect_local_profile(str(root))
+        assert d.profile is None
+        assert "--profile pusht" in d.reason
+        assert profile_for_path(str(root)) is None
+
+    def test_pipeline_records_reason_and_explicit_still_wins(self, tmp_path, capsys):
+        root = tmp_path / "copy"
+        self._hf_download(root, self.PUSHT_REV)
+        report = Pipeline(analyzers=[ControlSmoothnessAnalyzer()]).run(_batch(str(root)))
+        assert report.dataset_profile == "pusht"
+        assert "7628202a" in report.dataset_profile_reason
+        assert "applied automatically" in capsys.readouterr().err
+        explicit = Pipeline(analyzers=[ControlSmoothnessAnalyzer()], profile="pusht")
+        assert explicit.run(_batch(str(root))).dataset_profile_reason == "passed explicitly"

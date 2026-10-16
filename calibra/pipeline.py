@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 import time
 from datetime import datetime, timezone
 from typing import Optional
@@ -106,7 +107,8 @@ class Pipeline:
                 cheap, linear-time action/timestamp diagnostics (see
                 _fast_analyzers). Ignored when `analyzers` is given.
     profile   : dataset profile name (see calibra.dataset_profiles). When None,
-                a Hub ID's own profile is applied automatically, if it has one.
+                a Hub ID's own profile is applied automatically, if it has one,
+                and so is a local copy's when detect_local_profile identifies it.
     """
 
     def __init__(
@@ -147,9 +149,24 @@ class Pipeline:
         cache         : optional AuditCache instance. On hit, returns cached
                         result instantly. On miss, runs pipeline and stores result.
         """
-        from calibra.dataset_profiles import apply_profile, profile_for_path
+        from calibra.dataset_profiles import apply_profile, detect_local_profile, profile_for_path
 
-        profile = self.profile or profile_for_path(batch.source_path)
+        profile = self.profile
+        profile_reason = "passed explicitly" if profile else None
+        if profile is None:
+            profile = profile_for_path(batch.source_path)
+            if profile is not None:
+                detection = detect_local_profile(batch.source_path)
+                profile_reason = detection.reason or "Hub ID"
+                if detection.profile is not None:
+                    print(
+                        f"  [profile {profile.name}] applied automatically: {detection.reason}",
+                        file=sys.stderr,
+                    )
+            else:
+                hint = detect_local_profile(batch.source_path).reason
+                if hint:
+                    print(f"  [profile] none applied; {hint}", file=sys.stderr)
         profile_name = profile.name if profile else None
 
         if cache is not None:
@@ -204,6 +221,7 @@ class Pipeline:
             calibra_version=calibra_version,
             analyzer_versions=analyzer_versions,
             dataset_profile=profile_name,
+            dataset_profile_reason=profile_reason,
             config_hash=_config_hash(
                 calibra_version, policy_family, analyzer_versions, profile_name
             ),

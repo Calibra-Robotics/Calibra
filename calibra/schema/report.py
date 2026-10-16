@@ -142,6 +142,8 @@ class DiagnosticReport(BaseModel):
     calibra_version: str = ""
     analyzer_versions: dict[str, str] = {}
     dataset_profile: Optional[str] = None  # calibra.dataset_profiles name, if one applied
+    # How it was chosen: "passed explicitly", "Hub ID", or the local-copy evidence.
+    dataset_profile_reason: Optional[str] = None
     config_hash: str = ""
     generated_at: str = ""  # ISO 8601 UTC timestamp
 
