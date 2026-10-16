@@ -37,11 +37,83 @@ import json
 import shlex
 import sys
 from pathlib import Path
+from typing import Optional
 
 from calibra.pipeline import Pipeline
 from calibra.pruning import ApproximateCoresetSelector, CoresetSelector
 
 _APPROXIMATE_AUTO_THRESHOLD = 50_000  # auto-enable approximate mode above this episode count
+
+
+_SCRIPTED_AUTO_SPIKE = 0.30
+
+
+def resolve_stage1_limits(
+    report,
+    *,
+    max_spike_rate: Optional[float] = None,
+    max_vel_disc_rate: Optional[float] = None,
+    max_dropout: float = 0.10,
+    policy: Optional[str] = None,
+    log=lambda msg: None,
+) -> dict[str, float]:
+    """
+    Stage 1 quality limits exactly as `calibra prune` applies them.
+
+    Order: defaults, then the dataset profile (never overriding explicit
+    values), then GR00T caps, then the scripted-data spike-rate raise. Returns
+    keyword arguments for CoresetSelector.
+    """
+    user_set_spike_rate = max_spike_rate is not None
+    spike = max_spike_rate if max_spike_rate is not None else 0.10
+    user_set_vel_disc = max_vel_disc_rate is not None
+    vel_disc = max_vel_disc_rate if max_vel_disc_rate is not None else 0.25
+
+    # A dataset profile can replace the default limits (never explicit flags).
+    if report.dataset_profile:
+        from calibra.dataset_profiles import get_profile
+
+        profile_limits = get_profile(report.dataset_profile).prune_thresholds
+        if not user_set_spike_rate and "max_spike_rate" in profile_limits:
+            spike = profile_limits["max_spike_rate"]
+        if not user_set_vel_disc and "max_vel_disc_rate" in profile_limits:
+            vel_disc = profile_limits["max_vel_disc_rate"]
+        if profile_limits:
+            log(
+                f"  [profile {report.dataset_profile}] Stage 1 limits: "
+                f"max_spike_rate={spike:.2f}, max_vel_disc_rate={vel_disc:.2f}"
+            )
+
+    if policy and "gr00t" in policy.lower():
+        # GR00T fine-tuning is sensitive to jerk and discontinuities.
+        spike = min(spike, 0.05)
+        vel_disc = min(vel_disc, 0.10)
+        max_dropout = min(max_dropout, 0.05)
+        log("  [--policy gr00t] Applying GR00T quality thresholds and entropy weighting.")
+
+    # Scripted demos have spike_rate ~22-25% (planner waypoint transitions),
+    # which would discard the entire dataset under the default threshold of 0.10.
+    # When the scripted motion signature is detected and the user has not
+    # explicitly set --max-spike-rate, raise it to 0.30 automatically.
+    if not user_set_spike_rate:
+        is_scripted = any(
+            f.metric == "motion_collection_signature"
+            for r in report.analyzer_results
+            for f in r.flags
+        )
+        if is_scripted and spike < _SCRIPTED_AUTO_SPIKE:
+            log(
+                f"  [scripted data] Scripted motion signature detected. "
+                f"Auto-raised --max-spike-rate from {spike:.2f} to "
+                f"{_SCRIPTED_AUTO_SPIKE:.2f}. Use --max-spike-rate to override."
+            )
+            spike = _SCRIPTED_AUTO_SPIKE
+
+    return {
+        "max_spike_rate": spike,
+        "max_vel_disc_rate": vel_disc,
+        "max_dropout_fraction": max_dropout,
+    }
 
 
 def _print_lerobot_train_hint(keep_ids: list[str], dataset_path: str, log) -> None:
@@ -309,58 +381,21 @@ def run_prune(argv: list[str]) -> None:
         else:
             args.strategy = "diversity"
 
-    # Apply GR00T-specific defaults before building the selector.
-    user_set_spike_rate = args.max_spike_rate is not None
-    max_spike_rate = args.max_spike_rate if user_set_spike_rate else 0.10
-    user_set_vel_disc = args.max_vel_disc_rate is not None
-    max_vel_disc_rate = args.max_vel_disc_rate if user_set_vel_disc else 0.25
-
-    # A dataset profile can replace the default limits (never explicit flags).
-    if report.dataset_profile:
-        from calibra.dataset_profiles import get_profile
-
-        limits = get_profile(report.dataset_profile).prune_thresholds
-        if not user_set_spike_rate and "max_spike_rate" in limits:
-            max_spike_rate = limits["max_spike_rate"]
-        if not user_set_vel_disc and "max_vel_disc_rate" in limits:
-            max_vel_disc_rate = limits["max_vel_disc_rate"]
-        if limits:
-            log(
-                f"  [profile {report.dataset_profile}] Stage 1 limits: "
-                f"max_spike_rate={max_spike_rate:.2f}, max_vel_disc_rate={max_vel_disc_rate:.2f}"
-            )
-    max_dropout = args.max_dropout
+    limits = resolve_stage1_limits(
+        report,
+        max_spike_rate=args.max_spike_rate,
+        max_vel_disc_rate=args.max_vel_disc_rate,
+        max_dropout=args.max_dropout,
+        policy=args.policy,
+        log=log,
+    )
+    max_spike_rate = limits["max_spike_rate"]
+    max_vel_disc_rate = limits["max_vel_disc_rate"]
+    max_dropout = limits["max_dropout_fraction"]
     diversity_weight = args.diversity_weight
     entropy_weight = args.entropy_weight
-
-    if args.policy and "gr00t" in args.policy.lower():
-        # GR00T fine-tuning is sensitive to jerk and discontinuities.
-        max_spike_rate = min(max_spike_rate, 0.05)
-        max_vel_disc_rate = min(max_vel_disc_rate, 0.10)
-        max_dropout = min(max_dropout, 0.05)
-        if entropy_weight == 0.0:
-            entropy_weight = 0.4  # prefer informative episodes by default
-        log("  [--policy gr00t] Applying GR00T quality thresholds and entropy weighting.")
-
-    # Auto-adjust spike threshold for scripted/planner datasets.
-    # Scripted demos have spike_rate ~22–25% (planner waypoint transitions),
-    # which would discard the entire dataset under the default threshold of 0.10.
-    # When the scripted motion signature is detected and the user has not
-    # explicitly set --max-spike-rate, raise it to 0.30 automatically.
-    _SCRIPTED_AUTO_SPIKE = 0.30
-    if not user_set_spike_rate:
-        is_scripted = any(
-            f.metric == "motion_collection_signature"
-            for r in report.analyzer_results
-            for f in r.flags
-        )
-        if is_scripted and max_spike_rate < _SCRIPTED_AUTO_SPIKE:
-            log(
-                f"  [scripted data] Scripted motion signature detected. "
-                f"Auto-raised --max-spike-rate from {max_spike_rate:.2f} to "
-                f"{_SCRIPTED_AUTO_SPIKE:.2f}. Use --max-spike-rate to override."
-            )
-            max_spike_rate = _SCRIPTED_AUTO_SPIKE
+    if args.policy and "gr00t" in args.policy.lower() and entropy_weight == 0.0:
+        entropy_weight = 0.4  # prefer informative episodes by default
 
     # Auto-enable approximate mode for very large datasets.
     use_approximate = args.approximate or batch.n_episodes > _APPROXIMATE_AUTO_THRESHOLD

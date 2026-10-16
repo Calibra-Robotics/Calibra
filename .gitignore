@@ -87,3 +87,9 @@ venv.bak/
 .DS_Store
 Thumbs.db
 .vscode/settings.json
+
+# Local validation data and scratch outputs (not tracked)
+/pusht/
+/report.json
+/integrity.json
+/coreset_index.json
