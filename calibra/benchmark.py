@@ -8,12 +8,15 @@ import argparse
 import json
 import random
 import sys
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from calibra.pipeline import Pipeline
 from calibra.predict import predict_outcome
 from calibra.pruning import CoresetSelector
 from calibra.schema.episode import EpisodeBatch
+
+if TYPE_CHECKING:
+    from calibra.experiment_log import ExperimentRecord
 
 _WIDTH = 60
 _THICK = "━" * _WIDTH
@@ -58,7 +61,7 @@ def _condition_result(
     n_total: int,
     base_gpu_hours: float,
     sim_score: float,
-    measured_rec: Optional[object],
+    measured_rec: Optional[ExperimentRecord],
 ) -> dict:
     """Build a {n_episodes, gpu_hours, gpu_hours_source, predicted_success_rate,
     success_rate_source} dict, preferring a measured ExperimentRecord's values

@@ -321,8 +321,8 @@ def _build_jepa_features(batch: EpisodeBatch) -> tuple[np.ndarray, list[str]]:
             "  [diagnose] torch not available, falling back to action-space features.",
             file=sys.stderr,
         )
-        feats, ids, _ = _build_training_features(batch)
-        return feats, ids
+        feats, fallback_ids, _ = _build_training_features(batch)
+        return feats, fallback_ids
 
     print("  [diagnose --latent jepa] Training RobotJEPA...", file=sys.stderr, flush=True)
     jepa = RobotJEPA(RobotJEPAConfig(n_epochs=40))

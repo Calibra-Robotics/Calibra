@@ -20,7 +20,7 @@ import re
 import subprocess
 import sys
 
-BASELINE = 117
+BASELINE = 104
 
 
 def main() -> int:
