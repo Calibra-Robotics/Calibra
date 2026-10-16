@@ -33,7 +33,16 @@ frame and reward relative to the dataset, not the 0.95 threshold.
 | `unusual_valid` | valid demo with max \|Δaction\| above the dataset p90 (71 px) or length above the dataset p95 (186 steps): episodes 3, 4, 174 |
 | `clean` | everything else (47) |
 
-## Result (Calibra 0.12.0, provisional)
+## Re-score with the PushT dataset profile
+
+The first snapshot ran on a local copy (`./pusht`) without `--profile pusht`, so Stage 1 used
+the global limits (spike 0.10, vel_disc 0.25). Hub IDs get the profile automatically; local
+copies do not. With the profile (`snapshots/lerobot__pusht__0.12.0__profile-pusht.json`,
+limits 0.25 / 0.40): **0 Stage-1 drops** (was 48), 0 false positives on this batch.
+The drops below therefore measure the global defaults, not a correctly configured run. The
+product gap is that local copies silently lose their profile.
+
+## Result (Calibra 0.12.0, global defaults, provisional)
 
 - Stage 1 drops (all `jerk_spike` in this sample): 0 of 20 sampled are
   acquisition faults; 18 clean, 2 unusual_valid.

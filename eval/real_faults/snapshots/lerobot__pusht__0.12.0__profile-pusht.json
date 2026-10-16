@@ -1,0 +1,3068 @@
+{
+ "dataset": "lerobot/pusht",
+ "revision": "7628202a2180972f291ba1bc6723834921e72c19",
+ "calibra_version": "0.12.0",
+ "profile": "pusht",
+ "stage1_limits": {
+  "max_spike_rate": 0.25,
+  "max_vel_disc_rate": 0.4,
+  "max_dropout_fraction": 0.1
+ },
+ "created_at": "2026-10-16T18:12:52+00:00",
+ "episodes": [
+  {
+   "episode_id": "0",
+   "n_steps": 161,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.30345,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.29448305578133227,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "1",
+   "n_steps": 118,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.354854,
+   "anomaly_score": 0.9903,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.2684950705638527,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "2",
+   "n_steps": 141,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.211289,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.5231907788358815,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "3",
+   "n_steps": 159,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.294876,
+   "anomaly_score": 1.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction",
+    "per_episode_vel_disc_rate",
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.5517172144221616,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "4",
+   "n_steps": 159,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.363863,
+   "anomaly_score": 0.932,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_contact_fraction",
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.5589594211698993,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "5",
+   "n_steps": 157,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.273527,
+   "anomaly_score": 0.9709,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.6183402488155382,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "6",
+   "n_steps": 69,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.304262,
+   "anomaly_score": 0.8447,
+   "anomaly_reasons": [
+    "per_episode_length",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.6589925796661891,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "7",
+   "n_steps": 169,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.34451,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.6024002872859799,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "8",
+   "n_steps": 80,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.719242,
+   "anomaly_score": 0.9806,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.43402354424826317,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "9",
+   "n_steps": 134,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.567909,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction",
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.5549858984078591,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "10",
+   "n_steps": 188,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.342453,
+   "anomaly_score": 0.9903,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction",
+    "per_episode_length",
+    "per_episode_vel_disc_rate",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.7022058941985081,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "11",
+   "n_steps": 149,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.366185,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.4134793696032134,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "12",
+   "n_steps": 140,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.570589,
+   "anomaly_score": 0.9903,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.6107430697822868,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "13",
+   "n_steps": 125,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.39051,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4829571858219301,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "14",
+   "n_steps": 107,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.506574,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4589210163799149,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "15",
+   "n_steps": 153,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.563705,
+   "anomaly_score": 0.932,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.4749551896806312,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "16",
+   "n_steps": 126,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.505376,
+   "anomaly_score": 0.9515,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.532847792097455,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "17",
+   "n_steps": 102,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.434803,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.46066620755748633,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "18",
+   "n_steps": 86,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.455837,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.30211033179644026,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "19",
+   "n_steps": 75,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.568999,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_length"
+   ],
+   "coverage_value": 0.6246770256838108,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "20",
+   "n_steps": 142,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.394149,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.6483385528637545,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "21",
+   "n_steps": 115,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.470697,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.46666453324812984,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "22",
+   "n_steps": 109,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.482999,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.3021502656528749,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "23",
+   "n_steps": 110,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.388542,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.32053976837170706,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "24",
+   "n_steps": 98,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.553729,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.22749849426073304,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "25",
+   "n_steps": 133,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.350131,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.4493354800268037,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "26",
+   "n_steps": 158,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.186699,
+   "anomaly_score": 0.9126,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.6212979988943061,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "27",
+   "n_steps": 112,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.701247,
+   "anomaly_score": 0.9612,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.4749702599574398,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "28",
+   "n_steps": 107,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.444659,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.6274510042584334,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "29",
+   "n_steps": 115,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.386353,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.33335658963446935,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "30",
+   "n_steps": 84,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.632241,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.5179012799012315,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "31",
+   "n_steps": 95,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.33316,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.3105494233149611,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "32",
+   "n_steps": 148,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.499928,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.40544478697651537,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "33",
+   "n_steps": 120,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.301854,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.38284260108879625,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "34",
+   "n_steps": 142,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.359686,
+   "anomaly_score": 0.9612,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.5895358599634546,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "35",
+   "n_steps": 143,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.367246,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.6621325224747447,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "36",
+   "n_steps": 142,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.602379,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.6265852357527262,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "37",
+   "n_steps": 121,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.39492,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.5183348001457039,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "38",
+   "n_steps": 186,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.426285,
+   "anomaly_score": 1.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_jitter_cv",
+    "per_episode_length",
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.45801104489684175,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "39",
+   "n_steps": 99,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.380905,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.2638984415262725,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "40",
+   "n_steps": 139,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.531885,
+   "anomaly_score": 0.9223,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.4886252487053506,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "41",
+   "n_steps": 73,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.686242,
+   "anomaly_score": 0.9709,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.2687909323348507,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "42",
+   "n_steps": 136,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.500111,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.5361005987381925,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "43",
+   "n_steps": 118,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.354235,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.468871101754523,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "44",
+   "n_steps": 127,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.317905,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.38458183870899665,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "45",
+   "n_steps": 152,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.388816,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5870387245877611,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "46",
+   "n_steps": 83,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.564421,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.48236823249911787,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "47",
+   "n_steps": 109,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.313573,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.41239572558197524,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "48",
+   "n_steps": 138,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.180351,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.3743770885729535,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "49",
+   "n_steps": 83,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.589583,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.3613007389079368,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "50",
+   "n_steps": 69,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.525619,
+   "anomaly_score": 0.8447,
+   "anomaly_reasons": [
+    "per_episode_ldlj",
+    "per_episode_length",
+    "per_episode_jitter_cv",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.6182020562577636,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "51",
+   "n_steps": 73,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.394054,
+   "anomaly_score": 0.8835,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_contact_fraction",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.429339961610277,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "52",
+   "n_steps": 136,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.419022,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.3471000490951796,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "53",
+   "n_steps": 173,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.425495,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_length",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.4383358538376697,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "54",
+   "n_steps": 205,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.247815,
+   "anomaly_score": 0.9709,
+   "anomaly_reasons": [
+    "per_episode_length",
+    "per_episode_jitter_cv",
+    "per_episode_contact_fraction",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.6051935229859906,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "55",
+   "n_steps": 106,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.254277,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.664053325913514,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "56",
+   "n_steps": 105,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.292913,
+   "anomaly_score": 0.9029,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.6224393707611756,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "57",
+   "n_steps": 83,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.31842,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.41144046209478446,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "58",
+   "n_steps": 118,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.213995,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.5690536600701073,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "59",
+   "n_steps": 122,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.423626,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.40968430778470827,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "60",
+   "n_steps": 60,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.553089,
+   "anomaly_score": 0.9709,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length",
+    "per_episode_contact_fraction",
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.27721495368843285,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "61",
+   "n_steps": 150,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.428895,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4254883371926496,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "62",
+   "n_steps": 67,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.426725,
+   "anomaly_score": 0.932,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length",
+    "per_episode_contact_fraction",
+    "per_episode_vel_disc_rate",
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.47270835532035704,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "63",
+   "n_steps": 140,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.359557,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.3412592469003889,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "64",
+   "n_steps": 103,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.359335,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.3696968459745355,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "65",
+   "n_steps": 166,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.357565,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5254108674500884,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "66",
+   "n_steps": 67,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.400412,
+   "anomaly_score": 0.932,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.24321308776309605,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "67",
+   "n_steps": 104,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.442598,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.28574923397246144,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "68",
+   "n_steps": 90,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.348227,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.49421390704935364,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "69",
+   "n_steps": 150,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.261249,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.3289532660775396,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "70",
+   "n_steps": 186,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.337959,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.5394243094583866,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "71",
+   "n_steps": 134,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.300532,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.3375434363627803,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "72",
+   "n_steps": 148,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.611791,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.43215781454919633,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "73",
+   "n_steps": 112,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.393875,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.22391488800056064,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "74",
+   "n_steps": 118,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.290778,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.40347626276151116,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "75",
+   "n_steps": 98,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.31439,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4316334535792029,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "76",
+   "n_steps": 89,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.277988,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.30824818126437126,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "77",
+   "n_steps": 122,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.2031,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.3284854469957186,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "78",
+   "n_steps": 176,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.401877,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.5304498348026754,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "79",
+   "n_steps": 70,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.572513,
+   "anomaly_score": 0.8641,
+   "anomaly_reasons": [
+    "per_episode_length",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.26215753105117673,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "80",
+   "n_steps": 117,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.311109,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.594401962883695,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "81",
+   "n_steps": 113,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.436038,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.5575657854094092,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "82",
+   "n_steps": 94,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.141627,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.6317066485757894,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "83",
+   "n_steps": 139,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.419712,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4346676088437018,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "84",
+   "n_steps": 80,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.547436,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_contact_fraction",
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.42352345542400005,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "85",
+   "n_steps": 111,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.429384,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.48430411746542934,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "86",
+   "n_steps": 104,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.506993,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.524132190117057,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "87",
+   "n_steps": 115,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.4643,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.3130214147496047,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "88",
+   "n_steps": 81,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.687171,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.44591806793711825,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "89",
+   "n_steps": 138,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.477571,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5662426585919196,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "90",
+   "n_steps": 109,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.570009,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.38318144186043124,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "91",
+   "n_steps": 101,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.494135,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5329199193617357,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "92",
+   "n_steps": 78,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.406337,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.4327146952827276,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "93",
+   "n_steps": 64,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.600993,
+   "anomaly_score": 0.9029,
+   "anomaly_reasons": [
+    "per_episode_length",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.39511797899208756,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "94",
+   "n_steps": 67,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.439156,
+   "anomaly_score": 0.932,
+   "anomaly_reasons": [
+    "per_episode_ldlj",
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.5071650291521665,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "95",
+   "n_steps": 107,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.266147,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.23668789209028807,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "96",
+   "n_steps": 190,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.501906,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.6344043970001016,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "97",
+   "n_steps": 111,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.440872,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.47121379262418384,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "98",
+   "n_steps": 68,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.407473,
+   "anomaly_score": 0.9612,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.42071129819193287,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "99",
+   "n_steps": 82,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.283255,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.22171267162308422,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "100",
+   "n_steps": 117,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.468167,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.34412072621529916,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "101",
+   "n_steps": 92,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.448315,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.39898161176511227,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "102",
+   "n_steps": 114,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.429787,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.31665214157502813,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "103",
+   "n_steps": 141,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.391145,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5825427178898358,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "104",
+   "n_steps": 137,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.447434,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5291846405989962,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "105",
+   "n_steps": 75,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.410986,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_length"
+   ],
+   "coverage_value": 0.3366558581377859,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "106",
+   "n_steps": 126,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.46022,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.3385292913358174,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "107",
+   "n_steps": 197,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.395396,
+   "anomaly_score": 0.9806,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction",
+    "per_episode_jitter_cv",
+    "per_episode_length",
+    "per_episode_vel_disc_rate",
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.6080820718743676,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "108",
+   "n_steps": 112,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.557599,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4984067884030264,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "109",
+   "n_steps": 145,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.411689,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.49383222832838497,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "110",
+   "n_steps": 131,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.386522,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.719121143221008,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "111",
+   "n_steps": 98,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.409234,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.596114201365091,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "112",
+   "n_steps": 71,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.450081,
+   "anomaly_score": 0.8738,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.43361863139119894,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "113",
+   "n_steps": 149,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.454362,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.46031185200921787,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "114",
+   "n_steps": 165,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.46866,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5065501852396141,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "115",
+   "n_steps": 97,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.345588,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.27979234772825107,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "116",
+   "n_steps": 178,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.598806,
+   "anomaly_score": 0.9417,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_ldlj",
+    "per_episode_length",
+    "per_episode_jitter_cv",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.5184570448492258,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "117",
+   "n_steps": 116,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.398135,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5406471534944414,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "118",
+   "n_steps": 102,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.689579,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.36313404211355044,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "119",
+   "n_steps": 121,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.452365,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4968063240224381,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "120",
+   "n_steps": 65,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.481347,
+   "anomaly_score": 1.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_contact_fraction",
+    "per_episode_length",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.5062371796719476,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "121",
+   "n_steps": 137,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.275422,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.536773439337197,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "122",
+   "n_steps": 119,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.400616,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.262692279623268,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "123",
+   "n_steps": 205,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.288382,
+   "anomaly_score": 0.9709,
+   "anomaly_reasons": [
+    "per_episode_length",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.5644084704505856,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "124",
+   "n_steps": 148,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.486676,
+   "anomaly_score": 0.9806,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.4996211180427218,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "125",
+   "n_steps": 159,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.486568,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.40010484012307224,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "126",
+   "n_steps": 171,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.419282,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction",
+    "per_episode_length",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.3893202368726172,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "127",
+   "n_steps": 141,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.492996,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.4582693885356779,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "128",
+   "n_steps": 96,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.561334,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.6243978508648415,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "129",
+   "n_steps": 156,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.320455,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.49698153514688365,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "130",
+   "n_steps": 152,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.330334,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.5980429189453864,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "131",
+   "n_steps": 183,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.28331,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj",
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.44598201090320433,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "132",
+   "n_steps": 155,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.466741,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.45251242166108396,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "133",
+   "n_steps": 131,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.342141,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.34686053134261924,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "134",
+   "n_steps": 123,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.379614,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.5948070411219345,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "135",
+   "n_steps": 103,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.316549,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4629402120262647,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "136",
+   "n_steps": 125,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.469691,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4295829850445343,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "137",
+   "n_steps": 92,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.410359,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction",
+    "per_episode_vel_disc_rate",
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.4449372874632464,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "138",
+   "n_steps": 186,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.524646,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.6035996234684569,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "139",
+   "n_steps": 105,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.411244,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4365221027599282,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "140",
+   "n_steps": 112,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.497562,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.2948747532320465,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "141",
+   "n_steps": 186,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.295449,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.6035365378177117,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "142",
+   "n_steps": 122,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.282125,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction",
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.37385537776272326,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "143",
+   "n_steps": 146,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.433661,
+   "anomaly_score": 0.9709,
+   "anomaly_reasons": [
+    "per_episode_ldlj",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.3139159043144774,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "144",
+   "n_steps": 133,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.499247,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.5202092959410815,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "145",
+   "n_steps": 167,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.53723,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4497191364723364,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "146",
+   "n_steps": 103,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.311339,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.42904734113994397,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "147",
+   "n_steps": 162,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.380522,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5705348300203609,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "148",
+   "n_steps": 78,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.533051,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.3178098390233281,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "149",
+   "n_steps": 137,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.366852,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.2844495583609678,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "150",
+   "n_steps": 113,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.409764,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.43599742283706217,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "151",
+   "n_steps": 152,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.414654,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.2957022033449126,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "152",
+   "n_steps": 154,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.426744,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.48196033321486387,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "153",
+   "n_steps": 97,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.550641,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.39578906878964526,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "154",
+   "n_steps": 99,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.656894,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.35997856545969736,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "155",
+   "n_steps": 94,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.415677,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.31653821945648336,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "156",
+   "n_steps": 90,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.241694,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.6565051188713664,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "157",
+   "n_steps": 114,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.446283,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.46617335987482583,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "158",
+   "n_steps": 105,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.390576,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.4077366898109528,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "159",
+   "n_steps": 94,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.45899,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate",
+    "per_episode_contact_fraction",
+    "per_episode_ldlj",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.5850800155035905,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "160",
+   "n_steps": 147,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.484229,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5538352097930557,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "161",
+   "n_steps": 137,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.271505,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.6936700195301281,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "162",
+   "n_steps": 161,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.512217,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.30290862574510347,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "163",
+   "n_steps": 76,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.234075,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj",
+    "per_episode_spike_rate",
+    "per_episode_length",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.3314157502549634,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "164",
+   "n_steps": 126,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.296428,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.3316686667605019,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "165",
+   "n_steps": 193,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.357364,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_length",
+    "per_episode_jitter_cv",
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.44283984091211037,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "166",
+   "n_steps": 105,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.492577,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5512121888280791,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "167",
+   "n_steps": 140,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.428329,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.40997580297334,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "168",
+   "n_steps": 85,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.478156,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.5098187822729565,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "169",
+   "n_steps": 134,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.373804,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5217569484758545,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "170",
+   "n_steps": 130,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.397808,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.613437765859173,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "171",
+   "n_steps": 115,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.290786,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.3346208071708653,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "172",
+   "n_steps": 78,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.484237,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.5787215738630419,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "173",
+   "n_steps": 131,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.376758,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.500663036126658,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "174",
+   "n_steps": 246,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.410867,
+   "anomaly_score": 1.0,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length",
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.49871765029042087,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "175",
+   "n_steps": 146,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.508447,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.3693914906102954,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "176",
+   "n_steps": 89,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.410844,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate",
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.4544641216278978,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "177",
+   "n_steps": 127,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.345966,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.3601630379734872,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "178",
+   "n_steps": 148,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.298898,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.6707526131193737,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "179",
+   "n_steps": 155,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.479207,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.6586137390228103,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "180",
+   "n_steps": 170,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.543775,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.5119148981545871,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "181",
+   "n_steps": 107,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.413189,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5197141472502422,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "182",
+   "n_steps": 56,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.501651,
+   "anomaly_score": 0.9806,
+   "anomaly_reasons": [
+    "per_episode_ldlj",
+    "per_episode_jitter_cv",
+    "per_episode_length",
+    "per_episode_spike_rate",
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.5096552155945411,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "183",
+   "n_steps": 139,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.271127,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.5179175669208311,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "184",
+   "n_steps": 229,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.455692,
+   "anomaly_score": 0.9903,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.5682616811144837,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "185",
+   "n_steps": 64,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.542937,
+   "anomaly_score": 0.9029,
+   "anomaly_reasons": [
+    "per_episode_length",
+    "per_episode_vel_disc_rate",
+    "per_episode_jitter_cv"
+   ],
+   "coverage_value": 0.28978408790189036,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "186",
+   "n_steps": 92,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.234479,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_spike_rate"
+   ],
+   "coverage_value": 0.7661444992766866,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "187",
+   "n_steps": 145,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.458192,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.590965621498669,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "188",
+   "n_steps": 105,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.530016,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.47795495122494375,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "189",
+   "n_steps": 160,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.514704,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.5747441417864291,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "190",
+   "n_steps": 204,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.402522,
+   "anomaly_score": 0.9806,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.6211807555384696,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "191",
+   "n_steps": 159,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.449463,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.35294507314686363,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "192",
+   "n_steps": 185,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.33272,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length"
+   ],
+   "coverage_value": 0.5609251455334281,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "193",
+   "n_steps": 125,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.441062,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.6739410600535456,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "194",
+   "n_steps": 95,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.499201,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4916820517297967,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "195",
+   "n_steps": 100,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.378944,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.27703500991141194,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "196",
+   "n_steps": 105,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.390513,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.28533910120225475,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "197",
+   "n_steps": 167,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.41933,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4162707525316246,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "198",
+   "n_steps": 125,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.456694,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.2737076124627997,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "199",
+   "n_steps": 153,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.436943,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.39003202265638887,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "200",
+   "n_steps": 167,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.354472,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4236564551386795,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "201",
+   "n_steps": 92,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.469014,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.38387394296715194,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "202",
+   "n_steps": 167,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.513238,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_contact_fraction"
+   ],
+   "coverage_value": 0.5576950678549549,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "203",
+   "n_steps": 150,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.376435,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [],
+   "coverage_value": 0.4405086918217662,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "204",
+   "n_steps": 133,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.387308,
+   "anomaly_score": 0.0,
+   "anomaly_reasons": [
+    "per_episode_ldlj"
+   ],
+   "coverage_value": 0.3300193970747585,
+   "short_outlier": false,
+   "duplicate_of": null
+  },
+  {
+   "episode_id": "205",
+   "n_steps": 49,
+   "stage1_fail": false,
+   "stage1_reasons": [],
+   "video_faults": [],
+   "quality_risk": 0.444617,
+   "anomaly_score": 0.9903,
+   "anomaly_reasons": [
+    "per_episode_jitter_cv",
+    "per_episode_length",
+    "per_episode_contact_fraction",
+    "per_episode_vel_disc_rate"
+   ],
+   "coverage_value": 0.2721203658032428,
+   "short_outlier": false,
+   "duplicate_of": null
+  }
+ ]
+}
