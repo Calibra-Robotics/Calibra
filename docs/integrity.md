@@ -49,7 +49,7 @@ calibra integrity /data/my_demos.h5 --strict
 
 Pass `--strict` to fall back to the old, blunter policy: fail on *any* CRITICAL finding, including motion-review ones. Every finding also carries a `suggested_action` (`informational` / `inspect` / `block`) in `--json` output, so a CI pipeline that wants a custom policy can compute its own pass/fail from the raw findings instead of relying on the built-in `ci_result`.
 
-An analyzer that couldn't run at all (e.g. duplicate-frame/camera-freeze/blur on a video-backed LeRobot v2/v3 dataset without `--decode-images`) shows up under **Not Evaluated** with a reason, rather than disappearing from the output silently.
+An analyzer that couldn't run at all (e.g. duplicate-frame/camera-freeze/blur on a video-backed LeRobot v2/v3 dataset, or the video file checks on a Hub ID whose videos aren't downloaded) shows up under **Not Evaluated** with a reason, rather than disappearing from the output silently.
 
 ### CI Policy Files
 
@@ -141,7 +141,24 @@ A policy file is a flat JSON object mapping a **metric name** — the exact name
     Laplacian variance has no universal "blurry" cutoff — it depends on camera resolution, exposure, and scene content. This check flags episodes that are outliers *within their own dataset*, the same statistical approach used for episode completeness above. A dataset that's uniformly blurry throughout won't self-flag; there's nothing anomalous to compare against.
 
 !!! note "Format coverage"
-    Duplicate-frame, camera-freeze, and blur detection all need decoded image arrays. They work on HDF5-format datasets (Isaac Lab, robomimic-style exports) by default, and on **LeRobot v1** datasets (HuggingFace `Image`-feature columns) via the opt-in `--decode-images` flag — off by default since decoding increases load time and memory use. **LeRobot v2/v3** datasets store frames as encoded mp4 video rather than per-frame images; decoding those isn't supported yet (deliberately deferred — v3 in particular stores multiple episodes concatenated into shared video files with per-episode timestamp offsets, which needs more validation against real data before shipping). On v2/v3, these three checks are silently skipped (not an error), same as before.
+    Duplicate-frame, camera-freeze, and blur detection all need decoded image arrays. They work on HDF5-format datasets (Isaac Lab, robomimic-style exports) by default, and on **LeRobot v1** datasets (HuggingFace `Image`-feature columns) via the opt-in `--decode-images` flag — off by default since decoding increases load time and memory use. **LeRobot v2/v3** datasets store frames as encoded mp4 video rather than per-frame images; full-frame decoding for these three checks isn't supported yet, so on v2/v3 they show under **Not Evaluated** (not an error). The video files themselves are still checked; see [Video files](#video-files-lerobot-v2v3) below.
+
+### Video files (LeRobot v2/v3)
+
+**Detects:** per episode and camera, whether the mp4 referenced from `meta/` is usable for training:
+
+| Metric | Fails when |
+|--------|------------|
+| `video_missing_rate` | the referenced mp4 does not exist |
+| `video_decode_failure_rate` | the file cannot be opened, or the episode's first or last frame does not decode (truncated or corrupt file) |
+| `video_frame_mismatch_rate` | the video does not cover the episode's frames: v2 compares the file's frame count with the episode length, v3 checks the episode's `from_timestamp`/`to_timestamp` span against its length and the file's duration. A one-frame difference is tolerated. |
+| `video_fps_mismatch_rate` | the stream fps differs from `info.json` by more than 1% (counted per file) |
+
+All four are objective format failures, so a CRITICAL finding is `block`-level. `--json` output lists the affected episode indices per metric under `video_affected_episodes`, ready to drop or re-encode.
+
+**Why it matters:** the Parquet data can be perfect while the videos are not. LeRobot looks frames up by timestamp, so a missing, short, or wrong-fps video either crashes training when that episode is sampled or silently pairs actions with the wrong frames.
+
+**Requirements:** the check runs automatically on **local** v2/v3 datasets and needs OpenCV (`pip install 'calibra-robotics[video]'`). It reads only container metadata and two frames per episode, not whole videos. Hub IDs are listed under Not Evaluated, because the Parquet loader does not download videos; download first with `huggingface-cli download --repo-type dataset <repo_id> --local-dir <dir>` and run on the directory.
 
 ### Jittery / jerky motion
 

@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections import OrderedDict
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Callable, Iterable, Optional, Union
+from typing import Callable, Iterable, Iterator, Optional, Union
 
 import numpy as np
 
@@ -85,7 +85,7 @@ class LazyEpisodeList(Sequence):
     def __len__(self) -> int:
         return self._length
 
-    def __iter__(self) -> Iterable[Episode]:
+    def __iter__(self) -> Iterator[Episode]:
         if self._iterator_fn is not None:
             yield from self._iterator_fn()
         else:

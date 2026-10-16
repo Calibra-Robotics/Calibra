@@ -15,6 +15,11 @@ Usage:
     calibra integrity /data/my_demos.h5 --format hdf5
     calibra integrity /data/my_demos.h5 --json
     calibra integrity lerobot/pusht --decode-images   # v1 LeRobot only, see below
+    calibra integrity ./my_lerobot_v3_dataset         # also checks v2/v3 mp4 files
+
+Local LeRobot v2/v3 datasets with video features also get video file checks
+(missing / undecodable / frame-mismatched / wrong-fps mp4s); see
+calibra/video_integrity.py.
 
 Exit codes:
     0  No block-level CRITICAL findings (or --strict not passed).
@@ -41,7 +46,8 @@ from calibra.analyzers.task_structure import TaskStructureAnalyzer
 from calibra.analyzers.temporal import TemporalAnalyzer
 from calibra.pipeline import Pipeline
 from calibra.schema.episode import EpisodeBatch
-from calibra.schema.report import DiagnosticReport, RiskFlag, RiskLevel
+from calibra.schema.report import AnalyzerResult, DiagnosticReport, RiskFlag, RiskLevel
+from calibra.video_integrity import VIDEO_METRICS
 
 # Metric-name whitelist, not analyzer selection — TaskStructureAnalyzer also
 # emits trajectory_diversity/contact_density/grasp_events_per_episode, and
@@ -66,6 +72,7 @@ _INTEGRITY_METRICS = frozenset(
         "jerk_spike_rate",
         "velocity_discontinuity_rate",
         "joint_offset_max_abs",
+        *VIDEO_METRICS,
     }
 )
 
@@ -158,6 +165,65 @@ def _not_evaluated(
         reason = f"requires: {', '.join(missing)}" if missing else "requirements not met"
         result.append({"check": name, "reason": reason})
     return result
+
+
+def _video_checks(dataset_path: str, batch: EpisodeBatch) -> tuple[list[RiskFlag], dict, list]:
+    """
+    Run LeRobot v2/v3 video checks. Returns (flags, affected episodes per
+    metric, not-evaluated entries).
+    """
+    from pathlib import Path
+
+    from calibra.video_integrity import check_video_integrity, has_video_features
+
+    root = Path(dataset_path).expanduser()
+    info_path = root / "meta" / "info.json"
+    if not info_path.exists():
+        if batch.format == "lerobot" and not root.exists() and _hub_has_videos(dataset_path):
+            return (
+                [],
+                {},
+                [
+                    _video_not_evaluated(
+                        "videos are not downloaded for Hub datasets; run on a local copy "
+                        f"(huggingface-cli download --repo-type dataset {dataset_path} --local-dir DIR)"
+                    )
+                ],
+            )
+        return [], {}, []
+
+    if not has_video_features(json.loads(info_path.read_text(encoding="utf-8"))):
+        return [], {}, []
+
+    lengths = None
+    try:
+        lengths = {int(ep.metadata.episode_id): ep.n_steps for ep in batch.episodes}
+    except ValueError:
+        pass
+    try:
+        result = check_video_integrity(root, lengths)
+    except Exception as exc:
+        return [], {}, [_video_not_evaluated(f"could not read video metadata: {exc}")]
+    if result.not_evaluated_reason:
+        return [], {}, [_video_not_evaluated(result.not_evaluated_reason)]
+    return result.flags, result.affected, []
+
+
+def _video_not_evaluated(reason: str) -> dict:
+    return {"check": "video_integrity", "reason": reason}
+
+
+def _hub_has_videos(repo_id: str) -> bool:
+    try:
+        from huggingface_hub import hf_hub_download
+
+        from calibra.video_integrity import has_video_features
+
+        local = hf_hub_download(repo_id, "meta/info.json", repo_type="dataset")
+        with open(local, encoding="utf-8") as f:
+            return has_video_features(json.load(f))
+    except Exception:
+        return False
 
 
 def run_integrity(argv: list[str]) -> None:
@@ -279,13 +345,23 @@ def run_integrity(argv: list[str]) -> None:
         print(f"error running pipeline: {exc}", file=sys.stderr)
         sys.exit(1)
 
+    video_flags, video_affected, video_not_evaluated = _video_checks(dataset_path, batch)
+    if video_flags:
+        report.analyzer_results.append(
+            AnalyzerResult(
+                analyzer_name="video_integrity",
+                flags=video_flags,
+                raw_metrics={"affected_episodes": video_affected},
+            )
+        )
+
     flags = _integrity_flags(report)
     critical = [f for f in flags if f.level == RiskLevel.CRITICAL]
     warnings = [f for f in flags if f.level == RiskLevel.WARNING]
     passed = [f for f in flags if f.level == RiskLevel.OK]
     score, status = _integrity_score(flags)
     ci_result, ci_reason = _ci_result(flags, args.strict, policy)
-    not_evaluated = _not_evaluated(report, batch, analyzers)
+    not_evaluated = _not_evaluated(report, batch, analyzers) + video_not_evaluated
 
     if args.json:
         result = {
@@ -297,6 +373,7 @@ def run_integrity(argv: list[str]) -> None:
             "warnings": [_flag_to_dict(f, policy) for f in warnings],
             "passed": [_flag_to_dict(f, policy) for f in passed],
             "not_evaluated": not_evaluated,
+            "video_affected_episodes": video_affected,
             "integrity_score": score,
             "status": status,
             "ci_result": ci_result,
