@@ -49,3 +49,21 @@ product gap is that local copies silently lose their profile.
 - anomaly_score >= 0.8 fired on all 3 unusual_valid episodes and 12 clean ones.
 - No acquisition faults exist in this sample, so recall is not measurable on
   PushT (a rendered simulation). Real-robot datasets are needed for that.
+
+## Human spot-check (2026-10-17)
+
+Reviewer: omerTT (project maintainer, not a PushT specialist), blind to the AI label until each
+decision was saved. 8 of 50 rows checked (every non-clean AI label, the borderline cases and two
+plain controls); those rows carry `[human-checked 2026-10-17 ...]` in `notes`. The other 42
+remain AI first pass.
+
+Agreement with the AI first pass: 6 / 8.
+
+| ep | AI first pass | Human | Note |
+|---:|---|---|---|
+| 174 | unusual_valid | clean | longest episode (246 steps), succeeds; "long" is a definition question, not a fault |
+| 45 | clean | execution_failure | lowest final reward (0.83); T visibly off target. No demo reaches the 0.95 success threshold, so this is the worst of a borderline set |
+
+Re-score (profile snapshot, human labels where checked): no acquisition faults, every
+integrity detector 0 fires; `quality_risk>=0.5` 0/13/0; `anomaly_score>=0.8` 0/15/0 and fires
+on 2/2 unusual_valid.

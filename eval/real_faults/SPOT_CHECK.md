@@ -1,5 +1,9 @@
 # Human spot-check of the AI first-pass labels
 
+**Done 2026-10-17** (reviewer omerTT, through a blinded review page): 18 / 24 agree with the AI
+first pass (PushT 6/8, Unitree H1 5/9, ALOHA 7/7), 4 decisions at low confidence. Disagreements
+and the re-scores are in each batch's `LABELING.md`.
+
 All three batches were labeled by an AI first pass. Checking these 24 episodes (about 15
 minutes) is enough to call the batches human-verified or to find where the labels are wrong.
 They cover every non-clean label, the borderline cases, and a few plain clean ones per batch.

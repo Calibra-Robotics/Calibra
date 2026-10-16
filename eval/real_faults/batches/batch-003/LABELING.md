@@ -55,3 +55,13 @@ marks 1 clean episode for review. With no positives, recall is not measurable on
    batch-002.
 4. On an incomplete download (one camera file missing) `calibra integrity` correctly blocked
    on `video_missing_rate` (download artifact, not a dataset fault).
+
+## Human spot-check (2026-10-17)
+
+Reviewer: omerTT (project maintainer, no ALOHA hardware experience), blind to the AI label until
+each decision was saved. 7 of 49 rows checked (the three "ends while an arm is moving" episodes
+and four plain controls); those rows carry `[human-checked 2026-10-17 ...]` in `notes`. The
+other 42 remain AI first pass.
+
+Agreement with the AI first pass: 7 / 7, all clean. The battery is seated in every checked
+final frame. Re-score unchanged: no per-episode detector fires; `anomaly_score>=0.8` 0/1/0.
