@@ -496,6 +496,11 @@ def run_prune(argv: list[str]) -> None:
 
     if batch.format == "lerobot" and not args.export_dataset:
         _print_lerobot_train_hint(result.keep_episode_ids, dataset_path, log)
+    elif not args.export_dataset:
+        print(
+            "\n  To train on the kept episodes, add --export-dataset <dir> to write "
+            "them as a standalone dataset."
+        )
 
     if args.strategy == "world-model":
         from calibra.world_model.surprise import format_world_model_summary
@@ -518,7 +523,14 @@ def run_prune(argv: list[str]) -> None:
                 log=log,
             )
             log(f"Dataset exported to {exported}")
-            print(f"\n  Ready to train:\n    python train.py --dataset {exported}")
+            if batch.format == "lerobot":
+                name = Path(exported).resolve().name
+                print(
+                    "\n  Ready to train:\n    lerobot-train --policy.type=<policy> "
+                    f"--dataset.repo_id=local/{name} --dataset.root={shlex.quote(str(exported))}"
+                )
+            else:
+                print(f"\n  Exported dataset ready to train: {exported}")
         except Exception as exc:
             print(f"error exporting dataset: {exc}", file=sys.stderr)
             sys.exit(1)

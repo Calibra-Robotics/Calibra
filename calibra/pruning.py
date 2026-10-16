@@ -125,10 +125,6 @@ class PruningResult:
             f"  Coreset size       : {self.n_kept}  ({self.keep_fraction_actual:.1%} of original)",
             f"  Not evaluated      : {n_not_evaluated}  (passed Stage 1 with no quality metrics)",
             f"  Method             : {self.method}",
-            "─" * 56,
-            "  To use: add --export-dataset <dir> to write a ready-to-train dataset.",
-            "    calibra prune <path> --keep 0.3 --export-dataset ./coreset/",
-            "    python train.py --dataset ./coreset/",
             "━" * 56,
         ]
         return "\n".join(lines)
