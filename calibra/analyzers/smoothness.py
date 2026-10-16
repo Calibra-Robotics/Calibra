@@ -53,6 +53,15 @@ from calibra.schema.report import (
 _LDLJ_WARNING = -10.0  # below this → concerning
 _LDLJ_CRITICAL = -15.0
 
+# Per-sub-movement LDLJ (see _episode_ldlj). The thresholds above are the
+# single-movement scale from the motor-control literature, which is what the
+# per-sub-movement value is on.
+LDLJ_DEFINITION = "per_submovement_v1"
+_LDLJ_FILTER_HZ = 10.0  # moving-average low-pass before differentiating
+_SUBMOVEMENT_VALLEY_RATIO = 0.5  # split where speed dips below 50% of the smaller peak
+_MIN_SUBMOVEMENT_STEPS = 5
+_MIN_SUBMOVEMENT_PEAK = 0.10  # idle: peak below 10% of the median movement's peak
+
 _JERK_SPIKE_WARNING = 0.02  # 2% of steps
 _JERK_SPIKE_CRITICAL = 0.05
 
@@ -833,13 +842,85 @@ def _get_jerk(vel: np.ndarray, dt: float, action_type: str) -> Optional[np.ndarr
     return jerk
 
 
+def _lowpass(vel: np.ndarray, dt: float) -> np.ndarray:
+    """
+    Centered moving average with a window of fps / _LDLJ_FILTER_HZ samples
+    (no-op at or below that rate). Removes sensor and quantization noise that
+    two more derivatives would otherwise amplify by 1/dt^2.
+    """
+    w = int(round((1.0 / dt) / _LDLJ_FILTER_HZ))
+    if w <= 1 or len(vel) < w:
+        return vel
+    kernel = np.ones(w) / w
+    pad = (w // 2, w - 1 - w // 2)
+    padded = np.pad(vel, (pad, (0, 0)), mode="edge")
+    return np.stack(
+        [np.convolve(padded[:, d], kernel, mode="valid") for d in range(vel.shape[1])], axis=1
+    )
+
+
+def _submovement_bounds(speed: np.ndarray) -> list[tuple[int, int]]:
+    """
+    Split a speed profile into sub-movements at speed minima that fall below
+    _SUBMOVEMENT_VALLEY_RATIO of the smaller neighbouring peak. Returns
+    half-open (start, end) index ranges.
+    """
+    n = len(speed)
+    minima = [i for i in range(1, n - 1) if speed[i] <= speed[i - 1] and speed[i] < speed[i + 1]]
+    cuts = [0]
+    for k, m in enumerate(minima):
+        nxt = minima[k + 1] if k + 1 < len(minima) else n
+        left_peak = float(np.max(speed[cuts[-1] : m + 1]))
+        right_peak = float(np.max(speed[m:nxt]))
+        if speed[m] < _SUBMOVEMENT_VALLEY_RATIO * min(left_peak, right_peak):
+            cuts.append(m)
+    cuts.append(n)
+    bounds = [(a, b) for a, b in zip(cuts[:-1], cuts[1:]) if b > a]
+
+    # A segment too short to be a movement (e.g. carved out around a one-sample
+    # glitch) is merged into its neighbour, so the glitch spoils the movement it
+    # happened in instead of being dropped.
+    merged: list[tuple[int, int]] = []
+    for a, b in bounds:
+        if merged and (
+            b - a < _MIN_SUBMOVEMENT_STEPS or merged[-1][1] - merged[-1][0] < _MIN_SUBMOVEMENT_STEPS
+        ):
+            merged[-1] = (merged[-1][0], b)
+        else:
+            merged.append((a, b))
+    return merged
+
+
+def _ldlj_value(T: float, v_max: float, jerk: np.ndarray, dt: float) -> Optional[float]:
+    if T <= 0 or v_max <= 1e-12:
+        return None
+    jerk_sq_integral = float(np.sum(np.sum(jerk**2, axis=-1)) * dt)
+    if jerk_sq_integral <= 0:
+        return None
+    inner = (T**3 / v_max**2) * jerk_sq_integral
+    if inner <= 0:
+        return None
+    return float(-np.log(inner))
+
+
 def _episode_ldlj(
     ep: Episode,
     action_type: str = "position",
     active_dims: Optional[list[int]] = None,
 ) -> Optional[float]:
     """
-    LDLJ = -log((T^3 / v_max^2) * integral(||jerk||^2 dt))
+    Median per-sub-movement LDLJ of an episode.
+
+    LDLJ = -log((T^3 / v_max^2) * integral(||jerk||^2 dt)) is defined for a
+    single movement, where minimum-jerk motion scores about -6. Applied to a
+    whole demonstration of N movements it scales as -4 ln N regardless of how
+    smooth each one is (eval/investigations/ldlj/FINDINGS.md). So the velocity
+    is low-pass filtered (see _lowpass), split into sub-movements at speed
+    minima, LDLJ is computed per sub-movement (T and v_max of that movement),
+    and the duration-weighted mean is returned. Too-short pieces are merged
+    into their neighbour (so a glitch spoils its movement rather than being
+    dropped); sub-movements peaking below _MIN_SUBMOVEMENT_PEAK of the median
+    movement peak (idle drift) are ignored.
 
     Dimensionality check (all in SI units, position in arbitrary scale):
       jerk: [u/s^3]  → ||jerk||^2: [u^2/s^6]
@@ -848,6 +929,59 @@ def _episode_ldlj(
       product: [s^5/u^2 * u^2/s^5] = dimensionless ✓
 
     Returns None if the episode is too short or has zero-velocity content.
+    """
+    if ep.n_steps < 5:
+        return None
+
+    dt = float(np.median(np.diff(ep.timestamps)))
+    if dt <= 0:
+        return None
+
+    vel = _get_velocity(ep, action_type, active_dims or [])
+    if vel is None or len(vel) < 3:
+        return None
+    vel = _lowpass(vel, dt)
+
+    jerk = _get_jerk(vel, dt, action_type)
+    if jerk is None:
+        return None
+
+    speed = np.linalg.norm(vel, axis=-1)
+    if float(np.max(speed)) <= 1e-12:
+        return None
+
+    bounds = [(a, b) for a, b in _submovement_bounds(speed) if b - a >= _MIN_SUBMOVEMENT_STEPS]
+    if not bounds:
+        return None
+    # Idle drift is judged against a typical movement's peak, not the episode
+    # maximum, so one spike can't make every real movement look idle.
+    typical_peak = float(np.median([speed[a:b].max() for a, b in bounds]))
+
+    values, weights = [], []
+    for a, b in bounds:
+        seg_peak = float(speed[a:b].max())
+        if seg_peak < _MIN_SUBMOVEMENT_PEAK * typical_peak:
+            continue
+        # jerk[i] spans vel[i..i+2]; keep the jerk samples inside the segment.
+        seg_jerk = jerk[a : max(a, b - 2)]
+        if len(seg_jerk) == 0:
+            continue
+        v = _ldlj_value((b - a) * dt, seg_peak, seg_jerk, dt)
+        if v is not None:
+            values.append(v)
+            weights.append(b - a)
+    # Duration-weighted mean: a minority of rough movements still lowers the score.
+    return float(np.average(values, weights=weights)) if values else None
+
+
+def _episode_ldlj_whole_episode(
+    ep: Episode,
+    action_type: str = "position",
+    active_dims: Optional[list[int]] = None,
+) -> Optional[float]:
+    """
+    Legacy whole-episode LDLJ (Calibra <= 0.12), unfiltered and unsegmented.
+    Kept only to reproduce eval/investigations/ldlj; not used by any analyzer.
     """
     if ep.n_steps < 5:
         return None

@@ -4,7 +4,9 @@
 - **Calibra:** 0.12.0 + unreleased (`calibra/analyzers/smoothness.py`, `_episode_ldlj`)
 - **Data:** lerobot/pusht @ `7628202a2180972f291ba1bc6723834921e72c19`; synthetic trajectories
 - **Reproduce:** `python eval/investigations/ldlj/probe.py ./pusht eval/real_faults/batches/batch-001/sheet.csv`
-- **Status:** investigation only. The detector, thresholds and scores are unchanged.
+- **Status:** fixed in the same release (`ldlj_definition: per_submovement_v1`);
+  see "Fix" at the end. The sections below describe the old whole-episode metric,
+  reproducible with `_episode_ldlj_whole_episode`.
 
 ## Observation
 
@@ -77,3 +79,33 @@ In the labeled batch-001 (provisional AI labels), clean episodes have median
 
 Any change also moves the Calibra Score for every dataset, so it needs a
 CHANGELOG entry and regenerated goldens and claims.
+
+## Fix (options 1 + 3)
+
+`_episode_ldlj` now low-pass filters velocity (moving average, about 10 Hz;
+no-op at ≤10 Hz), splits it into sub-movements at speed minima below half the
+smaller neighbouring peak, merges pieces shorter than 5 samples into their
+neighbour, ignores idle pieces peaking below 10% of the median movement peak,
+and returns the duration-weighted mean of per-movement LDLJ. Thresholds are
+unchanged. A first version used the median and dropped short pieces; the
+glitch test (D) showed that hid injected glitches, so it was changed before
+release.
+
+Probe output (old → new):
+
+| Test | Old | New |
+|---|---:|---:|
+| A. smooth chain, N = 1 → 30 movements, 10 Hz | −4.50 → −18.42 | −4.50 → −4.64 |
+| A. same at 50 Hz | −5.13 → −18.65 | −5.06 → −5.05 |
+| B. N = 10, noise 1e-3, 50 Hz | −24.82 | −12.60 |
+| D. N = 10, 3 glitches, 10 / 50 Hz (clean −4.6 / −5.0) | −17.86 / −22.73 | −6.26 / −7.50 |
+| C. PushT median (range) | −16.37 (−19.3..−12.6) | −8.82 (−12.2..−7.3) |
+| C. PushT episodes < −10 / < −15 | 206 / 179 | 14 / 0 |
+| C. PushT corr(LDLJ, ln length) | −0.95 | −0.19 |
+| White-noise actions (80 steps, 10–50 Hz) | about −19 | −11.4 to −13.3 |
+
+Known limitations: white noise scores WARNING, not CRITICAL, under the
+unchanged thresholds (it is CRITICAL on `velocity_discontinuity_rate`); the
+moving-average cutoff and segmentation constants are reasoned defaults, not
+calibrated on labeled real-robot data; reference profiles and LDLJ claims must
+be regenerated under the new definition.

@@ -26,7 +26,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from calibra.analyzers.coverage import CoverageEntropyAnalyzer
-from calibra.analyzers.smoothness import ControlSmoothnessAnalyzer
+from calibra.analyzers.smoothness import LDLJ_DEFINITION, ControlSmoothnessAnalyzer
 from calibra.analyzers.task_structure import TaskStructureAnalyzer
 from calibra.analyzers.temporal import TemporalAnalyzer
 from calibra.ingestion.adapters.lerobot import LeRobotReader
@@ -166,6 +166,7 @@ def main() -> None:
             "control_mode": smoothness.action_type,
             "gripper_dims": list(smoothness.gripper_dims),
             "dataset_profile": report.dataset_profile,
+            "ldlj_definition": LDLJ_DEFINITION,
             "note": (
                 "Observation-only profile. No threshold calibration. "
                 "These distributions are Calibra's first real-data reference point."

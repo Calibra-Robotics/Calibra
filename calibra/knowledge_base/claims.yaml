@@ -125,6 +125,9 @@ claims:
     status: "active_hypothesis"
     confidence: "HIGH"
     assertion: "LDLJ is not a valid cross-dataset comparator when control modes or control frequencies differ significantly (> ~2x)"
+    # Evidence measured with whole-episode LDLJ (Calibra <= 0.12). Since
+    # ldlj_definition per_submovement_v1 it does not carry over; re-test pending.
+    # See calibra/claims/ldlj.json and eval/investigations/ldlj/FINDINGS.md.
     evidence_count: 6
     evidence_datasets:
       - lerobot/aloha_sim_insertion_human  # ✓ -20.43
@@ -134,6 +137,8 @@ claims:
       - lerobot/droid_100  # ✓ -19.393163
       - nvidia/BridgeData2_LeRobot_v3  # ✓ -13.788
     falsification: "Two datasets with different control modes where LDLJ ranks them in the physically expected order (position smoother than velocity) AND control frequencies differ > 2x"
+    pending_tests:
+      - Re-profile the six evidence datasets with ldlj_definition per_submovement_v1
 
   - id: "LDLJ-002"
     metric: "ldlj"
@@ -141,6 +146,9 @@ claims:
     status: "active_hypothesis"
     confidence: "HIGH"
     assertion: "LDLJ may be valid for within-type comparison (same control mode, similar frequency)"
+    # Evidence measured with whole-episode LDLJ (Calibra <= 0.12), which scales
+    # with episode length; rankings may reflect episode length, not roughness.
+    # Re-test with ldlj_definition per_submovement_v1 pending.
     evidence_count: 8
     evidence_datasets:
       - lerobot/aloha_sim_transfer_cube_human  # ✓ -20.015224
@@ -154,6 +162,7 @@ claims:
     falsification: "Two datasets of same type where LDLJ fails to distinguish a known-worse dataset (e.g. one with injected noise) from a clean one"
     pending_tests:
       - Two independent velocity-command datasets at similar control frequency
+      - Re-profile the eight evidence datasets with ldlj_definition per_submovement_v1
 
   - id: "PAI-001"
     metric: "pretraining_alignment_index"

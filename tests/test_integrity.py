@@ -290,16 +290,16 @@ class TestRunIntegrity:
         assert crit["suggested_action"] == "inspect"
 
     def test_policy_upgrades_motion_review_metric_to_block(self, tmp_path, capsys):
-        """ldlj is inspect-by-default (motion-review); a policy explicitly
-        marking it 'block' should flip ci_result to Failed and exit 1."""
-        policy_path = self._write_policy(tmp_path, {"ldlj": "block"})
+        """velocity_discontinuity_rate is inspect-by-default (motion-review); a
+        policy explicitly marking it 'block' should flip ci_result to Failed."""
+        policy_path = self._write_policy(tmp_path, {"velocity_discontinuity_rate": "block"})
         batch = self._jittery_batch()
         with patch("calibra.ingestion.registry.load", return_value=batch):
             with pytest.raises(SystemExit) as exc_info:
                 run_integrity(["/dummy/path.h5", "--json", "--policy", policy_path])
         payload = json.loads(capsys.readouterr().out)
         assert payload["ci_result"] == "Failed"
-        assert "ldlj" in payload["ci_reason"]
+        assert "velocity_discontinuity_rate" in payload["ci_reason"]
         assert exc_info.value.code == 1
 
     def test_policy_unknown_metric_warns_not_crashes(self, tmp_path, capsys):

@@ -225,7 +225,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 **Assertion:** LDLJ is not a valid cross-dataset comparator when control modes or control frequencies differ significantly (> ~2x)
 
-**Conditions:** LDLJ = -log((T^3 / v_max^2) * integral(||jerk||^2 dt))
+**Conditions:** LDLJ = -log((T^3 / v_max^2) * integral(||jerk||^2 dt)). All evidence below was measured with the whole-episode definition (Calibra <= 0.12). Since ldlj_definition per_submovement_v1 the metric is computed per sub-movement after a 10 Hz low-pass, which removes the episode-length (-4 ln N) and sampling-rate (1/dt^3 noise) dependence this claim describes; see eval/investigations/ldlj/FINDINGS.md. The evidence does not carry over to the new definition.
 
 **Evidence:**
 
@@ -241,7 +241,11 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 **Falsification condition:**
 > Two datasets with different control modes where LDLJ ranks them in the physically expected order (position smoother than velocity) AND control frequencies differ > 2x
 
-*Last updated: 2026-09-27*
+**Pending tests:**
+
+- `Re-profile the six evidence datasets with ldlj_definition per_submovement_v1`: Evidence was measured with the whole-episode definition; cross-frequency divergence may largely disappear under the per-sub-movement metric.
+
+*Last updated: 2026-10-16*
 
 ---
 
@@ -254,7 +258,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 **Assertion:** LDLJ may be valid for within-type comparison (same control mode, similar frequency)
 
-**Conditions:** control frequencies within ~2x, same action space semantics
+**Conditions:** control frequencies within ~2x, same action space semantics. All evidence below was measured with the whole-episode definition (Calibra <= 0.12), which scales with episode length (about -4 ln N for N movements); within-type rankings (e.g. aloha_mobile_shrimp as 'jerkiest') may reflect longer, multi-step episodes rather than rougher motion. Re-test with ldlj_definition per_submovement_v1; see eval/investigations/ldlj/FINDINGS.md.
 
 **Evidence:**
 
@@ -283,8 +287,9 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 **Pending tests:**
 
 - `Two independent velocity-command datasets at similar control frequency`: The pusht/pusht_image pair that resolved this was the same data (retracted 2026-09-27).
+- `Re-profile the eight evidence datasets with ldlj_definition per_submovement_v1`: Whole-episode LDLJ is length-driven; within-type rankings need to be re-checked under the per-sub-movement metric.
 
-*Last updated: 2026-09-27*
+*Last updated: 2026-10-16*
 
 ---
 

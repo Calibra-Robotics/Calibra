@@ -60,7 +60,7 @@ sys.path.insert(0, str(_REPO))
 
 from calibra.analyzers.base import parse_gripper_dims  # noqa: E402
 from calibra.analyzers.coverage import CoverageEntropyAnalyzer  # noqa: E402
-from calibra.analyzers.smoothness import ControlSmoothnessAnalyzer  # noqa: E402
+from calibra.analyzers.smoothness import LDLJ_DEFINITION, ControlSmoothnessAnalyzer  # noqa: E402
 from calibra.analyzers.task_structure import TaskStructureAnalyzer  # noqa: E402
 from calibra.analyzers.temporal import TemporalAnalyzer  # noqa: E402
 from calibra.ingestion.registry import load  # noqa: E402
@@ -293,6 +293,7 @@ def main() -> None:
             "control_mode": args.control_mode,
             "gripper_dims": gripper_dims,
             "dataset_profile": report.dataset_profile,
+            "ldlj_definition": LDLJ_DEFINITION,
             "note": note,
         },
         "episode_structure": {

@@ -6,6 +6,33 @@ All notable changes to Calibra are documented here.
 
 ### Changed
 
+- **`ldlj` is now computed per sub-movement** (`ldlj_definition:
+  per_submovement_v1`). Whole-episode LDLJ was defined for a single movement;
+  over a demonstration of N movements it fell by about 4 ln N regardless of
+  smoothness, and triple differentiation amplified sensor noise by 1/dt³, so it
+  was CRITICAL on all 30 official LeRobot datasets audited and correlated −0.95
+  with episode length on PushT. Velocities are now low-pass filtered (moving
+  average, ~10 Hz; no-op at ≤10 Hz), split into sub-movements at speed minima,
+  scored per sub-movement and combined as a duration-weighted mean. Thresholds
+  (−10 / −15) are unchanged; they are the single-movement scale the new values
+  are on. Details and evidence: `eval/investigations/ldlj/FINDINGS.md`.
+  - Smooth synthetic demos score −4.6 to −5.0 for any number of movements
+    (previously −4.5 to −18.4). Injected glitches and heavy noise still lower
+    the score. White-noise actions score about −11 to −13 (WARNING); they
+    remain CRITICAL on `velocity_discontinuity_rate`.
+  - PushT: `ldlj` CRITICAL → OK (mean −16.0 → −8.1); Calibra Score
+    44.3 → 63.1. The old value zeroed the smoothness dimension, which through
+    the integrity gate also halved coverage and task-structure credit.
+    Regression goldens updated (`ldlj` only).
+  - Expect higher Calibra Scores and fewer `ldlj` flags on most datasets,
+    especially long or 50 Hz ones. Stage-1 per-episode drops at `min_ldlj`
+    (−30) effectively no longer occur.
+  - Reference profiles in `calibra/references/` were made with the old
+    definition. `calibra compare` no longer compares `ldlj` against them and
+    says so; regenerate a reference with `scripts/profile_dataset.py`, which
+    now records `ldlj_definition`. Claims LDLJ-001 / LDLJ-002 are annotated as
+    measured with the old definition, with re-tests pending.
+
 - **Synthetic timestamps are reported as not evaluable, not passed.** When every
   episode's timestamps lie on an exact `t0 + k*dt` grid (LeRobot writes
   `frame_index / fps`; simulators step a fixed clock), `timestamp_jitter_cv` and

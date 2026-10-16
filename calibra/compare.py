@@ -85,6 +85,13 @@ def metrics_from_report(report: DiagnosticReport) -> dict[str, Optional[float]]:
     }
 
 
+def reference_ldlj_is_stale(ref: dict) -> bool:
+    """True if the reference was profiled with a different LDLJ definition."""
+    from calibra.analyzers.smoothness import LDLJ_DEFINITION
+
+    return ref.get("meta", {}).get("ldlj_definition") != LDLJ_DEFINITION
+
+
 def metrics_from_reference(ref: dict) -> dict[str, Optional[float]]:
     agg = ref.get("aggregate_metrics", {})
     t = agg.get("temporal_stability", {})
@@ -93,7 +100,8 @@ def metrics_from_reference(ref: dict) -> dict[str, Optional[float]]:
     return {
         "jitter_cv": t.get("jitter.mean_cv"),
         "dropout_rate": t.get("dropout.mean_dropout_fraction"),
-        "ldlj": s.get("ldlj.mean_ldlj"),
+        # LDLJ from an older definition is not comparable; never mix the two.
+        "ldlj": None if reference_ldlj_is_stale(ref) else s.get("ldlj.mean_ldlj"),
         "spike_rate": s.get("jerk_spikes.mean_spike_fraction"),
         "vel_disc_rate": s.get("vel_discontinuities.mean_disc_fraction"),
         "action_entropy": c.get("action_entropy.entropy_bits_per_dim"),
@@ -503,6 +511,12 @@ def render_comparison(
     delta = (y - r) if y is not None and r is not None else None
     if y is not None and r is not None:
         interp, conf = _interp_ldlj(y, r, ref_mode, ref_name, your_action_dim, ref_action_dim)
+    elif reference_ldlj_is_stale(ref_data):
+        interp, conf = (
+            "Not compared: this reference was profiled with the old whole-episode LDLJ. "
+            "Regenerate it with scripts/profile_dataset.py.",
+            "",
+        )
     else:
         interp, conf = "Could not compute.", ""
     delta_str = f"{delta:+.2f}" if delta is not None else "n/a"

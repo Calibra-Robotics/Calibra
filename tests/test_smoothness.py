@@ -747,3 +747,83 @@ def test_jerk_metrics_independent_of_action_dtype():
     assert _get_velocity(eps[0], "position", [0, 1]).dtype == np.float64
     for fn in (_episode_jerk_spike_fraction, _episode_vel_disc_fraction, _episode_ldlj):
         assert fn(eps[0], "position", [0, 1]) == fn(eps[1], "position", [0, 1])
+
+
+# ── per-sub-movement LDLJ (eval/investigations/ldlj/FINDINGS.md) ─────────────
+
+
+def _min_jerk_chain(n_seg: int, fps: float, noise: float = 0.0, seed: int = 0) -> Episode:
+    """N back-to-back minimum-jerk reaches (each starts and ends at rest)."""
+    rng = np.random.default_rng(seed)
+    t = np.linspace(0, 1, int(fps), endpoint=False)
+    s = 10 * t**3 - 15 * t**4 + 6 * t**5
+    p, out = np.zeros(6), []
+    for _ in range(n_seg):
+        d = rng.normal(size=6)
+        d *= 0.2 / np.linalg.norm(d)
+        out.append(p + s[:, None] * d)
+        p = p + d
+    pos = np.vstack(out + [p[None]])
+    if noise:
+        pos = pos + rng.normal(0, noise, pos.shape)
+    return Episode(
+        metadata=EpisodeMetadata(episode_id="chain"),
+        timestamps=np.arange(len(pos)) / fps,
+        observations={"proprio": pos.astype(np.float32)},
+        actions=pos,
+    )
+
+
+def _ldlj(ep: Episode) -> float:
+    v = _episode_ldlj(ep, "position", list(range(6)))
+    assert v is not None
+    return v
+
+
+def test_ldlj_independent_of_number_of_movements():
+    """Whole-episode LDLJ fell by ~4 ln N; per-movement LDLJ must not."""
+    for fps in (10, 50):
+        values = [_ldlj(_min_jerk_chain(n, fps)) for n in (1, 3, 10, 30)]
+        assert max(values) - min(values) < 0.6, values
+        assert all(-6.0 < v < -4.0 for v in values), values
+
+
+def test_ldlj_smooth_chain_is_ok_level():
+    result = ControlSmoothnessAnalyzer().analyze(
+        EpisodeBatch(
+            episodes=[_min_jerk_chain(20, 50, seed=i) for i in range(5)],
+            dataset_name="smooth",
+            format="hdf5",
+            source_path="x",
+        )
+    )
+    flag = next(f for f in result.flags if f.metric == "ldlj")
+    assert flag.level == RiskLevel.OK
+
+
+def test_ldlj_noise_at_high_rate_is_damped_but_still_worse():
+    clean, noisy = _ldlj(_min_jerk_chain(10, 50)), _ldlj(_min_jerk_chain(10, 50, noise=1e-3))
+    assert noisy < clean - 3  # heavy noise is still penalized
+    assert noisy > -15  # but no longer explodes via 1/dt^3
+
+
+def test_ldlj_glitches_lower_the_score():
+    clean = _min_jerk_chain(10, 50)
+    glitched = _min_jerk_chain(10, 50)
+    pos = np.array(glitched.actions)
+    for frac in (0.25, 0.5, 0.8):
+        pos[int(frac * len(pos))] += 0.2
+    glitched.actions = pos
+    assert _ldlj(glitched) < _ldlj(clean) - 1.5
+
+
+def test_ldlj_white_noise_far_below_smooth():
+    rng = np.random.default_rng(0)
+    a = rng.uniform(-1, 1, (80, 6))
+    ep = Episode(
+        metadata=EpisodeMetadata(episode_id="noise"),
+        timestamps=np.arange(80) / 20,
+        observations={"proprio": a.astype(np.float32)},
+        actions=a,
+    )
+    assert _ldlj(ep) < -10 < _ldlj(_min_jerk_chain(10, 20))
