@@ -90,6 +90,7 @@ Thumbs.db
 
 # Local validation data and scratch outputs (not tracked)
 /pusht/
+/data/
 /report.json
 /integrity.json
 /coreset_index.json
