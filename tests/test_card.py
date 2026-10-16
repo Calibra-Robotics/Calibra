@@ -177,11 +177,13 @@ class TestGenerateCard:
         assert "LDLJ" in card
         assert "Action entropy" in card
 
-    def test_predicted_success_present(self):
+    def test_no_unvalidated_success_prediction(self):
         report = _make_report()
-        card, _ = generate_card(report)
-        assert "Predicted success" in card
-        assert "%" in card
+        card, _ = generate_card(report, policy_family="act")
+        assert "Predicted success" not in card
+        assert "Training Outcome Prediction" not in card
+        assert "Calibra tier" not in card
+        assert "not a prediction of policy success" in card
 
     def test_policy_family_shown(self):
         report = _make_report()

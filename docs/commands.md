@@ -399,7 +399,7 @@ calibra card lerobot/my_dataset --policy diffusion --out quality_card.md
 calibra card /data/my_demos.h5 --push   # push directly to HuggingFace Hub README
 ```
 
-Generates a structured Markdown quality card with certification badge, per-metric status table, and predicted training outcome. Embed it in your dataset's HuggingFace Hub README so other researchers can see data quality at a glance.
+Generates a structured Markdown quality card with certification badge, per-metric status table, quality issues and provenance (source revision, profile, Calibra version). It contains measurements only, no predicted training outcome. Embed it in your dataset's HuggingFace Hub README so other researchers can see data quality at a glance.
 
 ---
 

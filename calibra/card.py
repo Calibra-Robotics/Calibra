@@ -8,9 +8,12 @@ README (YAML front-matter + Markdown section).
 The card includes:
   • Overall certification status (CERTIFIED / PROVISIONALLY CERTIFIED / NOT CERTIFIED)
   • Per-metric quality summary table
-  • Coreset size recommendation
-  • Predicted training outcome per policy family
-  • Calibra version and profiling date
+  • Quality issues (measured metrics past their thresholds)
+  • How to run episode selection (no claimed training benefit)
+  • Provenance: source revision, dataset profile, Calibra version, date
+
+Predicted policy success is deliberately left out: it is not validated, and
+the card is meant to be published on other people's dataset pages.
 
 Usage
 -----
@@ -178,9 +181,6 @@ def generate_card(
         ),
     ]
 
-    pred_score = pred["predicted_score"]
-    pred_lo, pred_hi = pred["predicted_range"]
-
     cs = score_result["total_score"]
     cs_cat = score_result["category"]
     dims = score_result["dimensions"]
@@ -195,6 +195,10 @@ def generate_card(
 **Certification status:** {status}
 **Calibra Score:** {cs:.1f} / 100 · *{cs_cat}*
 
+> The Calibra Score is a heuristic composite of the measurements below
+> ([spec](https://github.com/Calibra-Robotics/Calibra/blob/main/docs/calibra-score.md)).
+> It is not a prediction of policy success.
+
 | Dimension | Score | Max |
 |-----------|------:|----:|
 | Temporal Stability | {dims["temporal_stability"]["score"]:.1f} | {dims["temporal_stability"]["max"]} |
@@ -208,16 +212,10 @@ def generate_card(
 |--------|-------|------|--------|
 {chr(10).join(rows)}
 
-### Training Outcome Prediction
-
-| Policy | Predicted success | Range |
-|--------|------------------|-------|
-| `{policy_str}` | {pred_score:.0f}% | {pred_lo:.0f}%–{pred_hi:.0f}% |
-
-**Calibra tier:** {pred["tier"]}
-
 """
 
+    # Deductions are measured values past their thresholds; the predicted
+    # success rate itself is unvalidated and stays out of published cards.
     if pred["deductions"]:
         card += "### Quality Issues\n\n"
         for d in pred["deductions"]:
@@ -226,9 +224,11 @@ def generate_card(
         card += "\n"
 
     card += (
-        "### Recommended Coreset\n\n"
-        "Run `calibra prune <dataset> --keep 0.3` to select the most diverse "
-        "30% of quality-passing episodes before training.\n\n"
+        "### Episode Selection\n\n"
+        "To review per-episode decisions or select a diverse subset of the "
+        "quality-passing episodes, run `calibra prune <dataset> --keep <fraction> "
+        "--report report.json`. Whether a subset trains as well as the full "
+        "dataset depends on the task and policy; validate on your own setup.\n\n"
     )
 
     # ── Dataset Provenance ────────────────────────────────────────────────────
