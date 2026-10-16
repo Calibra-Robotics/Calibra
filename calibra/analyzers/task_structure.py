@@ -31,13 +31,19 @@ Metrics
    clusters. No scipy dependency — 2-means is implemented from scratch.
 
 4. Short episode fraction
-   Episodes with step count < Q1 - 1.5×IQR are outliers. High fractions
-   suggest data collection artefacts (e.g. early-termination on failure)
-   were not cleaned before export.
+   Episodes with step count < Q1 - 1.5×max(IQR, 0.25×median) are outliers.
+   High fractions suggest data collection artefacts (e.g. early-termination
+   on failure) were not cleaned before export.
+
+5. Duplicate episode fraction
+   Episodes whose actions and numeric observations are byte-identical to an
+   earlier episode. Exact copies come from export or merge mistakes; they
+   double-weight a demonstration and can leak across train/validation splits.
 """
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from typing import Optional
 
@@ -58,6 +64,12 @@ from calibra.schema.report import (
 
 _SHORT_EP_WARNING = 0.05  # 5% of episodes are outlier-short
 _SHORT_EP_CRITICAL = 0.15  # 15%
+# Floor on the spread used by the lower fence, as a fraction of the median
+# length. Fixed-length recordings (e.g. 23 × 250 and 7 × 200 steps) give
+# IQR = 0, which put the fence at Q1 and flagged every complete episode of the
+# shorter setting (eval/real_faults/batches/batch-002). With the floor an
+# episode must be below ~62% of the typical length to count as short.
+_SHORT_EP_MIN_SPREAD = 0.25
 
 _MULTIMODAL_SEP_INFO = 0.35  # weak 2-cluster structure → INFO
 _MULTIMODAL_SEP_WARNING = 0.60  # clear 2-cluster structure → WARNING
@@ -136,6 +148,10 @@ class TaskStructureAnalyzer(Analyzer):
         short_flag, short_raw = self._check_short_episodes(batch)
         flags.append(short_flag)
         raw["short_episodes"] = short_raw
+
+        dup_flag, dup_raw = self._check_duplicate_episodes(batch)
+        flags.append(dup_flag)
+        raw["duplicate_episodes"] = dup_raw
 
         hints = self._policy_hints(flags, policy_family, raw)
 
@@ -348,6 +364,53 @@ class TaskStructureAnalyzer(Analyzer):
 
     # ── metric: short episode fraction ───────────────────────────────────────
 
+    def _check_duplicate_episodes(self, batch: EpisodeBatch) -> tuple[RiskFlag, dict]:
+        first_by_digest: dict[str, str] = {}
+        groups: dict[str, list[str]] = {}
+        for ep in batch.episodes:
+            digest = _episode_digest(ep)
+            eid = ep.metadata.episode_id
+            if digest in first_by_digest:
+                groups.setdefault(first_by_digest[digest], []).append(eid)
+            else:
+                first_by_digest[digest] = eid
+        # {original episode id: [later copies]}
+        n_copies = sum(len(v) for v in groups.values())
+        n = max(len(batch.episodes), 1)
+        frac = n_copies / n
+        raw = {
+            "duplicate_episode_fraction": frac,
+            "n_duplicates": n_copies,
+            "duplicate_of": {copy: orig for orig, copies in groups.items() for copy in copies},
+        }
+        if n_copies == 0:
+            return RiskFlag(
+                level=RiskLevel.OK,
+                metric="duplicate_episode_fraction",
+                observed=ObservedValue(value=0.0, unit="fraction"),
+                threshold=0.0,
+                interpretation="No duplicated episodes.",
+                implication="Every episode's actions and observations are distinct.",
+            ), raw
+        pairs = ", ".join(f"{c} = {o}" for c, o in list(raw["duplicate_of"].items())[:5])
+        more = " ..." if n_copies > 5 else ""
+        return RiskFlag(
+            level=RiskLevel.CRITICAL,
+            metric="duplicate_episode_fraction",
+            observed=ObservedValue(value=frac, unit="fraction"),
+            threshold=0.0,
+            interpretation=(
+                f"{n_copies} of {len(batch.episodes)} episodes are exact copies of another "
+                f"episode (actions and observations byte-identical): {pairs}{more}."
+            ),
+            implication=(
+                "Duplicates double-weight a demonstration and can put the same data in "
+                "both training and validation splits. Usually an export or merge mistake: "
+                "remove the copies."
+            ),
+            affected_fraction=frac,
+        ), raw
+
     def _check_short_episodes(self, batch: EpisodeBatch) -> tuple[RiskFlag, dict]:
         lengths = np.array([ep.n_steps for ep in batch.episodes], dtype=float)
 
@@ -362,7 +425,8 @@ class TaskStructureAnalyzer(Analyzer):
 
         q1, q3 = np.percentile(lengths, [25, 75])
         iqr = q3 - q1
-        lower_fence = q1 - 1.5 * iqr
+        spread = max(iqr, _SHORT_EP_MIN_SPREAD * float(np.median(lengths)))
+        lower_fence = q1 - 1.5 * spread
 
         outlier_mask = lengths < lower_fence
         frac = float(np.mean(outlier_mask))
@@ -502,6 +566,21 @@ class TaskStructureAnalyzer(Analyzer):
 
 
 # ── per-episode and per-batch helpers ────────────────────────────────────────
+
+
+def _episode_digest(ep: Episode) -> str:
+    """Hash of an episode's actions and numeric non-image observations."""
+    h = hashlib.sha256()
+    arrays = [("actions", np.asarray(ep.actions))]
+    for key in sorted(ep.observations):
+        arr = np.asarray(ep.observations[key])
+        if arr.ndim <= 2 and np.issubdtype(arr.dtype, np.number):
+            arrays.append((key, arr))
+    for name, arr in arrays:
+        arr = np.ascontiguousarray(arr)
+        h.update(f"{name}:{arr.dtype}:{arr.shape}".encode())
+        h.update(arr.tobytes())
+    return h.hexdigest()
 
 
 def _collect_actions(batch: EpisodeBatch) -> np.ndarray:

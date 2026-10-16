@@ -97,7 +97,7 @@ def test_score_precision_recall_and_unusual_valid():
         },
     )
     result = score(labels, key, [snap], quality_risk_threshold=0.5)
-    blocked = result["detectors"]["blocked (stage1 or video)"]
+    blocked = result["detectors"]["blocked (stage1, video or duplicate)"]
     assert blocked["precision"] == pytest.approx(0.5)
     # Weighted: 1 found (w=1) vs 1 missed control (w=41/8).
     assert blocked["recall"] == pytest.approx(1 / (1 + 41 / 8))
@@ -160,7 +160,7 @@ def test_render_markdown():
     md = fault_eval.render_markdown(
         score(_label(sheet, key, {"0": "acquisition_fault"}), key, [snap])
     )
-    assert "| blocked (stage1 or video) |" in md
+    assert "| blocked (stage1, video or duplicate) |" in md
     assert "acquisition_fault=1" in md
 
 
@@ -240,7 +240,7 @@ def test_short_outliers_are_flagged_and_scored():
     labels = _label(sheet, key, {"3": "acquisition_fault", "7": "execution_failure"})
     d = score(labels, key, [snap])["detectors"]
     assert d["short_outlier"]["raw"]["tp"] == 1 and d["short_outlier"]["raw"]["fp"] == 1
-    assert d["blocked (stage1 or video)"]["raw"]["tp"] == 0
+    assert d["blocked (stage1, video or duplicate)"]["raw"]["tp"] == 0
 
 
 def test_old_snapshots_without_short_outlier_still_load():

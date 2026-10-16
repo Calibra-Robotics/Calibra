@@ -8,7 +8,7 @@
   "max_vel_disc_rate": 0.25,
   "max_dropout_fraction": 0.1
  },
- "created_at": "2026-10-16T16:56:56+00:00",
+ "created_at": "2026-10-16T17:56:04+00:00",
  "episodes": [
   {
    "episode_id": "0",
@@ -24,7 +24,8 @@
     "per_episode_spike_rate"
    ],
    "coverage_value": 0.8295063900928739,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "1",
@@ -40,7 +41,8 @@
     "per_episode_contact_fraction"
    ],
    "coverage_value": 0.6812146395250248,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "2",
@@ -55,7 +57,8 @@
     "per_episode_length"
    ],
    "coverage_value": 0.5812101554044238,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "3",
@@ -71,7 +74,8 @@
     "per_episode_length"
    ],
    "coverage_value": 0.8081509828840351,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "4",
@@ -86,7 +90,8 @@
     "per_episode_length"
    ],
    "coverage_value": 0.5617053508530644,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "5",
@@ -102,7 +107,8 @@
     "per_episode_ldlj"
    ],
    "coverage_value": 0.7730621242272175,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "6",
@@ -116,7 +122,8 @@
     "per_episode_ldlj"
    ],
    "coverage_value": 0.3671747498626079,
-   "short_outlier": true
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "7",
@@ -130,7 +137,8 @@
     "per_episode_contact_fraction"
    ],
    "coverage_value": 0.7815719575392277,
-   "short_outlier": true
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "8",
@@ -146,7 +154,8 @@
     "per_episode_ldlj"
    ],
    "coverage_value": 0.872892877114838,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "9",
@@ -161,7 +170,8 @@
     "per_episode_length"
    ],
    "coverage_value": 0.7856894129523975,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "10",
@@ -176,7 +186,8 @@
     "per_episode_length"
    ],
    "coverage_value": 0.6250720575037054,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "11",
@@ -192,7 +203,8 @@
     "per_episode_ldlj"
    ],
    "coverage_value": 0.9356191012593511,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "12",
@@ -204,7 +216,8 @@
    "anomaly_score": 0.0,
    "anomaly_reasons": [],
    "coverage_value": 0.695729881427086,
-   "short_outlier": true
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "13",
@@ -221,7 +234,8 @@
     "per_episode_contact_fraction"
    ],
    "coverage_value": 0.7864394433308686,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "14",
@@ -238,7 +252,8 @@
     "per_episode_spike_rate"
    ],
    "coverage_value": 0.9033095067714203,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "15",
@@ -254,7 +269,8 @@
     "per_episode_spike_rate"
    ],
    "coverage_value": 0.6455834967147853,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "16",
@@ -266,7 +282,8 @@
    "anomaly_score": 0.0,
    "anomaly_reasons": [],
    "coverage_value": 0.7741062958198205,
-   "short_outlier": true
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "17",
@@ -283,7 +300,8 @@
     "per_episode_vel_disc_rate"
    ],
    "coverage_value": 0.7125642096562239,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "18",
@@ -299,7 +317,8 @@
     "per_episode_spike_rate"
    ],
    "coverage_value": 0.7341690373195393,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "19",
@@ -316,7 +335,8 @@
     "per_episode_contact_fraction"
    ],
    "coverage_value": 0.7574322180103942,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "20",
@@ -328,7 +348,8 @@
    "anomaly_score": 0.0,
    "anomaly_reasons": [],
    "coverage_value": 0.7991818666370787,
-   "short_outlier": true
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "21",
@@ -344,7 +365,8 @@
     "per_episode_spike_rate"
    ],
    "coverage_value": 0.8637241517938172,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "22",
@@ -360,7 +382,8 @@
     "per_episode_contact_fraction"
    ],
    "coverage_value": 0.6500560295976372,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "23",
@@ -378,7 +401,8 @@
     "per_episode_vel_disc_rate"
    ],
    "coverage_value": 0.6343063690232986,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "24",
@@ -393,7 +417,8 @@
     "per_episode_length"
    ],
    "coverage_value": 0.8622181154900084,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "25",
@@ -409,7 +434,8 @@
     "per_episode_vel_disc_rate"
    ],
    "coverage_value": 0.7389371326321765,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "26",
@@ -423,7 +449,8 @@
     "per_episode_ldlj"
    ],
    "coverage_value": 0.3671747498626079,
-   "short_outlier": true
+   "short_outlier": false,
+   "duplicate_of": "6"
   },
   {
    "episode_id": "27",
@@ -441,7 +468,8 @@
     "per_episode_contact_fraction"
    ],
    "coverage_value": 0.9057524611611105,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "28",
@@ -456,7 +484,8 @@
     "per_episode_length"
    ],
    "coverage_value": 0.8494552817926625,
-   "short_outlier": false
+   "short_outlier": false,
+   "duplicate_of": null
   },
   {
    "episode_id": "29",
@@ -468,7 +497,8 @@
    "anomaly_score": 0.0,
    "anomaly_reasons": [],
    "coverage_value": 0.7642643306338148,
-   "short_outlier": true
+   "short_outlier": false,
+   "duplicate_of": null
   }
  ]
 }

@@ -39,6 +39,19 @@ No `execution_failure` and no `unusual_valid` found.
 
 **Read the TP rows as 0 real detections.** No current detector looks for duplicate episodes.
 
+### Re-score after fixes (same labels, new snapshot)
+
+After the short-episode fence floor and the new `duplicate_episode_fraction` check:
+
+| Detector | TP / FP / FN |
+|---|---|
+| `duplicate` (new) | 1 / 0 / 0 — names ep 26 as a copy of ep 6 |
+| `blocked (stage1, video or duplicate)` | 1 / 0 / 0 |
+| `short_outlier` | 0 / 0 / 1 — the six false flags are gone |
+
+`calibra integrity` on this dataset now fails CI on `duplicate_episode_fraction` instead of
+`short_episode_fraction`.
+
 ## Findings for Calibra
 
 1. **`short_episode_fraction` false block.** Episodes are fixed-length recordings (23 × 250,

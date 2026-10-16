@@ -99,9 +99,15 @@ A policy file is a flat JSON object mapping a **metric name** — the exact name
 
 ### Episode completeness
 
-**Detects:** episodes with a step count far below the dataset's typical length (`short_episode_fraction`, IQR-outlier test).
+**Detects:** episodes with a step count far below the dataset's typical length (`short_episode_fraction`, IQR-outlier test). The spread used for the fence is at least 25% of the median length, so datasets recorded at a few fixed lengths (IQR = 0) don't flag every episode of the shorter setting; an episode must then be below about 62% of the typical length to count as short.
 
 **Why it matters:** short-outlier episodes are usually failed demonstrations that were never filtered out — an operator abort, a safety-limit trip, or early termination. Training on them teaches the policy to abort tasks prematurely.
+
+### Duplicate episodes
+
+**Detects:** episodes whose actions and numeric observations are byte-identical to another episode (`duplicate_episode_fraction`). Any duplicate is CRITICAL and block-level; the finding names each copy and its original.
+
+**Why it matters:** an exact copy double-weights one demonstration and can land the same data in both training and validation splits. It comes from export or merge mistakes, not from recording, so the fix is to delete the copies. Found in practice: episode 26 of `lerobot/unitreeh1_rearrange_objects` @ `e874d89b` is a copy of episode 6 (`eval/real_faults/batches/batch-002`).
 
 ### Duplicate frames
 

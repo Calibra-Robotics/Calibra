@@ -64,6 +64,7 @@ _INTEGRITY_METRICS = frozenset(
         "camera_physics_drift",
         "action_dropout_rate",
         "short_episode_fraction",
+        "duplicate_episode_fraction",
         "duplicate_frame_rate",
         "camera_freeze_events",
         "blurry_episode_fraction",

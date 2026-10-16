@@ -74,7 +74,9 @@ _INTEGRITY_CATEGORIES: dict[str, frozenset[str]] = {
             "camera_physics_drift",
         }
     ),
-    "Episode structure": frozenset({"action_dropout_rate", "short_episode_fraction"}),
+    "Episode structure": frozenset(
+        {"action_dropout_rate", "short_episode_fraction", "duplicate_episode_fraction"}
+    ),
     "Camera feed": frozenset(
         {
             "duplicate_frame_rate",

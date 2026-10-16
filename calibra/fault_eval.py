@@ -69,11 +69,14 @@ class EpisodeSignals:
     # Below the task_structure analyzer's lower IQR length fence (the episodes
     # behind integrity's block-level short_episode_fraction finding).
     short_outlier: bool = False
+    # Episode id this one is a byte-identical copy of (the earlier occurrence
+    # is not marked), from integrity's block-level duplicate_episode_fraction.
+    duplicate_of: Optional[str] = None
 
     @property
     def blocked(self) -> bool:
         """Calibra would drop or block this episode without human review."""
-        return self.stage1_fail or bool(self.video_faults)
+        return self.stage1_fail or bool(self.video_faults) or self.duplicate_of is not None
 
     @property
     def flagged(self) -> bool:
@@ -125,6 +128,7 @@ def snapshot(
     video_by_episode = _video_faults_by_episode(path, batch)
     assessments = {a.episode_id: a for a in compute_episode_assessments(report, batch=batch)}
     short_fence = _short_episode_fence(report)
+    duplicate_of = _duplicate_map(report)
 
     episodes = []
     for ep in batch.episodes:
@@ -142,6 +146,7 @@ def snapshot(
                 anomaly_reasons=[r.metric for r in a.reasons] if a else [],
                 coverage_value=a.coverage_value if a else None,
                 short_outlier=short_fence is not None and ep.n_steps < short_fence,
+                duplicate_of=duplicate_of.get(eid),
             )
         )
 
@@ -154,6 +159,15 @@ def snapshot(
         "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "episodes": [asdict(e) for e in episodes],
     }
+
+
+def _duplicate_map(report) -> dict[str, str]:
+    """{copy episode id: original episode id} from the task_structure analyzer."""
+    for result in report.analyzer_results:
+        dup = result.raw_metrics.get("duplicate_episodes", {}).get("duplicate_of")
+        if dup is not None:
+            return dict(dup)
+    return {}
 
 
 def _short_episode_fence(report) -> Optional[float]:
@@ -293,8 +307,9 @@ def read_jsonl(path: Path) -> list[dict]:
 def detectors(quality_risk_threshold: float, anomaly_threshold: float) -> dict[str, Callable]:
     """Boolean per-episode decisions to score. Thresholds are for reporting, not calibrated."""
     return {
-        "flagged (stage1, video or short)": lambda s: s.flagged,
-        "blocked (stage1 or video)": lambda s: s.blocked,
+        "flagged (blocked or short)": lambda s: s.flagged,
+        "blocked (stage1, video or duplicate)": lambda s: s.blocked,
+        "duplicate": lambda s: s.duplicate_of is not None,
         "short_outlier": lambda s: s.short_outlier,
         "stage1_fail": lambda s: s.stage1_fail,
         "video_fault": lambda s: bool(s.video_faults),

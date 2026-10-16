@@ -273,10 +273,10 @@ class TestTaskStructureAnalyzerBasic:
         result = TaskStructureAnalyzer().analyze(_batch_of(eps))
         assert result.analyzer_name == "task_structure"
 
-    def test_four_flags_produced(self):
+    def test_five_flags_produced(self):
         eps = [_make_episode(100, ep_id=f"ep_{i}") for i in range(8)]
         result = TaskStructureAnalyzer().analyze(_batch_of(eps))
-        assert len(result.flags) == 4
+        assert len(result.flags) == 5
 
     def test_raw_metrics_populated(self):
         eps = [_make_episode(80, ep_id=f"ep_{i}") for i in range(5)]
@@ -348,6 +348,24 @@ class TestTaskStructureAnalyzerShortEpisodes:
         result = TaskStructureAnalyzer().analyze(_batch_of(eps))
         short_flags = [f for f in result.flags if "short" in f.metric]
         assert short_flags[0].level == RiskLevel.OK
+
+    def test_two_fixed_recording_lengths_not_flagged(self):
+        """Unitree H1 shape: 23 × 250 and 7 × 200 complete episodes gave IQR = 0
+        and a fence at Q1, flagging every 200-step episode (batch-002)."""
+        eps = [_make_episode(250, ep_id=f"ep_{i}") for i in range(23)]
+        eps += [_make_episode(200, ep_id=f"ep_{i + 23}") for i in range(7)]
+        result = TaskStructureAnalyzer().analyze(_batch_of(eps))
+        flag = next(f for f in result.flags if f.metric == "short_episode_fraction")
+        assert flag.level == RiskLevel.OK
+        assert result.raw_metrics["short_episodes"]["n_outliers"] == 0
+
+    def test_truncated_episode_among_fixed_lengths_still_flagged(self):
+        eps = [_make_episode(250, ep_id=f"ep_{i}") for i in range(28)]
+        eps += [_make_episode(90, ep_id=f"ep_{i + 28}") for i in range(2)]  # aborted early
+        result = TaskStructureAnalyzer().analyze(_batch_of(eps))
+        raw = result.raw_metrics["short_episodes"]
+        assert raw["n_outliers"] == 2
+        assert set(raw["outlier_episode_ids"]) == {"ep_28", "ep_29"}
 
 
 class TestTaskStructureAnalyzerMultimodal:
@@ -446,3 +464,32 @@ class TestTaskStructureAnalyzerPolicyHints:
         eps = [_make_episode(80, action_dim=4, ep_id=f"ep_{i}") for i in range(5)]
         result = TaskStructureAnalyzer(gripper_dims=[3]).analyze(_batch_of(eps))
         assert result.raw_metrics["detected_gripper_dims"] == [3]
+
+
+class TestTaskStructureAnalyzerDuplicateEpisodes:
+    def test_distinct_episodes_ok(self):
+        eps = [_make_episode(60 + i, ep_id=f"ep_{i}") for i in range(6)]
+        result = TaskStructureAnalyzer().analyze(_batch_of(eps))
+        flag = next(f for f in result.flags if f.metric == "duplicate_episode_fraction")
+        assert flag.level == RiskLevel.OK
+        assert result.raw_metrics["duplicate_episodes"]["n_duplicates"] == 0
+
+    def test_exact_copy_is_critical_and_named(self):
+        eps = [_make_episode(60 + i, ep_id=f"ep_{i}") for i in range(6)]
+        copy = _make_episode(62, ep_id="ep_6")
+        copy.actions = np.array(eps[2].actions)
+        copy.observations = {k: np.array(v) for k, v in eps[2].observations.items()}
+        copy.timestamps = np.array(eps[2].timestamps)
+        result = TaskStructureAnalyzer().analyze(_batch_of(eps + [copy]))
+        flag = next(f for f in result.flags if f.metric == "duplicate_episode_fraction")
+        assert flag.level == RiskLevel.CRITICAL
+        assert result.raw_metrics["duplicate_episodes"]["duplicate_of"] == {"ep_6": "ep_2"}
+        assert "ep_6 = ep_2" in flag.interpretation
+
+    def test_one_value_different_is_not_a_duplicate(self):
+        eps = [_make_episode(60, ep_id=f"ep_{i}") for i in range(2)]
+        eps[1].actions = np.array(eps[0].actions)
+        eps[1].observations = {k: np.array(v) for k, v in eps[0].observations.items()}
+        eps[1].actions[10, 0] += 1e-3
+        result = TaskStructureAnalyzer().analyze(_batch_of(eps))
+        assert result.raw_metrics["duplicate_episodes"]["n_duplicates"] == 0

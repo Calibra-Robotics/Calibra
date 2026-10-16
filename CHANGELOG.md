@@ -6,6 +6,15 @@ All notable changes to Calibra are documented here.
 
 ### Changed
 
+- **`short_episode_fraction` no longer flags fixed-length recordings.** The lower
+  fence is now `Q1 − 1.5 × max(IQR, 0.25 × median)`. Datasets recorded at a few
+  fixed lengths have IQR = 0, which put the fence at Q1: on
+  `lerobot/unitreeh1_rearrange_objects` (23 × 250 and 7 × 200 steps) every
+  complete 200-step episode was an "outlier" and `calibra integrity` failed CI.
+  An episode must now be below about 62% of the typical length to count as
+  short; ordinary variable-length datasets are unaffected (regression goldens
+  unchanged for this metric).
+
 - **`ldlj` is now computed per sub-movement** (`ldlj_definition:
   per_submovement_v1`). Whole-episode LDLJ was defined for a single movement;
   over a demonstration of N movements it fell by about 4 ln N regardless of
@@ -54,6 +63,11 @@ All notable changes to Calibra are documented here.
 
 ### Added
 
+- **Duplicate episode check** (`duplicate_episode_fraction`, task_structure
+  analyzer): episodes whose actions and numeric observations are byte-identical
+  to another episode are CRITICAL and block-level in `calibra integrity`; the
+  finding names each copy and its original. Found in practice: episode 26 of
+  `lerobot/unitreeh1_rearrange_objects` @ `e874d89b` copies episode 6.
 - `calibra integrity` checks LeRobot v2/v3 video files (missing, undecodable,
   frame-count/coverage mismatch, wrong fps) on local datasets. New optional
   extra `calibra-robotics[video]` (OpenCV).

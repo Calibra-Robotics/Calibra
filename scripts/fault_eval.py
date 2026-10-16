@@ -49,7 +49,7 @@ def cmd_snapshot(args) -> None:
         out = out / f"{name}__{snap['calibra_version']}.json"
     out.write_text(json.dumps(snap, indent=1), encoding="utf-8")
     n = len(snap["episodes"])
-    blocked = sum(1 for e in snap["episodes"] if e["stage1_fail"] or e["video_faults"])
+    blocked = sum(1 for e in snap["episodes"] if fault_eval.EpisodeSignals(**e).blocked)
     _log(f"Snapshot written to {out} ({n} episodes, {blocked} blocked)")
 
 
