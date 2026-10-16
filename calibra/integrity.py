@@ -186,7 +186,7 @@ def _video_checks(dataset_path: str, batch: EpisodeBatch) -> tuple[list[RiskFlag
                 [
                     _video_not_evaluated(
                         "videos are not downloaded for Hub datasets; run on a local copy "
-                        f"(huggingface-cli download --repo-type dataset {dataset_path} --local-dir DIR)"
+                        f"(hf download --repo-type dataset {dataset_path} --local-dir DIR)"
                     )
                 ],
             )

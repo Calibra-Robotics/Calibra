@@ -158,7 +158,7 @@ All four are objective format failures, so a CRITICAL finding is `block`-level. 
 
 **Why it matters:** the Parquet data can be perfect while the videos are not. LeRobot looks frames up by timestamp, so a missing, short, or wrong-fps video either crashes training when that episode is sampled or silently pairs actions with the wrong frames.
 
-**Requirements:** the check runs automatically on **local** v2/v3 datasets and needs OpenCV (`pip install 'calibra-robotics[video]'`). It reads only container metadata and two frames per episode, not whole videos. Hub IDs are listed under Not Evaluated, because the Parquet loader does not download videos; download first with `huggingface-cli download --repo-type dataset <repo_id> --local-dir <dir>` and run on the directory.
+**Requirements:** the check runs automatically on **local** v2/v3 datasets and needs OpenCV (`pip install 'calibra-robotics[video]'`). It reads only container metadata and two frames per episode, not whole videos. Hub IDs are listed under Not Evaluated, because the Parquet loader does not download videos; download first with `hf download --repo-type dataset <repo_id> --local-dir <dir>` and run on the directory.
 
 ### Jittery / jerky motion
 
