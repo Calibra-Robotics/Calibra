@@ -35,8 +35,10 @@ marks 1 clean episode for review. With no positives, recall is not measurable on
    frames), the signature of cameras running at roughly 25–30 Hz written into a 50 Hz stream
    by repeating frames. The policy sees visual observations at about half the labelled rate,
    lagging state/action. Calibra's `duplicate_frame_rate` / `camera_freeze_events` measure
-   exactly this but are **Not Evaluated on v2/v3** (no frame decoding). This is concrete
-   evidence for implementing decoded (sampled, bounded) video checks.
+   exactly this but were **Not Evaluated on v2/v3** (no frame decoding). Since
+   `calibra integrity --decode-video` (same release) they run on decoded video: this dataset
+   gets `duplicate_frame_rate` CRITICAL (cam_high 30.0%, 10 of 49 episodes decoded), with
+   no freeze runs (repeats alternate, they do not stall).
 
    | ep | cam_high | cam_left_wrist | cam_low | cam_right_wrist |
    |---:|---:|---:|---:|---:|

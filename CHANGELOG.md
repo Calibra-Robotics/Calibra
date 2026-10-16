@@ -63,6 +63,14 @@ All notable changes to Calibra are documented here.
 
 ### Added
 
+- **`calibra integrity --decode-video`** runs `duplicate_frame_rate` and
+  `camera_freeze_events` on LeRobot v2/v3 video (previously Not Evaluated).
+  Opt-in, sampled (`--video-sample N`, default 20 episodes, evenly spaced),
+  full resolution in 64-frame chunks, every camera; same measure and
+  thresholds as for image datasets. Validated on real data: flags
+  `lerobot/aloha_static_battery` (`cam_high` 30% repeated frames, cameras
+  slower than the 50 Hz recording), passes `unitreeh1_rearrange_objects`
+  (<1%) and `pusht` (1.5%).
 - **Duplicate episode check** (`duplicate_episode_fraction`, task_structure
   analyzer): episodes whose actions and numeric observations are byte-identical
   to another episode are CRITICAL and block-level in `calibra integrity`; the

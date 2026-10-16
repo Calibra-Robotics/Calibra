@@ -47,7 +47,7 @@ from calibra.analyzers.temporal import TemporalAnalyzer
 from calibra.pipeline import Pipeline
 from calibra.schema.episode import EpisodeBatch
 from calibra.schema.report import AnalyzerResult, DiagnosticReport, RiskFlag, RiskLevel
-from calibra.video_integrity import VIDEO_METRICS
+from calibra.video_integrity import VIDEO_METRICS, VideoContentResult
 
 # Metric-name whitelist, not analyzer selection — TaskStructureAnalyzer also
 # emits trajectory_diversity/contact_density/grasp_events_per_episode, and
@@ -210,6 +210,35 @@ def _video_checks(dataset_path: str, batch: EpisodeBatch) -> tuple[list[RiskFlag
     return result.flags, result.affected, []
 
 
+def _video_content_checks(
+    dataset_path: str, max_episodes: int, log
+) -> tuple[Optional[VideoContentResult], list]:
+    """Run decoded duplicate-frame / freeze checks on a local LeRobot v2/v3 dataset."""
+    from pathlib import Path
+
+    from calibra.video_integrity import check_video_content, has_video_features
+
+    root = Path(dataset_path).expanduser()
+    info_path = root / "meta" / "info.json"
+    if not info_path.exists() or not has_video_features(
+        json.loads(info_path.read_text(encoding="utf-8"))
+    ):
+        return None, [
+            {
+                "check": "video_content",
+                "reason": "--decode-video needs a local LeRobot v2/v3 dataset with video features",
+            }
+        ]
+    log(f"Decoding video for up to {max_episodes} episodes ...")
+    try:
+        result = check_video_content(root, max_episodes=max_episodes)
+    except Exception as exc:
+        return None, [{"check": "video_content", "reason": f"could not decode video: {exc}"}]
+    if result.not_evaluated_reason:
+        return None, [{"check": "video_content", "reason": result.not_evaluated_reason}]
+    return result, []
+
+
 def _video_not_evaluated(reason: str) -> dict:
     return {"check": "video_integrity", "reason": reason}
 
@@ -253,8 +282,24 @@ def run_integrity(argv: list[str]) -> None:
             "Decode camera frames for LeRobot v1 (HuggingFace Image-feature) "
             "datasets so duplicate_frame_rate/camera_freeze_events/blurry_episode_fraction "
             "can run. LeRobot-specific; increases load time and memory use. "
-            "Not yet supported for v2/v3 (video-encoded) LeRobot datasets."
+            "For v2/v3 (video-encoded) datasets use --decode-video."
         ),
+    )
+    p.add_argument(
+        "--decode-video",
+        action="store_true",
+        help=(
+            "Decode a sample of episodes from a local LeRobot v2/v3 dataset and run "
+            "duplicate_frame_rate and camera_freeze_events on every camera "
+            "(same measure and thresholds as for image datasets). Slower; see --video-sample."
+        ),
+    )
+    p.add_argument(
+        "--video-sample",
+        type=int,
+        default=20,
+        metavar="N",
+        help="Episodes to decode with --decode-video, evenly spaced (default: 20).",
     )
     p.add_argument(
         "--strict",
@@ -355,6 +400,23 @@ def run_integrity(argv: list[str]) -> None:
                 raw_metrics={"affected_episodes": video_affected},
             )
         )
+    decoded_checks: set[str] = set()
+    if args.decode_video:
+        content, content_not_evaluated = _video_content_checks(dataset_path, args.video_sample, log)
+        video_not_evaluated += content_not_evaluated
+        if content is not None:
+            report.analyzer_results.append(
+                AnalyzerResult(
+                    analyzer_name="video_content",
+                    flags=content.flags,
+                    raw_metrics={
+                        "duplicate_rate_by_camera": content.duplicate_rate_by_camera,
+                        "freeze_runs": content.freeze_runs,
+                        "sampled_episodes": content.sampled_episodes,
+                    },
+                )
+            )
+            decoded_checks = {"duplicate_frame", "camera_freeze"}
 
     flags = _integrity_flags(report)
     critical = [f for f in flags if f.level == RiskLevel.CRITICAL]
@@ -368,7 +430,13 @@ def run_integrity(argv: list[str]) -> None:
         {"check": f.metric, "reason": f.interpretation} for f in flags if f.level == RiskLevel.INFO
     ]
     not_evaluated = (
-        _not_evaluated(report, batch, analyzers) + info_not_evaluated + video_not_evaluated
+        [
+            item
+            for item in _not_evaluated(report, batch, analyzers)
+            if item["check"] not in decoded_checks  # evaluated from decoded video instead
+        ]
+        + info_not_evaluated
+        + video_not_evaluated
     )
 
     if args.json:

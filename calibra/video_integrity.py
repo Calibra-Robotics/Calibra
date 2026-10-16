@@ -302,3 +302,177 @@ def _v3_entries(root, info, keys, episode_lengths):
                 )
             )
     return entries
+
+
+# ── decoded content checks (opt-in) ──────────────────────────────────────────
+
+_DECODE_CHUNK = 64  # frames held in memory at once per camera
+
+
+@dataclass
+class VideoContentResult:
+    flags: list[RiskFlag]
+    # camera -> mean repeated-frame fraction over the sampled episodes
+    duplicate_rate_by_camera: dict[str, float] = field(default_factory=dict)
+    # episode index -> longest run of repeated frames (max over cameras)
+    freeze_runs: dict[int, int] = field(default_factory=dict)
+    sampled_episodes: list[int] = field(default_factory=list)
+    not_evaluated_reason: Optional[str] = None
+
+
+def _sample_evenly(items: list[int], k: int) -> list[int]:
+    if k <= 0 or len(items) <= k:
+        return list(items)
+    idx = sorted({round(i * (len(items) - 1) / (k - 1)) for i in range(k)}) if k > 1 else [0]
+    return [items[i] for i in idx]
+
+
+def _decoded_repeats(cv2, path: Path, first: int, n_frames: int):
+    """Repeated-transition mask for frames [first, first + n_frames), decoded in chunks."""
+    import numpy as np
+
+    from calibra.analyzers.duplicate_frame import repeated_transitions
+
+    cap = cv2.VideoCapture(str(path))
+    try:
+        cap.set(cv2.CAP_PROP_POS_FRAMES, max(first, 0))
+        masks, carry, read = [], None, 0
+        while read < n_frames:
+            # Carry the last frame over so the transition across chunks is counted.
+            chunk = [] if carry is None else [carry]
+            new = 0
+            for _ in range(min(_DECODE_CHUNK, n_frames - read)):
+                ok, frame = cap.read()
+                if not ok:
+                    break
+                chunk.append(frame)
+                new += 1
+            read += new
+            if new == 0 or len(chunk) < 2:
+                break
+            masks.append(repeated_transitions(np.stack(chunk)))
+            carry = chunk[-1]
+        return np.concatenate(masks) if masks else np.zeros(0, dtype=bool)
+    finally:
+        cap.release()
+
+
+def check_video_content(root: Path, max_episodes: int = 20) -> VideoContentResult:
+    """
+    Decode a sample of episodes from a local LeRobot v2/v3 dataset and run the
+    duplicate-frame and camera-freeze checks on every camera, with the same
+    measure and thresholds the image-based analyzers use
+    (calibra.analyzers.duplicate_frame / camera_freeze). Up to `max_episodes`
+    evenly spaced episodes; frames are processed in chunks at full resolution.
+    """
+    import numpy as np
+
+    from calibra.analyzers.camera_freeze import (
+        _FREEZE_CRITICAL_FRACTION,
+        _FREEZE_WARNING_FRACTION,
+        _MIN_FREEZE_RUN,
+        _max_run_length,
+    )
+    from calibra.analyzers.duplicate_frame import _DUPLICATE_CRITICAL, _DUPLICATE_WARNING
+    from calibra.analyzers.task_structure import _threshold_level_upper
+
+    info = json.loads((root / "meta" / "info.json").read_text(encoding="utf-8"))
+    keys = _video_keys(info)
+    if not keys:
+        return VideoContentResult(flags=[], not_evaluated_reason="dataset has no video features")
+    cv2 = _require_cv2()
+    if cv2 is None:
+        return VideoContentResult(
+            flags=[], not_evaluated_reason="requires opencv (pip install 'calibra-robotics[video]')"
+        )
+
+    if str(info.get("codebase_version", "")).startswith("v3"):
+        entries = _v3_entries(root, info, keys, None)
+    else:
+        entries = _v2_entries(root, info, keys, None)
+    by_ep: dict[int, list] = {}
+    for ep, key, path, start_s, end_s, length in entries:
+        by_ep.setdefault(ep, []).append((key, path, start_s, end_s, length))
+    sampled = _sample_evenly(sorted(by_ep), max_episodes)
+
+    cache = _VideoCache(cv2)
+    rates: dict[str, list[float]] = {k: [] for k in keys}
+    runs: dict[int, int] = {}
+    for ep in sampled:
+        for key, path, start_s, end_s, length in by_ep[ep]:
+            if not path.exists():
+                continue
+            probe = cache.probe(path)
+            if not probe.ok:
+                continue
+            first = round(start_s * probe.fps) if start_s is not None else 0
+            if end_s is not None:
+                n = round(end_s * probe.fps) - first
+            else:
+                n = length if length is not None else probe.n_frames
+            mask = _decoded_repeats(cv2, path, first, int(n))
+            if len(mask) == 0:
+                continue
+            rates[key].append(float(np.mean(mask)))
+            runs[ep] = max(runs.get(ep, 0), _max_run_length(mask))
+
+    per_camera = {k: float(np.mean(v)) for k, v in rates.items() if v}
+    if not per_camera:
+        return VideoContentResult(
+            flags=[], not_evaluated_reason="no decodable video for the sampled episodes"
+        )
+    worst_cam, worst = max(per_camera.items(), key=lambda kv: kv[1])
+    cams = ", ".join(f"{k.split('.')[-1]} {v:.1%}" for k, v in sorted(per_camera.items()))
+    scope = f"decoded {len(sampled)} of {len(by_ep)} episodes"
+
+    dup_level = _threshold_level_upper(worst, _DUPLICATE_WARNING, _DUPLICATE_CRITICAL)
+    dup_flag = RiskFlag(
+        level=dup_level,
+        metric="duplicate_frame_rate",
+        observed=ObservedValue(value=worst, unit="fraction"),
+        threshold=_DUPLICATE_WARNING,
+        interpretation=(
+            "Camera frames show expected frame-to-frame variation"
+            if dup_level == RiskLevel.OK
+            else f"{worst:.1%} of frame transitions on {worst_cam.split('.')[-1]} repeat the "
+            "previous frame"
+        )
+        + f" ({scope}; per camera: {cams}).",
+        implication=(
+            "No duplicate-frame risk detected."
+            if dup_level == RiskLevel.OK
+            else "Repeated frames usually mean the camera ran slower than the recording rate "
+            "(frames padded by repetition) or the capture pipeline re-emitted buffers; the "
+            "policy then sees stale or lower-rate visual input. Rendered simulations repeat "
+            "frames legitimately when nothing in view moves."
+        ),
+        affected_fraction=worst,
+    )
+
+    frozen = sorted(ep for ep, r in runs.items() if r >= _MIN_FREEZE_RUN)
+    frac = len(frozen) / max(len(runs), 1)
+    frz_level = _threshold_level_upper(frac, _FREEZE_WARNING_FRACTION, _FREEZE_CRITICAL_FRACTION)
+    frz_flag = RiskFlag(
+        level=frz_level,
+        metric="camera_freeze_events",
+        observed=ObservedValue(value=frac, unit="fraction"),
+        threshold=_FREEZE_WARNING_FRACTION,
+        interpretation=(
+            f"No sustained camera-freeze runs detected ({scope})."
+            if frz_level == RiskLevel.OK
+            else f"{len(frozen)} of {len(runs)} sampled episodes contain a run of "
+            f">={_MIN_FREEZE_RUN} repeated frames (episodes {frozen[:10]}; {scope})."
+        ),
+        implication=(
+            "No freeze risk detected."
+            if frz_level == RiskLevel.OK
+            else "A frozen camera segment trains the policy on stale visual input for that window."
+        ),
+        affected_fraction=frac,
+    )
+    return VideoContentResult(
+        flags=[dup_flag, frz_flag],
+        duplicate_rate_by_camera=per_camera,
+        freeze_runs=runs,
+        sampled_episodes=sampled,
+    )

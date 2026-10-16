@@ -272,3 +272,116 @@ def test_integrity_cli_healthy_videos_pass(tmp_path, capsys):
     passed = {f["metric"] for f in out["passed"]}
     assert set(VIDEO_METRICS) <= passed
     assert not [n for n in out["not_evaluated"] if n["check"] == "video_integrity"]
+
+
+# ── decoded content checks (--decode-video) ──────────────────────────────────
+
+
+def _write_frames_mp4(path: Path, frames: list) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    h, w = frames[0].shape[:2]
+    # MJPEG encodes each frame independently, so a repeated frame decodes
+    # identically, as with real camera footage under AV1. Inter-frame mp4v
+    # rebuilds repeats from predictions and adds residual error.
+    writer = cv2.VideoWriter(str(path), cv2.VideoWriter_fourcc(*"MJPG"), FPS, (w, h))
+    for f in frames:
+        writer.write(f)
+    writer.release()
+
+
+def _noise_frames(n: int, seed: int = 0, repeat_every_other: bool = False, freeze=None):
+    """
+    Camera-like frames: a gradient background with a moving square plus mild
+    sensor noise. (Pure random noise is incompressible, so mp4v keyframes
+    rebuild "identical" frames with large errors, which no real camera does.)
+    """
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:48, 0:64]
+    background = np.stack([xx * 3, yy * 4, (xx + yy) * 2], axis=-1).astype(np.int16)
+    frames, prev = [], None
+    for i in range(n):
+        if (repeat_every_other and i % 2 == 1) or (freeze and freeze[0] <= i < freeze[1]):
+            frames.append(prev.copy())
+            continue
+        img = background + rng.integers(-6, 7, background.shape)
+        x = (i * 3 + seed * 7) % 54
+        img[20:30, x : x + 10] = 230
+        prev = np.clip(img, 0, 255).astype(np.uint8)
+        frames.append(prev)
+    return frames
+
+
+def _content_dataset(tmp_path: Path, frames_by_ep: dict) -> Path:
+    root = _make_v2(tmp_path, {ep: len(fr) for ep, fr in frames_by_ep.items()})
+    for ep, fr in frames_by_ep.items():
+        _write_frames_mp4(_v2_video(root, ep), fr)
+    return root
+
+
+def _content_levels(result):
+    return {f.metric: f.level for f in result.flags}
+
+
+def test_content_live_camera_ok(tmp_path):
+    from calibra.video_integrity import check_video_content
+
+    root = _content_dataset(tmp_path, {e: _noise_frames(90, seed=e) for e in range(3)})
+    result = check_video_content(root)
+    assert _content_levels(result) == {
+        "duplicate_frame_rate": RiskLevel.OK,
+        "camera_freeze_events": RiskLevel.OK,
+    }
+    assert result.duplicate_rate_by_camera[KEY] < 0.02
+
+
+def test_content_half_rate_camera_is_critical(tmp_path):
+    """ALOHA shape: a slower camera padded to the recording rate by repeating frames."""
+    from calibra.video_integrity import check_video_content
+
+    frames = {e: _noise_frames(90, seed=e, repeat_every_other=True) for e in range(3)}
+    result = check_video_content(_content_dataset(tmp_path, frames))
+    assert _content_levels(result)["duplicate_frame_rate"] == RiskLevel.CRITICAL
+    assert result.duplicate_rate_by_camera[KEY] == pytest.approx(0.5, abs=0.05)
+    # Alternating repeats are not a freeze.
+    assert _content_levels(result)["camera_freeze_events"] == RiskLevel.OK
+
+
+def test_content_freeze_run_detected_across_chunk_boundary(tmp_path):
+    from calibra.video_integrity import check_video_content
+
+    # Frozen frames 60-75 straddle the 64-frame decode chunk boundary.
+    frames = {0: _noise_frames(120, freeze=(60, 75)), 1: _noise_frames(120, seed=1)}
+    result = check_video_content(_content_dataset(tmp_path, frames))
+    assert result.freeze_runs[0] >= 14
+    assert result.freeze_runs[1] == 0
+    assert _content_levels(result)["camera_freeze_events"] != RiskLevel.OK
+
+
+def test_content_samples_episodes_evenly(tmp_path):
+    from calibra.video_integrity import check_video_content
+
+    root = _content_dataset(tmp_path, {e: _noise_frames(20, seed=e) for e in range(9)})
+    assert check_video_content(root, max_episodes=3).sampled_episodes == [0, 4, 8]
+
+
+def test_integrity_decode_video_replaces_not_evaluated(tmp_path, capsys):
+    from calibra.integrity import run_integrity
+
+    frames = {e: _noise_frames(40, seed=e, repeat_every_other=True) for e in range(3)}
+    root = _content_dataset(tmp_path, frames)
+    with pytest.raises(SystemExit):
+        run_integrity([str(root), "--json", "--decode-video"])
+    out = json.loads(capsys.readouterr().out)
+    crit = {f["metric"]: f for f in out["critical"]}
+    assert crit["duplicate_frame_rate"]["suggested_action"] == "block"
+    assert "duplicate_frame" not in {n["check"] for n in out["not_evaluated"]}
+
+
+def test_integrity_without_decode_video_keeps_not_evaluated(tmp_path, capsys):
+    from calibra.integrity import run_integrity
+
+    root = _content_dataset(tmp_path, {e: _noise_frames(40, seed=e) for e in range(3)})
+    with pytest.raises(SystemExit):
+        run_integrity([str(root), "--json"])
+    out = json.loads(capsys.readouterr().out)
+    assert "duplicate_frame" in {n["check"] for n in out["not_evaluated"]}
