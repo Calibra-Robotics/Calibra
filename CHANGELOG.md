@@ -6,6 +6,17 @@ All notable changes to Calibra are documented here.
 
 ### Changed
 
+- **`velocity_discontinuity_rate` severity ignores sensor noise.** The flag
+  level now comes from the rate after the same ~10 Hz low-pass LDLJ uses (no-op
+  at ≤10 Hz); the text shows the unfiltered rate when it differs. Unfiltered, the
+  metric was CRITICAL on clean 50 Hz data and non-monotone: an injected spike
+  raised peak speed and hid the noise, so lightly corrupted ALOHA scored 2.9% vs
+  6.5% clean. Filtered: 0.0% clean, rising with corruption. ALOHA CRITICAL → OK,
+  Unitree H1 CRITICAL → WARNING, PushT unchanged. The unfiltered rate is kept
+  (`mean_disc_fraction`, per-episode values) for regime thresholds, prune limits,
+  profiles, the Calibra Score and claims, so those do not move; filtered values
+  are added alongside. Evidence: `eval/investigations/vel_disc/FINDINGS.md`.
+
 - **Local dataset copies get their dataset profile automatically** when they
   can be identified from their own files: the `hf download` revision equals the
   revision a profile was measured on, or the dataset card links a covered Hub

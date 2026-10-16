@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from calibra.analyzers.smoothness import (
     ControlSmoothnessAnalyzer,
@@ -827,3 +828,51 @@ def test_ldlj_white_noise_far_below_smooth():
         actions=a,
     )
     assert _ldlj(ep) < -10 < _ldlj(_min_jerk_chain(10, 20))
+
+
+# ── velocity discontinuity: noise-filtered severity (eval/investigations/vel_disc) ──
+
+
+def _vd_flag_and_raw(episodes):
+    batch = EpisodeBatch(episodes=episodes, dataset_name="vd", format="hdf5", source_path="x")
+    result = ControlSmoothnessAnalyzer(gripper_dims=[]).analyze(batch)
+    flag = next(f for f in result.flags if f.metric == "velocity_discontinuity_rate")
+    return flag, result.raw_metrics["vel_discontinuities"]
+
+
+def test_vel_disc_sensor_noise_at_50hz_is_not_a_discontinuity():
+    # 3e-4 (0.15% of a movement) already pushes the unfiltered rate past 50%.
+    # Much heavier noise (1e-3) still filters to ~2.4%, a WARNING, by design.
+    eps = [_min_jerk_chain(10, 50, noise=3e-4, seed=i) for i in range(4)]
+    flag, raw = _vd_flag_and_raw(eps)
+    assert raw["mean_disc_fraction"] > 0.3  # unfiltered: noise counted
+    assert flag.level == RiskLevel.OK  # filtered severity
+    assert "unfiltered" in flag.interpretation
+
+
+def test_vel_disc_filtered_rate_rises_with_injected_spikes():
+    """Unfiltered, a spike inflates max speed and hides noise, so a corrupted
+    episode could score lower than a clean one; the filtered rate is monotone."""
+    rng = np.random.default_rng(1)
+
+    def corrupted(n_swaps, seed):
+        ep = _min_jerk_chain(10, 50, noise=1e-3, seed=seed)
+        a = np.array(ep.actions)
+        for _ in range(n_swaps):
+            i, j = rng.choice(len(a), 2, replace=False)
+            a[[i, j]] = a[[j, i]]
+        ep.actions = a
+        return ep
+
+    rates = [
+        _vd_flag_and_raw([corrupted(k, s) for s in range(4)])[1]["mean_disc_fraction_filtered"]
+        for k in (0, 3, 10)
+    ]
+    assert rates[0] < rates[1] < rates[2]
+
+
+def test_vel_disc_raw_value_kept_for_calibrated_consumers():
+    eps = [_min_jerk_chain(10, 10, seed=i) for i in range(3)]  # 10 Hz: filter is a no-op
+    flag, raw = _vd_flag_and_raw(eps)
+    assert raw["mean_disc_fraction"] == pytest.approx(raw["mean_disc_fraction_filtered"])
+    assert "unfiltered" not in flag.interpretation

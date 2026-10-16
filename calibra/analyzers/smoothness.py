@@ -396,17 +396,35 @@ class ControlSmoothnessAnalyzer(Analyzer):
                 "episode_values": ep_values
             }
 
-        arr = np.array(fracs)
+        # The raw (unfiltered) rate stays the value every calibrated consumer
+        # reads (regime thresholds, prune limits, profiles, scores, claims).
+        # The flag's severity comes from the noise-filtered rate; see
+        # eval/investigations/vel_disc/FINDINGS.md.
+        raw_mean = float(np.mean(fracs))
+        filtered_values = [
+            _episode_vel_disc_fraction(
+                ep, self.action_type, self._active_dims(ep), self.vel_disc_threshold, lowpass=True
+            )
+            for ep in batch.episodes
+        ]
+        arr = np.array([f for f in filtered_values if f is not None])
         stat, lo, hi = _bootstrap_ci(arr, np.mean, self.n_bootstrap, self.ci_level)
         raw = {
-            "mean_disc_fraction": float(stat),
+            "mean_disc_fraction": raw_mean,
+            "mean_disc_fraction_filtered": float(stat),
             "ci_lower": float(lo),
             "ci_upper": float(hi),
             "threshold": self.vel_disc_threshold,
             "episode_values": ep_values,
+            "episode_values_filtered": filtered_values,
         }
 
         level = _threshold_level_upper(stat, self.vel_disc_warning, self.vel_disc_critical)
+        raw_note = (
+            f" (after removing >10 Hz noise; unfiltered {raw_mean:.1%})"
+            if abs(raw_mean - stat) > 1e-9
+            else ""
+        )
 
         if level == RiskLevel.OK:
             return RiskFlag(
@@ -421,7 +439,9 @@ class ControlSmoothnessAnalyzer(Analyzer):
                     ci_method="bootstrap",
                 ),
                 threshold=self.vel_disc_warning,
-                interpretation="Velocity profile is continuous with no sudden reversals.",
+                interpretation="Velocity profile is continuous with no sudden reversals"
+                + (raw_note or "")
+                + ".",
                 implication="No velocity discontinuity risk detected.",
                 affected_fraction=float(stat),
             ), raw
@@ -440,7 +460,7 @@ class ControlSmoothnessAnalyzer(Analyzer):
             threshold=self.vel_disc_warning,
             interpretation=(
                 f"{stat:.1%} of steps show velocity change > "
-                f"{self.vel_disc_threshold:.0%} of peak velocity."
+                f"{self.vel_disc_threshold:.0%} of peak velocity{raw_note}."
             ),
             implication=(
                 "Sudden velocity reversals are physically impossible under normal "
@@ -1053,8 +1073,16 @@ def _episode_vel_disc_fraction(
     action_type: str = "position",
     active_dims: Optional[list[int]] = None,
     threshold: float = 0.20,
+    lowpass: bool = False,
 ) -> Optional[float]:
-    """Fraction of steps with ||Δv|| > threshold × max(||v||)."""
+    """
+    Fraction of steps with ||Δv|| > threshold × max(||v||).
+
+    With ``lowpass`` the velocity is first filtered like LDLJ's (see
+    _lowpass): sensor noise above ~10 Hz is not a discontinuity, and unfiltered
+    it both inflates the rate on clean 50 Hz data and makes it non-monotone
+    (a spike raises max(||v||) and hides the noise that was being counted).
+    """
     if ep.n_steps < 3:
         return None
 
@@ -1065,6 +1093,8 @@ def _episode_vel_disc_fraction(
     vel = _get_velocity(ep, action_type, active_dims or [])
     if vel is None or len(vel) < 2:
         return None
+    if lowpass:
+        vel = _lowpass(vel, dt)
 
     speed = np.linalg.norm(vel, axis=-1)
     v_max = float(np.max(speed))
