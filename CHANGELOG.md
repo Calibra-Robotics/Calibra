@@ -4,6 +4,8 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+## [0.13.0] - Trustworthy integrity checks
+
 ### Changed
 
 - **`velocity_discontinuity_rate` severity ignores sensor noise.** The flag
