@@ -127,11 +127,22 @@ class TestBootstrapCI:
 # ── integration tests: TemporalAnalyzer end-to-end ──────────────────────────
 
 
+def _real_clock_batch() -> EpisodeBatch:
+    """Clean data from a real clock: ~1% step jitter, far below the warning level."""
+    from tests.conftest import _make_episode
+
+    episodes = [_make_episode(jitter_std=0.001, episode_id=f"ep_{i}") for i in range(10)]
+    return EpisodeBatch(
+        episodes=episodes, dataset_name="real", format="hdf5", source_path="/tmp/real.h5"
+    )
+
+
 class TestTemporalAnalyzerClean:
-    def test_clean_batch_all_ok(self, clean_batch):
-        result = TemporalAnalyzer().analyze(clean_batch)
+    def test_clean_batch_all_ok(self):
+        result = TemporalAnalyzer().analyze(_real_clock_batch())
         non_ok = [f for f in result.flags if f.level != RiskLevel.OK]
         assert non_ok == [], f"Unexpected flags on clean data: {non_ok}"
+        assert result.raw_metrics["synthetic_timestamps"] is False
 
     def test_returns_correct_analyzer_name(self, clean_batch):
         result = TemporalAnalyzer().analyze(clean_batch)
@@ -141,6 +152,46 @@ class TestTemporalAnalyzerClean:
         result = TemporalAnalyzer().analyze(clean_batch)
         assert "jitter" in result.raw_metrics
         assert "dropout" in result.raw_metrics
+
+
+class TestSyntheticTimestamps:
+    """frame_index/fps timestamps carry no clock information: not evaluable, not OK."""
+
+    def test_exact_grid_is_not_evaluable(self, clean_batch):
+        from calibra.analyzers.temporal import timestamps_are_synthetic
+
+        assert timestamps_are_synthetic(clean_batch)
+        result = TemporalAnalyzer().analyze(clean_batch)
+        by_metric = {f.metric: f for f in result.flags}
+        for metric in ("timestamp_jitter_cv", "timestamp_dropout_rate"):
+            assert by_metric[metric].level == RiskLevel.INFO
+            assert by_metric[metric].interpretation.startswith("Not evaluable")
+        assert result.raw_metrics["synthetic_timestamps"] is True
+        # Raw values are unchanged so scores and pruning don't move.
+        assert result.raw_metrics["dropout"]["mean_dropout_fraction"] == 0.0
+
+    def test_float32_rounding_still_synthetic(self):
+        from tests.conftest import _make_episode
+
+        ep = _make_episode(n_steps=600)
+        ep.timestamps = (np.arange(600) / 30).astype(np.float32).astype(np.float64)
+        batch = EpisodeBatch(episodes=[ep], dataset_name="f32", format="lerobot", source_path="x")
+        assert TemporalAnalyzer().analyze(batch).raw_metrics["synthetic_timestamps"] is True
+
+    def test_gaps_break_the_grid_and_are_evaluated(self, dropout_batch):
+        result = TemporalAnalyzer().analyze(dropout_batch)
+        assert result.raw_metrics["synthetic_timestamps"] is False
+        flag = next(f for f in result.flags if f.metric == "timestamp_dropout_rate")
+        assert flag.level in (RiskLevel.WARNING, RiskLevel.CRITICAL)
+
+    def test_one_real_clock_episode_keeps_evaluation(self, clean_batch):
+        from tests.conftest import _make_episode
+
+        eps = list(clean_batch.episodes) + [_make_episode(jitter_std=0.001, episode_id="real")]
+        batch = EpisodeBatch(episodes=eps, dataset_name="mixed", format="hdf5", source_path="x")
+        result = TemporalAnalyzer().analyze(batch)
+        assert result.raw_metrics["synthetic_timestamps"] is False
+        assert all(f.level != RiskLevel.INFO for f in result.flags if "timestamp" in f.metric)
 
 
 class TestTemporalAnalyzerJitter:

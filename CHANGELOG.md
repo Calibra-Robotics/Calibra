@@ -4,6 +4,46 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- **Synthetic timestamps are reported as not evaluable, not passed.** When every
+  episode's timestamps lie on an exact `t0 + k*dt` grid (LeRobot writes
+  `frame_index / fps`; simulators step a fixed clock), `timestamp_jitter_cv` and
+  `timestamp_dropout_rate` are emitted at level INFO with the reason, and
+  `calibra integrity` lists them under Not Evaluated instead of Passed. They no
+  longer count toward the integrity score, so integrity scores of LeRobot and
+  simulated datasets drop accordingly. Raw metric values, the Calibra Score and
+  pruning decisions are unchanged. Regression goldens for PushT updated
+  (OK → INFO for these two metrics only).
+- `calibra analyze` and `calibra integrity` treat INFO integrity flags as not
+  evaluated. Previously a category with only skipped checks (e.g. calibration
+  drift with no stationary holds) showed as OK in `analyze` and was omitted
+  entirely from `integrity`.
+- **Dataset cards no longer show a predicted training success rate.** The
+  prediction is not validated, and cards are meant for other people's dataset
+  pages. The Calibra Score is labelled as a heuristic composite.
+- `calibra prune` prints a ready `lerobot-train` command for LeRobot sources
+  instead of the old `python train.py` hint.
+
+### Added
+
+- `calibra integrity` checks LeRobot v2/v3 video files (missing, undecodable,
+  frame-count/coverage mismatch, wrong fps) on local datasets. New optional
+  extra `calibra-robotics[video]` (OpenCV).
+- `calibra.integrations.lerobot`: `lerobot_train_args`, `lerobot_episode_indices`
+  and `load_lerobot_dataset` to train on kept episodes without exporting a copy.
+- `calibra card --push --create-pr` opens the card as a Hub pull request.
+- Real-fault evaluation tooling (`calibra.fault_eval`, `scripts/fault_eval.py`,
+  `eval/real_faults/`).
+
+### Fixed
+
+- `calibra card --push` replaced the dataset's entire README with the card (it
+  read a non-existent attribute and always saw an empty README). It now edits
+  only the Calibra section and aborts if the README can't be read.
+- `calibra benchmark` printed `--dataset.episodes` with batch positions instead
+  of LeRobot `episode_index` values.
+
 ## [0.12.0] - Apache 2.0 core
 
 ### Changed

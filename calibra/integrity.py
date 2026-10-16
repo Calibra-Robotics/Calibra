@@ -361,7 +361,14 @@ def run_integrity(argv: list[str]) -> None:
     passed = [f for f in flags if f.level == RiskLevel.OK]
     score, status = _integrity_score(flags)
     ci_result, ci_reason = _ci_result(flags, args.strict, policy)
-    not_evaluated = _not_evaluated(report, batch, analyzers) + video_not_evaluated
+    # INFO integrity flags are checks that ran but could not evaluate (e.g.
+    # synthetic timestamps): list them with their reason, never as passed.
+    info_not_evaluated = [
+        {"check": f.metric, "reason": f.interpretation} for f in flags if f.level == RiskLevel.INFO
+    ]
+    not_evaluated = (
+        _not_evaluated(report, batch, analyzers) + info_not_evaluated + video_not_evaluated
+    )
 
     if args.json:
         result = {

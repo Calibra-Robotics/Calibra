@@ -250,7 +250,22 @@ class TestRunIntegrity:
         checks = {item["check"] for item in payload["not_evaluated"]}
         assert {"duplicate_frame", "camera_freeze", "blur"} <= checks
         for item in payload["not_evaluated"]:
-            assert item["reason"] == "requires: images"
+            if item["check"] in {"duplicate_frame", "camera_freeze", "blur"}:
+                assert item["reason"] == "requires: images"
+
+    def test_synthetic_timestamps_not_evaluated_not_passed(self, capsys):
+        """_make_batch uses an exact frame grid: jitter/dropout can't be evaluated,
+        so they must be listed under not_evaluated with a reason, never passed."""
+        batch = _make_batch(n_short=0)
+        with patch("calibra.ingestion.registry.load", return_value=batch):
+            with pytest.raises(SystemExit):
+                run_integrity(["/dummy/path.h5", "--json"])
+        payload = json.loads(capsys.readouterr().out)
+        passed = {f["metric"] for f in payload["passed"]}
+        not_eval = {item["check"]: item["reason"] for item in payload["not_evaluated"]}
+        for metric in ("timestamp_jitter_cv", "timestamp_dropout_rate"):
+            assert metric not in passed
+            assert not_eval[metric].startswith("Not evaluable")
 
     # ── --policy ─────────────────────────────────────────────────────────
 

@@ -15,6 +15,12 @@ Confidence intervals are computed via percentile bootstrap over episodes
 (i.e., the unit of resampling is the episode, not the step). This avoids
 artificially narrow intervals from treating correlated within-episode steps
 as i.i.d. samples.
+
+Synthetic timestamps: when every episode's timestamps lie on an exact
+`t0 + k * dt` grid (LeRobot writes `frame_index / fps`; simulators step a
+fixed clock), there is no recorded clock to check. Jitter and dropout are then
+reported at level INFO as not evaluable instead of OK, so a blind check never
+reads as "passed". Raw metric values are unchanged.
 """
 
 from __future__ import annotations
@@ -53,6 +59,17 @@ _ALIGN_CRITICAL = 0.05
 
 _CAMERA_PREFIXES = ("camera", "cam", "rgb", "depth", "wrist", "overhead")
 
+# Timestamps within this fraction of a step of an exact t0 + k*dt grid are
+# treated as synthetic. Real logged clocks jitter by far more than 0.1 % of a
+# step; float32 rounding of frame_index / fps stays well below it.
+_SYNTHETIC_GRID_TOL = 1e-3
+
+_NOT_EVALUABLE_REASON = (
+    "Not evaluable: every episode's timestamps lie on an exact frame_index/fps grid "
+    "(synthesized by the recorder or simulator), so dropped frames and loop jitter "
+    "cannot show up in them."
+)
+
 # Action-dropout thresholds: fraction of steps with near-zero action magnitude.
 # Zero actions indicate dropped commands — distinct from timestamp dropout and
 # invisible to the spike detector (silence looks smooth).
@@ -73,6 +90,40 @@ _DRIFT_CRITICAL_FRAMES: int = 5  # 100 ms at 50 Hz
 _JOINT_VEL_KEYS = frozenset(["joint_vel", "robot0_joint_vel", "velocity"])
 # Observation key fragments used to detect image arrays.
 _VISUAL_KEYS = frozenset(["camera", "image", "rgb", "depth", "visual"])
+
+
+def _on_exact_grid(ts: np.ndarray) -> Optional[bool]:
+    """True if ts lies on t0 + k*dt within tolerance; None if undecidable."""
+    if len(ts) < 3:
+        return None
+    dt = float(np.median(np.diff(ts)))
+    if dt <= 0:
+        return None
+    grid = ts[0] + dt * np.arange(len(ts))
+    return bool(np.max(np.abs(ts - grid)) <= _SYNTHETIC_GRID_TOL * dt)
+
+
+def timestamps_are_synthetic(batch: EpisodeBatch) -> bool:
+    """
+    True when every decidable episode's timestamps sit on an exact frame grid,
+    i.e. they carry no information about the real recording clock.
+    """
+    decided = [_on_exact_grid(np.asarray(ep.timestamps, dtype=np.float64)) for ep in batch.episodes]
+    decided = [d for d in decided if d is not None]
+    return bool(decided) and all(decided)
+
+
+def _not_evaluable(flag: RiskFlag) -> RiskFlag:
+    return flag.model_copy(
+        update={
+            "level": RiskLevel.INFO,
+            "interpretation": _NOT_EVALUABLE_REASON,
+            "implication": (
+                "Timestamp jitter/dropout were not evaluated. Check acquisition gaps "
+                "from the video (calibra integrity video checks) or the recorder logs."
+            ),
+        }
+    )
 
 
 @dataclass
@@ -130,14 +181,17 @@ class TemporalAnalyzer(Analyzer):
         flags: list[RiskFlag] = []
         raw: dict = {}
 
+        synthetic = timestamps_are_synthetic(batch)
+        raw["synthetic_timestamps"] = synthetic
+
         jitter_flag, jitter_raw = self._check_jitter(batch)
         if jitter_flag:
-            flags.append(jitter_flag)
+            flags.append(_not_evaluable(jitter_flag) if synthetic else jitter_flag)
         raw["jitter"] = jitter_raw
 
         dropout_flag, dropout_raw = self._check_dropout(batch)
         if dropout_flag:
-            flags.append(dropout_flag)
+            flags.append(_not_evaluable(dropout_flag) if synthetic else dropout_flag)
         raw["dropout"] = dropout_raw
 
         cam_keys = self._resolve_camera_keys(batch)

@@ -134,6 +134,9 @@ def _integrity_by_category(report: DiagnosticReport) -> dict[str, list[RiskFlag]
 
 
 def _worst_level(flags: list[RiskFlag]) -> Optional[RiskLevel]:
+    # INFO means the check could not evaluate (skipped, synthetic timestamps),
+    # so a category with only INFO flags is "not evaluated", not OK.
+    flags = [f for f in flags if f.level != RiskLevel.INFO]
     if not flags:
         return None
     if any(f.level == RiskLevel.CRITICAL for f in flags):
