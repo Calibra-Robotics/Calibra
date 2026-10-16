@@ -42,7 +42,7 @@ Per dataset, `mine` takes:
 
 | Stratum | What | Inclusion probability |
 |---|---|---|
-| `flagged` | every episode Calibra would drop (Stage 1 quality) or block (video fault); with `--max-flagged N`, a random sample of N | 1, or N / flagged |
+| `flagged` | every episode Calibra would drop (Stage 1 quality), block (video fault) or flag as a short-length outlier (behind integrity's `short_episode_fraction`); with `--max-flagged N`, a random sample of N | 1, or N / flagged |
 | `review_top` | the top-K remaining episodes of the review queue | 1 |
 | `control` | a seeded random sample of everything else | sample size / remaining |
 

@@ -66,11 +66,19 @@ class EpisodeSignals:
     anomaly_score: float = 0.0
     anomaly_reasons: list[str] = field(default_factory=list)
     coverage_value: Optional[float] = None
+    # Below the task_structure analyzer's lower IQR length fence (the episodes
+    # behind integrity's block-level short_episode_fraction finding).
+    short_outlier: bool = False
 
     @property
     def blocked(self) -> bool:
         """Calibra would drop or block this episode without human review."""
         return self.stage1_fail or bool(self.video_faults)
+
+    @property
+    def flagged(self) -> bool:
+        """Any objective per-episode flag: blocked, or a short-length outlier."""
+        return self.blocked or self.short_outlier
 
     @property
     def review_priority(self) -> float:
@@ -116,6 +124,7 @@ def snapshot(
 
     video_by_episode = _video_faults_by_episode(path, batch)
     assessments = {a.episode_id: a for a in compute_episode_assessments(report, batch=batch)}
+    short_fence = _short_episode_fence(report)
 
     episodes = []
     for ep in batch.episodes:
@@ -132,6 +141,7 @@ def snapshot(
                 anomaly_score=a.anomaly_score if a else 0.0,
                 anomaly_reasons=[r.metric for r in a.reasons] if a else [],
                 coverage_value=a.coverage_value if a else None,
+                short_outlier=short_fence is not None and ep.n_steps < short_fence,
             )
         )
 
@@ -144,6 +154,15 @@ def snapshot(
         "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "episodes": [asdict(e) for e in episodes],
     }
+
+
+def _short_episode_fence(report) -> Optional[float]:
+    """The task_structure analyzer's lower IQR length fence, if it ran."""
+    for result in report.analyzer_results:
+        fence = result.raw_metrics.get("short_episodes", {}).get("lower_fence_steps")
+        if fence is not None:
+            return float(fence)
+    return None
 
 
 def _video_faults_by_episode(path: str, batch) -> dict[str, list[str]]:
@@ -198,12 +217,12 @@ def mine(
     items: list[dict] = []
     for snap in snapshots:
         signals = sorted(_signals(snap).values(), key=lambda s: s.episode_id)
-        all_flagged = [s for s in signals if s.blocked]
+        all_flagged = [s for s in signals if s.flagged]
         flagged = all_flagged
         if max_flagged is not None and len(all_flagged) > max_flagged:
             flagged = rng.sample(all_flagged, max_flagged)
         p_flagged = len(flagged) / len(all_flagged) if all_flagged else 0.0
-        rest = [s for s in signals if not s.blocked]
+        rest = [s for s in signals if not s.flagged]
         rest.sort(key=lambda s: (-s.review_priority, s.episode_id))
         review = rest[:top_k]
         pool = rest[top_k:]
@@ -274,7 +293,9 @@ def read_jsonl(path: Path) -> list[dict]:
 def detectors(quality_risk_threshold: float, anomaly_threshold: float) -> dict[str, Callable]:
     """Boolean per-episode decisions to score. Thresholds are for reporting, not calibrated."""
     return {
+        "flagged (stage1, video or short)": lambda s: s.flagged,
         "blocked (stage1 or video)": lambda s: s.blocked,
+        "short_outlier": lambda s: s.short_outlier,
         "stage1_fail": lambda s: s.stage1_fail,
         "video_fault": lambda s: bool(s.video_faults),
         f"quality_risk>={quality_risk_threshold:g}": lambda s: (

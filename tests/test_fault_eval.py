@@ -227,3 +227,25 @@ def test_cli_score_without_labels_explains(tmp_path):
     main(["mine", str(snap_path), "--out", str(batch)])
     with pytest.raises(SystemExit, match="No labels yet"):
         main(["score", str(batch), str(snap_path)])
+
+
+def test_short_outliers_are_flagged_and_scored():
+    eps = [_ep(i) for i in range(20)]
+    eps[3]["short_outlier"] = True
+    eps[7]["short_outlier"] = True
+    snap = _snap(episodes=eps)
+    sheet, key = mine([snap], top_k=0, n_controls=5, seed=2)
+    flagged = {k["episode_id"] for k in key if k["stratum"] == "flagged"}
+    assert flagged == {"3", "7"}
+    labels = _label(sheet, key, {"3": "acquisition_fault", "7": "execution_failure"})
+    d = score(labels, key, [snap])["detectors"]
+    assert d["short_outlier"]["raw"]["tp"] == 1 and d["short_outlier"]["raw"]["fp"] == 1
+    assert d["blocked (stage1 or video)"]["raw"]["tp"] == 0
+
+
+def test_old_snapshots_without_short_outlier_still_load():
+    old = _snap()
+    for e in old["episodes"]:
+        e.pop("short_outlier", None)
+    sheet, key = mine([old], top_k=1, n_controls=2)
+    assert key
