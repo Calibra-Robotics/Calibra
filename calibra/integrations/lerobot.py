@@ -49,16 +49,25 @@ The report must have been generated with ``calibra prune --report`` (not just
 
 LeRobot training integration
 -----------------------------
-To use filtered episodes directly with LeRobot's training:
+Train on the selected episodes without materialising a second dataset.
+``calibra prune`` prints the exact command for LeRobot sources:
 
-    # Export the coreset to disk as a valid LeRobot v2 dataset:
+    lerobot-train --policy.type=act --dataset.repo_id=lerobot/pusht \
+        --dataset.episodes="[0,4,7,12]"
+
+From Python, either build the flags or load a ``LeRobotDataset`` directly:
+
+    args = lerobot_train_args("report.json", "lerobot/pusht")
+    ds = load_lerobot_dataset("lerobot/pusht", "report.json")
+
+Calibra episode IDs for LeRobot sources are the ``episode_index`` values, so
+they map one-to-one onto LeRobot's ``episodes`` selection.
+
+To materialise a standalone copy instead (e.g. to publish the subset):
+
     calibra prune /path/to/dataset --keep 0.3 --export-dataset ./pusht_coreset/
-    # Then train on it:
-    lerobot-train policy=act dataset_repo_id=./pusht_coreset/
-
-    # Or, use the episode IDs as a filter within your own training loop:
-    ids = recommended_episode_ids("report.json")
-    # Pass ids to your dataset loader's episode_indices argument.
+    lerobot-train --policy.type=act --dataset.repo_id=local/pusht_coreset \
+        --dataset.root=./pusht_coreset
 """
 
 from __future__ import annotations
@@ -182,12 +191,8 @@ def load_dataset(
     >>> ds = load_dataset("lerobot/pusht", report_path="results/pusht/latest.json")
     >>> print(f"Training on {len(set(ds['episode_index']))} approved episodes")
 
-    Training integration
-    --------------------
-    The filtered dataset can be saved to disk and used with LeRobot's trainer:
-
-    >>> ds.save_to_disk("./pusht_coreset")
-    # then: lerobot-train policy=act dataset_repo_id=./pusht_coreset
+    This returns a plain ``datasets.Dataset``. To train with LeRobot, use
+    :func:`load_lerobot_dataset` or :func:`lerobot_train_args` instead.
     """
     try:
         from datasets import load_dataset as _hf_load
@@ -245,6 +250,72 @@ def filter_by_report(
         num_proc=num_proc,
         desc=f"Filtering to {len(keep_int)} Calibra-approved episodes",
     )
+
+
+# ── LeRobot training selection ───────────────────────────────────────────────
+
+
+def lerobot_episode_indices(ids: Union[str, Path, list[str]]) -> list[int]:
+    """
+    Return kept episodes as sorted LeRobot ``episode_index`` integers.
+
+    ``ids`` is a CalibraReport path or a list of Calibra episode IDs. Raises
+    ValueError for IDs that are not integer episode indices (non-LeRobot sources).
+    """
+    if isinstance(ids, (str, Path)):
+        ids = recommended_episode_ids(ids)
+    try:
+        return sorted({int(eid) for eid in ids})
+    except ValueError:
+        raise ValueError(
+            "Episode IDs are not LeRobot episode indices; this report was not "
+            "produced from a LeRobot dataset."
+        ) from None
+
+
+def lerobot_train_args(
+    ids: Union[str, Path, list[str]],
+    repo_id: str,
+    *,
+    root: Union[str, Path, None] = None,
+) -> list[str]:
+    """
+    Return ``lerobot-train`` dataset flags that select only the kept episodes.
+
+    >>> lerobot_train_args(["0", "4", "7"], "lerobot/pusht")
+    ['--dataset.repo_id=lerobot/pusht', '--dataset.episodes=[0,4,7]']
+    """
+    indices = lerobot_episode_indices(ids)
+    args = [f"--dataset.repo_id={repo_id}"]
+    if root is not None:
+        args.append(f"--dataset.root={root}")
+    args.append("--dataset.episodes=[" + ",".join(str(i) for i in indices) + "]")
+    return args
+
+
+def load_lerobot_dataset(
+    repo_id: str,
+    report_path: Union[str, Path],
+    **kwargs,
+):
+    """
+    Load a ``LeRobotDataset`` restricted to the episodes a CalibraReport keeps.
+
+    Extra keyword arguments (``root``, ``delta_timestamps``, ...) are passed to
+    ``LeRobotDataset``. Video and multi-episode Parquet/MP4 shards (v3) are
+    handled by LeRobot itself; nothing is copied.
+    """
+    try:
+        from lerobot.datasets.lerobot_dataset import LeRobotDataset
+    except ImportError:
+        try:  # LeRobot releases before the datasets package move
+            from lerobot.common.datasets.lerobot_dataset import LeRobotDataset
+        except ImportError:
+            raise ImportError(
+                "The 'lerobot' package is required.\nInstall it with: pip install lerobot"
+            ) from None
+
+    return LeRobotDataset(repo_id, episodes=lerobot_episode_indices(report_path), **kwargs)
 
 
 # ── internal helpers ──────────────────────────────────────────────────────────

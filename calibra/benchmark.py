@@ -302,9 +302,19 @@ def run_benchmark(argv: List[str]) -> None:
         if ep.metadata.episode_id in prune_res.keep_episode_ids
     )
     if batch.format == "lerobot":
+        from calibra.integrations.lerobot import lerobot_episode_indices
+
+        # LeRobot selects by episode_index, which is the Calibra episode ID,
+        # not the position in the batch.
+        try:
+            episodes_str = ",".join(
+                str(i) for i in lerobot_episode_indices(prune_res.keep_episode_ids)
+            )
+        except ValueError:
+            episodes_str = kept_indices_str
         lerobot_cmd = (
             f"lerobot-train --dataset.repo_id {batch.dataset_name} "
-            f'--dataset.episodes "[{kept_indices_str}]"'
+            f'--dataset.episodes "[{episodes_str}]"'
         )
     else:
         lerobot_cmd = (

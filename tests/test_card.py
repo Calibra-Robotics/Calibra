@@ -431,3 +431,16 @@ class TestRunCardCLI:
             with pytest.raises(SystemExit) as exc:
                 run_card(["bad_path"])
         assert exc.value.code == 1
+
+
+def test_card_provenance_includes_revision_profile_and_version():
+    from calibra import __version__
+
+    report = _make_report()
+    card, _ = generate_card(report, dataset_revision="abc123")
+    assert "| Source revision | `abc123` |" in card
+    assert "| Dataset profile | none |" in card
+    assert f"| Calibra version | {__version__} |" in card
+
+    card, _ = generate_card(report)
+    assert "| Source revision | n/a |" in card

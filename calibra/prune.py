@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import sys
 from pathlib import Path
 
@@ -41,6 +42,28 @@ from calibra.pipeline import Pipeline
 from calibra.pruning import ApproximateCoresetSelector, CoresetSelector
 
 _APPROXIMATE_AUTO_THRESHOLD = 50_000  # auto-enable approximate mode above this episode count
+
+
+def _print_lerobot_train_hint(keep_ids: list[str], dataset_path: str, log) -> None:
+    """Print a lerobot-train command that trains on the kept episodes in place."""
+    from calibra.integrations.lerobot import lerobot_train_args
+
+    local = Path(dataset_path).expanduser()
+    if local.exists():
+        repo_id, root = f"local/{local.resolve().name}", str(local)
+    else:
+        repo_id, root = dataset_path, None
+    try:
+        flags = lerobot_train_args(keep_ids, repo_id, root=root)
+    except ValueError as exc:
+        log(f"Note: no lerobot-train command printed ({exc})")
+        return
+    # Quote so shells don't glob the episode-list brackets.
+    print("\n  Train on the kept episodes (no export needed):")
+    print(
+        "    lerobot-train --policy.type=<policy> \\\n      "
+        + " \\\n      ".join(shlex.quote(f) for f in flags)
+    )
 
 
 def run_prune(argv: list[str]) -> None:
@@ -470,6 +493,9 @@ def run_prune(argv: list[str]) -> None:
 
     # Human-readable summary to stdout
     print(result.summary())
+
+    if batch.format == "lerobot" and not args.export_dataset:
+        _print_lerobot_train_hint(result.keep_episode_ids, dataset_path, log)
 
     if args.strategy == "world-model":
         from calibra.world_model.surprise import format_world_model_summary
