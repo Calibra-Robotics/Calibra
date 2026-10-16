@@ -56,7 +56,12 @@ for fps in (10, 50):
     print(f"   {fps:3d} Hz  noise 0 / 1e-4 / 1e-3: " + "  ".join(row))
 
 print("C) smooth 1 s movements at 50 Hz, command held for k steps (slower teleop)")
-print("   " + "  ".join(f"k={k}: {rate(min_jerk_chain(10, 1.0, 50, hold=k), 50):6.1%}" for k in (1, 2, 3, 5)))
+print(
+    "   "
+    + "  ".join(
+        f"k={k}: {rate(min_jerk_chain(10, 1.0, 50, hold=k), 50):6.1%}" for k in (1, 2, 3, 5)
+    )
+)
 
 if len(sys.argv) > 1:
     from calibra.ingestion.registry import load
