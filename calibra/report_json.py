@@ -19,7 +19,7 @@ import json
 import platform
 import sys
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, cast
 
 from calibra import __version__
 from calibra.certify import _grade
@@ -28,6 +28,7 @@ from calibra.schema.public_report import (
     AuditConfig,
     AuditResults,
     CalibraReport,
+    Certification,
     DatasetInfo,
     DetectorCalibrationSummary,
     DimensionResult,
@@ -41,6 +42,7 @@ from calibra.schema.public_report import (
     Recommendations,
     ReportMeta,
     SamplingConfig,
+    Severity,
 )
 from calibra.schema.report import CompatibilityHint, DiagnosticReport, RiskFlag, RiskLevel
 from calibra.schema.scoring import (
@@ -75,7 +77,7 @@ def _pruning_to_verdicts(pruning_result) -> EpisodeVerdicts:
 def _flag_to_finding(flag: RiskFlag) -> Finding:
     code = flag.metric.upper().replace(".", "_")
     return Finding(
-        severity=flag.level.value.lower(),
+        severity=cast(Severity, flag.level.value.lower()),
         code=code,
         metric=flag.metric,
         message=flag.interpretation,
@@ -298,7 +300,7 @@ def assemble_public_report(
         sampling = SamplingConfig(mode="full")
 
     grade_label, _ = _grade(diag)
-    certification_map = {
+    certification_map: dict[str, Certification] = {
         "CERTIFIED": "pass",
         "PROVISIONALLY CERTIFIED": "provisional",
         "NOT CERTIFIED": "fail",

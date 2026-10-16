@@ -103,11 +103,15 @@ class DimensionResult(BaseModel):
 # ── overall result ────────────────────────────────────────────────────────────
 
 
+Certification = Literal["pass", "provisional", "fail"]
+Severity = Literal["critical", "warning", "info", "ok"]
+
+
 class OverallResult(BaseModel):
     score: float  # 0-100
     grade: str  # "A"–"F"
     confidence: float  # 0-1, CI-derived
-    certification: Literal["pass", "provisional", "fail"]
+    certification: Certification
     critical_failures: list[str] = []  # metric names of CRITICAL flags
 
 
@@ -130,7 +134,7 @@ class Recommendations(BaseModel):
 
 
 class Finding(BaseModel):
-    severity: Literal["critical", "warning", "info", "ok"]
+    severity: Severity
     code: str  # "TEMPORAL_JITTER_HIGH"
     metric: str  # raw metric name from analyzer
     message: str  # human-readable interpretation

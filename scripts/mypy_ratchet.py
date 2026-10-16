@@ -20,6 +20,8 @@ import re
 import subprocess
 import sys
 
+# Set from CI's count (Python 3.12, fresh install), not a local run: counts
+# differ by a few errors between environments (numpy/pandas stubs).
 BASELINE = 104
 
 

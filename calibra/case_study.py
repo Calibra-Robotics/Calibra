@@ -123,7 +123,7 @@ def generate_case_study(
             f"At **{headline_level:.0f}% retention**, Calibra's selected subset reached "
             f"**{c.eval_success_rate:.1%} eval success**"
         )
-        if full_success:
+        if full_success and c.eval_success_rate is not None:
             headline += (
                 f" (**{c.eval_success_rate / full_success:.0%}** of the full-dataset baseline)"
             )

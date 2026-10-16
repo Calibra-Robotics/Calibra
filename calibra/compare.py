@@ -742,10 +742,9 @@ def fetch_community_percentiles(policy_family: str) -> Optional[dict]:
 
 def _pct_rank(val: float, p: dict, higher_better: bool) -> Optional[float]:
     """Estimate percentile rank (0–100, higher = better) for val given p25/50/75/90."""
-    quartiles = (p.get("p25"), p.get("p50"), p.get("p75"), p.get("p90"))
-    if any(q is None for q in quartiles):
+    p25, p50, p75, p90 = p.get("p25"), p.get("p50"), p.get("p75"), p.get("p90")
+    if p25 is None or p50 is None or p75 is None or p90 is None:
         return None
-    p25, p50, p75, p90 = (float(q) for q in quartiles)
     # Raw position in the sorted distribution (0 = lowest, 100 = highest)
     if val <= p25:
         raw = max(0.0, 25.0 * val / p25) if p25 != 0 else 25.0
