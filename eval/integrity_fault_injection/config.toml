@@ -2,7 +2,9 @@
 # Tiers are pre-registered here; do not edit them after a scored run without a
 # PROTOCOL.md changelog entry.
 
-calibra_version = "0.13.0"
+# Installed Calibra must match. results/v0.13.0 ran on 0.13.0; results/post-fix
+# ran on the commit that became 0.13.1 (version string still 0.13.0 then).
+calibra_version = "0.13.1"
 
 [datasets.h1]
 repo = "lerobot/unitreeh1_rearrange_objects"

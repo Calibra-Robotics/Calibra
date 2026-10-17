@@ -159,8 +159,8 @@ corresponding clean or re-encoded control and not explained by the fault.
 
 ## Changes after v0.13.0
 
-Made on 2026-10-18 in response to findings 1, 2, 4 and 5 (finding 6 is a
-deliberate threshold and was left as is):
+Made on 2026-10-18 in response to findings 1, 2, 4 and 5 and released as
+Calibra 0.13.1 (finding 6 is a deliberate threshold and was left as is):
 
 - `timestamp_non_monotonic` and `timestamp_scale_mismatch` in the temporal
   analyzer, part of `calibra integrity`. Both run even when timestamps are

@@ -4,6 +4,8 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+## [0.13.1] - Integrity fixes from fault injection
+
 ### Added
 
 - **`timestamp_non_monotonic`** (temporal analyzer, `calibra integrity`):
@@ -162,7 +164,7 @@ All notable changes to Calibra are documented here.
 
 Measured after release (2026-10-17, corrected 2026-10-18) by the integrity
 fault-injection benchmark; see `eval/integrity_fault_injection/REPORT.md`. Items
-marked *addressed* are changed in [Unreleased].
+marked *addressed* are changed in [0.13.1].
 
 - **`duplicate_frame_rate` under-counts on AV1-encoded video** (LeRobot v2/v3
   with `--decode-video`). With LeRobot's 2-frame GOP, a repeated frame coded as

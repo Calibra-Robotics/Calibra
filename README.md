@@ -5,7 +5,7 @@
   <a href="https://calibra-robotics.github.io/Calibra/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" alt="Docs"/></a>
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"/></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-v0.13.0-informational" alt="Changelog"/></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-v0.13.1-informational" alt="Changelog"/></a>
 </p>
 
 <p align="center"><b>Train robot policies with up to 75% less data.</b></p>
@@ -468,7 +468,15 @@ result = selector.select(batch, report)
 
 ## Roadmap
 
-**v0.13.0 (current), Trustworthy integrity checks:** fewer false alarms on
+**v0.13.1 (current), Integrity fixes from fault injection:** two new timestamp
+checks, `timestamp_non_monotonic` (timestamps that repeat or go backwards) and
+`timestamp_scale_mismatch` (an episode in different units, e.g. milliseconds),
+which run even on synthetic timestamps; `--decode-video` says which episodes it
+did not check; `duplicate_frame_rate` says it is a lower bound on AV1/H.264
+video. See [Integrity checks under fault injection](#integrity-checks-under-fault-injection)
+and [CHANGELOG.md](CHANGELOG.md).
+
+**v0.13.0, Trustworthy integrity checks:** fewer false alarms on
 real datasets (LDLJ per sub-movement, `velocity_discontinuity_rate` ignores
 sensor noise, fixed-length recordings no longer flagged short, synthetic
 timestamps reported as not evaluable) and new checks: duplicate episodes,
