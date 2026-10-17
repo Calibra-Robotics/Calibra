@@ -60,6 +60,8 @@ _INTEGRITY_METRICS = frozenset(
     {
         "timestamp_jitter_cv",
         "timestamp_dropout_rate",
+        "timestamp_non_monotonic",
+        "timestamp_scale_mismatch",
         "action_obs_misalignment",
         "camera_physics_drift",
         "action_dropout_rate",

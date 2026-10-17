@@ -448,3 +448,15 @@ eval/integrity_fault_injection/
   plus a fully decoded clean copy. PushT gets 2 extra reps of the frozen-frame
   run10/run30 variants so the frozen clear tier still reaches 60 trials. Each
   run invocation now writes its own manifest under results/<run>/manifests/.
+- 2026-10-18 (after the v0.13.0 report): **harness error corrected.** The
+  repeated-frame injector drew positions from every-other slot, so under
+  LeRobot's 2-frame GOP every injected repeat landed on a keyframe, where the
+  codec re-encodes it with fresh noise and hides it. The v0.13.0 repeated-frame
+  results (0/3 on H1) and the conclusion drawn from them ("compression erases
+  repeats", "ALOHA's flag is a compression artifact") were wrong. Repeats at
+  predicted-frame positions are detected 18/18; the ALOHA flag repeats while the
+  arms move, so it reflects real repeated frames (cameras slower than the
+  recording rate). The injector now draws non-adjacent positions from both
+  parities. Repeated-frame and clean-copy trials are rerun under `results/post-fix/`
+  together with the timestamp variants, which now also expect the two checks
+  added after v0.13.0 (`timestamp_non_monotonic`, `timestamp_scale_mismatch`).

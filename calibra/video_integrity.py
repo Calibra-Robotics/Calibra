@@ -94,6 +94,18 @@ def _video_keys(info: dict) -> list[str]:
     return [k for k, f in info.get("features", {}).items() if f.get("dtype") == "video"]
 
 
+# Codecs that code every frame on its own, so a repeated frame decodes identically.
+_INTRA_CODECS = {"mjpeg", "ffv1", "png", "rawvideo", "huffyuv", "utvideo", "prores"}
+
+
+def _video_codec(info: dict, key: str) -> Optional[str]:
+    """Codec recorded in info.json (v2: features.<key>.info, v3: .video_info)."""
+    feature = info.get("features", {}).get(key, {})
+    meta = feature.get("video_info") or feature.get("info") or {}
+    codec = meta.get("video.codec")
+    return str(codec).lower() if codec else None
+
+
 def _require_cv2():
     try:
         import cv2
@@ -424,6 +436,23 @@ def check_video_content(root: Path, max_episodes: int = 20) -> VideoContentResul
     worst_cam, worst = max(per_camera.items(), key=lambda kv: kv[1])
     cams = ", ".join(f"{k.split('.')[-1]} {v:.1%}" for k, v in sorted(per_camera.items()))
     scope = f"decoded {len(sampled)} of {len(by_ep)} episodes"
+    unchecked = (
+        f" Episodes outside the sample were not checked; use --video-sample {len(by_ep)} "
+        "to check every episode."
+        if len(sampled) < len(by_ep)
+        else ""
+    )
+    # Inter-frame codecs (AV1, H.264, ...) only reproduce a repeated frame
+    # exactly when it is coded as a predicted frame; one that lands on a
+    # keyframe is re-encoded with fresh compression noise and looks new.
+    codecs = sorted({c for c in (_video_codec(info, k) for k in keys) if c} - _INTRA_CODECS)
+    lower_bound = (
+        f" Video is {'/'.join(codecs)}-encoded: repeats that fall on keyframes are not "
+        "visible, so this rate is a lower bound (about half of real repeats with "
+        "LeRobot's 2-frame GOP)."
+        if codecs
+        else ""
+    )
 
     dup_level = _threshold_level_upper(worst, _DUPLICATE_WARNING, _DUPLICATE_CRITICAL)
     dup_flag = RiskFlag(
@@ -445,7 +474,9 @@ def check_video_content(root: Path, max_episodes: int = 20) -> VideoContentResul
             "(frames padded by repetition) or the capture pipeline re-emitted buffers; the "
             "policy then sees stale or lower-rate visual input. Rendered simulations repeat "
             "frames legitimately when nothing in view moves."
-        ),
+        )
+        + lower_bound
+        + unchecked,
         affected_fraction=worst,
     )
 
@@ -467,7 +498,8 @@ def check_video_content(root: Path, max_episodes: int = 20) -> VideoContentResul
             "No freeze risk detected."
             if frz_level == RiskLevel.OK
             else "A frozen camera segment trains the policy on stale visual input for that window."
-        ),
+        )
+        + unchecked,
         affected_fraction=frac,
     )
     return VideoContentResult(

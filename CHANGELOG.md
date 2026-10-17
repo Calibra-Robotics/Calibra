@@ -6,16 +6,35 @@ All notable changes to Calibra are documented here.
 
 ### Added
 
+- **`timestamp_non_monotonic`** (temporal analyzer, `calibra integrity`):
+  CRITICAL when any episode's timestamps repeat or go backwards. v0.13.0 caught
+  swapped timestamps only through jitter CV, which missed them when few
+  episodes were affected (0/30 at 10% of episodes; now 30/30).
+- **`timestamp_scale_mismatch`**: CRITICAL when an episode's median step is
+  more than 10x away from the dataset's (e.g. one episode in milliseconds). In
+  v0.13.0 such an episode still lay on a frame grid, so timing was reported as
+  not evaluated (now 30/30 detected). Both checks run even when timestamps are
+  synthetic. On the PushT regression fixture both are OK; no other output
+  changed (golden updated for the two new entries only).
 - **Integrity fault-injection benchmark** (`eval/integrity_fault_injection/`):
   pre-registered protocol, injectors for LeRobot v3 on-disk copies (duplicate
   episodes, missing/truncated/wrong-fps video, dropped video frames, frozen and
   repeated frames, dropped steps, timestamp jitter, swaps, offsets and units),
-  `run.py` / `score.py`, and the v0.13.0 results (981 trials on Unitree H1,
-  PushT and ALOHA) with a technical report. Findings are listed under
-  [0.13.0] Known limitations.
+  `run.py` / `score.py`, the v0.13.0 results (981 trials on Unitree H1, PushT
+  and ALOHA), the post-fix rerun (471 trials) and a technical report. Findings
+  are listed under [0.13.0] Known limitations.
 - `tests/regression/test_fault_injection_findings.py`: the benchmark's confirmed
-  detections as tests, and its known misses as strict xfails that fail once a
-  detector change fixes them.
+  detections as tests, and its remaining known miss as a strict xfail that fails
+  once a detector change fixes it.
+
+### Changed
+
+- **`--decode-video` says what it did not check.** When fewer episodes are
+  decoded than exist, the `duplicate_frame_rate` and `camera_freeze_events`
+  output says episodes outside the sample were not checked and gives the
+  `--video-sample` value that checks all of them.
+- **`duplicate_frame_rate` states that it is a lower bound on inter-coded
+  video** (AV1, H.264, ...; codec read from `info.json`). Levels are unchanged.
 
 ### Documentation
 
@@ -23,6 +42,10 @@ All notable changes to Calibra are documented here.
   unsupported; they shipped in 0.13.0. Added the AV1 caveat, the 20-episode
   default sample, and a fault-injection results section. Removed the stale
   "next: Vision Integrity for v2/v3" roadmap entry.
+- Corrected the first fault-injection report (2026-10-17): it said AV1
+  compression erases repeated frames and that ALOHA's `duplicate_frame_rate`
+  flag is a compression artifact. A harness error placed every injected repeat
+  on a keyframe; see [0.13.0] Known limitations for the measured behavior.
 
 ## [0.13.0] - Trustworthy integrity checks
 
@@ -137,26 +160,31 @@ All notable changes to Calibra are documented here.
 
 ### Known limitations
 
-Measured after release (2026-10-17) by the integrity fault-injection benchmark;
-see `eval/integrity_fault_injection/REPORT.md`. Not yet fixed.
+Measured after release (2026-10-17, corrected 2026-10-18) by the integrity
+fault-injection benchmark; see `eval/integrity_fault_injection/REPORT.md`. Items
+marked *addressed* are changed in [Unreleased].
 
-- **`duplicate_frame_rate` is unreliable on AV1-encoded video** (LeRobot v2/v3
-  with `--decode-video`). With LeRobot's encoder settings, an exact repeated
-  frame decodes about 19% different from its predecessor (0/18 detected), and
-  near-static scenes decode as exact copies (unmodified
-  `lerobot/aloha_static_battery` reads CRITICAL). `camera_freeze_events` is not
-  affected.
+- **`duplicate_frame_rate` under-counts on AV1-encoded video** (LeRobot v2/v3
+  with `--decode-video`). With LeRobot's 2-frame GOP, a repeated frame coded as
+  a predicted frame is detected (18/18), but one that lands on a keyframe is
+  re-encoded with fresh noise and looks new (0/18), so the rate is about half
+  the true rate. It does not flag static scenes: unmodified
+  `lerobot/aloha_static_battery` reads CRITICAL because its frames really
+  repeat, including while the arms move. *Addressed:* the flag now says the
+  rate is a lower bound.
 - **`--decode-video` checks 20 episodes by default**, so a frozen camera in an
   episode outside the sample is missed (19 of 60 injected freezes). Pass
   `--video-sample N` with the episode count to check every episode.
+  *Addressed:* the output now says so.
 - **No timestamp monotonicity check.** Swapped timestamps are caught only
   through jitter CV, which misses them when few episodes are affected (0/30 at
-  10% of episodes).
+  10% of episodes). *Addressed:* `timestamp_non_monotonic`.
 - **An episode stored in milliseconds disables the timing checks**: its
   timestamps still lie on a frame grid, so the dataset is reported as synthetic
-  and timing is not evaluated.
+  and timing is not evaluated. *Addressed:* `timestamp_scale_mismatch`.
 - **`timestamp_dropout_rate` cannot see single dropped steps**: it counts gaps
   longer than 3x the median interval, and one missing step leaves a 2x gap.
+  Deliberate threshold; not changed.
 
 ## [0.12.0] - Apache 2.0 core
 

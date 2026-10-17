@@ -296,21 +296,20 @@ Averaged across `lerobot/pusht` (n=206) and `lerobot/aloha_sim_insertion_scripte
 
 → [Full per-dataset tables with confidence intervals](experiments/results/benign_firing_rates.md)
 
-### Integrity checks under fault injection (v0.13.0)
+### Integrity checks under fault injection
 
-We injected controlled acquisition faults into on-disk copies of three LeRobot v3.0 datasets (`unitreeh1_rearrange_objects`, `pusht`, `aloha_static_battery`) and ran `calibra integrity` on each copy: 981 trials, protocol pre-registered.
+We injected controlled acquisition faults into on-disk copies of three LeRobot v3.0 datasets (`unitreeh1_rearrange_objects`, `pusht`, `aloha_static_battery`) and ran `calibra integrity` on each copy: 981 trials on v0.13.0 and 471 after the fixes it led to, protocol pre-registered.
 
-| Fault (clearly above threshold) | Detected |
-|---|---:|
-| Duplicate episodes | 105/105 |
-| Missing, truncated, or wrong-fps video | 96/96 |
-| Dropped video frames | 60/60 |
-| Frozen camera stream (every episode decoded) | 60/60 |
-| Timestamp dropout and jitter | 150/150 |
-| Swapped (non-monotonic) timestamps in 10% of episodes | 0/30 |
-| Isolated repeated frames in AV1 video | 0/3 |
+| Fault (clearly above threshold) | v0.13.0 | Current |
+|---|---:|---:|
+| Duplicate episodes | 105/105 | 105/105 |
+| Missing, truncated, or wrong-fps video | 96/96 | 96/96 |
+| Dropped video frames | 60/60 | 60/60 |
+| Frozen camera stream (every episode decoded) | 60/60 | 60/60 |
+| Repeated frames (10% to 30%) | n/a | 3/3 |
+| Timestamp dropout, jitter, swaps, and unit errors | 150/180 | 210/210 |
 
-On unmodified data, 1 of 300 evaluated checks fired (ALOHA, `duplicate_frame_rate`, caused by video compression). Known gaps: repeated-frame detection on AV1 video, frozen cameras missed when the frozen episode is outside the default 20-episode video sample (19/60), no timestamp monotonicity check, and an episode stored in milliseconds makes the timing checks skip. All three datasets have synthetic timestamps, so timing results show the detectors respond to injected noise, not to real clock faults. These are synthetic injections: they show what Calibra can detect, not how often faults occur in real data.
+On unmodified data, 1 of 300 evaluated checks fired: `duplicate_frame_rate` on ALOHA, which detects real repeated frames (most likely cameras slower than the 50 Hz recording rate), an anomaly rather than confirmed corruption. Known limits: on AV1 video, `duplicate_frame_rate` sees only repeats coded as predicted frames, so it reports about half the true rate; frozen cameras are missed when the frozen episode is outside the default 20-episode video sample (19/60), which the output now says. All three datasets have synthetic timestamps, so timing results show the detectors respond to injected faults, not to real clock faults. These are synthetic injections: they show what Calibra can detect, not how often faults occur in real data.
 
 → [Report, findings, and limitations](eval/integrity_fault_injection/REPORT.md)
 
@@ -535,7 +534,7 @@ pip install 'calibra-robotics[all]'               # everything
 
 **Formats supported:** LeRobot v1/v2/v3 (Parquet), HuggingFace Hub IDs, HDF5 (Isaac Lab, Robomimic), RLDS/TF Datasets, MCAP/ROS2 bags.
 
-Camera-frame checks (`duplicate_frame_rate`, `camera_freeze_events`, `blurry_episode_fraction` in `calibra integrity`) work out of the box on HDF5/Isaac Lab/robomimic data, and on LeRobot **v1** datasets via `calibra integrity <path> --decode-images` (opt-in; decodes HuggingFace `Image`-feature columns, off by default since it increases load time/memory). On local LeRobot **v2/v3** copies (video-encoded), `--decode-video` runs `duplicate_frame_rate` and `camera_freeze_events` on decoded frames (needs `calibra-robotics[video]`). It decodes 20 evenly spaced episodes by default; pass `--video-sample N` with the episode count to check every episode. Known limit: on AV1-encoded video, `duplicate_frame_rate` is unreliable (compression erases isolated repeated frames and makes static scenes look repeated); `camera_freeze_events` is not affected. See the [integrity fault-injection benchmark](eval/integrity_fault_injection/REPORT.md).
+Camera-frame checks (`duplicate_frame_rate`, `camera_freeze_events`, `blurry_episode_fraction` in `calibra integrity`) work out of the box on HDF5/Isaac Lab/robomimic data, and on LeRobot **v1** datasets via `calibra integrity <path> --decode-images` (opt-in; decodes HuggingFace `Image`-feature columns, off by default since it increases load time/memory). On local LeRobot **v2/v3** copies (video-encoded), `--decode-video` runs `duplicate_frame_rate` and `camera_freeze_events` on decoded frames (needs `calibra-robotics[video]`). It decodes 20 evenly spaced episodes by default; pass `--video-sample N` with the episode count to check every episode. Known limit: on inter-coded video such as LeRobot's AV1, a repeated frame is visible only when it is coded as a predicted frame, so `duplicate_frame_rate` is a lower bound (about half the true rate); the flag says so. See the [integrity fault-injection benchmark](eval/integrity_fault_injection/REPORT.md).
 
 ---
 

@@ -113,38 +113,33 @@ def _swapped(n_swapped: int, n: int = 10) -> list[Episode]:
     return eps
 
 
-def _timing_levels(eps: list[Episode]) -> set:
-    return {
-        _level(TemporalAnalyzer(), _batch(eps), m)
-        for m in ("timestamp_jitter_cv", "timestamp_dropout_rate")
-    }
+def test_non_monotonic_timestamps_in_one_episode_are_critical():
+    # v0.13.0 missed this: jitter CV averaged over episodes diluted a swap in
+    # 10% of episodes below threshold. timestamp_non_monotonic catches it.
+    assert (
+        _level(TemporalAnalyzer(), _batch(_swapped(1)), "timestamp_non_monotonic")
+        == RiskLevel.CRITICAL
+    )
 
 
-def test_non_monotonic_timestamps_in_every_episode_are_flagged():
-    # Caught only indirectly, through the jitter CV a swap produces.
-    assert _timing_levels(_swapped(10)) & set(NON_OK)
+def test_monotonic_timestamps_pass():
+    assert (
+        _level(TemporalAnalyzer(), _batch(_swapped(0)), "timestamp_non_monotonic") == RiskLevel.OK
+    )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="no monotonicity check; jitter CV averaged over episodes dilutes swaps in 10% of episodes below threshold (fault-injection benchmark)",
-)
-def test_non_monotonic_timestamps_in_some_episodes_are_flagged():
-    assert _timing_levels(_swapped(1)) & set(NON_OK)
-
-
-@pytest.mark.xfail(
-    strict=True,
-    reason="ms timestamps still lie on a frame grid, so timing checks are not evaluated (fault-injection benchmark)",
-)
-def test_one_episode_in_milliseconds_is_flagged():
+def test_one_episode_in_milliseconds_is_critical():
+    # v0.13.0 missed this: ms timestamps still lie on a frame grid, so the
+    # timing checks were reported as not evaluated.
     eps = [_episode(i) for i in range(10)]
     eps[4] = _episode(4, ts=np.arange(200) / FPS * 1000.0)
-    levels = {
-        _level(TemporalAnalyzer(), _batch(eps), m)
-        for m in ("timestamp_jitter_cv", "timestamp_dropout_rate")
-    }
-    assert levels & set(NON_OK)
+    assert _level(TemporalAnalyzer(), _batch(eps), "timestamp_scale_mismatch") == RiskLevel.CRITICAL
+
+
+def test_consistent_time_scale_passes():
+    eps = [_episode(i) for i in range(10)]
+    eps[4] = _episode(4, ts=np.arange(200) / (FPS * 1.5))  # different rate, same unit
+    assert _level(TemporalAnalyzer(), _batch(eps), "timestamp_scale_mismatch") == RiskLevel.OK
 
 
 # ── frozen and repeated frames ──────────────────────────────────────────────
@@ -235,14 +230,23 @@ def test_isolated_repeats_are_detected_before_encoding():
     assert repeated_transitions(frames)[pos - 1].all()
 
 
+def _encoded_repeats(pos: np.ndarray) -> float:
+    frames = _texture(100)
+    frames[pos] = frames[pos - 1]
+    return float(repeated_transitions(_av1_roundtrip(frames))[pos - 1].mean())
+
+
+@pytest.mark.skipif(not _has_svtav1(), reason="needs ffmpeg with libsvtav1")
+def test_repeats_on_predicted_frames_survive_lerobot_encoding():
+    # With GOP 2, odd frames are predicted from the keyframe before them.
+    assert _encoded_repeats(np.arange(11, 90, 10)) == 1.0
+
+
 @pytest.mark.skipif(not _has_svtav1(), reason="needs ffmpeg with libsvtav1")
 @pytest.mark.xfail(
     strict=True,
-    reason="AV1 crf 30 noise exceeds the repeat tolerance: isolated repeats vanish after encoding (fault-injection benchmark)",
+    reason="a repeat that lands on a keyframe is re-encoded with fresh compression noise; "
+    "duplicate_frame_rate is a lower bound on inter-coded video (fault-injection benchmark)",
 )
-def test_isolated_repeats_survive_lerobot_encoding():
-    frames = _texture(100)
-    pos = np.arange(10, 90, 10)
-    frames[pos] = frames[pos - 1]
-    decoded = _av1_roundtrip(frames)
-    assert repeated_transitions(decoded)[pos - 1].mean() >= 0.5
+def test_repeats_on_keyframes_survive_lerobot_encoding():
+    assert _encoded_repeats(np.arange(10, 90, 10)) >= 0.5

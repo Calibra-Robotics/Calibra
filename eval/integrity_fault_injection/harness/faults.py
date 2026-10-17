@@ -26,7 +26,12 @@ OK, WARNING, CRITICAL = "OK", "WARNING", "CRITICAL"
 ANY = "ANY"  # some non-OK flag from the listed checks
 NONE = "NONE"  # nothing should fire
 
-TIMESTAMP_CHECKS = ("timestamp_jitter_cv", "timestamp_dropout_rate")
+TIMESTAMP_CHECKS = (
+    "timestamp_jitter_cv",
+    "timestamp_dropout_rate",
+    "timestamp_non_monotonic",
+    "timestamp_scale_mismatch",
+)
 
 # Set by run.py from config.toml after it is checked against the source.
 THRESHOLDS: dict[str, dict] = {}
@@ -358,9 +363,16 @@ def repeat_fill(ds, rng, rate: float) -> Injection:
     def fill(frames: np.ndarray) -> np.ndarray:
         n = len(frames) - 1
         k = round(rate * n)
-        # non-adjacent transition positions 1..n-1 (every other slot, then sample)
-        slots = np.arange(2, n, 2)
-        pos = np.sort(rng.choice(slots, size=min(k, len(slots)), replace=False))
+        # Non-adjacent positions drawn from both frame parities. (Every-other
+        # slots put every repeat on a keyframe under a 2-frame GOP, where the
+        # codec hides it.)
+        taken: list[int] = []
+        for p in rng.permutation(np.arange(2, n)):
+            if len(taken) == k:
+                break
+            if all(abs(p - q) > 1 for q in taken):
+                taken.append(int(p))
+        pos = np.sort(np.array(taken, dtype=int))
         out = frames.copy()
         out[pos] = frames[pos - 1]
         return out

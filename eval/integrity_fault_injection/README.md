@@ -4,27 +4,29 @@ Injects controlled acquisition faults into real LeRobot v3 datasets and measures
 whether `calibra integrity` flags them, at the right severity, without flagging
 clean data. The pre-registered design is in [PROTOCOL.md](PROTOCOL.md).
 
-## Latest results: Calibra v0.13.0 (2026-10-17)
+## Latest results (2026-10-18)
 
-Full write-up: [REPORT.md](REPORT.md). Tables: [results/v0.13.0/summary.md](results/v0.13.0/summary.md).
-981 trials on H1, PushT and ALOHA (LeRobot v3.0, AV1 video). Synthetic injection
-only: these numbers say what Calibra can detect, not how often faults occur.
+Full write-up: [REPORT.md](REPORT.md). Tables:
+[results/v0.13.0/summary.md](results/v0.13.0/summary.md) (as released) and
+[results/post-fix/summary.md](results/post-fix/summary.md) (after the fixes).
+981 + 471 trials on H1, PushT and ALOHA (LeRobot v3.0, AV1 video). Synthetic
+injection only: these numbers say what Calibra can detect, not how often faults
+occur.
 
-| Fault type (clear tier) | Detected |
-|---|---|
-| Duplicate episodes | 105/105 |
-| Missing, truncated or wrong-fps video | 96/96 |
-| Dropped video frames | 60/60 |
-| Frozen frames (every episode decoded) | 60/60 |
-| Timestamp faults | 150/180 |
-| Repeated frames | 0/3 |
+| Fault type (clear tier) | v0.13.0 | After fixes |
+|---|---|---|
+| Duplicate episodes | 105/105 | unchanged |
+| Missing, truncated or wrong-fps video | 96/96 | unchanged |
+| Dropped video frames | 60/60 | unchanged |
+| Frozen frames (every episode decoded) | 60/60 | unchanged |
+| Repeated frames | n/a (injector error) | 3/3 |
+| Timestamp faults | 150/180 | 210/210 |
 
-False positives on clean data: 1 of 300 evaluated checks (ALOHA,
-`duplicate_frame_rate`, caused by video compression). Known gaps, all covered by
-`xfail` tests in `tests/regression/test_fault_injection_findings.py`: repeated-frame
-detection on AV1 video, frozen cameras missed by the default 20-episode video
-sample, no timestamp monotonicity check, and millisecond timestamps disabling
-the timing checks. See [REPORT.md](REPORT.md#findings).
+On clean data, 1 of 300 evaluated checks fired: ALOHA `duplicate_frame_rate`,
+which detects real repeated frames (an anomaly, not a labeled fault). Remaining
+limits: `duplicate_frame_rate` reports about half the true rate on AV1 video,
+and frozen cameras outside the default 20-episode video sample are missed. See
+[REPORT.md](REPORT.md#findings).
 
 ## Requirements
 

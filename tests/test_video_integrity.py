@@ -364,6 +364,43 @@ def test_content_samples_episodes_evenly(tmp_path):
     assert check_video_content(root, max_episodes=3).sampled_episodes == [0, 4, 8]
 
 
+def _set_codec(root: Path, codec: str) -> None:
+    info_path = root / "meta/info.json"
+    info = json.loads(info_path.read_text())
+    info["features"][KEY]["info"] = {"video.codec": codec}
+    info_path.write_text(json.dumps(info))
+
+
+def _implication(result, metric: str) -> str:
+    return next(f.implication for f in result.flags if f.metric == metric)
+
+
+def test_content_inter_coded_video_rate_is_a_lower_bound(tmp_path):
+    from calibra.video_integrity import check_video_content
+
+    root = _content_dataset(tmp_path, {e: _noise_frames(40, seed=e) for e in range(3)})
+    _set_codec(root, "av1")
+    assert "lower bound" in _implication(check_video_content(root), "duplicate_frame_rate")
+
+
+def test_content_intra_coded_video_has_no_lower_bound_note(tmp_path):
+    from calibra.video_integrity import check_video_content
+
+    root = _content_dataset(tmp_path, {e: _noise_frames(40, seed=e) for e in range(3)})
+    _set_codec(root, "mjpeg")
+    assert "lower bound" not in _implication(check_video_content(root), "duplicate_frame_rate")
+
+
+def test_content_sampled_run_says_other_episodes_were_not_checked(tmp_path):
+    from calibra.video_integrity import check_video_content
+
+    root = _content_dataset(tmp_path, {e: _noise_frames(20, seed=e) for e in range(5)})
+    partial = check_video_content(root, max_episodes=3)
+    assert "--video-sample 5" in _implication(partial, "camera_freeze_events")
+    full = check_video_content(root, max_episodes=5)
+    assert "not checked" not in _implication(full, "camera_freeze_events")
+
+
 def test_integrity_decode_video_replaces_not_evaluated(tmp_path, capsys):
     from calibra.integrity import run_integrity
 

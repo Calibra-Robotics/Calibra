@@ -23,7 +23,9 @@
     "task_structure/trajectory_diversity": "INFO",
     "temporal_stability/action_dropout_rate": "OK",
     "temporal_stability/timestamp_dropout_rate": "INFO",
-    "temporal_stability/timestamp_jitter_cv": "INFO"
+    "temporal_stability/timestamp_jitter_cv": "INFO",
+    "temporal_stability/timestamp_non_monotonic": "OK",
+    "temporal_stability/timestamp_scale_mismatch": "OK"
   },
   "analyze[./datasets/pusht]/metrics": {
     "mean_disc_fraction": 0.11048,
@@ -58,7 +60,9 @@
     "task_structure/trajectory_diversity": "INFO",
     "temporal_stability/action_dropout_rate": "OK",
     "temporal_stability/timestamp_dropout_rate": "INFO",
-    "temporal_stability/timestamp_jitter_cv": "INFO"
+    "temporal_stability/timestamp_jitter_cv": "INFO",
+    "temporal_stability/timestamp_non_monotonic": "OK",
+    "temporal_stability/timestamp_scale_mismatch": "OK"
   },
   "analyze[lerobot/pusht]/metrics": {
     "mean_disc_fraction": 0.166956,

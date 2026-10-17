@@ -59,6 +59,10 @@ _ALIGN_CRITICAL = 0.05
 
 _CAMERA_PREFIXES = ("camera", "cam", "rgb", "depth", "wrist", "overhead")
 
+# An episode whose median step differs from the dataset's median step by more
+# than this factor is on a different time scale (e.g. milliseconds vs seconds).
+_TIMESCALE_RATIO = 10.0
+
 # Timestamps within this fraction of a step of an exact t0 + k*dt grid are
 # treated as synthetic. Real logged clocks jitter by far more than 0.1 % of a
 # step; float32 rounding of frame_index / fps stays well below it.
@@ -184,6 +188,17 @@ class TemporalAnalyzer(Analyzer):
         synthetic = timestamps_are_synthetic(batch)
         raw["synthetic_timestamps"] = synthetic
 
+        # Ordering and scale are format checks: they hold for synthetic
+        # timestamps too, so they run either way.
+        order_flag, order_raw = self._check_monotonic(batch)
+        flags.append(order_flag)
+        raw["non_monotonic"] = order_raw
+
+        scale_flag, scale_raw = self._check_timescale(batch)
+        if scale_flag:
+            flags.append(scale_flag)
+        raw["timescale"] = scale_raw
+
         jitter_flag, jitter_raw = self._check_jitter(batch)
         if jitter_flag:
             flags.append(_not_evaluable(jitter_flag) if synthetic else jitter_flag)
@@ -229,6 +244,92 @@ class TemporalAnalyzer(Analyzer):
             hints=hints,
             raw_metrics=raw,
         )
+
+    # ── metric: timestamp ordering ───────────────────────────────────────────
+
+    def _check_monotonic(self, batch: EpisodeBatch) -> tuple[RiskFlag, dict]:
+        bad = [
+            ep.metadata.episode_id
+            for ep in batch.episodes
+            if ep.n_steps >= 2 and np.any(np.diff(ep.timestamps) <= 0)
+        ]
+        frac = len(bad) / max(batch.n_episodes, 1)
+        raw = {"episodes": bad, "fraction": frac}
+        if not bad:
+            return RiskFlag(
+                level=RiskLevel.OK,
+                metric="timestamp_non_monotonic",
+                observed=ObservedValue(value=0.0, unit="fraction"),
+                threshold=0.0,
+                interpretation="Timestamps strictly increase within every episode.",
+                implication="No ordering problem detected.",
+                affected_fraction=0.0,
+            ), raw
+        shown = ", ".join(str(e) for e in bad[:10]) + (" ..." if len(bad) > 10 else "")
+        return RiskFlag(
+            level=RiskLevel.CRITICAL,
+            metric="timestamp_non_monotonic",
+            observed=ObservedValue(value=frac, unit="fraction"),
+            threshold=0.0,
+            interpretation=(
+                f"{len(bad)} of {batch.n_episodes} episodes have timestamps that repeat or "
+                f"go backwards: {shown}."
+            ),
+            implication=(
+                "Steps are out of order or duplicated in time, so velocities and any "
+                "time-based resampling are wrong for these episodes. Re-sort by the "
+                "recorder's clock or drop them."
+            ),
+            affected_fraction=frac,
+        ), raw
+
+    # ── metric: per-episode time scale ───────────────────────────────────────
+
+    def _check_timescale(self, batch: EpisodeBatch) -> tuple[Optional[RiskFlag], dict]:
+        steps = {}
+        for ep in batch.episodes:
+            d = np.diff(ep.timestamps)
+            d = d[d > 0]
+            if len(d):
+                steps[ep.metadata.episode_id] = float(np.median(d))
+        if len(steps) < 2:
+            return None, {"skipped": "fewer than 2 episodes with timestamps"}
+        typical = float(np.median(list(steps.values())))
+        bad = [
+            e
+            for e, s in steps.items()
+            if s > typical * _TIMESCALE_RATIO or s < typical / _TIMESCALE_RATIO
+        ]
+        frac = len(bad) / len(steps)
+        raw = {"median_step_s": typical, "episodes": bad, "fraction": frac}
+        if not bad:
+            return RiskFlag(
+                level=RiskLevel.OK,
+                metric="timestamp_scale_mismatch",
+                observed=ObservedValue(value=0.0, unit="fraction"),
+                threshold=0.0,
+                interpretation="Every episode's step duration is on the same time scale.",
+                implication="No unit mismatch detected.",
+                affected_fraction=0.0,
+            ), raw
+        shown = ", ".join(f"{e} ({steps[e]:.4g} s)" for e in bad[:10])
+        more = " ..." if len(bad) > 10 else ""
+        return RiskFlag(
+            level=RiskLevel.CRITICAL,
+            metric="timestamp_scale_mismatch",
+            observed=ObservedValue(value=frac, unit="fraction"),
+            threshold=0.0,
+            interpretation=(
+                f"{len(bad)} of {len(steps)} episodes have a median step more than "
+                f"{_TIMESCALE_RATIO:g}x away from the dataset's {typical:.4g} s: {shown}{more}."
+            ),
+            implication=(
+                "These episodes' timestamps are in different units (e.g. milliseconds) "
+                "or a different clock, so durations, rates and timing checks are wrong "
+                "for them. Convert them to the dataset's unit."
+            ),
+            affected_fraction=frac,
+        ), raw
 
     # ── metric: timestamp jitter ─────────────────────────────────────────────
 
