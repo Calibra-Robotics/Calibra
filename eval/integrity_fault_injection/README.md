@@ -28,7 +28,7 @@ the timing checks. See [REPORT.md](REPORT.md#findings).
 
 ## Requirements
 
-- Calibra installed from this repository (`pip install -e '.[video]'`)
+- Calibra installed from this repository (`pip install -e '.[lerobot,video]'`)
 - `ffmpeg` with `libsvtav1` on `PATH`
 - The three datasets downloaded at the pinned revisions (see `config.toml`):
 
@@ -49,8 +49,15 @@ refuses to run if it differs from `config.toml`.
 From the repository root:
 
 ```bash
-# everything (hours; resumable: rerun the same command to continue)
-python eval/integrity_fault_injection/run.py --run v0.13.0
+# the published v0.13.0 run (a few hours; resumable: rerun a command to continue)
+python eval/integrity_fault_injection/run.py --run v0.13.0 --datasets h1,pusht
+python eval/integrity_fault_injection/run.py --run v0.13.0 --datasets pusht \
+    --variants freeze.run10,freeze.run30 --reps 6
+python eval/integrity_fault_injection/run.py --run v0.13.0 --datasets aloha \
+    --variants clean.copy,clean.append,dup.,video.,vdrop.,steps.,jitter.,ts.
+
+# every variant on every dataset: frame faults on ALOHA alone take 10+ hours
+python eval/integrity_fault_injection/run.py --run all
 
 # one dataset, a subset of variants, one rep
 python eval/integrity_fault_injection/run.py --datasets h1 --variants freeze.,dup. --reps 1 --run try
@@ -64,8 +71,9 @@ Calibra source and that the installed version matches, then for each trial
 builds a working copy under `work/` (symlinks; the source dataset is never
 written), injects the fault with a seed derived from the trial id, and runs
 `calibra integrity --json` as a user would. Each trial appends one line to
-`results/<run>/trials.jsonl` with the ground truth and the verdict; the run's
-environment is in `results/<run>/manifest.json`.
+`results/<run>/trials.jsonl` with the ground truth and the verdict. Each
+invocation records its argv, environment and config hash in
+`results/<run>/manifests/<start time>.json`.
 
 `score.py` writes `summary.json` and `summary.md`: clean-data triage, recall
 per fault family and tier, sub-threshold and by-design behaviour, severity

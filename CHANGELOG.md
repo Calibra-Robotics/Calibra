@@ -4,6 +4,26 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **Integrity fault-injection benchmark** (`eval/integrity_fault_injection/`):
+  pre-registered protocol, injectors for LeRobot v3 on-disk copies (duplicate
+  episodes, missing/truncated/wrong-fps video, dropped video frames, frozen and
+  repeated frames, dropped steps, timestamp jitter, swaps, offsets and units),
+  `run.py` / `score.py`, and the v0.13.0 results (981 trials on Unitree H1,
+  PushT and ALOHA) with a technical report. Findings are listed under
+  [0.13.0] Known limitations.
+- `tests/regression/test_fault_injection_findings.py`: the benchmark's confirmed
+  detections as tests, and its known misses as strict xfails that fail once a
+  detector change fixes them.
+
+### Documentation
+
+- README: frame checks on LeRobot v2/v3 via `--decode-video` were documented as
+  unsupported; they shipped in 0.13.0. Added the AV1 caveat, the 20-episode
+  default sample, and a fault-injection results section. Removed the stale
+  "next: Vision Integrity for v2/v3" roadmap entry.
+
 ## [0.13.0] - Trustworthy integrity checks
 
 ### Changed
@@ -114,6 +134,29 @@ All notable changes to Calibra are documented here.
   only the Calibra section and aborts if the README can't be read.
 - `calibra benchmark` printed `--dataset.episodes` with batch positions instead
   of LeRobot `episode_index` values.
+
+### Known limitations
+
+Measured after release (2026-10-17) by the integrity fault-injection benchmark;
+see `eval/integrity_fault_injection/REPORT.md`. Not yet fixed.
+
+- **`duplicate_frame_rate` is unreliable on AV1-encoded video** (LeRobot v2/v3
+  with `--decode-video`). With LeRobot's encoder settings, an exact repeated
+  frame decodes about 19% different from its predecessor (0/18 detected), and
+  near-static scenes decode as exact copies (unmodified
+  `lerobot/aloha_static_battery` reads CRITICAL). `camera_freeze_events` is not
+  affected.
+- **`--decode-video` checks 20 episodes by default**, so a frozen camera in an
+  episode outside the sample is missed (19 of 60 injected freezes). Pass
+  `--video-sample N` with the episode count to check every episode.
+- **No timestamp monotonicity check.** Swapped timestamps are caught only
+  through jitter CV, which misses them when few episodes are affected (0/30 at
+  10% of episodes).
+- **An episode stored in milliseconds disables the timing checks**: its
+  timestamps still lie on a frame grid, so the dataset is reported as synthetic
+  and timing is not evaluated.
+- **`timestamp_dropout_rate` cannot see single dropped steps**: it counts gaps
+  longer than 3x the median interval, and one missing step leaves a 2x gap.
 
 ## [0.12.0] - Apache 2.0 core
 
