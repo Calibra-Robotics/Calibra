@@ -130,9 +130,13 @@ class Scorer:
         inj = row["injection"]
         skip = set(inj["expected"]) | set(inj["explained"])
         out = []
+        reencoded = self.reencoded[row["dataset"]] if row["family"] in REENCODED_FAMILIES else {}
         for check, level in p.get("levels", {}).items():
             if check in self.objective and check not in skip and level in NON_OK:
-                if self.base_level(row["dataset"], check) == "OK":
+                if (
+                    self.base_level(row["dataset"], check) == "OK"
+                    and reencoded.get(check) not in NON_OK
+                ):
                     out.append({"check": check, "level": level})
         return out
 

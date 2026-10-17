@@ -11280,12 +11280,7 @@
           "default_pass": "detected"
         }
       ],
-      "collateral": [
-        {
-          "check": "duplicate_frame_rate",
-          "level": "WARNING"
-        }
-      ],
+      "collateral": [],
       "measured": {
         "injected_max_runs": [
           10,
@@ -11517,12 +11512,7 @@
           "default_pass": "detected"
         }
       ],
-      "collateral": [
-        {
-          "check": "duplicate_frame_rate",
-          "level": "WARNING"
-        }
-      ],
+      "collateral": [],
       "measured": {
         "injected_max_runs": [
           10,
@@ -11754,12 +11744,7 @@
           "default_pass": "detected"
         }
       ],
-      "collateral": [
-        {
-          "check": "duplicate_frame_rate",
-          "level": "WARNING"
-        }
-      ],
+      "collateral": [],
       "measured": {
         "injected_max_runs": [
           10,
@@ -11991,12 +11976,7 @@
           "default_pass": "detected"
         }
       ],
-      "collateral": [
-        {
-          "check": "duplicate_frame_rate",
-          "level": "WARNING"
-        }
-      ],
+      "collateral": [],
       "measured": {
         "injected_max_runs": [
           10,
@@ -17291,12 +17271,7 @@
           "default_pass": "detected"
         }
       ],
-      "collateral": [
-        {
-          "check": "duplicate_frame_rate",
-          "level": "WARNING"
-        }
-      ],
+      "collateral": [],
       "measured": {
         "injected_max_runs": [
           10,
@@ -17528,12 +17503,7 @@
           "default_pass": "detected"
         }
       ],
-      "collateral": [
-        {
-          "check": "duplicate_frame_rate",
-          "level": "WARNING"
-        }
-      ],
+      "collateral": [],
       "measured": {
         "injected_max_runs": [
           10,
@@ -17747,6 +17717,6471 @@
         ],
         "frozen_episode_fraction": 0.5
       }
+    },
+    {
+      "trial_id": "aloha/dup.exact.1/r0",
+      "dataset": "aloha",
+      "variant": "dup.exact.1",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.1/r1",
+      "dataset": "aloha",
+      "variant": "dup.exact.1",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.1/r2",
+      "dataset": "aloha",
+      "variant": "dup.exact.1",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.1/r3",
+      "dataset": "aloha",
+      "variant": "dup.exact.1",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.1/r4",
+      "dataset": "aloha",
+      "variant": "dup.exact.1",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.1/r5",
+      "dataset": "aloha",
+      "variant": "dup.exact.1",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.1/r6",
+      "dataset": "aloha",
+      "variant": "dup.exact.1",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.1/r7",
+      "dataset": "aloha",
+      "variant": "dup.exact.1",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.1/r8",
+      "dataset": "aloha",
+      "variant": "dup.exact.1",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.1/r9",
+      "dataset": "aloha",
+      "variant": "dup.exact.1",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.5pct/r0",
+      "dataset": "aloha",
+      "variant": "dup.exact.5pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 3,
+          "units_flagged": 3,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.5pct/r1",
+      "dataset": "aloha",
+      "variant": "dup.exact.5pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 3,
+          "units_flagged": 3,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.5pct/r2",
+      "dataset": "aloha",
+      "variant": "dup.exact.5pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 3,
+          "units_flagged": 3,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.5pct/r3",
+      "dataset": "aloha",
+      "variant": "dup.exact.5pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 3,
+          "units_flagged": 3,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.5pct/r4",
+      "dataset": "aloha",
+      "variant": "dup.exact.5pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 3,
+          "units_flagged": 3,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.5pct/r5",
+      "dataset": "aloha",
+      "variant": "dup.exact.5pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 3,
+          "units_flagged": 3,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.5pct/r6",
+      "dataset": "aloha",
+      "variant": "dup.exact.5pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 3,
+          "units_flagged": 3,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.5pct/r7",
+      "dataset": "aloha",
+      "variant": "dup.exact.5pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 3,
+          "units_flagged": 3,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.5pct/r8",
+      "dataset": "aloha",
+      "variant": "dup.exact.5pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 3,
+          "units_flagged": 3,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.5pct/r9",
+      "dataset": "aloha",
+      "variant": "dup.exact.5pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 3,
+          "units_flagged": 3,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.15pct/r0",
+      "dataset": "aloha",
+      "variant": "dup.exact.15pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 8,
+          "units_flagged": 8,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.15pct/r1",
+      "dataset": "aloha",
+      "variant": "dup.exact.15pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 8,
+          "units_flagged": 8,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.15pct/r2",
+      "dataset": "aloha",
+      "variant": "dup.exact.15pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 8,
+          "units_flagged": 8,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.15pct/r3",
+      "dataset": "aloha",
+      "variant": "dup.exact.15pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 8,
+          "units_flagged": 8,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.15pct/r4",
+      "dataset": "aloha",
+      "variant": "dup.exact.15pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 8,
+          "units_flagged": 8,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.15pct/r5",
+      "dataset": "aloha",
+      "variant": "dup.exact.15pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 8,
+          "units_flagged": 8,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.15pct/r6",
+      "dataset": "aloha",
+      "variant": "dup.exact.15pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 8,
+          "units_flagged": 8,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.15pct/r7",
+      "dataset": "aloha",
+      "variant": "dup.exact.15pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 8,
+          "units_flagged": 8,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.15pct/r8",
+      "dataset": "aloha",
+      "variant": "dup.exact.15pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 8,
+          "units_flagged": 8,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.exact.15pct/r9",
+      "dataset": "aloha",
+      "variant": "dup.exact.15pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 8,
+          "units_flagged": 8,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.reencoded/r0",
+      "dataset": "aloha",
+      "variant": "dup.reencoded",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.reencoded/r1",
+      "dataset": "aloha",
+      "variant": "dup.reencoded",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.reencoded/r2",
+      "dataset": "aloha",
+      "variant": "dup.reencoded",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.reencoded/r3",
+      "dataset": "aloha",
+      "variant": "dup.reencoded",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.reencoded/r4",
+      "dataset": "aloha",
+      "variant": "dup.reencoded",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.ulp/r0",
+      "dataset": "aloha",
+      "variant": "dup.ulp",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.ulp/r1",
+      "dataset": "aloha",
+      "variant": "dup.ulp",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.ulp/r2",
+      "dataset": "aloha",
+      "variant": "dup.ulp",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.ulp/r3",
+      "dataset": "aloha",
+      "variant": "dup.ulp",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.ulp/r4",
+      "dataset": "aloha",
+      "variant": "dup.ulp",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.ulp/r5",
+      "dataset": "aloha",
+      "variant": "dup.ulp",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.ulp/r6",
+      "dataset": "aloha",
+      "variant": "dup.ulp",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.ulp/r7",
+      "dataset": "aloha",
+      "variant": "dup.ulp",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.ulp/r8",
+      "dataset": "aloha",
+      "variant": "dup.ulp",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.ulp/r9",
+      "dataset": "aloha",
+      "variant": "dup.ulp",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.shifted/r0",
+      "dataset": "aloha",
+      "variant": "dup.shifted",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.shifted/r1",
+      "dataset": "aloha",
+      "variant": "dup.shifted",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.shifted/r2",
+      "dataset": "aloha",
+      "variant": "dup.shifted",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.shifted/r3",
+      "dataset": "aloha",
+      "variant": "dup.shifted",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.shifted/r4",
+      "dataset": "aloha",
+      "variant": "dup.shifted",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.shifted/r5",
+      "dataset": "aloha",
+      "variant": "dup.shifted",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.shifted/r6",
+      "dataset": "aloha",
+      "variant": "dup.shifted",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.shifted/r7",
+      "dataset": "aloha",
+      "variant": "dup.shifted",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.shifted/r8",
+      "dataset": "aloha",
+      "variant": "dup.shifted",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.shifted/r9",
+      "dataset": "aloha",
+      "variant": "dup.shifted",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/dup.other_video/r0",
+      "dataset": "aloha",
+      "variant": "dup.other_video",
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "video_from": 11
+      }
+    },
+    {
+      "trial_id": "aloha/dup.other_video/r1",
+      "dataset": "aloha",
+      "variant": "dup.other_video",
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "video_from": 7
+      }
+    },
+    {
+      "trial_id": "aloha/dup.other_video/r2",
+      "dataset": "aloha",
+      "variant": "dup.other_video",
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "video_from": 1
+      }
+    },
+    {
+      "trial_id": "aloha/dup.other_video/r3",
+      "dataset": "aloha",
+      "variant": "dup.other_video",
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "video_from": 33
+      }
+    },
+    {
+      "trial_id": "aloha/dup.other_video/r4",
+      "dataset": "aloha",
+      "variant": "dup.other_video",
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "video_from": 9
+      }
+    },
+    {
+      "trial_id": "aloha/dup.other_video/r5",
+      "dataset": "aloha",
+      "variant": "dup.other_video",
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "video_from": 13
+      }
+    },
+    {
+      "trial_id": "aloha/dup.other_video/r6",
+      "dataset": "aloha",
+      "variant": "dup.other_video",
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "video_from": 34
+      }
+    },
+    {
+      "trial_id": "aloha/dup.other_video/r7",
+      "dataset": "aloha",
+      "variant": "dup.other_video",
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "video_from": 41
+      }
+    },
+    {
+      "trial_id": "aloha/dup.other_video/r8",
+      "dataset": "aloha",
+      "variant": "dup.other_video",
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "video_from": 6
+      }
+    },
+    {
+      "trial_id": "aloha/dup.other_video/r9",
+      "dataset": "aloha",
+      "variant": "dup.other_video",
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "video_from": 26
+      }
+    },
+    {
+      "trial_id": "aloha/video.missing.camera_file/r0",
+      "dataset": "aloha",
+      "variant": "video.missing.camera_file",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.camera_file/r1",
+      "dataset": "aloha",
+      "variant": "video.missing.camera_file",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.camera_file/r2",
+      "dataset": "aloha",
+      "variant": "video.missing.camera_file",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.camera_file/r3",
+      "dataset": "aloha",
+      "variant": "video.missing.camera_file",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.camera_file/r4",
+      "dataset": "aloha",
+      "variant": "video.missing.camera_file",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.camera_file/r5",
+      "dataset": "aloha",
+      "variant": "video.missing.camera_file",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.camera_file/r6",
+      "dataset": "aloha",
+      "variant": "video.missing.camera_file",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.camera_file/r7",
+      "dataset": "aloha",
+      "variant": "video.missing.camera_file",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.camera_file/r8",
+      "dataset": "aloha",
+      "variant": "video.missing.camera_file",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.camera_file/r9",
+      "dataset": "aloha",
+      "variant": "video.missing.camera_file",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.chunk/r0",
+      "dataset": "aloha",
+      "variant": "video.missing.chunk",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.episode/r0",
+      "dataset": "aloha",
+      "variant": "video.missing.episode",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.episode/r1",
+      "dataset": "aloha",
+      "variant": "video.missing.episode",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.episode/r2",
+      "dataset": "aloha",
+      "variant": "video.missing.episode",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.episode/r3",
+      "dataset": "aloha",
+      "variant": "video.missing.episode",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.missing.episode/r4",
+      "dataset": "aloha",
+      "variant": "video.missing.episode",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.truncate.90/r0",
+      "dataset": "aloha",
+      "variant": "video.truncate.90",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 3457844,
+        "bytes_total": 3842049
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.90/r1",
+      "dataset": "aloha",
+      "variant": "video.truncate.90",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 4088776,
+        "bytes_total": 4543085
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.90/r2",
+      "dataset": "aloha",
+      "variant": "video.truncate.90",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 3854652,
+        "bytes_total": 4282947
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.90/r3",
+      "dataset": "aloha",
+      "variant": "video.truncate.90",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 3503579,
+        "bytes_total": 3892866
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.90/r4",
+      "dataset": "aloha",
+      "variant": "video.truncate.90",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 3332764,
+        "bytes_total": 3703072
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.50/r0",
+      "dataset": "aloha",
+      "variant": "video.truncate.50",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 2154747,
+        "bytes_total": 4309495
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.50/r1",
+      "dataset": "aloha",
+      "variant": "video.truncate.50",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 2218423,
+        "bytes_total": 4436846
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.50/r2",
+      "dataset": "aloha",
+      "variant": "video.truncate.50",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 2251740,
+        "bytes_total": 4503480
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.50/r3",
+      "dataset": "aloha",
+      "variant": "video.truncate.50",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 1894543,
+        "bytes_total": 3789087
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.50/r4",
+      "dataset": "aloha",
+      "variant": "video.truncate.50",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 1805501,
+        "bytes_total": 3611002
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.10/r0",
+      "dataset": "aloha",
+      "variant": "video.truncate.10",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 367917,
+        "bytes_total": 3679172
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.10/r1",
+      "dataset": "aloha",
+      "variant": "video.truncate.10",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 363785,
+        "bytes_total": 3637854
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.10/r2",
+      "dataset": "aloha",
+      "variant": "video.truncate.10",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 376935,
+        "bytes_total": 3769358
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.10/r3",
+      "dataset": "aloha",
+      "variant": "video.truncate.10",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 385107,
+        "bytes_total": 3851072
+      }
+    },
+    {
+      "trial_id": "aloha/video.truncate.10/r4",
+      "dataset": "aloha",
+      "variant": "video.truncate.10",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 385107,
+        "bytes_total": 3851072
+      }
+    },
+    {
+      "trial_id": "aloha/video.fps.5pct/r0",
+      "dataset": "aloha",
+      "variant": "video.fps.5pct",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_fps_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 49,
+          "units_flagged": 49,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/video.fps.0.5pct/r0",
+      "dataset": "aloha",
+      "variant": "video.fps.0.5pct",
+      "family": "missing_video",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_fps_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/vdrop.1/r0",
+      "dataset": "aloha",
+      "variant": "vdrop.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.1/r1",
+      "dataset": "aloha",
+      "variant": "vdrop.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.1/r2",
+      "dataset": "aloha",
+      "variant": "vdrop.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.1/r3",
+      "dataset": "aloha",
+      "variant": "vdrop.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.1/r4",
+      "dataset": "aloha",
+      "variant": "vdrop.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.2/r0",
+      "dataset": "aloha",
+      "variant": "vdrop.2",
+      "family": "dropped_video_frames",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          2
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.2/r1",
+      "dataset": "aloha",
+      "variant": "vdrop.2",
+      "family": "dropped_video_frames",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          2
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.2/r2",
+      "dataset": "aloha",
+      "variant": "vdrop.2",
+      "family": "dropped_video_frames",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          2
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.2/r3",
+      "dataset": "aloha",
+      "variant": "vdrop.2",
+      "family": "dropped_video_frames",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          2
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.2/r4",
+      "dataset": "aloha",
+      "variant": "vdrop.2",
+      "family": "dropped_video_frames",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          2
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.5/r0",
+      "dataset": "aloha",
+      "variant": "vdrop.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.5/r1",
+      "dataset": "aloha",
+      "variant": "vdrop.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.5/r2",
+      "dataset": "aloha",
+      "variant": "vdrop.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.5/r3",
+      "dataset": "aloha",
+      "variant": "vdrop.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.5/r4",
+      "dataset": "aloha",
+      "variant": "vdrop.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.10pct/r0",
+      "dataset": "aloha",
+      "variant": "vdrop.10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          60
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.10pct/r1",
+      "dataset": "aloha",
+      "variant": "vdrop.10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          60
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.10pct/r2",
+      "dataset": "aloha",
+      "variant": "vdrop.10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          60
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.10pct/r3",
+      "dataset": "aloha",
+      "variant": "vdrop.10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          60
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.10pct/r4",
+      "dataset": "aloha",
+      "variant": "vdrop.10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          60
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.5.eps10pct/r0",
+      "dataset": "aloha",
+      "variant": "vdrop.5.eps10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 5,
+          "units_flagged": 5,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5,
+          5,
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.5.eps10pct/r1",
+      "dataset": "aloha",
+      "variant": "vdrop.5.eps10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 5,
+          "units_flagged": 5,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5,
+          5,
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.5.eps10pct/r2",
+      "dataset": "aloha",
+      "variant": "vdrop.5.eps10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 5,
+          "units_flagged": 5,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5,
+          5,
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.5.eps10pct/r3",
+      "dataset": "aloha",
+      "variant": "vdrop.5.eps10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 5,
+          "units_flagged": 5,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5,
+          5,
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.5.eps10pct/r4",
+      "dataset": "aloha",
+      "variant": "vdrop.5.eps10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 5,
+          "units_flagged": 5,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5,
+          5,
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.metafull.1/r0",
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.metafull.1/r1",
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.metafull.1/r2",
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.metafull.1/r3",
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.metafull.1/r4",
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.metafull.5/r0",
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "ANY",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.metafull.5/r1",
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "ANY",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.metafull.5/r2",
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "ANY",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.metafull.5/r3",
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "ANY",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/vdrop.metafull.5/r4",
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "ANY",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run1.5pct/r0",
+      "dataset": "aloha",
+      "variant": "steps.run1.5pct",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0,
+        "rows_removed": 1470
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run1.5pct/r1",
+      "dataset": "aloha",
+      "variant": "steps.run1.5pct",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0,
+        "rows_removed": 1470
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run1.5pct/r2",
+      "dataset": "aloha",
+      "variant": "steps.run1.5pct",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0,
+        "rows_removed": 1470
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run1.5pct/r3",
+      "dataset": "aloha",
+      "variant": "steps.run1.5pct",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0,
+        "rows_removed": 1470
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run1.5pct/r4",
+      "dataset": "aloha",
+      "variant": "steps.run1.5pct",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0,
+        "rows_removed": 1470
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run1.5pct/r5",
+      "dataset": "aloha",
+      "variant": "steps.run1.5pct",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0,
+        "rows_removed": 1470
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run1.5pct/r6",
+      "dataset": "aloha",
+      "variant": "steps.run1.5pct",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0,
+        "rows_removed": 1470
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run1.5pct/r7",
+      "dataset": "aloha",
+      "variant": "steps.run1.5pct",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0,
+        "rows_removed": 1470
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run1.5pct/r8",
+      "dataset": "aloha",
+      "variant": "steps.run1.5pct",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0,
+        "rows_removed": 1470
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run1.5pct/r9",
+      "dataset": "aloha",
+      "variant": "steps.run1.5pct",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0,
+        "rows_removed": 1470
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.0.5pct/r0",
+      "dataset": "aloha",
+      "variant": "steps.run3.0.5pct",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.005084745762711864,
+        "rows_removed": 441
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.0.5pct/r1",
+      "dataset": "aloha",
+      "variant": "steps.run3.0.5pct",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.005084745762711864,
+        "rows_removed": 441
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.0.5pct/r2",
+      "dataset": "aloha",
+      "variant": "steps.run3.0.5pct",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.005084745762711864,
+        "rows_removed": 441
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.0.5pct/r3",
+      "dataset": "aloha",
+      "variant": "steps.run3.0.5pct",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.005084745762711864,
+        "rows_removed": 441
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.0.5pct/r4",
+      "dataset": "aloha",
+      "variant": "steps.run3.0.5pct",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.005084745762711864,
+        "rows_removed": 441
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.0.5pct/r5",
+      "dataset": "aloha",
+      "variant": "steps.run3.0.5pct",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.005084745762711864,
+        "rows_removed": 441
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.0.5pct/r6",
+      "dataset": "aloha",
+      "variant": "steps.run3.0.5pct",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.005084745762711864,
+        "rows_removed": 441
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.0.5pct/r7",
+      "dataset": "aloha",
+      "variant": "steps.run3.0.5pct",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.005084745762711864,
+        "rows_removed": 441
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.0.5pct/r8",
+      "dataset": "aloha",
+      "variant": "steps.run3.0.5pct",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.005084745762711864,
+        "rows_removed": 441
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.0.5pct/r9",
+      "dataset": "aloha",
+      "variant": "steps.run3.0.5pct",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.005084745762711864,
+        "rows_removed": 441
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.1pct/r0",
+      "dataset": "aloha",
+      "variant": "steps.run3.1pct",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.010327022375215147,
+        "rows_removed": 882
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.1pct/r1",
+      "dataset": "aloha",
+      "variant": "steps.run3.1pct",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.010327022375215147,
+        "rows_removed": 882
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.1pct/r2",
+      "dataset": "aloha",
+      "variant": "steps.run3.1pct",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.010327022375215147,
+        "rows_removed": 882
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.1pct/r3",
+      "dataset": "aloha",
+      "variant": "steps.run3.1pct",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.010327022375215147,
+        "rows_removed": 882
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.1pct/r4",
+      "dataset": "aloha",
+      "variant": "steps.run3.1pct",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.010327022375215147,
+        "rows_removed": 882
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.1pct/r5",
+      "dataset": "aloha",
+      "variant": "steps.run3.1pct",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.010327022375215147,
+        "rows_removed": 882
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.1pct/r6",
+      "dataset": "aloha",
+      "variant": "steps.run3.1pct",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.010327022375215147,
+        "rows_removed": 882
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.1pct/r7",
+      "dataset": "aloha",
+      "variant": "steps.run3.1pct",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.010327022375215147,
+        "rows_removed": 882
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.1pct/r8",
+      "dataset": "aloha",
+      "variant": "steps.run3.1pct",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.010327022375215147,
+        "rows_removed": 882
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.1pct/r9",
+      "dataset": "aloha",
+      "variant": "steps.run3.1pct",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.010327022375215147,
+        "rows_removed": 882
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.2pct/r0",
+      "dataset": "aloha",
+      "variant": "steps.run3.2pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.021314387211367674,
+        "rows_removed": 1764
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.2pct/r1",
+      "dataset": "aloha",
+      "variant": "steps.run3.2pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.021314387211367674,
+        "rows_removed": 1764
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.2pct/r2",
+      "dataset": "aloha",
+      "variant": "steps.run3.2pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.021314387211367674,
+        "rows_removed": 1764
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.2pct/r3",
+      "dataset": "aloha",
+      "variant": "steps.run3.2pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.021314387211367674,
+        "rows_removed": 1764
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.2pct/r4",
+      "dataset": "aloha",
+      "variant": "steps.run3.2pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.021314387211367674,
+        "rows_removed": 1764
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.2pct/r5",
+      "dataset": "aloha",
+      "variant": "steps.run3.2pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.021314387211367674,
+        "rows_removed": 1764
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.2pct/r6",
+      "dataset": "aloha",
+      "variant": "steps.run3.2pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.021314387211367674,
+        "rows_removed": 1764
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.2pct/r7",
+      "dataset": "aloha",
+      "variant": "steps.run3.2pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.021314387211367674,
+        "rows_removed": 1764
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.2pct/r8",
+      "dataset": "aloha",
+      "variant": "steps.run3.2pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.021314387211367674,
+        "rows_removed": 1764
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.2pct/r9",
+      "dataset": "aloha",
+      "variant": "steps.run3.2pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.021314387211367674,
+        "rows_removed": 1764
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.5pct/r0",
+      "dataset": "aloha",
+      "variant": "steps.run3.5pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.05893909626719057,
+        "rows_removed": 4410
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.5pct/r1",
+      "dataset": "aloha",
+      "variant": "steps.run3.5pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.05893909626719057,
+        "rows_removed": 4410
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.5pct/r2",
+      "dataset": "aloha",
+      "variant": "steps.run3.5pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.05893909626719057,
+        "rows_removed": 4410
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.5pct/r3",
+      "dataset": "aloha",
+      "variant": "steps.run3.5pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.05893909626719057,
+        "rows_removed": 4410
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.5pct/r4",
+      "dataset": "aloha",
+      "variant": "steps.run3.5pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.05893909626719057,
+        "rows_removed": 4410
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.5pct/r5",
+      "dataset": "aloha",
+      "variant": "steps.run3.5pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.05893909626719057,
+        "rows_removed": 4410
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.5pct/r6",
+      "dataset": "aloha",
+      "variant": "steps.run3.5pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.05893909626719057,
+        "rows_removed": 4410
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.5pct/r7",
+      "dataset": "aloha",
+      "variant": "steps.run3.5pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.05893909626719057,
+        "rows_removed": 4410
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.5pct/r8",
+      "dataset": "aloha",
+      "variant": "steps.run3.5pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.05893909626719057,
+        "rows_removed": 4410
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.5pct/r9",
+      "dataset": "aloha",
+      "variant": "steps.run3.5pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.05893909626719057,
+        "rows_removed": 4410
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.10pct/r0",
+      "dataset": "aloha",
+      "variant": "steps.run3.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.1431980906921241,
+        "rows_removed": 8820
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.10pct/r1",
+      "dataset": "aloha",
+      "variant": "steps.run3.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.1431980906921241,
+        "rows_removed": 8820
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.10pct/r2",
+      "dataset": "aloha",
+      "variant": "steps.run3.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.1431980906921241,
+        "rows_removed": 8820
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.10pct/r3",
+      "dataset": "aloha",
+      "variant": "steps.run3.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.1431980906921241,
+        "rows_removed": 8820
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.10pct/r4",
+      "dataset": "aloha",
+      "variant": "steps.run3.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.1431980906921241,
+        "rows_removed": 8820
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.10pct/r5",
+      "dataset": "aloha",
+      "variant": "steps.run3.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.1431980906921241,
+        "rows_removed": 8820
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.10pct/r6",
+      "dataset": "aloha",
+      "variant": "steps.run3.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.1431980906921241,
+        "rows_removed": 8820
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.10pct/r7",
+      "dataset": "aloha",
+      "variant": "steps.run3.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.1431980906921241,
+        "rows_removed": 8820
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.10pct/r8",
+      "dataset": "aloha",
+      "variant": "steps.run3.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.1431980906921241,
+        "rows_removed": 8820
+      }
+    },
+    {
+      "trial_id": "aloha/steps.run3.10pct/r9",
+      "dataset": "aloha",
+      "variant": "steps.run3.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.1431980906921241,
+        "rows_removed": 8820
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.05/r0",
+      "dataset": "aloha",
+      "variant": "jitter.0.05",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.0500000310474234
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.05/r1",
+      "dataset": "aloha",
+      "variant": "jitter.0.05",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.050000103652031495
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.05/r2",
+      "dataset": "aloha",
+      "variant": "jitter.0.05",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.050000033550537094
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.05/r3",
+      "dataset": "aloha",
+      "variant": "jitter.0.05",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.04999993593037185
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.05/r4",
+      "dataset": "aloha",
+      "variant": "jitter.0.05",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.04999988092362683
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.05/r5",
+      "dataset": "aloha",
+      "variant": "jitter.0.05",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.05000005956148467
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.05/r6",
+      "dataset": "aloha",
+      "variant": "jitter.0.05",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.04999991981493696
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.05/r7",
+      "dataset": "aloha",
+      "variant": "jitter.0.05",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.050000007205983375
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.05/r8",
+      "dataset": "aloha",
+      "variant": "jitter.0.05",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.04999997371230908
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.05/r9",
+      "dataset": "aloha",
+      "variant": "jitter.0.05",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.05000003540554045
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.10/r0",
+      "dataset": "aloha",
+      "variant": "jitter.0.10",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.09999989214431425
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.10/r1",
+      "dataset": "aloha",
+      "variant": "jitter.0.10",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.10000001094789573
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.10/r2",
+      "dataset": "aloha",
+      "variant": "jitter.0.10",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.10000006291393174
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.10/r3",
+      "dataset": "aloha",
+      "variant": "jitter.0.10",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.10000004748475987
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.10/r4",
+      "dataset": "aloha",
+      "variant": "jitter.0.10",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.1000001734534716
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.10/r5",
+      "dataset": "aloha",
+      "variant": "jitter.0.10",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.09999993422194162
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.10/r6",
+      "dataset": "aloha",
+      "variant": "jitter.0.10",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.09999991743808274
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.10/r7",
+      "dataset": "aloha",
+      "variant": "jitter.0.10",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.09999995667589485
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.10/r8",
+      "dataset": "aloha",
+      "variant": "jitter.0.10",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.10000000051529413
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.10/r9",
+      "dataset": "aloha",
+      "variant": "jitter.0.10",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.10000001416142863
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.16/r0",
+      "dataset": "aloha",
+      "variant": "jitter.0.16",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.16000004058095585
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.16/r1",
+      "dataset": "aloha",
+      "variant": "jitter.0.16",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.16000018765080418
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.16/r2",
+      "dataset": "aloha",
+      "variant": "jitter.0.16",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.1600001215881822
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.16/r3",
+      "dataset": "aloha",
+      "variant": "jitter.0.16",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.15999991711076408
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.16/r4",
+      "dataset": "aloha",
+      "variant": "jitter.0.16",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.1600000589762058
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.16/r5",
+      "dataset": "aloha",
+      "variant": "jitter.0.16",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.1600000421202406
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.16/r6",
+      "dataset": "aloha",
+      "variant": "jitter.0.16",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.1600000776085452
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.16/r7",
+      "dataset": "aloha",
+      "variant": "jitter.0.16",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.15999995859462984
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.16/r8",
+      "dataset": "aloha",
+      "variant": "jitter.0.16",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.15999999717872973
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.16/r9",
+      "dataset": "aloha",
+      "variant": "jitter.0.16",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.15999993768056375
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.20/r0",
+      "dataset": "aloha",
+      "variant": "jitter.0.20",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.19999999356591783
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.20/r1",
+      "dataset": "aloha",
+      "variant": "jitter.0.20",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.1999999867795098
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.20/r2",
+      "dataset": "aloha",
+      "variant": "jitter.0.20",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.20000010360445822
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.20/r3",
+      "dataset": "aloha",
+      "variant": "jitter.0.20",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.19999998584337056
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.20/r4",
+      "dataset": "aloha",
+      "variant": "jitter.0.20",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.20000000813656338
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.20/r5",
+      "dataset": "aloha",
+      "variant": "jitter.0.20",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.1999999959197796
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.20/r6",
+      "dataset": "aloha",
+      "variant": "jitter.0.20",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.19999998861573817
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.20/r7",
+      "dataset": "aloha",
+      "variant": "jitter.0.20",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.20000005686576947
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.20/r8",
+      "dataset": "aloha",
+      "variant": "jitter.0.20",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.1999999533683773
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.20/r9",
+      "dataset": "aloha",
+      "variant": "jitter.0.20",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.20000013974028263
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.30/r0",
+      "dataset": "aloha",
+      "variant": "jitter.0.30",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.2998029295750627
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.30/r1",
+      "dataset": "aloha",
+      "variant": "jitter.0.30",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.2999125062093649
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.30/r2",
+      "dataset": "aloha",
+      "variant": "jitter.0.30",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.29967269814834163
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.30/r3",
+      "dataset": "aloha",
+      "variant": "jitter.0.30",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.2998383698985869
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.30/r4",
+      "dataset": "aloha",
+      "variant": "jitter.0.30",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.29974194326211023
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.30/r5",
+      "dataset": "aloha",
+      "variant": "jitter.0.30",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.2997803456992514
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.30/r6",
+      "dataset": "aloha",
+      "variant": "jitter.0.30",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.29958398494240995
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.30/r7",
+      "dataset": "aloha",
+      "variant": "jitter.0.30",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.29963596949166926
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.30/r8",
+      "dataset": "aloha",
+      "variant": "jitter.0.30",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.2997268176361496
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.30/r9",
+      "dataset": "aloha",
+      "variant": "jitter.0.30",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.29974915391450874
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.45/r0",
+      "dataset": "aloha",
+      "variant": "jitter.0.45",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.4419671699105108
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.45/r1",
+      "dataset": "aloha",
+      "variant": "jitter.0.45",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.44187034065042774
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.45/r2",
+      "dataset": "aloha",
+      "variant": "jitter.0.45",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.4425366048022606
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.45/r3",
+      "dataset": "aloha",
+      "variant": "jitter.0.45",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.4419061876676913
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.45/r4",
+      "dataset": "aloha",
+      "variant": "jitter.0.45",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.44246739416480524
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.45/r5",
+      "dataset": "aloha",
+      "variant": "jitter.0.45",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.4417765185217453
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.45/r6",
+      "dataset": "aloha",
+      "variant": "jitter.0.45",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.4416285084220726
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.45/r7",
+      "dataset": "aloha",
+      "variant": "jitter.0.45",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.44116519208139127
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.45/r8",
+      "dataset": "aloha",
+      "variant": "jitter.0.45",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.44257597521956077
+      }
+    },
+    {
+      "trial_id": "aloha/jitter.0.45/r9",
+      "dataset": "aloha",
+      "variant": "jitter.0.45",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.4416322552287139
+      }
+    },
+    {
+      "trial_id": "aloha/ts.swap.10pct/r0",
+      "dataset": "aloha",
+      "variant": "ts.swap.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.swap.10pct/r1",
+      "dataset": "aloha",
+      "variant": "ts.swap.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.swap.10pct/r2",
+      "dataset": "aloha",
+      "variant": "ts.swap.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.swap.10pct/r3",
+      "dataset": "aloha",
+      "variant": "ts.swap.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.swap.10pct/r4",
+      "dataset": "aloha",
+      "variant": "ts.swap.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.swap.10pct/r5",
+      "dataset": "aloha",
+      "variant": "ts.swap.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.swap.10pct/r6",
+      "dataset": "aloha",
+      "variant": "ts.swap.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.swap.10pct/r7",
+      "dataset": "aloha",
+      "variant": "ts.swap.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.swap.10pct/r8",
+      "dataset": "aloha",
+      "variant": "ts.swap.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.swap.10pct/r9",
+      "dataset": "aloha",
+      "variant": "ts.swap.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.offset.1s/r0",
+      "dataset": "aloha",
+      "variant": "ts.offset.1s",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.offset.1s/r1",
+      "dataset": "aloha",
+      "variant": "ts.offset.1s",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.offset.1s/r2",
+      "dataset": "aloha",
+      "variant": "ts.offset.1s",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.offset.1s/r3",
+      "dataset": "aloha",
+      "variant": "ts.offset.1s",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.offset.1s/r4",
+      "dataset": "aloha",
+      "variant": "ts.offset.1s",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.offset.1s/r5",
+      "dataset": "aloha",
+      "variant": "ts.offset.1s",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.offset.1s/r6",
+      "dataset": "aloha",
+      "variant": "ts.offset.1s",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.offset.1s/r7",
+      "dataset": "aloha",
+      "variant": "ts.offset.1s",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.offset.1s/r8",
+      "dataset": "aloha",
+      "variant": "ts.offset.1s",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.offset.1s/r9",
+      "dataset": "aloha",
+      "variant": "ts.offset.1s",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.units.ms/r0",
+      "dataset": "aloha",
+      "variant": "ts.units.ms",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.units.ms/r1",
+      "dataset": "aloha",
+      "variant": "ts.units.ms",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.units.ms/r2",
+      "dataset": "aloha",
+      "variant": "ts.units.ms",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.units.ms/r3",
+      "dataset": "aloha",
+      "variant": "ts.units.ms",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.units.ms/r4",
+      "dataset": "aloha",
+      "variant": "ts.units.ms",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.units.ms/r5",
+      "dataset": "aloha",
+      "variant": "ts.units.ms",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.units.ms/r6",
+      "dataset": "aloha",
+      "variant": "ts.units.ms",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.units.ms/r7",
+      "dataset": "aloha",
+      "variant": "ts.units.ms",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.units.ms/r8",
+      "dataset": "aloha",
+      "variant": "ts.units.ms",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/ts.units.ms/r9",
+      "dataset": "aloha",
+      "variant": "ts.units.ms",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
     }
   ],
   "clean": [
@@ -18381,6 +24816,188 @@
         }
       ],
       "measured": {}
+    },
+    {
+      "trial_id": "aloha/clean.copy/r0",
+      "dataset": "aloha",
+      "variant": "clean.copy",
+      "flags": [
+        {
+          "check": "duplicate_frame_rate",
+          "level": "CRITICAL",
+          "episodes": [],
+          "triage": "false_positive"
+        },
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/clean.append/r0",
+      "dataset": "aloha",
+      "variant": "clean.append",
+      "flags": [
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/clean.append/r1",
+      "dataset": "aloha",
+      "variant": "clean.append",
+      "flags": [
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/clean.append/r2",
+      "dataset": "aloha",
+      "variant": "clean.append",
+      "flags": [
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/clean.append/r3",
+      "dataset": "aloha",
+      "variant": "clean.append",
+      "flags": [
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/clean.append/r4",
+      "dataset": "aloha",
+      "variant": "clean.append",
+      "flags": [
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/clean.append/r5",
+      "dataset": "aloha",
+      "variant": "clean.append",
+      "flags": [
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/clean.append/r6",
+      "dataset": "aloha",
+      "variant": "clean.append",
+      "flags": [
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/clean.append/r7",
+      "dataset": "aloha",
+      "variant": "clean.append",
+      "flags": [
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/clean.append/r8",
+      "dataset": "aloha",
+      "variant": "clean.append",
+      "flags": [
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    },
+    {
+      "trial_id": "aloha/clean.append/r9",
+      "dataset": "aloha",
+      "variant": "clean.append",
+      "flags": [
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
     }
   ],
   "errors": [],
@@ -18390,12 +25007,28 @@
       "family": "dropped_video_frames",
       "tier": "clear",
       "dataset": "all",
-      "detected": 40,
+      "detected": 60,
       "missed": 0,
-      "n_scored": 40,
+      "n_scored": 60,
       "recall": 1.0,
       "wilson95": [
-        0.9124,
+        0.9398,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "dataset": "aloha",
+      "detected": 20,
+      "missed": 0,
+      "n_scored": 20,
+      "recall": 1.0,
+      "wilson95": [
+        0.8389,
         1.0
       ],
       "masked": 0,
@@ -18438,12 +25071,28 @@
       "family": "dropped_video_frames",
       "tier": "near",
       "dataset": "all",
-      "detected": 10,
+      "detected": 15,
       "missed": 0,
-      "n_scored": 10,
+      "n_scored": 15,
       "recall": 1.0,
       "wilson95": [
-        0.7225,
+        0.7961,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "dropped_video_frames",
+      "tier": "near",
+      "dataset": "aloha",
+      "detected": 5,
+      "missed": 0,
+      "n_scored": 5,
+      "recall": 1.0,
+      "wilson95": [
+        0.5655,
         1.0
       ],
       "masked": 0,
@@ -18486,12 +25135,28 @@
       "family": "duplicate_episode",
       "tier": "ambiguous",
       "dataset": "all",
-      "detected": 20,
+      "detected": 30,
       "missed": 0,
-      "n_scored": 20,
+      "n_scored": 30,
       "recall": 1.0,
       "wilson95": [
-        0.8389,
+        0.8865,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "dataset": "aloha",
+      "detected": 10,
+      "missed": 0,
+      "n_scored": 10,
+      "recall": 1.0,
+      "wilson95": [
+        0.7225,
         1.0
       ],
       "masked": 0,
@@ -18534,12 +25199,28 @@
       "family": "duplicate_episode",
       "tier": "clear",
       "dataset": "all",
-      "detected": 70,
+      "detected": 105,
       "missed": 0,
-      "n_scored": 70,
+      "n_scored": 105,
       "recall": 1.0,
       "wilson95": [
-        0.948,
+        0.9647,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "dataset": "aloha",
+      "detected": 35,
+      "missed": 0,
+      "n_scored": 35,
+      "recall": 1.0,
+      "wilson95": [
+        0.9011,
         1.0
       ],
       "masked": 0,
@@ -18678,12 +25359,28 @@
       "family": "missing_video",
       "tier": "clear",
       "dataset": "all",
-      "detected": 64,
+      "detected": 96,
       "missed": 0,
-      "n_scored": 64,
+      "n_scored": 96,
       "recall": 1.0,
       "wilson95": [
-        0.9434,
+        0.9615,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "missing_video",
+      "tier": "clear",
+      "dataset": "aloha",
+      "detected": 32,
+      "missed": 0,
+      "n_scored": 32,
+      "recall": 1.0,
+      "wilson95": [
+        0.8928,
         1.0
       ],
       "masked": 0,
@@ -18816,16 +25513,32 @@
       "family": "timestamp",
       "tier": "clear",
       "dataset": "all",
-      "detected": 100,
-      "missed": 20,
-      "n_scored": 120,
+      "detected": 150,
+      "missed": 30,
+      "n_scored": 180,
       "recall": 0.8333,
       "wilson95": [
-        0.7565,
-        0.8894
+        0.772,
+        0.8807
       ],
       "masked": 0,
-      "not_evaluated": 20,
+      "not_evaluated": 30,
+      "sampling_limited": 0
+    },
+    {
+      "family": "timestamp",
+      "tier": "clear",
+      "dataset": "aloha",
+      "detected": 50,
+      "missed": 10,
+      "n_scored": 60,
+      "recall": 0.8333,
+      "wilson95": [
+        0.7197,
+        0.9069
+      ],
+      "masked": 0,
+      "not_evaluated": 10,
       "sampling_limited": 0
     },
     {
@@ -18864,12 +25577,28 @@
       "family": "timestamp",
       "tier": "near",
       "dataset": "all",
-      "detected": 60,
+      "detected": 90,
       "missed": 0,
-      "n_scored": 60,
+      "n_scored": 90,
       "recall": 1.0,
       "wilson95": [
-        0.9398,
+        0.9591,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "timestamp",
+      "tier": "near",
+      "dataset": "aloha",
+      "detected": 30,
+      "missed": 0,
+      "n_scored": 30,
+      "recall": 1.0,
+      "wilson95": [
+        0.8865,
         1.0
       ],
       "masked": 0,
@@ -18915,14 +25644,14 @@
       "check": "video_frame_mismatch_rate",
       "expected": "CRITICAL",
       "emitted": "CRITICAL",
-      "n": 40
+      "n": 60
     },
     {
       "family": "duplicate_episode",
       "check": "duplicate_episode_fraction",
       "expected": "CRITICAL",
       "emitted": "CRITICAL",
-      "n": 90
+      "n": 135
     },
     {
       "family": "frozen_frames",
@@ -18950,21 +25679,21 @@
       "check": "video_decode_failure_rate",
       "expected": "CRITICAL",
       "emitted": "CRITICAL",
-      "n": 30
+      "n": 45
     },
     {
       "family": "missing_video",
       "check": "video_fps_mismatch_rate",
       "expected": "CRITICAL",
       "emitted": "CRITICAL",
-      "n": 2
+      "n": 3
     },
     {
       "family": "missing_video",
       "check": "video_missing_rate",
       "expected": "CRITICAL",
       "emitted": "CRITICAL",
-      "n": 32
+      "n": 48
     },
     {
       "family": "repeated_frames",
@@ -18992,39 +25721,52 @@
       "check": "timestamp_dropout_rate",
       "expected": "CRITICAL",
       "emitted": "CRITICAL",
-      "n": 40
+      "n": 60
     },
     {
       "family": "timestamp",
       "check": "timestamp_dropout_rate",
       "expected": "WARNING",
       "emitted": "WARNING",
-      "n": 40
+      "n": 60
     },
     {
       "family": "timestamp",
       "check": "timestamp_jitter_cv",
       "expected": "CRITICAL",
       "emitted": "CRITICAL",
-      "n": 20
+      "n": 30
     },
     {
       "family": "timestamp",
       "check": "timestamp_jitter_cv",
       "expected": "WARNING",
       "emitted": "WARNING",
-      "n": 60
+      "n": 90
     }
   ],
-  "collateral": [
-    {
-      "family": "frozen_frames",
-      "check": "duplicate_frame_rate",
-      "trials": 6,
-      "of": 78
-    }
-  ],
+  "collateral": [],
   "clean_summary": [
+    {
+      "dataset": "aloha",
+      "clean_trials": 11,
+      "evaluated_checks": 79,
+      "false_positives": 1,
+      "fp_wilson95_upper": 0.0683,
+      "flags": [
+        {
+          "check": "duplicate_frame_rate",
+          "level": "CRITICAL",
+          "episodes": [],
+          "triage": "false_positive",
+          "trial_id": "aloha/clean.copy/r0"
+        }
+      ],
+      "not_evaluated": [
+        "timestamp_dropout_rate",
+        "timestamp_jitter_cv"
+      ]
+    },
     {
       "dataset": "h1",
       "clean_trials": 16,
@@ -19215,13 +25957,13 @@
       "variant": "dup.shifted",
       "tier": "by_design",
       "check": "duplicate_episode_fraction",
-      "quiet": 20
+      "quiet": 30
     },
     {
       "variant": "dup.ulp",
       "tier": "by_design",
       "check": "duplicate_episode_fraction",
-      "quiet": 20
+      "quiet": 30
     },
     {
       "variant": "freeze.run3",
@@ -19239,13 +25981,13 @@
       "variant": "jitter.0.05",
       "tier": "sub",
       "check": "timestamp_jitter_cv",
-      "quiet": 20
+      "quiet": 30
     },
     {
       "variant": "jitter.0.10",
       "tier": "sub",
       "check": "timestamp_jitter_cv",
-      "quiet": 20
+      "quiet": 30
     },
     {
       "variant": "repeat.2pct",
@@ -19265,52 +26007,286 @@
       "variant": "steps.run1.5pct",
       "tier": "by_design",
       "check": "timestamp_dropout_rate",
-      "quiet": 20
+      "quiet": 30
     },
     {
       "variant": "steps.run3.0.5pct",
       "tier": "sub",
       "check": "timestamp_dropout_rate",
-      "quiet": 20
+      "quiet": 30
     },
     {
       "variant": "ts.offset.1s",
       "tier": "by_design",
       "check": "timestamp_dropout_rate",
-      "not_evaluated": 20
+      "not_evaluated": 30
     },
     {
       "variant": "ts.offset.1s",
       "tier": "by_design",
       "check": "timestamp_jitter_cv",
-      "not_evaluated": 20
+      "not_evaluated": 30
     },
     {
       "variant": "vdrop.1",
       "tier": "sub",
       "check": "video_frame_mismatch_rate",
-      "quiet": 10
+      "quiet": 15
     },
     {
       "variant": "vdrop.metafull.1",
       "tier": "sub",
       "check": "video_decode_failure_rate",
-      "quiet": 10
+      "quiet": 15
     },
     {
       "variant": "vdrop.metafull.1",
       "tier": "sub",
       "check": "video_frame_mismatch_rate",
-      "quiet": 10
+      "quiet": 15
     },
     {
       "variant": "video.fps.0.5pct",
       "tier": "sub",
       "check": "video_fps_mismatch_rate",
-      "quiet": 2
+      "quiet": 3
     }
   ],
   "timing": [
+    {
+      "dataset": "aloha",
+      "variant": "clean.append",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "clean.copy",
+      "n": 1,
+      "mean_seconds": 830.4
+    },
+    {
+      "dataset": "aloha",
+      "variant": "dup.exact.1",
+      "n": 10,
+      "mean_seconds": 4.4
+    },
+    {
+      "dataset": "aloha",
+      "variant": "dup.exact.15pct",
+      "n": 10,
+      "mean_seconds": 5.1
+    },
+    {
+      "dataset": "aloha",
+      "variant": "dup.exact.5pct",
+      "n": 10,
+      "mean_seconds": 4.7
+    },
+    {
+      "dataset": "aloha",
+      "variant": "dup.other_video",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "dup.reencoded",
+      "n": 5,
+      "mean_seconds": 20.8
+    },
+    {
+      "dataset": "aloha",
+      "variant": "dup.shifted",
+      "n": 10,
+      "mean_seconds": 4.5
+    },
+    {
+      "dataset": "aloha",
+      "variant": "dup.ulp",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "jitter.0.05",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "jitter.0.10",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "jitter.0.16",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "jitter.0.20",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "jitter.0.30",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "jitter.0.45",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "steps.run1.5pct",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "steps.run3.0.5pct",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "steps.run3.10pct",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "steps.run3.1pct",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "steps.run3.2pct",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "steps.run3.5pct",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "ts.offset.1s",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "ts.swap.10pct",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "ts.units.ms",
+      "n": 10,
+      "mean_seconds": 4.6
+    },
+    {
+      "dataset": "aloha",
+      "variant": "vdrop.1",
+      "n": 5,
+      "mean_seconds": 8.4
+    },
+    {
+      "dataset": "aloha",
+      "variant": "vdrop.10pct",
+      "n": 5,
+      "mean_seconds": 8.1
+    },
+    {
+      "dataset": "aloha",
+      "variant": "vdrop.2",
+      "n": 5,
+      "mean_seconds": 8.3
+    },
+    {
+      "dataset": "aloha",
+      "variant": "vdrop.5",
+      "n": 5,
+      "mean_seconds": 8.2
+    },
+    {
+      "dataset": "aloha",
+      "variant": "vdrop.5.eps10pct",
+      "n": 5,
+      "mean_seconds": 24.2
+    },
+    {
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.1",
+      "n": 5,
+      "mean_seconds": 8.3
+    },
+    {
+      "dataset": "aloha",
+      "variant": "vdrop.metafull.5",
+      "n": 5,
+      "mean_seconds": 8.2
+    },
+    {
+      "dataset": "aloha",
+      "variant": "video.fps.0.5pct",
+      "n": 1,
+      "mean_seconds": 4.3
+    },
+    {
+      "dataset": "aloha",
+      "variant": "video.fps.5pct",
+      "n": 1,
+      "mean_seconds": 4.4
+    },
+    {
+      "dataset": "aloha",
+      "variant": "video.missing.camera_file",
+      "n": 10,
+      "mean_seconds": 3.5
+    },
+    {
+      "dataset": "aloha",
+      "variant": "video.missing.chunk",
+      "n": 1,
+      "mean_seconds": 0.8
+    },
+    {
+      "dataset": "aloha",
+      "variant": "video.missing.episode",
+      "n": 5,
+      "mean_seconds": 8.1
+    },
+    {
+      "dataset": "aloha",
+      "variant": "video.truncate.10",
+      "n": 5,
+      "mean_seconds": 8.9
+    },
+    {
+      "dataset": "aloha",
+      "variant": "video.truncate.50",
+      "n": 5,
+      "mean_seconds": 8.8
+    },
+    {
+      "dataset": "aloha",
+      "variant": "video.truncate.90",
+      "n": 5,
+      "mean_seconds": 8.8
+    },
     {
       "dataset": "h1",
       "variant": "clean.append",
