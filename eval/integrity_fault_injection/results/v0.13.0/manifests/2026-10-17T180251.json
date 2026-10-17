@@ -1,0 +1,50 @@
+{
+  "run": "v0.13.0",
+  "started": "2026-10-17T18:02:51.127591+00:00",
+  "calibra_version": "0.13.0",
+  "git": {
+    "commit": "a710aa6f8bbb36b169a474a9aaf76778016aefe5",
+    "dirty": false
+  },
+  "environment": {
+    "python": "3.11.3",
+    "platform": "macOS-26.5-arm64-arm-64bit",
+    "numpy": "2.2.6",
+    "pyarrow": "22.0.0",
+    "opencv": "4.12.0",
+    "ffmpeg": "ffmpeg version 8.1.2 Copyright (c) 2000-2026 the FFmpeg developers",
+    "encode_args": [
+      "-c:v",
+      "libsvtav1",
+      "-g",
+      "2",
+      "-crf",
+      "30",
+      "-preset",
+      "12",
+      "-pix_fmt",
+      "yuv420p"
+    ]
+  },
+  "datasets": {
+    "aloha": {
+      "repo": "lerobot/aloha_static_battery",
+      "revision": "06dc3da83c4fd3d1889b00f1dfd3780da8421f64",
+      "root": "data/aloha_static_battery",
+      "native_faults": [],
+      "local_revision": "06dc3da83c4fd3d1889b00f1dfd3780da8421f64",
+      "info_sha256": "7731c3266c8167657303e6d25e824b5a20076ddc800c2f7d9a4eb8704a142a42"
+    }
+  },
+  "argv": [
+    "eval/integrity_fault_injection/run.py",
+    "--run",
+    "v0.13.0",
+    "--datasets",
+    "aloha",
+    "--variants",
+    "clean.copy,clean.append,dup.,video.,vdrop.,steps.,jitter.,ts."
+  ],
+  "config_sha256": "02454d3ee9803a40a2deda1a4879a0fcb8b356a85e7e9ebdb16de7efcea40588",
+  "protocol_sha256": "dde16dc950198b3f45d80d388bfee3ae1f2690749ba48d96dae0adeae914d5ee"
+}

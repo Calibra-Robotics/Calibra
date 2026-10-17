@@ -1,0 +1,61 @@
+{
+  "run": "v0.13.0",
+  "started": "2026-10-17T15:55:57.328477+00:00",
+  "calibra_version": "0.13.0",
+  "git": {
+    "commit": "a710aa6f8bbb36b169a474a9aaf76778016aefe5",
+    "dirty": false
+  },
+  "environment": {
+    "python": "3.11.3",
+    "platform": "macOS-26.5-arm64-arm-64bit",
+    "numpy": "2.2.6",
+    "pyarrow": "22.0.0",
+    "opencv": "4.12.0",
+    "ffmpeg": "ffmpeg version 8.1.2 Copyright (c) 2000-2026 the FFmpeg developers",
+    "encode_args": [
+      "-c:v",
+      "libsvtav1",
+      "-g",
+      "2",
+      "-crf",
+      "30",
+      "-preset",
+      "12",
+      "-pix_fmt",
+      "yuv420p"
+    ]
+  },
+  "datasets": {
+    "h1": {
+      "repo": "lerobot/unitreeh1_rearrange_objects",
+      "revision": "e874d89b9024bad414deb45d7da82fa93601c260",
+      "root": "data/unitreeh1_rearrange_objects",
+      "native_faults": [
+        {
+          "episode": 26,
+          "check": "duplicate_episode_fraction"
+        }
+      ],
+      "local_revision": "e874d89b9024bad414deb45d7da82fa93601c260",
+      "info_sha256": "db80d74369ae8e30eba8063b65932fd3daa524f8233630d17ba91f0d62e7dddb"
+    },
+    "pusht": {
+      "repo": "lerobot/pusht",
+      "revision": "7628202a2180972f291ba1bc6723834921e72c19",
+      "root": "pusht",
+      "native_faults": [],
+      "local_revision": "7628202a2180972f291ba1bc6723834921e72c19",
+      "info_sha256": "0b46becc21ad92b117da1e95daf44110bb21d0bde75638b4ad167c8ccd959d38"
+    }
+  },
+  "argv": [
+    "eval/integrity_fault_injection/run.py",
+    "--run",
+    "v0.13.0",
+    "--datasets",
+    "h1,pusht"
+  ],
+  "config_sha256": "02454d3ee9803a40a2deda1a4879a0fcb8b356a85e7e9ebdb16de7efcea40588",
+  "protocol_sha256": "dde16dc950198b3f45d80d388bfee3ae1f2690749ba48d96dae0adeae914d5ee"
+}

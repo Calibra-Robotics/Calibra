@@ -1,0 +1,2235 @@
+{
+  "trials": [
+    {
+      "trial_id": "h1/dup.exact.1/r0",
+      "dataset": "h1",
+      "variant": "dup.exact.1",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/dup.exact.5pct/r0",
+      "dataset": "h1",
+      "variant": "dup.exact.5pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 2,
+          "units_flagged": 2,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/dup.exact.15pct/r0",
+      "dataset": "h1",
+      "variant": "dup.exact.15pct",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 5,
+          "units_flagged": 5,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/dup.reencoded/r0",
+      "dataset": "h1",
+      "variant": "dup.reencoded",
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/dup.ulp/r0",
+      "dataset": "h1",
+      "variant": "dup.ulp",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/dup.shifted/r0",
+      "dataset": "h1",
+      "variant": "dup.shifted",
+      "family": "duplicate_episode",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "NONE",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/dup.other_video/r0",
+      "dataset": "h1",
+      "variant": "dup.other_video",
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "duplicate_episode_fraction",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "video_from": 5
+      }
+    },
+    {
+      "trial_id": "h1/video.missing.camera_file/r0",
+      "dataset": "h1",
+      "variant": "video.missing.camera_file",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 30,
+          "units_flagged": 30,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/video.missing.chunk/r0",
+      "dataset": "h1",
+      "variant": "video.missing.chunk",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 30,
+          "units_flagged": 30,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/video.missing.episode/r0",
+      "dataset": "h1",
+      "variant": "video.missing.episode",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_missing_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/video.truncate.90/r0",
+      "dataset": "h1",
+      "variant": "video.truncate.90",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 1672745,
+        "bytes_total": 1858606
+      }
+    },
+    {
+      "trial_id": "h1/video.truncate.50/r0",
+      "dataset": "h1",
+      "variant": "video.truncate.50",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 895222,
+        "bytes_total": 1790445
+      }
+    },
+    {
+      "trial_id": "h1/video.truncate.10/r0",
+      "dataset": "h1",
+      "variant": "video.truncate.10",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "bytes_kept": 157326,
+        "bytes_total": 1573266
+      }
+    },
+    {
+      "trial_id": "h1/video.fps.5pct/r0",
+      "dataset": "h1",
+      "variant": "video.fps.5pct",
+      "family": "missing_video",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_fps_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 30,
+          "units_flagged": 30,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/video.fps.0.5pct/r0",
+      "dataset": "h1",
+      "variant": "video.fps.0.5pct",
+      "family": "missing_video",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_fps_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/freeze.run3/r0",
+      "dataset": "h1",
+      "variant": "freeze.run3",
+      "family": "frozen_frames",
+      "tier": "sub",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "camera_freeze_events",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "decoded_max_runs": [
+          3
+        ],
+        "frozen_episode_fraction": 0.0
+      }
+    },
+    {
+      "trial_id": "h1/freeze.run4/r0",
+      "dataset": "h1",
+      "variant": "freeze.run4",
+      "family": "frozen_frames",
+      "tier": "sub",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "camera_freeze_events",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "decoded_max_runs": [
+          3
+        ],
+        "frozen_episode_fraction": 0.0
+      }
+    },
+    {
+      "trial_id": "h1/freeze.run5/r0",
+      "dataset": "h1",
+      "variant": "freeze.run5",
+      "family": "frozen_frames",
+      "tier": "near",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "camera_freeze_events",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true,
+          "default_pass": "detected"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "decoded_max_runs": [
+          5
+        ],
+        "frozen_episode_fraction": 0.03333333333333333
+      }
+    },
+    {
+      "trial_id": "h1/freeze.run10/r0",
+      "dataset": "h1",
+      "variant": "freeze.run10",
+      "family": "frozen_frames",
+      "tier": "clear",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "camera_freeze_events",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true,
+          "default_pass": "detected"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "decoded_max_runs": [
+          9
+        ],
+        "frozen_episode_fraction": 0.03333333333333333
+      }
+    },
+    {
+      "trial_id": "h1/freeze.run30/r0",
+      "dataset": "h1",
+      "variant": "freeze.run30",
+      "family": "frozen_frames",
+      "tier": "clear",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "camera_freeze_events",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true,
+          "default_pass": "detected"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "decoded_max_runs": [
+          29
+        ],
+        "frozen_episode_fraction": 0.03333333333333333
+      }
+    },
+    {
+      "trial_id": "h1/freeze.run10.eps5pct/r0",
+      "dataset": "h1",
+      "variant": "freeze.run10.eps5pct",
+      "family": "frozen_frames",
+      "tier": "clear",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "camera_freeze_events",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true,
+          "default_pass": "detected"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "decoded_max_runs": [
+          9,
+          9
+        ],
+        "frozen_episode_fraction": 0.06666666666666667
+      }
+    },
+    {
+      "trial_id": "h1/freeze.run10.eps10pct/r0",
+      "dataset": "h1",
+      "variant": "freeze.run10.eps10pct",
+      "family": "frozen_frames",
+      "tier": "clear",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "camera_freeze_events",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true,
+          "default_pass": "detected"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "decoded_max_runs": [
+          9,
+          9,
+          9
+        ],
+        "frozen_episode_fraction": 0.1
+      }
+    },
+    {
+      "trial_id": "h1/freeze.run10.eps20pct/r0",
+      "dataset": "h1",
+      "variant": "freeze.run10.eps20pct",
+      "family": "frozen_frames",
+      "tier": "clear",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "camera_freeze_events",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true,
+          "default_pass": "detected"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "decoded_max_runs": [
+          9,
+          9,
+          9,
+          9,
+          9,
+          9
+        ],
+        "frozen_episode_fraction": 0.2
+      }
+    },
+    {
+      "trial_id": "h1/freeze.run10.eps50pct/r0",
+      "dataset": "h1",
+      "variant": "freeze.run10.eps50pct",
+      "family": "frozen_frames",
+      "tier": "clear",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "camera_freeze_events",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true,
+          "default_pass": "detected"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "decoded_max_runs": [
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9
+        ],
+        "frozen_episode_fraction": 0.5
+      }
+    },
+    {
+      "trial_id": "h1/repeat.2pct/r0",
+      "dataset": "h1",
+      "variant": "repeat.2pct",
+      "family": "repeated_frames",
+      "tier": "sub",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "duplicate_frame_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "camera": "observation.images.cam_right",
+        "mean_repeat_rate": 0.007733446348206896
+      }
+    },
+    {
+      "trial_id": "h1/repeat.4pct/r0",
+      "dataset": "h1",
+      "variant": "repeat.4pct",
+      "family": "repeated_frames",
+      "tier": "sub",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "duplicate_frame_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "camera": "observation.images.cam_left",
+        "mean_repeat_rate": 0.007767081727243984
+      }
+    },
+    {
+      "trial_id": "h1/repeat.5pct/r0",
+      "dataset": "h1",
+      "variant": "repeat.5pct",
+      "family": "repeated_frames",
+      "tier": "near",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "duplicate_frame_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "camera": "observation.images.cam_right",
+        "mean_repeat_rate": 0.007298204543467
+      }
+    },
+    {
+      "trial_id": "h1/repeat.7.5pct/r0",
+      "dataset": "h1",
+      "variant": "repeat.7.5pct",
+      "family": "repeated_frames",
+      "tier": "near",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "duplicate_frame_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "camera": "observation.images.cam_right",
+        "mean_repeat_rate": 0.007030466926331791
+      }
+    },
+    {
+      "trial_id": "h1/repeat.10pct/r0",
+      "dataset": "h1",
+      "variant": "repeat.10pct",
+      "family": "repeated_frames",
+      "tier": "clear",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "duplicate_frame_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "camera": "observation.images.cam_left",
+        "mean_repeat_rate": 0.0063604501759130325
+      }
+    },
+    {
+      "trial_id": "h1/repeat.15pct/r0",
+      "dataset": "h1",
+      "variant": "repeat.15pct",
+      "family": "repeated_frames",
+      "tier": "clear",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "duplicate_frame_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "camera": "observation.images.cam_right",
+        "mean_repeat_rate": 0.005691106133075013
+      }
+    },
+    {
+      "trial_id": "h1/repeat.30pct/r0",
+      "dataset": "h1",
+      "variant": "repeat.30pct",
+      "family": "repeated_frames",
+      "tier": "clear",
+      "pass": "full",
+      "checks": [
+        {
+          "check": "duplicate_frame_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "camera": "observation.images.cam_left",
+        "mean_repeat_rate": 0.0032814675788581456
+      }
+    },
+    {
+      "trial_id": "h1/vdrop.1/r0",
+      "dataset": "h1",
+      "variant": "vdrop.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "h1/vdrop.2/r0",
+      "dataset": "h1",
+      "variant": "vdrop.2",
+      "family": "dropped_video_frames",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          2
+        ]
+      }
+    },
+    {
+      "trial_id": "h1/vdrop.5/r0",
+      "dataset": "h1",
+      "variant": "vdrop.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "h1/vdrop.10pct/r0",
+      "dataset": "h1",
+      "variant": "vdrop.10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          20
+        ]
+      }
+    },
+    {
+      "trial_id": "h1/vdrop.5.eps10pct/r0",
+      "dataset": "h1",
+      "variant": "vdrop.5.eps10pct",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "units_injected": 3,
+          "units_flagged": 3,
+          "episode_false_positives": [],
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "h1/vdrop.metafull.1/r0",
+      "dataset": "h1",
+      "variant": "vdrop.metafull.1",
+      "family": "dropped_video_frames",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "units_injected": 0,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          1
+        ]
+      }
+    },
+    {
+      "trial_id": "h1/vdrop.metafull.5/r0",
+      "dataset": "h1",
+      "variant": "vdrop.metafull.5",
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "video_frame_mismatch_rate",
+          "expected": "ANY",
+          "level": "CRITICAL",
+          "units_injected": 1,
+          "units_flagged": 1,
+          "episode_false_positives": [],
+          "outcome": "detected"
+        },
+        {
+          "check": "video_decode_failure_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "units_injected": 1,
+          "units_flagged": 0,
+          "episode_false_positives": [],
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "frames_dropped": [
+          5
+        ]
+      }
+    },
+    {
+      "trial_id": "h1/steps.run1.5pct/r0",
+      "dataset": "h1",
+      "variant": "steps.run1.5pct",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0,
+        "rows_removed": 346
+      }
+    },
+    {
+      "trial_id": "h1/steps.run3.0.5pct/r0",
+      "dataset": "h1",
+      "variant": "steps.run3.0.5pct",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0043070073557878435,
+        "rows_removed": 90
+      }
+    },
+    {
+      "trial_id": "h1/steps.run3.1pct/r0",
+      "dataset": "h1",
+      "variant": "steps.run3.1pct",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.008727975720875357,
+        "rows_removed": 180
+      }
+    },
+    {
+      "trial_id": "h1/steps.run3.2pct/r0",
+      "dataset": "h1",
+      "variant": "steps.run3.2pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.0213728537257949,
+        "rows_removed": 429
+      }
+    },
+    {
+      "trial_id": "h1/steps.run3.5pct/r0",
+      "dataset": "h1",
+      "variant": "steps.run3.5pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.05699919437730921,
+        "rows_removed": 1038
+      }
+    },
+    {
+      "trial_id": "h1/steps.run3.10pct/r0",
+      "dataset": "h1",
+      "variant": "steps.run3.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "dropout_rate": 0.1437263981917914,
+        "rows_removed": 2145
+      }
+    },
+    {
+      "trial_id": "h1/jitter.0.05/r0",
+      "dataset": "h1",
+      "variant": "jitter.0.05",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.05065857440345851
+      }
+    },
+    {
+      "trial_id": "h1/jitter.0.10/r0",
+      "dataset": "h1",
+      "variant": "jitter.0.10",
+      "family": "timestamp",
+      "tier": "sub",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.09900517346433842
+      }
+    },
+    {
+      "trial_id": "h1/jitter.0.15/r0",
+      "dataset": "h1",
+      "variant": "jitter.0.15",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "OK",
+          "outcome": "quiet"
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.1492494352976998
+      }
+    },
+    {
+      "trial_id": "h1/jitter.0.20/r0",
+      "dataset": "h1",
+      "variant": "jitter.0.20",
+      "family": "timestamp",
+      "tier": "near",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.1997846124406604
+      }
+    },
+    {
+      "trial_id": "h1/jitter.0.30/r0",
+      "dataset": "h1",
+      "variant": "jitter.0.30",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "WARNING",
+          "level": "WARNING",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.29811446763470223
+      }
+    },
+    {
+      "trial_id": "h1/jitter.0.45/r0",
+      "dataset": "h1",
+      "variant": "jitter.0.45",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "CRITICAL",
+          "level": "CRITICAL",
+          "outcome": "detected",
+          "level_agrees": true
+        }
+      ],
+      "collateral": [],
+      "measured": {
+        "mean_episode_cv": 0.4328744120631602
+      }
+    },
+    {
+      "trial_id": "h1/ts.swap.10pct/r0",
+      "dataset": "h1",
+      "variant": "ts.swap.10pct",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "OK",
+          "outcome": "missed"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/ts.offset.1s/r0",
+      "dataset": "h1",
+      "variant": "ts.offset.1s",
+      "family": "timestamp",
+      "tier": "by_design",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "NONE",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/ts.units.ms/r0",
+      "dataset": "h1",
+      "variant": "ts.units.ms",
+      "family": "timestamp",
+      "tier": "clear",
+      "pass": "files",
+      "checks": [
+        {
+          "check": "timestamp_jitter_cv",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "expected": "ANY",
+          "level": "NOT_EVALUATED",
+          "outcome": "not_evaluated"
+        }
+      ],
+      "collateral": [],
+      "measured": {}
+    }
+  ],
+  "clean": [
+    {
+      "trial_id": "h1/clean.copy/r0",
+      "dataset": "h1",
+      "variant": "clean.copy",
+      "flags": [
+        {
+          "check": "duplicate_episode_fraction",
+          "level": "CRITICAL",
+          "episodes": [
+            26
+          ],
+          "triage": "native_fault"
+        },
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    },
+    {
+      "trial_id": "h1/clean.reencode/r0",
+      "dataset": "h1",
+      "variant": "clean.reencode",
+      "flags": [
+        {
+          "check": "duplicate_episode_fraction",
+          "level": "CRITICAL",
+          "episodes": [
+            26
+          ],
+          "triage": "native_fault"
+        },
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {
+        "camera": "observation.images.cam_right",
+        "mean_repeat_rate": 0.007867315156774501,
+        "max_run": 1
+      }
+    },
+    {
+      "trial_id": "h1/clean.append/r0",
+      "dataset": "h1",
+      "variant": "clean.append",
+      "flags": [
+        {
+          "check": "duplicate_episode_fraction",
+          "level": "CRITICAL",
+          "episodes": [
+            26
+          ],
+          "triage": "native_fault"
+        },
+        {
+          "check": "timestamp_jitter_cv",
+          "triage": "not_evaluated"
+        },
+        {
+          "check": "timestamp_dropout_rate",
+          "triage": "not_evaluated"
+        }
+      ],
+      "measured": {}
+    }
+  ],
+  "errors": [],
+  "skipped": [],
+  "recall": [
+    {
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "dataset": "all",
+      "detected": 4,
+      "missed": 0,
+      "n_scored": 4,
+      "recall": 1.0,
+      "wilson95": [
+        0.5101,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "dropped_video_frames",
+      "tier": "clear",
+      "dataset": "h1",
+      "detected": 4,
+      "missed": 0,
+      "n_scored": 4,
+      "recall": 1.0,
+      "wilson95": [
+        0.5101,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "dropped_video_frames",
+      "tier": "near",
+      "dataset": "all",
+      "detected": 1,
+      "missed": 0,
+      "n_scored": 1,
+      "recall": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "dropped_video_frames",
+      "tier": "near",
+      "dataset": "h1",
+      "detected": 1,
+      "missed": 0,
+      "n_scored": 1,
+      "recall": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "dataset": "all",
+      "detected": 1,
+      "missed": 0,
+      "n_scored": 1,
+      "recall": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "duplicate_episode",
+      "tier": "ambiguous",
+      "dataset": "h1",
+      "detected": 1,
+      "missed": 0,
+      "n_scored": 1,
+      "recall": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "dataset": "all",
+      "detected": 4,
+      "missed": 0,
+      "n_scored": 4,
+      "recall": 1.0,
+      "wilson95": [
+        0.5101,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "duplicate_episode",
+      "tier": "clear",
+      "dataset": "h1",
+      "detected": 4,
+      "missed": 0,
+      "n_scored": 4,
+      "recall": 1.0,
+      "wilson95": [
+        0.5101,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "frozen_frames",
+      "tier": "clear",
+      "dataset": "all",
+      "detected": 6,
+      "missed": 0,
+      "n_scored": 6,
+      "recall": 1.0,
+      "wilson95": [
+        0.6097,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "frozen_frames",
+      "tier": "clear",
+      "dataset": "h1",
+      "detected": 6,
+      "missed": 0,
+      "n_scored": 6,
+      "recall": 1.0,
+      "wilson95": [
+        0.6097,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "frozen_frames",
+      "tier": "near",
+      "dataset": "all",
+      "detected": 1,
+      "missed": 0,
+      "n_scored": 1,
+      "recall": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "frozen_frames",
+      "tier": "near",
+      "dataset": "h1",
+      "detected": 1,
+      "missed": 0,
+      "n_scored": 1,
+      "recall": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "missing_video",
+      "tier": "clear",
+      "dataset": "all",
+      "detected": 7,
+      "missed": 0,
+      "n_scored": 7,
+      "recall": 1.0,
+      "wilson95": [
+        0.6457,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "missing_video",
+      "tier": "clear",
+      "dataset": "h1",
+      "detected": 7,
+      "missed": 0,
+      "n_scored": 7,
+      "recall": 1.0,
+      "wilson95": [
+        0.6457,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "repeated_frames",
+      "tier": "clear",
+      "dataset": "all",
+      "detected": 0,
+      "missed": 0,
+      "n_scored": 0,
+      "recall": null,
+      "wilson95": null,
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "repeated_frames",
+      "tier": "clear",
+      "dataset": "h1",
+      "detected": 0,
+      "missed": 0,
+      "n_scored": 0,
+      "recall": null,
+      "wilson95": null,
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "repeated_frames",
+      "tier": "near",
+      "dataset": "all",
+      "detected": 0,
+      "missed": 0,
+      "n_scored": 0,
+      "recall": null,
+      "wilson95": null,
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "repeated_frames",
+      "tier": "near",
+      "dataset": "h1",
+      "detected": 0,
+      "missed": 0,
+      "n_scored": 0,
+      "recall": null,
+      "wilson95": null,
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "timestamp",
+      "tier": "clear",
+      "dataset": "all",
+      "detected": 5,
+      "missed": 1,
+      "n_scored": 6,
+      "recall": 0.8333,
+      "wilson95": [
+        0.4365,
+        0.9699
+      ],
+      "masked": 0,
+      "not_evaluated": 1,
+      "sampling_limited": 0
+    },
+    {
+      "family": "timestamp",
+      "tier": "clear",
+      "dataset": "h1",
+      "detected": 5,
+      "missed": 1,
+      "n_scored": 6,
+      "recall": 0.8333,
+      "wilson95": [
+        0.4365,
+        0.9699
+      ],
+      "masked": 0,
+      "not_evaluated": 1,
+      "sampling_limited": 0
+    },
+    {
+      "family": "timestamp",
+      "tier": "near",
+      "dataset": "all",
+      "detected": 1,
+      "missed": 0,
+      "n_scored": 1,
+      "recall": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    },
+    {
+      "family": "timestamp",
+      "tier": "near",
+      "dataset": "h1",
+      "detected": 1,
+      "missed": 0,
+      "n_scored": 1,
+      "recall": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "masked": 0,
+      "not_evaluated": 0,
+      "sampling_limited": 0
+    }
+  ],
+  "severity": [
+    {
+      "family": "dropped_video_frames",
+      "check": "video_frame_mismatch_rate",
+      "expected": "CRITICAL",
+      "emitted": "CRITICAL",
+      "n": 4
+    },
+    {
+      "family": "duplicate_episode",
+      "check": "duplicate_episode_fraction",
+      "expected": "CRITICAL",
+      "emitted": "CRITICAL",
+      "n": 5
+    },
+    {
+      "family": "frozen_frames",
+      "check": "camera_freeze_events",
+      "expected": "CRITICAL",
+      "emitted": "CRITICAL",
+      "n": 3
+    },
+    {
+      "family": "frozen_frames",
+      "check": "camera_freeze_events",
+      "expected": "WARNING",
+      "emitted": "WARNING",
+      "n": 4
+    },
+    {
+      "family": "missing_video",
+      "check": "video_decode_failure_rate",
+      "expected": "CRITICAL",
+      "emitted": "CRITICAL",
+      "n": 3
+    },
+    {
+      "family": "missing_video",
+      "check": "video_fps_mismatch_rate",
+      "expected": "CRITICAL",
+      "emitted": "CRITICAL",
+      "n": 1
+    },
+    {
+      "family": "missing_video",
+      "check": "video_missing_rate",
+      "expected": "CRITICAL",
+      "emitted": "CRITICAL",
+      "n": 3
+    },
+    {
+      "family": "timestamp",
+      "check": "timestamp_dropout_rate",
+      "expected": "CRITICAL",
+      "emitted": "CRITICAL",
+      "n": 2
+    },
+    {
+      "family": "timestamp",
+      "check": "timestamp_dropout_rate",
+      "expected": "WARNING",
+      "emitted": "WARNING",
+      "n": 1
+    },
+    {
+      "family": "timestamp",
+      "check": "timestamp_jitter_cv",
+      "expected": "CRITICAL",
+      "emitted": "CRITICAL",
+      "n": 1
+    },
+    {
+      "family": "timestamp",
+      "check": "timestamp_jitter_cv",
+      "expected": "WARNING",
+      "emitted": "WARNING",
+      "n": 2
+    }
+  ],
+  "collateral": [],
+  "clean_summary": [
+    {
+      "dataset": "h1",
+      "clean_trials": 3,
+      "evaluated_checks": 25,
+      "false_positives": 0,
+      "fp_wilson95_upper": 0.1332,
+      "flags": [
+        {
+          "check": "duplicate_episode_fraction",
+          "level": "CRITICAL",
+          "episodes": [
+            26
+          ],
+          "triage": "native_fault",
+          "trial_id": "h1/clean.copy/r0"
+        },
+        {
+          "check": "duplicate_episode_fraction",
+          "level": "CRITICAL",
+          "episodes": [
+            26
+          ],
+          "triage": "native_fault",
+          "trial_id": "h1/clean.reencode/r0"
+        },
+        {
+          "check": "duplicate_episode_fraction",
+          "level": "CRITICAL",
+          "episodes": [
+            26
+          ],
+          "triage": "native_fault",
+          "trial_id": "h1/clean.append/r0"
+        }
+      ],
+      "not_evaluated": [
+        "timestamp_dropout_rate",
+        "timestamp_jitter_cv"
+      ]
+    }
+  ],
+  "boundary": [
+    {
+      "variant": "dup.shifted",
+      "tier": "by_design",
+      "check": "duplicate_episode_fraction",
+      "quiet": 1
+    },
+    {
+      "variant": "dup.ulp",
+      "tier": "by_design",
+      "check": "duplicate_episode_fraction",
+      "quiet": 1
+    },
+    {
+      "variant": "freeze.run3",
+      "tier": "sub",
+      "check": "camera_freeze_events",
+      "quiet": 1
+    },
+    {
+      "variant": "freeze.run4",
+      "tier": "sub",
+      "check": "camera_freeze_events",
+      "quiet": 1
+    },
+    {
+      "variant": "jitter.0.05",
+      "tier": "sub",
+      "check": "timestamp_jitter_cv",
+      "quiet": 1
+    },
+    {
+      "variant": "jitter.0.10",
+      "tier": "sub",
+      "check": "timestamp_jitter_cv",
+      "quiet": 1
+    },
+    {
+      "variant": "repeat.2pct",
+      "tier": "sub",
+      "check": "duplicate_frame_rate",
+      "quiet": 1
+    },
+    {
+      "variant": "repeat.4pct",
+      "tier": "sub",
+      "check": "duplicate_frame_rate",
+      "quiet": 1
+    },
+    {
+      "variant": "steps.run1.5pct",
+      "tier": "by_design",
+      "check": "timestamp_dropout_rate",
+      "quiet": 1
+    },
+    {
+      "variant": "steps.run3.0.5pct",
+      "tier": "sub",
+      "check": "timestamp_dropout_rate",
+      "quiet": 1
+    },
+    {
+      "variant": "ts.offset.1s",
+      "tier": "by_design",
+      "check": "timestamp_dropout_rate",
+      "not_evaluated": 1
+    },
+    {
+      "variant": "ts.offset.1s",
+      "tier": "by_design",
+      "check": "timestamp_jitter_cv",
+      "not_evaluated": 1
+    },
+    {
+      "variant": "vdrop.1",
+      "tier": "sub",
+      "check": "video_frame_mismatch_rate",
+      "quiet": 1
+    },
+    {
+      "variant": "vdrop.metafull.1",
+      "tier": "sub",
+      "check": "video_decode_failure_rate",
+      "quiet": 1
+    },
+    {
+      "variant": "vdrop.metafull.1",
+      "tier": "sub",
+      "check": "video_frame_mismatch_rate",
+      "quiet": 1
+    },
+    {
+      "variant": "video.fps.0.5pct",
+      "tier": "sub",
+      "check": "video_fps_mismatch_rate",
+      "quiet": 1
+    }
+  ],
+  "timing": [
+    {
+      "dataset": "h1",
+      "variant": "clean.append",
+      "n": 1,
+      "mean_seconds": 2.0
+    },
+    {
+      "dataset": "h1",
+      "variant": "clean.copy",
+      "n": 1,
+      "mean_seconds": 95.8
+    },
+    {
+      "dataset": "h1",
+      "variant": "clean.reencode",
+      "n": 1,
+      "mean_seconds": 169.4
+    },
+    {
+      "dataset": "h1",
+      "variant": "dup.exact.1",
+      "n": 1,
+      "mean_seconds": 2.0
+    },
+    {
+      "dataset": "h1",
+      "variant": "dup.exact.15pct",
+      "n": 1,
+      "mean_seconds": 2.3
+    },
+    {
+      "dataset": "h1",
+      "variant": "dup.exact.5pct",
+      "n": 1,
+      "mean_seconds": 2.1
+    },
+    {
+      "dataset": "h1",
+      "variant": "dup.other_video",
+      "n": 1,
+      "mean_seconds": 2.0
+    },
+    {
+      "dataset": "h1",
+      "variant": "dup.reencoded",
+      "n": 1,
+      "mean_seconds": 4.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "dup.shifted",
+      "n": 1,
+      "mean_seconds": 2.1
+    },
+    {
+      "dataset": "h1",
+      "variant": "dup.ulp",
+      "n": 1,
+      "mean_seconds": 2.0
+    },
+    {
+      "dataset": "h1",
+      "variant": "freeze.run10",
+      "n": 1,
+      "mean_seconds": 99.7
+    },
+    {
+      "dataset": "h1",
+      "variant": "freeze.run10.eps10pct",
+      "n": 1,
+      "mean_seconds": 105.3
+    },
+    {
+      "dataset": "h1",
+      "variant": "freeze.run10.eps20pct",
+      "n": 1,
+      "mean_seconds": 113.9
+    },
+    {
+      "dataset": "h1",
+      "variant": "freeze.run10.eps50pct",
+      "n": 1,
+      "mean_seconds": 135.7
+    },
+    {
+      "dataset": "h1",
+      "variant": "freeze.run10.eps5pct",
+      "n": 1,
+      "mean_seconds": 97.7
+    },
+    {
+      "dataset": "h1",
+      "variant": "freeze.run3",
+      "n": 1,
+      "mean_seconds": 98.5
+    },
+    {
+      "dataset": "h1",
+      "variant": "freeze.run30",
+      "n": 1,
+      "mean_seconds": 97.0
+    },
+    {
+      "dataset": "h1",
+      "variant": "freeze.run4",
+      "n": 1,
+      "mean_seconds": 98.4
+    },
+    {
+      "dataset": "h1",
+      "variant": "freeze.run5",
+      "n": 1,
+      "mean_seconds": 99.3
+    },
+    {
+      "dataset": "h1",
+      "variant": "jitter.0.05",
+      "n": 1,
+      "mean_seconds": 2.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "jitter.0.10",
+      "n": 1,
+      "mean_seconds": 2.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "jitter.0.15",
+      "n": 1,
+      "mean_seconds": 2.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "jitter.0.20",
+      "n": 1,
+      "mean_seconds": 2.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "jitter.0.30",
+      "n": 1,
+      "mean_seconds": 2.1
+    },
+    {
+      "dataset": "h1",
+      "variant": "jitter.0.45",
+      "n": 1,
+      "mean_seconds": 2.1
+    },
+    {
+      "dataset": "h1",
+      "variant": "repeat.10pct",
+      "n": 1,
+      "mean_seconds": 170.6
+    },
+    {
+      "dataset": "h1",
+      "variant": "repeat.15pct",
+      "n": 1,
+      "mean_seconds": 167.3
+    },
+    {
+      "dataset": "h1",
+      "variant": "repeat.2pct",
+      "n": 1,
+      "mean_seconds": 178.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "repeat.30pct",
+      "n": 1,
+      "mean_seconds": 173.5
+    },
+    {
+      "dataset": "h1",
+      "variant": "repeat.4pct",
+      "n": 1,
+      "mean_seconds": 175.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "repeat.5pct",
+      "n": 1,
+      "mean_seconds": 171.4
+    },
+    {
+      "dataset": "h1",
+      "variant": "repeat.7.5pct",
+      "n": 1,
+      "mean_seconds": 169.5
+    },
+    {
+      "dataset": "h1",
+      "variant": "steps.run1.5pct",
+      "n": 1,
+      "mean_seconds": 2.3
+    },
+    {
+      "dataset": "h1",
+      "variant": "steps.run3.0.5pct",
+      "n": 1,
+      "mean_seconds": 2.1
+    },
+    {
+      "dataset": "h1",
+      "variant": "steps.run3.10pct",
+      "n": 1,
+      "mean_seconds": 2.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "steps.run3.1pct",
+      "n": 1,
+      "mean_seconds": 2.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "steps.run3.2pct",
+      "n": 1,
+      "mean_seconds": 2.4
+    },
+    {
+      "dataset": "h1",
+      "variant": "steps.run3.5pct",
+      "n": 1,
+      "mean_seconds": 2.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "ts.offset.1s",
+      "n": 1,
+      "mean_seconds": 2.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "ts.swap.10pct",
+      "n": 1,
+      "mean_seconds": 2.1
+    },
+    {
+      "dataset": "h1",
+      "variant": "ts.units.ms",
+      "n": 1,
+      "mean_seconds": 2.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "vdrop.1",
+      "n": 1,
+      "mean_seconds": 3.5
+    },
+    {
+      "dataset": "h1",
+      "variant": "vdrop.10pct",
+      "n": 1,
+      "mean_seconds": 3.1
+    },
+    {
+      "dataset": "h1",
+      "variant": "vdrop.2",
+      "n": 1,
+      "mean_seconds": 3.4
+    },
+    {
+      "dataset": "h1",
+      "variant": "vdrop.5",
+      "n": 1,
+      "mean_seconds": 3.7
+    },
+    {
+      "dataset": "h1",
+      "variant": "vdrop.5.eps10pct",
+      "n": 1,
+      "mean_seconds": 5.6
+    },
+    {
+      "dataset": "h1",
+      "variant": "vdrop.metafull.1",
+      "n": 1,
+      "mean_seconds": 3.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "vdrop.metafull.5",
+      "n": 1,
+      "mean_seconds": 3.3
+    },
+    {
+      "dataset": "h1",
+      "variant": "video.fps.0.5pct",
+      "n": 1,
+      "mean_seconds": 2.1
+    },
+    {
+      "dataset": "h1",
+      "variant": "video.fps.5pct",
+      "n": 1,
+      "mean_seconds": 2.0
+    },
+    {
+      "dataset": "h1",
+      "variant": "video.missing.camera_file",
+      "n": 1,
+      "mean_seconds": 1.3
+    },
+    {
+      "dataset": "h1",
+      "variant": "video.missing.chunk",
+      "n": 1,
+      "mean_seconds": 0.7
+    },
+    {
+      "dataset": "h1",
+      "variant": "video.missing.episode",
+      "n": 1,
+      "mean_seconds": 3.0
+    },
+    {
+      "dataset": "h1",
+      "variant": "video.truncate.10",
+      "n": 1,
+      "mean_seconds": 3.0
+    },
+    {
+      "dataset": "h1",
+      "variant": "video.truncate.50",
+      "n": 1,
+      "mean_seconds": 3.2
+    },
+    {
+      "dataset": "h1",
+      "variant": "video.truncate.90",
+      "n": 1,
+      "mean_seconds": 3.2
+    }
+  ]
+}

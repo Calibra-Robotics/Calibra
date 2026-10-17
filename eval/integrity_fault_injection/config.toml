@@ -1,0 +1,501 @@
+# Integrity fault-injection benchmark configuration (PROTOCOL.md).
+# Tiers are pre-registered here; do not edit them after a scored run without a
+# PROTOCOL.md changelog entry.
+
+calibra_version = "0.13.0"
+
+[datasets.h1]
+repo = "lerobot/unitreeh1_rearrange_objects"
+revision = "e874d89b9024bad414deb45d7da82fa93601c260"
+root = "data/unitreeh1_rearrange_objects"
+# Native acquisition faults from eval/real_faults (extra-copy convention).
+native_faults = [{ episode = 26, check = "duplicate_episode_fraction" }]
+
+[datasets.aloha]
+repo = "lerobot/aloha_static_battery"
+revision = "06dc3da83c4fd3d1889b00f1dfd3780da8421f64"
+root = "data/aloha_static_battery"
+native_faults = []
+
+[datasets.pusht]
+repo = "lerobot/pusht"
+revision = "7628202a2180972f291ba1bc6723834921e72c19"
+root = "pusht"
+native_faults = []
+
+# Thresholds as documented in PROTOCOL.md section 4. run.py compares each one to
+# the Calibra source and refuses to run if any differs.
+[thresholds]
+duplicate_frame_rate = { warning = 0.05, critical = 0.15 }
+camera_freeze_events = { warning = 1e-9, critical = 0.10, min_run = 5 }
+timestamp_dropout_rate = { warning = 0.01, critical = 0.05, gap_k = 3.0 }
+timestamp_jitter_cv = { warning = 0.15, critical = 0.30 }
+video_frame_mismatch_rate = { frame_tolerance = 1 }
+video_fps_mismatch_rate = { rel_tolerance = 0.01 }
+
+[reps]
+default = 10
+reencode = 5   # variants that re-encode video
+
+# One entry per (variant, severity). `decode`: run the decoded-video pass
+# (needed only when frame content changes). `reencode`: uses the reencode rep count.
+# Tiers, relative to the check's first (WARNING or zero-tolerance) threshold:
+#   sub < 1x, near 1x-1.5x, clear >= 2x (or any instance of a zero-tolerance
+#   fault), by_design (outside what the check is built to see), ambiguous, control.
+# Recall counts any non-OK flag from the expected check; whether the level is
+# the expected one is scored separately (severity agreement).
+
+# ── controls ────────────────────────────────────────────────────────────────
+[[variants]]
+id = "clean.copy"
+injector = "identity"
+family = "control"
+tier = "control"
+decode = true
+reps = 1
+
+[[variants]]
+id = "clean.reencode"
+reps = 2
+injector = "reencode_control"
+family = "control"
+tier = "control"
+decode = true
+reencode = true
+
+[[variants]]
+id = "clean.append"
+injector = "append_control"
+family = "control"
+tier = "control"
+
+# ── 5.1 duplicate episodes ──────────────────────────────────────────────────
+[[variants]]
+id = "dup.exact.1"
+injector = "duplicate_exact"
+params = { count = 1 }
+family = "duplicate_episode"
+tier = "clear"
+
+[[variants]]
+id = "dup.exact.5pct"
+injector = "duplicate_exact"
+params = { frac = 0.05 }
+family = "duplicate_episode"
+tier = "clear"
+
+[[variants]]
+id = "dup.exact.15pct"
+injector = "duplicate_exact"
+params = { frac = 0.15 }
+family = "duplicate_episode"
+tier = "clear"
+
+[[variants]]
+id = "dup.reencoded"
+injector = "duplicate_reencoded"
+family = "duplicate_episode"
+tier = "clear"
+reencode = true
+
+[[variants]]
+id = "dup.ulp"
+injector = "duplicate_ulp"
+family = "duplicate_episode"
+tier = "by_design"
+
+[[variants]]
+id = "dup.shifted"
+injector = "duplicate_shifted"
+family = "duplicate_episode"
+tier = "by_design"
+
+[[variants]]
+id = "dup.other_video"
+injector = "duplicate_other_video"
+family = "duplicate_episode"
+tier = "ambiguous"
+
+# ── 5.2 missing and broken video ────────────────────────────────────────────
+[[variants]]
+id = "video.missing.camera_file"
+injector = "video_delete_camera_file"
+family = "missing_video"
+tier = "clear"
+
+[[variants]]
+id = "video.missing.chunk"
+injector = "video_delete_chunk"
+family = "missing_video"
+tier = "clear"
+reps = 1   # deterministic: every file removed
+
+[[variants]]
+id = "video.missing.episode"
+injector = "video_delete_episode"
+family = "missing_video"
+tier = "clear"
+reencode = true
+
+[[variants]]
+id = "video.truncate.90"
+injector = "video_truncate"
+params = { keep = 0.90 }
+family = "missing_video"
+tier = "clear"
+reencode = true
+
+[[variants]]
+id = "video.truncate.50"
+injector = "video_truncate"
+params = { keep = 0.50 }
+family = "missing_video"
+tier = "clear"
+reencode = true
+
+[[variants]]
+id = "video.truncate.10"
+injector = "video_truncate"
+params = { keep = 0.10 }
+family = "missing_video"
+tier = "clear"
+reencode = true
+
+[[variants]]
+id = "video.fps.5pct"
+injector = "info_fps_shift"
+params = { rel = 0.05 }
+family = "missing_video"
+tier = "clear"
+reps = 1
+
+[[variants]]
+id = "video.fps.0.5pct"
+injector = "info_fps_shift"
+params = { rel = 0.005 }
+family = "missing_video"
+tier = "sub"
+reps = 1
+
+# ── 5.3 frozen and repeated frames ──────────────────────────────────────────
+[[variants]]
+id = "freeze.run3"
+reps = 2
+injector = "freeze_run"
+params = { run = 3 }
+family = "frozen_frames"
+tier = "sub"
+decode = true
+reencode = true
+
+[[variants]]
+id = "freeze.run4"
+reps = 2
+injector = "freeze_run"
+params = { run = 4 }
+family = "frozen_frames"
+tier = "sub"
+decode = true
+reencode = true
+
+[[variants]]
+id = "freeze.run5"
+reps = 2
+injector = "freeze_run"
+params = { run = 5 }
+family = "frozen_frames"
+tier = "near"
+decode = true
+reencode = true
+
+[[variants]]
+id = "freeze.run10"
+reps = 4
+injector = "freeze_run"
+params = { run = 10 }
+family = "frozen_frames"
+tier = "clear"
+decode = true
+reencode = true
+
+[[variants]]
+id = "freeze.run30"
+reps = 4
+injector = "freeze_run"
+params = { run = 30 }
+family = "frozen_frames"
+tier = "clear"
+decode = true
+reencode = true
+
+[[variants]]
+id = "freeze.run10.eps5pct"
+reps = 4
+injector = "freeze_run"
+params = { run = 10, frac = 0.05 }
+family = "frozen_frames"
+tier = "clear"
+decode = true
+reencode = true
+
+[[variants]]
+id = "freeze.run10.eps10pct"
+reps = 4
+injector = "freeze_run"
+params = { run = 10, frac = 0.10 }
+family = "frozen_frames"
+tier = "clear"
+decode = true
+reencode = true
+
+[[variants]]
+id = "freeze.run10.eps20pct"
+reps = 4
+injector = "freeze_run"
+params = { run = 10, frac = 0.20 }
+family = "frozen_frames"
+tier = "clear"
+decode = true
+reencode = true
+
+[[variants]]
+id = "freeze.run10.eps50pct"
+reps = 4
+injector = "freeze_run"
+params = { run = 10, frac = 0.50 }
+family = "frozen_frames"
+tier = "clear"
+decode = true
+reencode = true
+
+[[variants]]
+id = "repeat.2pct"
+reps = 1
+injector = "repeat_fill"
+params = { rate = 0.02 }
+family = "repeated_frames"
+tier = "sub"
+decode = true
+reencode = true
+
+[[variants]]
+id = "repeat.4pct"
+reps = 1
+injector = "repeat_fill"
+params = { rate = 0.04 }
+family = "repeated_frames"
+tier = "sub"
+decode = true
+reencode = true
+
+[[variants]]
+id = "repeat.5pct"
+reps = 1
+injector = "repeat_fill"
+params = { rate = 0.05 }
+family = "repeated_frames"
+tier = "near"
+decode = true
+reencode = true
+
+[[variants]]
+id = "repeat.7.5pct"
+reps = 1
+injector = "repeat_fill"
+params = { rate = 0.075 }
+family = "repeated_frames"
+tier = "near"
+decode = true
+reencode = true
+
+[[variants]]
+id = "repeat.10pct"
+reps = 1
+injector = "repeat_fill"
+params = { rate = 0.10 }
+family = "repeated_frames"
+tier = "clear"
+decode = true
+reencode = true
+
+[[variants]]
+id = "repeat.15pct"
+reps = 1
+injector = "repeat_fill"
+params = { rate = 0.15 }
+family = "repeated_frames"
+tier = "clear"
+decode = true
+reencode = true
+
+[[variants]]
+id = "repeat.30pct"
+reps = 1
+injector = "repeat_fill"
+params = { rate = 0.30 }
+family = "repeated_frames"
+tier = "clear"
+decode = true
+reencode = true
+
+# ── 5.4 dropped frames and timestamps ───────────────────────────────────────
+[[variants]]
+id = "vdrop.1"
+injector = "video_drop_frames"
+params = { k = 1 }
+family = "dropped_video_frames"
+tier = "sub"
+reencode = true
+
+[[variants]]
+id = "vdrop.2"
+injector = "video_drop_frames"
+params = { k = 2 }
+family = "dropped_video_frames"
+tier = "near"
+reencode = true
+
+[[variants]]
+id = "vdrop.5"
+injector = "video_drop_frames"
+params = { k = 5 }
+family = "dropped_video_frames"
+tier = "clear"
+reencode = true
+
+[[variants]]
+id = "vdrop.10pct"
+injector = "video_drop_frames"
+params = { frac = 0.10 }
+family = "dropped_video_frames"
+tier = "clear"
+reencode = true
+
+[[variants]]
+id = "vdrop.5.eps10pct"
+injector = "video_drop_frames"
+params = { k = 5, eps_frac = 0.10 }
+family = "dropped_video_frames"
+tier = "clear"
+reencode = true
+
+[[variants]]
+id = "vdrop.metafull.1"
+injector = "video_drop_frames"
+params = { k = 1, meta_claims_full = true }
+family = "dropped_video_frames"
+tier = "sub"
+reencode = true
+
+[[variants]]
+id = "vdrop.metafull.5"
+injector = "video_drop_frames"
+params = { k = 5, meta_claims_full = true }
+family = "dropped_video_frames"
+tier = "clear"
+reencode = true
+
+[[variants]]
+id = "steps.run1.5pct"
+injector = "steps_dropped"
+params = { rate = 0.05, run = 1 }
+family = "timestamp"
+tier = "by_design"
+
+[[variants]]
+id = "steps.run3.0.5pct"
+injector = "steps_dropped"
+params = { rate = 0.005, run = 3 }
+family = "timestamp"
+tier = "sub"
+
+[[variants]]
+id = "steps.run3.1pct"
+injector = "steps_dropped"
+params = { rate = 0.01, run = 3 }
+family = "timestamp"
+tier = "near"
+
+[[variants]]
+id = "steps.run3.2pct"
+injector = "steps_dropped"
+params = { rate = 0.02, run = 3 }
+family = "timestamp"
+tier = "clear"
+
+[[variants]]
+id = "steps.run3.5pct"
+injector = "steps_dropped"
+params = { rate = 0.05, run = 3 }
+family = "timestamp"
+tier = "clear"
+
+[[variants]]
+id = "steps.run3.10pct"
+injector = "steps_dropped"
+params = { rate = 0.10, run = 3 }
+family = "timestamp"
+tier = "clear"
+
+[[variants]]
+id = "jitter.0.05"
+injector = "timestamp_jitter"
+params = { cv = 0.05 }
+family = "timestamp"
+tier = "sub"
+
+[[variants]]
+id = "jitter.0.10"
+injector = "timestamp_jitter"
+params = { cv = 0.10 }
+family = "timestamp"
+tier = "sub"
+
+[[variants]]
+id = "jitter.0.16"
+injector = "timestamp_jitter"
+params = { cv = 0.16 }   # 0.15 exactly stores as 0.14999998 in float32
+family = "timestamp"
+tier = "near"
+
+[[variants]]
+id = "jitter.0.20"
+injector = "timestamp_jitter"
+params = { cv = 0.20 }
+family = "timestamp"
+tier = "near"
+
+[[variants]]
+id = "jitter.0.30"
+injector = "timestamp_jitter"
+params = { cv = 0.30 }
+family = "timestamp"
+tier = "clear"
+
+[[variants]]
+id = "jitter.0.45"
+injector = "timestamp_jitter"
+params = { cv = 0.45 }
+family = "timestamp"
+tier = "clear"
+
+[[variants]]
+id = "ts.swap.10pct"
+injector = "timestamp_swap"
+params = { eps_frac = 0.10 }
+family = "timestamp"
+tier = "clear"
+
+[[variants]]
+id = "ts.offset.1s"
+injector = "timestamp_offset"
+params = { seconds = 1.0 }
+family = "timestamp"
+tier = "by_design"
+
+[[variants]]
+id = "ts.units.ms"
+injector = "timestamp_units"
+params = { scale = 1000.0 }
+family = "timestamp"
+tier = "clear"

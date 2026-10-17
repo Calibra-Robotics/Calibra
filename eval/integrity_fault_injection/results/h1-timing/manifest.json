@@ -1,0 +1,55 @@
+{
+  "run": "h1-timing",
+  "started": "2026-10-17T09:52:01.748379+00:00",
+  "calibra_version": "0.13.0",
+  "git": {
+    "commit": "a710aa6f8bbb36b169a474a9aaf76778016aefe5",
+    "dirty": false
+  },
+  "environment": {
+    "python": "3.11.3",
+    "platform": "macOS-26.5-arm64-arm-64bit",
+    "numpy": "2.2.6",
+    "pyarrow": "22.0.0",
+    "opencv": "4.12.0",
+    "ffmpeg": "ffmpeg version 8.1.2 Copyright (c) 2000-2026 the FFmpeg developers",
+    "encode_args": [
+      "-c:v",
+      "libsvtav1",
+      "-g",
+      "2",
+      "-crf",
+      "30",
+      "-preset",
+      "12",
+      "-pix_fmt",
+      "yuv420p"
+    ]
+  },
+  "datasets": {
+    "h1": {
+      "repo": "lerobot/unitreeh1_rearrange_objects",
+      "revision": "e874d89b9024bad414deb45d7da82fa93601c260",
+      "root": "data/unitreeh1_rearrange_objects",
+      "native_faults": [
+        {
+          "episode": 26,
+          "check": "duplicate_episode_fraction"
+        }
+      ],
+      "local_revision": "e874d89b9024bad414deb45d7da82fa93601c260",
+      "info_sha256": "db80d74369ae8e30eba8063b65932fd3daa524f8233630d17ba91f0d62e7dddb"
+    }
+  },
+  "argv": [
+    "eval/integrity_fault_injection/run.py",
+    "--datasets",
+    "h1",
+    "--reps",
+    "1",
+    "--run",
+    "h1-timing"
+  ],
+  "config_sha256": "a95d1fe70b3bb2f73902607fb4f3f7f72b5af425819631d75a8895dbff1127f1",
+  "protocol_sha256": "ec06976214d6d767198fcf0b1440603030b1d8918f74abb6a31fc9bf77182ef0"
+}
