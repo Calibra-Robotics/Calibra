@@ -255,3 +255,16 @@ def test_render_with_none_metrics():
     }
     output = render_corruption_report("ds", cfg, metrics, metrics, 5, 5)
     assert "n/a" in output
+
+
+def test_improved_metric_is_not_a_detection():
+    # Spike injection once raised ALOHA's LDLJ (scored smoother) and the report
+    # still listed LDLJ under "Detected by Calibra".
+    cfg = CorruptionConfig(inject_spikes=0.02)
+    orig = _dummy_metrics()
+    corr = {**orig, "spike_rate": 0.15, "ldlj": orig["ldlj"] + 1.3}
+    output = render_corruption_report("ds", cfg, orig, corr, 5, 5)
+    detected, _, rest = output.partition("Moved the wrong way")
+    assert "✓ Jerk spike rate" in detected
+    assert "LDLJ" not in detected.split("Detected by Calibra:")[1]
+    assert "! LDLJ smoothness" in rest

@@ -319,6 +319,7 @@ def render_corruption_report(
 
     # Interpretation
     responded = []
+    wrong_way = []
     missed = []
     for key, (label, _) in _METRIC_LABELS.items():
         orig = orig_metrics.get(key)
@@ -327,8 +328,12 @@ def render_corruption_report(
             continue
         delta = corr - orig
         threshold = 0.001 if key == "jitter_cv" else (0.005 if "rate" in key else 0.1)
-        if abs(delta) >= threshold:
+        worse = (key in _WORSE_IS_HIGHER and delta > 0) or (key in _WORSE_IS_LOWER and delta < 0)
+        if abs(delta) >= threshold and worse:
             responded.append(label)
+        elif abs(delta) >= threshold:
+            # A metric that improves on corrupted data did not detect it.
+            wrong_way.append(label)
         elif (
             (cfg.drop_frames and key == "dropout_rate")
             or (cfg.add_jitter_ms and key == "jitter_cv")
@@ -340,6 +345,11 @@ def render_corruption_report(
         lines.append("Detected by Calibra:")
         for m in responded:
             lines.append(f"  ✓ {m}")
+        lines.append("")
+    if wrong_way:
+        lines.append("Moved the wrong way (corrupted data scores better):")
+        for m in wrong_way:
+            lines.append(f"  ! {m}")
         lines.append("")
     if missed:
         lines.append("Expected to respond but didn't (review thresholds or corruption rate):")

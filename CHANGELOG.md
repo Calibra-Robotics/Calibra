@@ -39,6 +39,10 @@ All notable changes to Calibra are documented here.
   It now also covers the Calibra version and every analyzer's resolved
   settings (after the profile is applied). Existing cache entries are
   recomputed once.
+- **`calibra corrupt` no longer counts an improved metric as a detection.** A
+  metric that scores the corrupted copy better (LDLJ under spike injection)
+  was listed under "Detected by Calibra"; it is now listed under "Moved the
+  wrong way".
 - `docs/benchmarks.md`: the PushT / DROID-100 observation claimed CRITICAL
   jerk and velocity-discontinuity flags (not true under current code) and an
   8–10 point win over random (the table shows 1.3 on PushT). It now follows the
