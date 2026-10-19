@@ -24,15 +24,16 @@ From two datasets, no dataset-specific configuration:
 
 | Dataset | Control mode | Rate | Flag |
 |---------|-------------|------|------|
-| lerobot/pusht | velocity (2D) | 16.7% | CRITICAL |
-| lerobot/aloha_sim_insertion_human | joint position (14D) | 2.4% | WARNING |
+| lerobot/pusht | absolute target position (2D) | 16.7% | CRITICAL (OK under the `pusht` profile) |
+| lerobot/aloha_sim_insertion_human | joint position (12 joint dims, grippers excluded) | 1.45% | OK |
 
-7× ratio without any dataset-type input. The metric recovers a structural property
+11× ratio without any dataset-type input (7× when ALOHA's grippers were scored
+as joints: 2.4% over 14D). The metric recovers a structural property
 of the control mode from raw trajectories alone.
 
 **Rule 2: The 5% critical threshold is correctly calibrated for position-command datasets.**
 
-2.4% is well below the critical threshold for aloha — the tool does not
+1.45% is well below the critical threshold for aloha — the tool does not
 false-positive on clean position-command teleop data.
 
 **Rule 3: ~16% is the empirical floor for velocity-command teleop.**
@@ -46,7 +47,7 @@ datasets for discontinuity rates below ~20% without additional context.
 
 ## Open questions (needs more datasets)
 
-1. **Is 2.4% the position-command floor, or is it aloha-specific?** A second
+1. **Is 1.45% the position-command floor, or is it aloha-specific?** A second
    position-command dataset (e.g., BridgeData V2, DROID) with a different task or
    hardware would confirm whether the position-command baseline is stable.
 
@@ -73,4 +74,4 @@ None confirmed yet. The metric behaved as expected on both datasets.
 ## Datasets profiled
 
 - `references/pusht_velocity_command.json` — velocity-command reference (16.7%)
-- `references/aloha_sim_insertion_human.json` — position-command reference (2.4%)
+- `references/aloha_sim_insertion_human.json` — position-command reference (1.45%, grippers excluded)

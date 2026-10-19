@@ -11,10 +11,10 @@
       "evidence": [
         {
           "dataset": "lerobot/aloha_sim_insertion_human",
-          "observed": 0.024,
+          "observed": 0.014538,
           "supports": true,
           "date": "2026-06-15",
-          "notes": "Simulated, 14-DOF bimanual, 50Hz, peg insertion"
+          "notes": "Simulated, 14-DOF bimanual, 50Hz, peg insertion [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.024.]"
         },
         {
           "dataset": "lerobot/aloha_mobile_cabinet",
@@ -25,17 +25,17 @@
         },
         {
           "dataset": "lerobot/aloha_sim_insertion_scripted",
-          "observed": 0.0075,
+          "observed": 0.007538,
           "supports": true,
           "date": "2026-06-15",
-          "notes": "Scripted ALOHA sim, 14-DOF bimanual, 50Hz, peg insertion. Rate 0.75% — fourth position-control data point supporting claim."
+          "notes": "Scripted ALOHA sim, 14-DOF bimanual, 50Hz, peg insertion. Rate 0.75% — fourth position-control data point supporting claim. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.0075.]"
         },
         {
           "dataset": "lerobot/aloha_sim_transfer_cube_scripted",
-          "observed": 0.0075,
+          "observed": 0.007437,
           "supports": true,
           "date": "2026-06-15",
-          "notes": "Scripted ALOHA sim, 14-DOF bimanual, 50Hz, cube transfer. Rate 0.75% — fifth position-control data point supporting claim."
+          "notes": "Scripted ALOHA sim, 14-DOF bimanual, 50Hz, cube transfer. Rate 0.75% — fifth position-control data point supporting claim. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.0075.]"
         },
         {
           "dataset": "lerobot/droid_100",
@@ -46,45 +46,45 @@
         },
         {
           "dataset": "lerobot/aloha_mobile_shrimp",
-          "observed": 0.006596,
+          "observed": 0.005099,
           "supports": true,
           "date": "2026-06-29",
-          "notes": "Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking, 18 episodes. vel_disc_rate 0.66% — well below 5%."
+          "notes": "Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking, 18 episodes. vel_disc_rate 0.66% — well below 5%. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.006596.]"
         },
         {
           "dataset": "lerobot/aloha_sim_transfer_cube_human",
-          "observed": 0.045628,
+          "observed": 0.044221,
           "supports": true,
           "date": "2026-06-29",
-          "notes": "Human teleop sim, 14-DOF, 50Hz, cube transfer, 50 episodes. vel_disc_rate 4.56% — below 5%, marginally. Highest rate among ALOHA sim human datasets."
+          "notes": "Human teleop sim, 14-DOF, 50Hz, cube transfer, 50 episodes. vel_disc_rate 4.56% — below 5%, marginally. Highest rate among ALOHA sim human datasets. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.045628.]"
         },
         {
           "dataset": "lerobot/aloha_static_battery",
-          "observed": 0.054638,
+          "observed": 0.054604,
           "supports": false,
           "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, battery task, 49 episodes. vel_disc_rate 5.46% — exceeds 5% claim boundary (below 8% falsification threshold). Second hardware counter-evidence after droid_100 (7.1%); combined with cups_open (6.4%) and svla_pickplace (6.7%) this is now a pattern of hardware datasets clustering in the 5–7% range. Evidence accumulating that the 5% threshold is too tight for real-hardware human teleoperation."
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, battery task, 49 episodes. vel_disc_rate 5.46% — exceeds 5% claim boundary (below 8% falsification threshold). Second hardware counter-evidence after droid_100 (7.1%); combined with cups_open (6.4%) and svla_pickplace (6.7%) this is now a pattern of hardware datasets clustering in the 5–7% range. Evidence accumulating that the 5% threshold is too tight for real-hardware human teleoperation. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.054638.]"
         },
         {
           "dataset": "lerobot/aloha_static_candy",
-          "observed": 0.02659,
+          "observed": 0.03808,
           "supports": true,
           "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, candy task, 50 episodes. vel_disc_rate 2.66% — below 5%."
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, candy task, 50 episodes. vel_disc_rate 2.66% — below 5%. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.02659.]"
         },
         {
           "dataset": "lerobot/aloha_static_coffee",
-          "observed": 0.019454,
+          "observed": 0.018197,
           "supports": true,
           "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, coffee task, 50 episodes. vel_disc_rate 1.95% — below 5%."
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, coffee task, 50 episodes. vel_disc_rate 1.95% — below 5%. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.019454.]"
         },
         {
           "dataset": "lerobot/aloha_static_cups_open",
-          "observed": 0.064372,
+          "observed": 0.080955,
           "supports": false,
           "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, cups task, 50 episodes. vel_disc_rate 6.44% — exceeds 5% (below 8% falsification boundary). Third hardware counter-evidence. Pattern: battery(5.5%), cups_open(6.4%), droid_100(7.1%), svla_pickplace(6.7%) — four hardware datasets all land in 5–7%. A revised threshold of <8% would accommodate all current evidence."
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, cups task, 50 episodes. vel_disc_rate 6.44% — exceeds 5% (below 8% falsification boundary). Third hardware counter-evidence. Pattern: battery(5.5%), cups_open(6.4%), droid_100(7.1%), svla_pickplace(6.7%) — four hardware datasets all land in 5–7%. A revised threshold of <8% would accommodate all current evidence. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.064372.]"
         },
         {
           "dataset": "lerobot/svla_so100_pickplace",
@@ -104,9 +104,14 @@
       "falsification": {
         "condition": "Any position-command hardware dataset with aggregate rate > 0.08",
         "threshold": 0.08,
-        "pending_tests": []
+        "pending_tests": [
+          {
+            "dataset": "Review: lerobot/aloha_static_cups_open meets the falsification condition",
+            "reason": "Re-profiled 2026-10-19 with both grippers excluded (gripper_dims [6, 13]), its aggregate rate is 8.10% (was 6.44% with only the last dim excluded), just above the 0.08 threshold. Decide whether this falsifies VD-001 (SPEC: set status falsified) or whether the threshold or gripper handling should be revisited first."
+          }
+        ]
       },
-      "last_updated": "2026-09-27"
+      "last_updated": "2026-10-19"
     },
     {
       "id": "VD-002",

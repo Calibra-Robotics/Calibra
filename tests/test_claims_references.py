@@ -42,16 +42,31 @@ def _references() -> dict[str, dict]:
     return refs
 
 
+def _ldlj_definition(ref: dict) -> str:
+    # References made before ldlj_definition was recorded used the whole-episode metric.
+    return ref["meta"].get("ldlj_definition", "whole_episode")
+
+
 def _evidence():
+    from calibra.analyzers.smoothness import LDLJ_DEFINITION
+
     refs = _references()
     for path in sorted((PKG / "claims").glob("*.json")):
         for claim in json.loads(path.read_text())["claims"]:
             metric = claim.get("reference_metric") or _REFERENCE_METRIC.get(claim["metric"])
+            evidence_def = claim.get("evidence_ldlj_definition", LDLJ_DEFINITION)
             for entry in claim.get("evidence", []):
                 observed = entry.get("observed")
                 if metric is None or not isinstance(observed, (int, float)):
                     continue
                 if entry["dataset"] not in refs:
+                    continue
+                # LDLJ values are only comparable under the same definition: a
+                # whole-episode claim value is checked against a whole-episode
+                # reference, and new evidence against a re-profiled one.
+                if claim["metric"] == "ldlj" and evidence_def != _ldlj_definition(
+                    refs[entry["dataset"]]
+                ):
                     continue
                 analyzer, key = metric.split("/", 1)
                 measured = refs[entry["dataset"]]["aggregate_metrics"].get(analyzer, {}).get(key)
@@ -99,3 +114,13 @@ def test_confidence_follows_spec_scale(n_supporting, expected):
 
     evidence = [{"supports": True}] * n_supporting + [{"supports": False}]
     assert _derive_confidence({"evidence": evidence}) == expected
+
+
+def test_unjudged_evidence_does_not_count():
+    # supports: null is a measured value awaiting judgment (SPEC.md).
+    from calibra.claims import _derive_confidence
+
+    assert _derive_confidence({"evidence": [{"supports": None}] * 10}) == "NOT VALIDATED"
+    assert _derive_confidence({"evidence": [{"supports": True}, {"supports": None}]}) == (
+        "LOW-MODERATE"
+    )

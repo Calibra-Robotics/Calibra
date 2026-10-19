@@ -3,130 +3,184 @@
     {
       "id": "LDLJ-001",
       "metric": "ldlj",
+      "evidence_ldlj_definition": "per_submovement_v1",
       "class": "any",
       "assertion": "LDLJ is not a valid cross-dataset comparator when control modes or control frequencies differ significantly (> ~2x)",
-      "conditions": "LDLJ = -log((T^3 / v_max^2) * integral(||jerk||^2 dt)). All evidence below was measured with the whole-episode definition (Calibra <= 0.12). Since ldlj_definition per_submovement_v1 the metric is computed per sub-movement after a 10 Hz low-pass, which removes the episode-length (-4 ln N) and sampling-rate (1/dt^3 noise) dependence this claim describes; see eval/investigations/ldlj/FINDINGS.md. The evidence does not carry over to the new definition.",
-      "confidence": "MODERATE-HIGH",
+      "conditions": "Tested with ldlj_definition per_submovement_v1 by changing only the sampling rate of the same trajectories, and across datasets at native rates (eval/investigations/ldlj/SUBSAMPLING.md). The whole-episode evidence (Calibra <= 0.12) and the 2026-10-19 single-dataset measurements are retracted below.",
+      "confidence": "MODERATE",
       "status": "active_hypothesis",
       "evidence": [
         {
-          "dataset": "lerobot/aloha_sim_insertion_human",
-          "observed": -20.43,
+          "dataset": "lerobot/aloha_static_battery subsampled 50 -> 25 -> 10 -> 5 Hz",
+          "observed": "LDLJ -12.63 / -9.86 / -8.57 / -7.53 on the same trajectories",
           "supports": true,
-          "date": "2026-06-15",
-          "notes": "50Hz, 14-DOF position control. Scores WORSE than pusht despite being physically smoother — confirms cross-mode incomparability [Corrected 2026-09-27: pusht is also position control, so this is a cross-frequency (10 vs 50 Hz) comparison, not cross-mode.]"
+          "date": "2026-10-19",
+          "notes": "Only the sampling rate changes (every k-th step kept; gripper_dims [6, 13]). LDLJ moves 5.1 units and crosses from WARNING to OK. eval/investigations/ldlj/SUBSAMPLING.md."
         },
         {
-          "dataset": "lerobot/pusht",
-          "observed": -16.34,
+          "dataset": "lerobot/aloha_sim_insertion_human subsampled 50 -> 25 -> 10 -> 5 Hz",
+          "observed": "LDLJ -11.01 / -9.23 / -8.82 / -8.38 on the same trajectories",
           "supports": true,
-          "date": "2026-06-15",
-          "notes": "~10Hz, 2D velocity command. Scores BETTER than aloha despite being a jerkier control mode — anomalous direction confirms the claim [Corrected 2026-09-27: pusht is position control (2-D target positions), not velocity. It still supports the claim through the ~5x frequency gap to aloha (10 vs 50 Hz), not through a control-mode difference.]"
+          "date": "2026-10-19",
+          "notes": "Same test on sim human teleop. Subsampled to 10 Hz it scores like lerobot/pusht at its native 10 Hz (-8.89), so the PushT-vs-ALOHA gap is explained by sampling rate. eval/investigations/ldlj/SUBSAMPLING.md."
         },
         {
-          "dataset": "lerobot/aloha_sim_insertion_scripted",
-          "observed": -17.192,
+          "dataset": "nvidia/BridgeData2_LeRobot_v3 (5 Hz, velocity) vs lerobot/aloha_* (50 Hz, position)",
+          "observed": "BridgeData2 -8.70 vs ALOHA -11.0 .. -13.2 (native 50 Hz)",
           "supports": true,
-          "date": "2026-06-15",
-          "notes": "50Hz, 14-DOF position control, scripted. Scores BETTER than aloha_sim_insertion_human (-20.43) despite same setup — difference driven by motion profile, not frequency. Further confirms cross-mode incomparability."
-        },
-        {
-          "dataset": "lerobot/aloha_sim_transfer_cube_scripted",
-          "observed": -17.232,
-          "supports": true,
-          "date": "2026-06-15",
-          "notes": "50Hz, 14-DOF position control, scripted. Consistent with insertion_scripted (-17.19). Both scripted datasets cluster at -17.2, distinct from human demos at -20.4 — confirms LDLJ is sensitive to data collection method within the same control class."
-        },
-        {
-          "dataset": "lerobot/droid_100",
-          "observed": -19.393163,
-          "supports": true,
-          "date": "2026-06-18",
-          "notes": "DROID, 7-DOF position-command, 15Hz, 100 episodes of real hardware teleoperation. LDLJ −19.39 at 15Hz vs aloha −20.43 at 50Hz — a gap of only 1.0 unit despite 3.3× frequency difference. Within same control mode, frequency has limited LDLJ impact. Contrast with cross-mode gap: pusht (velocity) −16.34 vs aloha (position) −20.43 = 4.1 units gap despite a smaller frequency difference. Confirms that the control-mode dimension dominates over frequency for LDLJ divergence. Resolves pending test for 'low-frequency position-command dataset'. [Corrected 2026-09-27: pusht is position control, so the pusht-vs-aloha gap is within-mode at a 5x frequency difference. The conclusion that control mode dominates frequency is not supported by this pair.]"
-        },
-        {
-          "dataset": "nvidia/BridgeData2_LeRobot_v3",
-          "observed": -13.788,
-          "supports": true,
-          "date": "2026-06-18",
-          "notes": "BridgeData V2, 7-DOF velocity-command, 5Hz. LDLJ −13.79 vs pusht (velocity, 10Hz) at −16.34 — a 2.55-unit gap within the same control mode at 2x frequency difference. Cross-mode gap (velocity vs position): pusht −16.34 vs aloha −20.43 = 4.1 units. Shows that both frequency AND control mode contribute to LDLJ divergence. Further supports LDLJ-001: LDLJ is not a valid cross-dataset comparator even within the same control mode when frequencies differ ≥2x. [Corrected 2026-09-27: pusht is position control, so BridgeData2 vs pusht crosses control mode and frequency; the 'within the same control mode' reading does not hold. The entry still supports LDLJ-001 as a cross-mode, cross-frequency divergence.]"
+          "date": "2026-10-19",
+          "notes": "Different control mode and a 10x rate gap: the velocity-command dataset scores smoother than every position-command ALOHA dataset, the physically unexpected order. BridgeData2 measured on revision b96f7216 from its data/ and meta/ files (velocity mode, last dim excluded); spike and velocity-discontinuity rates on that revision do not match calibra/references/bridgedata_v2.json, which was made from other data (the June code gives the same numbers as today's on b96f7216), so that reference is not replaced. eval/investigations/ldlj/SUBSAMPLING.md."
         }
       ],
       "falsification": {
         "condition": "Two datasets with different control modes where LDLJ ranks them in the physically expected order (position smoother than velocity) AND control frequencies differ > 2x",
         "pending_tests": [
           {
-            "dataset": "Re-profile the six evidence datasets with ldlj_definition per_submovement_v1",
-            "reason": "Evidence was measured with the whole-episode definition; cross-frequency divergence may largely disappear under the per-sub-movement metric."
+            "dataset": "Control mode at matched sampling rate",
+            "reason": "At a matched 5 Hz, BridgeData2 (velocity, -8.70) vs ALOHA subsampled to 5 Hz (position, -7.53 and -8.38) rank in the physically expected order, so the evidence supports the frequency half of the assertion, not the control-mode half. A position- and a velocity-command dataset recorded at the same native rate would test it; if mode alone does not break comparability, narrow the assertion to frequency."
           }
         ]
       },
-      "last_updated": "2026-10-16"
+      "last_updated": "2026-10-19",
+      "retracted_evidence": [
+        {
+          "dataset": "lerobot/aloha_sim_insertion_human",
+          "observed": -20.43,
+          "supports": true,
+          "date": "2026-06-15",
+          "notes": "50Hz, 14-DOF position control. Scores WORSE than pusht despite being physically smoother — confirms cross-mode incomparability [Corrected 2026-09-27: pusht is also position control, so this is a cross-frequency (10 vs 50 Hz) comparison, not cross-mode.]",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length and sampling rate. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/pusht",
+          "observed": -16.34,
+          "supports": true,
+          "date": "2026-06-15",
+          "notes": "~10Hz, 2D velocity command. Scores BETTER than aloha despite being a jerkier control mode — anomalous direction confirms the claim [Corrected 2026-09-27: pusht is position control (2-D target positions), not velocity. It still supports the claim through the ~5x frequency gap to aloha (10 vs 50 Hz), not through a control-mode difference.]",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length and sampling rate. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/aloha_sim_insertion_scripted",
+          "observed": -17.192,
+          "supports": true,
+          "date": "2026-06-15",
+          "notes": "50Hz, 14-DOF position control, scripted. Scores BETTER than aloha_sim_insertion_human (-20.43) despite same setup — difference driven by motion profile, not frequency. Further confirms cross-mode incomparability.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length and sampling rate. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/aloha_sim_transfer_cube_scripted",
+          "observed": -17.232,
+          "supports": true,
+          "date": "2026-06-15",
+          "notes": "50Hz, 14-DOF position control, scripted. Consistent with insertion_scripted (-17.19). Both scripted datasets cluster at -17.2, distinct from human demos at -20.4 — confirms LDLJ is sensitive to data collection method within the same control class.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length and sampling rate. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/droid_100",
+          "observed": -19.393163,
+          "supports": true,
+          "date": "2026-06-18",
+          "notes": "DROID, 7-DOF position-command, 15Hz, 100 episodes of real hardware teleoperation. LDLJ −19.39 at 15Hz vs aloha −20.43 at 50Hz — a gap of only 1.0 unit despite 3.3× frequency difference. Within same control mode, frequency has limited LDLJ impact. Contrast with cross-mode gap: pusht (velocity) −16.34 vs aloha (position) −20.43 = 4.1 units gap despite a smaller frequency difference. Confirms that the control-mode dimension dominates over frequency for LDLJ divergence. Resolves pending test for 'low-frequency position-command dataset'. [Corrected 2026-09-27: pusht is position control, so the pusht-vs-aloha gap is within-mode at a 5x frequency difference. The conclusion that control mode dominates frequency is not supported by this pair.]",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length and sampling rate. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "nvidia/BridgeData2_LeRobot_v3",
+          "observed": -13.788,
+          "supports": true,
+          "date": "2026-06-18",
+          "notes": "BridgeData V2, 7-DOF velocity-command, 5Hz. LDLJ −13.79 vs pusht (velocity, 10Hz) at −16.34 — a 2.55-unit gap within the same control mode at 2x frequency difference. Cross-mode gap (velocity vs position): pusht −16.34 vs aloha −20.43 = 4.1 units. Shows that both frequency AND control mode contribute to LDLJ divergence. Further supports LDLJ-001: LDLJ is not a valid cross-dataset comparator even within the same control mode when frequencies differ ≥2x. [Corrected 2026-09-27: pusht is position control, so BridgeData2 vs pusht crosses control mode and frequency; the 'within the same control mode' reading does not hold. The entry still supports LDLJ-001 as a cross-mode, cross-frequency divergence.]",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), and every dataset it was compared with has been re-profiled under per_submovement_v1. Its own re-profile is pending (see pending_tests)."
+        },
+        {
+          "dataset": "lerobot/aloha_sim_insertion_human",
+          "observed": -11.013682,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "50Hz, 14-DOF position control, both grippers excluded (gripper_dims [6, 13]). per_submovement_v1. Whole-episode value was -20.43 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single dataset's LDLJ value is a measurement, not a test of this assertion: differences between datasets mix sampling rate, control mode, task and hardware. Replaced by direct tests (eval/investigations/ldlj/SUBSAMPLING.md). Judged 2026-10-19."
+        },
+        {
+          "dataset": "lerobot/pusht",
+          "observed": -8.885727,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "~10Hz, 2-D absolute target position, both axes scored (pusht profile). per_submovement_v1. Whole-episode value was -16.34 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single dataset's LDLJ value is a measurement, not a test of this assertion: differences between datasets mix sampling rate, control mode, task and hardware. Replaced by direct tests (eval/investigations/ldlj/SUBSAMPLING.md). Judged 2026-10-19."
+        },
+        {
+          "dataset": "lerobot/aloha_sim_insertion_scripted",
+          "observed": -10.955926,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "50Hz, 14-DOF position control, scripted. per_submovement_v1, gripper_dims [6, 13]. Whole-episode value was -17.192 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single dataset's LDLJ value is a measurement, not a test of this assertion: differences between datasets mix sampling rate, control mode, task and hardware. Replaced by direct tests (eval/investigations/ldlj/SUBSAMPLING.md). Judged 2026-10-19."
+        },
+        {
+          "dataset": "lerobot/aloha_sim_transfer_cube_scripted",
+          "observed": -10.891518,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "50Hz, 14-DOF position control, scripted. per_submovement_v1, gripper_dims [6, 13]. Whole-episode value was -17.232 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single dataset's LDLJ value is a measurement, not a test of this assertion: differences between datasets mix sampling rate, control mode, task and hardware. Replaced by direct tests (eval/investigations/ldlj/SUBSAMPLING.md). Judged 2026-10-19."
+        },
+        {
+          "dataset": "lerobot/droid_100",
+          "observed": -9.787342,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "DROID, 7-DOF position-command, 15Hz, real hardware. per_submovement_v1. Whole-episode value was -19.393163 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single dataset's LDLJ value is a measurement, not a test of this assertion: differences between datasets mix sampling rate, control mode, task and hardware. Replaced by direct tests (eval/investigations/ldlj/SUBSAMPLING.md). Judged 2026-10-19."
+        }
+      ]
     },
     {
       "id": "LDLJ-002",
       "metric": "ldlj",
+      "evidence_ldlj_definition": "per_submovement_v1",
       "class": "any",
       "assertion": "LDLJ may be valid for within-type comparison (same control mode, similar frequency)",
-      "conditions": "control frequencies within ~2x, same action space semantics. All evidence below was measured with the whole-episode definition (Calibra <= 0.12), which scales with episode length (about -4 ln N for N movements); within-type rankings (e.g. aloha_mobile_shrimp as 'jerkiest') may reflect longer, multi-step episodes rather than rougher motion. Re-test with ldlj_definition per_submovement_v1; see eval/investigations/ldlj/FINDINGS.md.",
-      "confidence": "STRONG",
-      "status": "active_hypothesis",
+      "conditions": "control frequencies within ~2x, same action space semantics. Tested with ldlj_definition per_submovement_v1 against known-worse (spike-injected) copies; see eval/investigations/ldlj/SPIKE_INJECTION.md. The whole-episode evidence (Calibra <= 0.12) and the 2026-10-19 single-dataset measurements are retracted below.",
+      "confidence": "NOT VALIDATED",
+      "status": "falsified",
       "evidence": [
         {
-          "dataset": "lerobot/aloha_sim_transfer_cube_human",
-          "observed": -20.015224,
-          "supports": true,
-          "date": "2026-06-29",
-          "notes": "Human teleop sim, 14-DOF, 50Hz, cube transfer. LDLJ -20.01 — consistent with insertion_human (-20.43). Gap of only 0.4 units between two same-control-mode, same-frequency human sim tasks. Supports within-type validity."
+          "dataset": "lerobot/aloha_static_battery clean vs 2% spike-injected",
+          "observed": "LDLJ -12.63 -> -11.29 (clean -> corrupted); jerk spike rate 0.5% -> 15.2%",
+          "supports": false,
+          "date": "2026-10-19",
+          "notes": "Known-worse copy from `calibra corrupt lerobot/aloha_static_battery --inject-spikes 0.02` (seed 42; see eval/investigations/ldlj/SPIKE_INJECTION.md). LDLJ does not fall on the corrupted copy (it rises or stays flat), so it fails to distinguish known-worse from clean within the same type, which is this claim's falsification condition. Jerk spike rate detects every run."
         },
         {
-          "dataset": "lerobot/aloha_static_battery",
-          "observed": -22.102043,
-          "supports": true,
-          "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, battery task. LDLJ -22.10 — clusters with other real-hardware ALOHA tasks (-20.5 to -24.1). Within-type comparison ranks this as jerkier than peg insertion (-20.4), consistent with physical expectation for a high-precision fine-motor task."
+          "dataset": "lerobot/aloha_sim_insertion_human clean vs 2% spike-injected",
+          "observed": "LDLJ -11.01 -> -10.54 (clean -> corrupted); jerk spike rate 0.4% -> 15.0%",
+          "supports": false,
+          "date": "2026-10-19",
+          "notes": "Known-worse copy from `calibra corrupt lerobot/aloha_sim_insertion_human --inject-spikes 0.02` (seed 42; see eval/investigations/ldlj/SPIKE_INJECTION.md). LDLJ does not fall on the corrupted copy (it rises or stays flat), so it fails to distinguish known-worse from clean within the same type, which is this claim's falsification condition. Jerk spike rate detects every run."
         },
         {
-          "dataset": "lerobot/aloha_static_candy",
-          "observed": -22.282415,
-          "supports": true,
-          "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, candy task. LDLJ -22.28 — virtually identical to battery (-22.10). Two similar real-hardware tasks cluster tightly, supporting within-type comparison reproducibility."
+          "dataset": "lerobot/aloha_sim_insertion_human clean vs 5% spike-injected",
+          "observed": "LDLJ -11.01 -> -9.90 (clean -> corrupted); jerk spike rate 0.4% -> 33.0%",
+          "supports": false,
+          "date": "2026-10-19",
+          "notes": "Known-worse copy from `calibra corrupt lerobot/aloha_sim_insertion_human --inject-spikes 0.05` (seed 42; see eval/investigations/ldlj/SPIKE_INJECTION.md). LDLJ does not fall on the corrupted copy (it rises or stays flat), so it fails to distinguish known-worse from clean within the same type, which is this claim's falsification condition. Jerk spike rate detects every run."
         },
         {
-          "dataset": "lerobot/aloha_static_coffee",
-          "observed": -24.140276,
-          "supports": true,
-          "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, coffee task. LDLJ -24.14 — most negative of the static ALOHA tasks; coffee involves slow, controlled pouring motions requiring high jerk for precise positioning. Within-type ranking places it correctly below battery/candy."
-        },
-        {
-          "dataset": "lerobot/aloha_static_cups_open",
-          "observed": -20.51132,
-          "supports": true,
-          "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, cups task. LDLJ -20.51 — close to human sim insertion (-20.43) and cube transfer human (-20.01). Within-type comparison clusters cups with peg-insertion-style precision tasks."
-        },
-        {
-          "dataset": "lerobot/aloha_mobile_shrimp",
-          "observed": -27.795387,
-          "supports": true,
-          "date": "2026-06-29",
-          "notes": "Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking, 18 episodes. LDLJ -27.80 — most negative (jerkiest) of all position-command datasets. Shrimp cooking involves rapid wrist twists and high-acceleration cutting motions; within-type comparison correctly ranks this as the highest-jerk dataset. Demonstrates LDLJ can discriminate within the same control class across qualitatively different tasks."
-        },
-        {
-          "dataset": "lerobot/svla_so100_pickplace",
-          "observed": -20.105093,
-          "supports": true,
-          "date": "2026-06-29",
-          "notes": "SO-100 low-cost arm, real hardware, position control, pick and place, 50 episodes. LDLJ -20.10 — similar to ALOHA human demos (-20.4), despite different hardware. Within-type comparison yields physically plausible ranking. Note: low-cost arm backlash may introduce noise; result treated as approximate."
-        },
-        {
-          "dataset": "lerobot/svla_so100_stacking",
-          "observed": -19.61111,
-          "supports": true,
-          "date": "2026-06-29",
-          "notes": "SO-100 low-cost arm, real hardware, position control, block stacking, 56 episodes. LDLJ -19.61 — slightly less negative than pickplace (-20.10), plausible for a stacking task requiring fewer rapid direction changes. Within-type comparison across two SO-100 tasks produces expected relative ranking."
+          "dataset": "lerobot/svla_so100_stacking clean vs 5% spike-injected",
+          "observed": "LDLJ -10.64 -> -10.55 (clean -> corrupted); jerk spike rate 1.0% -> 30.5%",
+          "supports": false,
+          "date": "2026-10-19",
+          "notes": "Known-worse copy from `calibra corrupt lerobot/svla_so100_stacking --inject-spikes 0.05` (seed 42; see eval/investigations/ldlj/SPIKE_INJECTION.md). LDLJ does not fall on the corrupted copy (it rises or stays flat), so it fails to distinguish known-worse from clean within the same type, which is this claim's falsification condition. Jerk spike rate detects every run."
         }
       ],
       "falsification": {
@@ -137,12 +191,13 @@
             "reason": "The pusht/pusht_image pair that resolved this was the same data (retracted 2026-09-27)."
           },
           {
-            "dataset": "Re-profile the eight evidence datasets with ldlj_definition per_submovement_v1",
-            "reason": "Whole-episode LDLJ is length-driven; within-type rankings need to be re-checked under the per-sub-movement metric."
+            "dataset": "Noise-type corruption (Gaussian action noise) on the same three datasets",
+            "reason": "The falsifying runs use one injector (step swaps). Before writing a narrower successor claim, check whether LDLJ responds to smooth-noise corruption."
           }
-        ]
+        ],
+        "note": "Falsified 2026-10-19 by spike injection on ALOHA (real and sim) and SO-100: per-sub-movement LDLJ scores the corrupted copy as smoother or unchanged in 5 of 6 runs (eval/investigations/ldlj/SPIKE_INJECTION.md). One injector only; a successor claim should be tested with noise-type corruption too."
       },
-      "last_updated": "2026-10-16",
+      "last_updated": "2026-10-19",
       "retracted_evidence": [
         {
           "dataset": "lerobot/pusht_image",
@@ -170,6 +225,150 @@
           "notes": "BridgeData V2 (velocity, 5Hz) LDLJ −13.79 vs pusht (velocity, 10Hz) −16.34 = 2.55-unit gap within the same control class. LDLJ-002 asserts within-type comparison is valid 'at similar frequency'. BridgeData2 shows that even a 2x frequency difference within velocity-command datasets produces a meaningful LDLJ divergence. This partially challenges LDLJ-002: within-type validity requires frequency matching (≤2x), not just the same control class. The condition 'similar frequency' in LDLJ-002 is validated rather than falsified — the claim's frequency qualifier is confirmed necessary.",
           "retracted": "2026-09-27",
           "retraction_reason": "Compares a 5 Hz velocity-command dataset with lerobot/pusht, which is position control, not velocity. The comparison crosses control mode and frequency at once, so it cannot isolate either."
+        },
+        {
+          "dataset": "lerobot/aloha_sim_transfer_cube_human",
+          "observed": -20.015224,
+          "supports": true,
+          "date": "2026-06-29",
+          "notes": "Human teleop sim, 14-DOF, 50Hz, cube transfer. LDLJ -20.01 — consistent with insertion_human (-20.43). Gap of only 0.4 units between two same-control-mode, same-frequency human sim tasks. Supports within-type validity.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/aloha_static_battery",
+          "observed": -22.102043,
+          "supports": true,
+          "date": "2026-06-29",
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, battery task. LDLJ -22.10 — clusters with other real-hardware ALOHA tasks (-20.5 to -24.1). Within-type comparison ranks this as jerkier than peg insertion (-20.4), consistent with physical expectation for a high-precision fine-motor task.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/aloha_static_candy",
+          "observed": -22.282415,
+          "supports": true,
+          "date": "2026-06-29",
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, candy task. LDLJ -22.28 — virtually identical to battery (-22.10). Two similar real-hardware tasks cluster tightly, supporting within-type comparison reproducibility.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/aloha_static_coffee",
+          "observed": -24.140276,
+          "supports": true,
+          "date": "2026-06-29",
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, coffee task. LDLJ -24.14 — most negative of the static ALOHA tasks; coffee involves slow, controlled pouring motions requiring high jerk for precise positioning. Within-type ranking places it correctly below battery/candy.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/aloha_static_cups_open",
+          "observed": -20.51132,
+          "supports": true,
+          "date": "2026-06-29",
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, cups task. LDLJ -20.51 — close to human sim insertion (-20.43) and cube transfer human (-20.01). Within-type comparison clusters cups with peg-insertion-style precision tasks.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/aloha_mobile_shrimp",
+          "observed": -27.795387,
+          "supports": true,
+          "date": "2026-06-29",
+          "notes": "Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking, 18 episodes. LDLJ -27.80 — most negative (jerkiest) of all position-command datasets. Shrimp cooking involves rapid wrist twists and high-acceleration cutting motions; within-type comparison correctly ranks this as the highest-jerk dataset. Demonstrates LDLJ can discriminate within the same control class across qualitatively different tasks.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/svla_so100_pickplace",
+          "observed": -20.105093,
+          "supports": true,
+          "date": "2026-06-29",
+          "notes": "SO-100 low-cost arm, real hardware, position control, pick and place, 50 episodes. LDLJ -20.10 — similar to ALOHA human demos (-20.4), despite different hardware. Within-type comparison yields physically plausible ranking. Note: low-cost arm backlash may introduce noise; result treated as approximate.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/svla_so100_stacking",
+          "observed": -19.61111,
+          "supports": true,
+          "date": "2026-06-29",
+          "notes": "SO-100 low-cost arm, real hardware, position control, block stacking, 56 episodes. LDLJ -19.61 — slightly less negative than pickplace (-20.10), plausible for a stacking task requiring fewer rapid direction changes. Within-type comparison across two SO-100 tasks produces expected relative ranking.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above)."
+        },
+        {
+          "dataset": "lerobot/aloha_sim_transfer_cube_human",
+          "observed": -11.370566,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "Human teleop sim, 14-DOF, 50Hz, cube transfer. per_submovement_v1, gripper_dims [6, 13]. Whole-episode value was -20.015224 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19."
+        },
+        {
+          "dataset": "lerobot/aloha_static_battery",
+          "observed": -12.632709,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, battery task. per_submovement_v1, gripper_dims [6, 13]. Whole-episode value was -22.102043 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19."
+        },
+        {
+          "dataset": "lerobot/aloha_static_candy",
+          "observed": -12.117708,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, candy task. per_submovement_v1, gripper_dims [6, 13]. Whole-episode value was -22.282415 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19."
+        },
+        {
+          "dataset": "lerobot/aloha_static_coffee",
+          "observed": -13.188998,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, coffee task. per_submovement_v1, gripper_dims [6, 13]. Whole-episode value was -24.140276 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19."
+        },
+        {
+          "dataset": "lerobot/aloha_static_cups_open",
+          "observed": -13.010149,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, cups task. per_submovement_v1, gripper_dims [6, 13]. Whole-episode value was -20.51132 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19."
+        },
+        {
+          "dataset": "lerobot/aloha_mobile_shrimp",
+          "observed": -12.625318,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking, 18 episodes. per_submovement_v1, gripper_dims [6, 13]. Whole-episode value was -27.795387 (retracted), where it ranked as the jerkiest position-command dataset; it no longer does. Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19."
+        },
+        {
+          "dataset": "lerobot/svla_so100_pickplace",
+          "observed": -9.895078,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "SO-100 low-cost arm, real hardware, position control, pick and place, 50 episodes. per_submovement_v1. Whole-episode value was -20.105093 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19."
+        },
+        {
+          "dataset": "lerobot/svla_so100_stacking",
+          "observed": -10.640625,
+          "supports": null,
+          "date": "2026-10-19",
+          "notes": "SO-100 low-cost arm, real hardware, position control, block stacking, 56 episodes. per_submovement_v1. Whole-episode value was -19.61111 (retracted). Support not yet judged.",
+          "retracted": "2026-10-19",
+          "retraction_reason": "A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19."
         }
       ]
     }

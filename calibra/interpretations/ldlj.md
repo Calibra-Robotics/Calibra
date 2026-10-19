@@ -21,12 +21,19 @@ below −10 for movements with significant discontinuities.
 **LDLJ should not be compared across datasets with different control modes or
 significantly different control frequencies.**
 
-Evidence from two datasets:
+Evidence from two datasets, measured with the whole-episode definition
+(Calibra ≤ 0.12):
 
 | Dataset | Control mode | Freq | Action dim | LDLJ (mean) | Flag |
 |---------|-------------|------|-----------|-------------|------|
-| lerobot/pusht | velocity (2D) | ~10Hz | 2 | −16.34 | CRITICAL |
+| lerobot/pusht | absolute target position (2D) | ~10Hz | 2 | −16.34 | CRITICAL |
 | lerobot/aloha_sim_insertion_human | joint position (14D) | 50Hz | 14 | −20.43 | CRITICAL |
+
+Per sub-movement (`ldlj_definition: per_submovement_v1`, re-profiled
+2026-10-19), PushT scores −8.89 (OK) and ALOHA insertion −11.01 (WARNING, both
+grippers excluded): the gap shrinks from 4.1 to 2.1 units. Whether the finding below survives the new
+definition is open; claims LDLJ-001 / LDLJ-002 hold the re-profiled values,
+not yet judged. The rest of this section describes the whole-episode metric.
 
 aloha scores *worse* than pusht despite being position-controlled and physically
 smoother. This is counterintuitive and reveals a limitation of the metric at scale.
@@ -98,5 +105,5 @@ When a user specifies a policy family, the policy-conditioning layer should:
 
 ## Datasets profiled
 
-- `references/pusht_velocity_command.json` — velocity-command, ~10Hz (LDLJ −16.34)
-- `references/aloha_sim_insertion_human.json` — position-command, 50Hz (LDLJ −20.43)
+- `references/pusht_velocity_command.json` — absolute target position, ~10Hz (LDLJ −8.89 per sub-movement; −16.34 whole-episode)
+- `references/aloha_sim_insertion_human.json` — position-command, 50Hz (LDLJ −11.01 per sub-movement, grippers excluded; −20.43 whole-episode)

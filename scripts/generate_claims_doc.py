@@ -155,7 +155,8 @@ def _render_claim(claim: dict, lines: list[str]) -> None:
         for e in evidence:
             ds = e.get("dataset", "?")
             obs = e.get("observed", "n/a")
-            supports = "✅" if e.get("supports", True) else "❌"
+            # supports: null = measured but not yet judged (SPEC.md).
+            supports = {True: "✅", None: "⏳"}.get(e.get("supports", True), "❌")
             date = e.get("date", "")
             notes = e.get("notes", "").replace("|", "\\|")
             if isinstance(obs, float):
@@ -226,7 +227,7 @@ def _render_claims_yaml(claims: list[dict]) -> str:
         if evidence:
             lines.append("    evidence_datasets:")
             for e in evidence:
-                tick = "✓" if e.get("supports", True) else "✗"
+                tick = {True: "✓", None: "?"}.get(e.get("supports", True), "✗")
                 obs = e.get("observed", "")
                 lines.append(f"      - {e.get('dataset', '?')}  # {tick} {obs}")
         falsify = claim.get("falsification", {})

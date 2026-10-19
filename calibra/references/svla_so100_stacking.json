@@ -11,6 +11,8 @@
     "gripper_dims": [
       -1
     ],
+    "dataset_profile": null,
+    "ldlj_definition": "per_submovement_v1",
     "note": "SO-100 low-cost arm, real hardware, position control, block stacking task"
   },
   "episode_structure": {
@@ -78,17 +80,17 @@
     },
     "control_smoothness/per_episode_ldlj": {
       "n": 51,
-      "mean": -19.61111,
-      "std": 0.616975,
-      "min": -20.824322,
-      "max": -17.952348,
-      "p5": -20.652515,
-      "p10": -20.578443,
-      "p25": -19.926453,
-      "p50": -19.641102,
-      "p75": -19.251033,
-      "p90": -18.785546,
-      "p95": -18.694468
+      "mean": -10.640625,
+      "std": 0.930363,
+      "min": -12.984822,
+      "max": -8.831518,
+      "p5": -12.217234,
+      "p10": -11.870021,
+      "p25": -11.075943,
+      "p50": -10.713963,
+      "p75": -9.891336,
+      "p90": -9.580604,
+      "p95": -9.197532
     },
     "control_smoothness/per_episode_spike_rate": {
       "n": 55,
@@ -167,6 +169,10 @@
   },
   "aggregate_metrics": {
     "temporal_stability": {
+      "synthetic_timestamps": 1.0,
+      "non_monotonic.fraction": 0.0,
+      "timescale.median_step_s": 0.033333,
+      "timescale.fraction": 0.0,
       "jitter.mean_cv": 9e-06,
       "jitter.ci_lower": 9e-06,
       "jitter.ci_upper": 1e-05,
@@ -174,26 +180,35 @@
       "dropout.mean_dropout_fraction": 0.0,
       "dropout.ci_lower": 0.0,
       "dropout.ci_upper": 0.0,
-      "dropout.dropout_k": 3.0
+      "dropout.dropout_k": 3.0,
+      "action_dropout.mean_zero_action_fraction": 0.0,
+      "action_dropout.ci_lower": 0.0,
+      "action_dropout.ci_upper": 0.0,
+      "action_dropout.zero_threshold": 2.698559,
+      "action_dropout.state_inconsistency_used": 1.0
     },
     "control_smoothness": {
-      "ldlj.mean_ldlj": -19.61111,
-      "ldlj.ci_lower": -19.77763,
-      "ldlj.ci_upper": -19.456977,
+      "ldlj.mean_ldlj": -10.640625,
+      "ldlj.ci_lower": -10.906818,
+      "ldlj.ci_upper": -10.380104,
       "ldlj.n_episodes": 51.0,
       "jerk_spikes.mean_spike_fraction": 0.010179,
       "jerk_spikes.ci_lower": 0.00794,
       "jerk_spikes.ci_upper": 0.012527,
       "jerk_spikes.spike_k": 5.0,
       "vel_discontinuities.mean_disc_fraction": 0.016478,
-      "vel_discontinuities.ci_lower": 0.013621,
-      "vel_discontinuities.ci_upper": 0.019695,
+      "vel_discontinuities.mean_disc_fraction_filtered": 0.005429,
+      "vel_discontinuities.ci_lower": 0.004295,
+      "vel_discontinuities.ci_upper": 0.006567,
       "vel_discontinuities.threshold": 0.2,
       "action_state_divergence.mean_divergence": 4.274379,
       "action_state_divergence.ci_lower": 0.823781,
       "action_state_divergence.ci_upper": 5.708324,
       "action_state_divergence.n_episodes": 56.0,
-      "action_state_divergence.n_skipped": 0.0
+      "action_state_divergence.n_skipped": 0.0,
+      "action_state_divergence.units_not_radians": 1.0,
+      "action_state_divergence.state_abs_max": 177.451172,
+      "action_state_divergence.relative_divergence": 0.016284
     },
     "coverage_entropy": {
       "action_entropy.entropy_bits_per_dim": 4.791612,
@@ -219,40 +234,69 @@
       "trajectory_diversity.separation_score": 0.534572,
       "trajectory_diversity.n_episodes": 56.0,
       "short_episodes.short_episode_fraction": 0.071429,
-      "short_episodes.lower_fence_steps": 272.625,
+      "short_episodes.lower_fence_steps": 228.0,
       "short_episodes.q1_steps": 389.25,
       "short_episodes.q3_steps": 467.0,
       "short_episodes.iqr_steps": 77.75,
-      "short_episodes.n_outliers": 4.0
+      "short_episodes.n_outliers": 4.0,
+      "duplicate_episodes.duplicate_episode_fraction": 0.0,
+      "duplicate_episodes.n_duplicates": 0.0
     }
   },
   "flags": [
     {
       "analyzer": "temporal_stability",
-      "metric": "timestamp_jitter_cv",
+      "metric": "timestamp_non_monotonic",
       "level": "OK",
+      "observed": 0.0,
+      "ci_lower": null,
+      "ci_upper": null,
+      "interpretation": "Timestamps strictly increase within every episode."
+    },
+    {
+      "analyzer": "temporal_stability",
+      "metric": "timestamp_scale_mismatch",
+      "level": "OK",
+      "observed": 0.0,
+      "ci_lower": null,
+      "ci_upper": null,
+      "interpretation": "Every episode's step duration is on the same time scale."
+    },
+    {
+      "analyzer": "temporal_stability",
+      "metric": "timestamp_jitter_cv",
+      "level": "INFO",
       "observed": 9.472806416040681e-06,
       "ci_lower": 8.788004895244632e-06,
       "ci_upper": 9.983241901273256e-06,
-      "interpretation": "Step-to-step timing is consistent."
+      "interpretation": "Not evaluable: every episode's timestamps lie on an exact frame_index/fps grid (synthesized by the recorder or simulator), so dropped frames and loop jitter cannot show up in them."
     },
     {
       "analyzer": "temporal_stability",
       "metric": "timestamp_dropout_rate",
+      "level": "INFO",
+      "observed": 0.0,
+      "ci_lower": 0.0,
+      "ci_upper": 0.0,
+      "interpretation": "Not evaluable: every episode's timestamps lie on an exact frame_index/fps grid (synthesized by the recorder or simulator), so dropped frames and loop jitter cannot show up in them."
+    },
+    {
+      "analyzer": "temporal_stability",
+      "metric": "action_dropout_rate",
       "level": "OK",
       "observed": 0.0,
       "ci_lower": 0.0,
       "ci_upper": 0.0,
-      "interpretation": "Timestamp dropout rate is within acceptable range."
+      "interpretation": "Action-dropout rate is within acceptable range."
     },
     {
       "analyzer": "control_smoothness",
       "metric": "ldlj",
-      "level": "CRITICAL",
-      "observed": -19.611110126803336,
-      "ci_lower": -19.777629742365356,
-      "ci_upper": -19.456977142866574,
-      "interpretation": "Mean LDLJ = -19.61 across 51 episodes (threshold: >-10). Action trajectories contain significant jerk."
+      "level": "WARNING",
+      "observed": -10.640625343328685,
+      "ci_lower": -10.906817935637317,
+      "ci_upper": -10.38010368695783,
+      "interpretation": "Mean LDLJ = -10.64 across 51 episodes (threshold: >-10). Action trajectories contain significant jerk."
     },
     {
       "analyzer": "control_smoothness",
@@ -267,19 +311,19 @@
       "analyzer": "control_smoothness",
       "metric": "velocity_discontinuity_rate",
       "level": "OK",
-      "observed": 0.01647829321883783,
-      "ci_lower": 0.013620944729089556,
-      "ci_upper": 0.019695347954389698,
-      "interpretation": "Velocity profile is continuous \u2014 no sudden reversals."
+      "observed": 0.005428597615878555,
+      "ci_lower": 0.004295385785353859,
+      "ci_upper": 0.00656730760736949,
+      "interpretation": "Velocity profile is continuous with no sudden reversals (after removing >10 Hz noise; unfiltered 1.6%)."
     },
     {
       "analyzer": "control_smoothness",
       "metric": "action_state_divergence",
-      "level": "CRITICAL",
+      "level": "INFO",
       "observed": 4.274379023483822,
       "ci_lower": 0.8237805962562561,
       "ci_upper": 5.708324193954468,
-      "interpretation": "Action-state divergence is high (4.2744, threshold: 0.350). Very large gap between commanded position and observed joint state. Likely cause: scripted planner with large waypoint targets, or severe communication lag / wrong control mode."
+      "interpretation": "Mean action-state divergence is 4.274 in the dataset's own units, about 1.6% of the state range. State values reach 177.5, so they are not joint angles in radians and the radian-calibrated thresholds do not apply."
     },
     {
       "analyzer": "coverage_entropy",
@@ -333,7 +377,7 @@
       "observed": null,
       "ci_lower": null,
       "ci_upper": null,
-      "interpretation": "No gripper dimension detected \u2014 grasp count unavailable."
+      "interpretation": "No gripper dimension detected; grasp count unavailable."
     },
     {
       "analyzer": "task_structure",
@@ -342,7 +386,7 @@
       "observed": 0.5345715523817904,
       "ci_lower": null,
       "ci_upper": null,
-      "interpretation": "Trajectory diversity score 0.53 \u2014 weak evidence of multiple strategies. May be within-task variation."
+      "interpretation": "Trajectory diversity score 0.53: weak evidence of multiple strategies. May be within-task variation."
     },
     {
       "analyzer": "task_structure",
@@ -351,7 +395,16 @@
       "observed": 0.07142857142857142,
       "ci_lower": null,
       "ci_upper": null,
-      "interpretation": "7.1% of episodes (4/56) have fewer than 273 steps (lower IQR fence). IDs: ['20', '37', '38', '55']"
+      "interpretation": "7.1% of episodes (4/56) have fewer than 228 steps (lower IQR fence). IDs: ['20', '37', '38', '55']"
+    },
+    {
+      "analyzer": "task_structure",
+      "metric": "duplicate_episode_fraction",
+      "level": "OK",
+      "observed": 0.0,
+      "ci_lower": null,
+      "ci_upper": null,
+      "interpretation": "No duplicated episodes."
     }
   ]
 }

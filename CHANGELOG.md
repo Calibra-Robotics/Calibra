@@ -39,10 +39,68 @@ All notable changes to Calibra are documented here.
   It now also covers the Calibra version and every analyzer's resolved
   settings (after the profile is applied). Existing cache entries are
   recomputed once.
+- **PushT references re-profiled** (`pusht_velocity_command.json`,
+  `pusht_image.json`, revision `7628202a`) with per-sub-movement LDLJ: mean
+  −16.34 → −8.89, now recorded as `ldlj_definition: per_submovement_v1`, so
+  `calibra compare` compares LDLJ against them again. Spike and
+  velocity-discontinuity distributions are unchanged; the 0.13.x timestamp and
+  duplicate-episode metrics are added. The other 14 references still use the
+  whole-episode definition. Claims LDLJ-001 / LDLJ-002 now declare
+  `evidence_ldlj_definition: whole_episode`, and
+  `tests/test_claims_references.py` checks LDLJ evidence only against a
+  reference with the same definition; LDLJ-001's re-test note records PushT's
+  new value.
+- **13 more references re-profiled with per-sub-movement LDLJ** (all ALOHA
+  sim/static/mobile, DROID-100, SO-100 pickplace/stacking), offline from the
+  local HF cache, each with its recorded settings. Apart from LDLJ, the only
+  differences are documented code changes (velocity-discontinuity CIs now on
+  the filtered rate, the 0.13.x short-episode fence, current flag thresholds);
+  raw means are unchanged. LDLJ values move from −17…−28 to −9…−13.
+  `bridgedata_v2.json` is not replaced: on its Hub revision `b96f7216` its
+  spike and velocity-discontinuity rates do not reproduce (0.81% / 59.9% vs
+  0.71% / 80.5%), and the June 2026 analyzer gives today's numbers on that
+  data, so the reference came from other data (an unrecorded revision or
+  loader). It stays whole-episode.
+- **ALOHA references exclude both grippers** (`gripper_dims [6, 13]`, the
+  ALOHA/ACT layout of 6 joints + gripper per arm). Before, nine excluded only
+  the last dim (scoring the left gripper as a joint), `aloha_sim_insertion_human`
+  excluded none and `aloha_mobile_cabinet` already used `[6, 13]`. Only
+  smoothness metrics change (coverage, temporal and task-structure output is
+  identical). Claim evidence that cites these references is updated in the
+  same change: JS-001 (9 entries), VD-001 (9), JS-003 (2), LDLJ, each with a
+  `[Corrected 2026-10-19]` note; no JS-001 / VD-001 entry crosses its claim's
+  boundary. `aloha_static_cups_open` now reads 8.10% velocity discontinuities
+  (was 6.44%), just above VD-001's 0.08 falsification threshold: a review
+  pending test records it; the claim's status is unchanged pending that review.
+  Runtime analysis of ALOHA datasets is unchanged (still `[-1]` by default).
+- **LDLJ claims judged on direct tests** instead of single-dataset values
+  (whole-episode evidence and the single-dataset measurements are retracted
+  with reasons):
+  - **LDLJ-002 falsified.** Per-sub-movement LDLJ does not separate
+    spike-injected copies from the clean data: on ALOHA it scores the corrupted
+    copy as *smoother* (battery −12.63 → −11.29 at 2% injected spikes;
+    insertion −11.01 → −9.90 at 5%), and on SO-100 it barely moves; jerk spike
+    rate detects every run. `eval/investigations/ldlj/SPIKE_INJECTION.md`.
+  - **LDLJ-001 supported (MODERATE), frequency half only.** Changing only
+    the sampling rate of the same ALOHA trajectories moves LDLJ by 2.6–5.1
+    units (battery −12.63 at 50 Hz → −8.57 at 10 Hz → −7.53 at 5 Hz), and
+    ALOHA at 10 Hz scores like PushT at its native 10 Hz. BridgeData2
+    (velocity, 5 Hz, −8.70) scores smoother than native 50 Hz ALOHA, but at a
+    matched 5 Hz the order is the physical one, so control mode alone is not
+    shown to break comparability (pending test). `eval/investigations/ldlj/SUBSAMPLING.md`,
+    `eval/investigations/ldlj/subsample.py`.
+  - Same-trajectory subsampling also moves jerk-spike and
+    velocity-discontinuity rates (ALOHA insertion 1.45% → 15.6% velocity
+    discontinuities at 10 Hz, close to PushT's 16.7%). This bears on JS-003,
+    VD-001 and the `pusht` profile's reading of its rate; not acted on here.
 - **`calibra corrupt` no longer counts an improved metric as a detection.** A
   metric that scores the corrupted copy better (LDLJ under spike injection)
   was listed under "Detected by Calibra"; it is now listed under "Moved the
   wrong way".
+- `calibra/claims/SPEC.md` documents `"supports": null` (measured, not yet
+  judged; ⏳ in `docs/claims.md`, no confidence credit), and
+  `tests/test_claims_references.py` checks LDLJ evidence only against
+  references with the same `ldlj_definition`.
 - `docs/benchmarks.md`: the PushT / DROID-100 observation claimed CRITICAL
   jerk and velocity-discontinuity flags (not true under current code) and an
   8–10 point win over random (the table shows 1.3 on PushT). It now follows the

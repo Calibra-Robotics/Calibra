@@ -178,6 +178,16 @@ without evidence, add the missing test to `pending_tests`.
 An entry that is valid but whose notes reasoned from a wrong fact keeps its
 place; append `[Corrected YYYY-MM-DD: ...]` to its notes instead.
 
+### Evidence not yet judged
+
+When a metric's definition changes, its old evidence is retracted and the
+datasets are re-profiled. A re-profiled value whose support has not been
+decided yet is recorded with `"supports": null`. It is checked against its
+reference like any entry, does not count toward confidence, and shows as ⏳ in
+`docs/claims.md`. Add a pending test to judge it. LDLJ claims also declare
+`evidence_ldlj_definition`, so their values are only checked against
+references made with the same `ldlj_definition`.
+
 ---
 
 ## What falsifies a claim

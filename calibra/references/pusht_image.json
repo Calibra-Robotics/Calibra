@@ -10,6 +10,7 @@
     "control_mode": "position",
     "gripper_dims": [],
     "dataset_profile": "pusht",
+    "ldlj_definition": "per_submovement_v1",
     "note": "PushT with image observations. Same 2-D absolute (x, y) target-position actions as lerobot/pusht, no gripper."
   },
   "episode_structure": {
@@ -77,17 +78,17 @@
     },
     "control_smoothness/per_episode_ldlj": {
       "n": 206,
-      "mean": -16.340008,
-      "std": 1.1442,
-      "min": -19.261448,
-      "max": -12.561094,
-      "p5": -18.010439,
-      "p10": -17.72271,
-      "p25": -17.154484,
-      "p50": -16.367387,
-      "p75": -15.651133,
-      "p90": -14.740398,
-      "p95": -14.28249
+      "mean": -8.885727,
+      "std": 0.814311,
+      "min": -12.244745,
+      "max": -7.282099,
+      "p5": -10.271187,
+      "p10": -9.877601,
+      "p25": -9.483583,
+      "p50": -8.820373,
+      "p75": -8.306277,
+      "p90": -7.853098,
+      "p95": -7.722504
     },
     "control_smoothness/per_episode_spike_rate": {
       "n": 206,
@@ -166,6 +167,10 @@
   },
   "aggregate_metrics": {
     "temporal_stability": {
+      "synthetic_timestamps": 1.0,
+      "non_monotonic.fraction": 0.0,
+      "timescale.median_step_s": 0.1,
+      "timescale.fraction": 0.0,
       "jitter.mean_cv": 3e-06,
       "jitter.ci_lower": 3e-06,
       "jitter.ci_upper": 3e-06,
@@ -181,15 +186,16 @@
       "action_dropout.state_inconsistency_used": 1.0
     },
     "control_smoothness": {
-      "ldlj.mean_ldlj": -16.340008,
-      "ldlj.ci_lower": -16.507588,
-      "ldlj.ci_upper": -16.190959,
+      "ldlj.mean_ldlj": -8.885727,
+      "ldlj.ci_lower": -9.00614,
+      "ldlj.ci_upper": -8.775786,
       "ldlj.n_episodes": 206.0,
       "jerk_spikes.mean_spike_fraction": 0.049462,
       "jerk_spikes.ci_lower": 0.045851,
       "jerk_spikes.ci_upper": 0.053051,
       "jerk_spikes.spike_k": 5.0,
       "vel_discontinuities.mean_disc_fraction": 0.166956,
+      "vel_discontinuities.mean_disc_fraction_filtered": 0.166956,
       "vel_discontinuities.ci_lower": 0.15796,
       "vel_discontinuities.ci_upper": 0.175849,
       "vel_discontinuities.threshold": 0.2,
@@ -229,27 +235,47 @@
       "short_episodes.q1_steps": 99.0,
       "short_episodes.q3_steps": 148.0,
       "short_episodes.iqr_steps": 49.0,
-      "short_episodes.n_outliers": 0.0
+      "short_episodes.n_outliers": 0.0,
+      "duplicate_episodes.duplicate_episode_fraction": 0.0,
+      "duplicate_episodes.n_duplicates": 0.0
     }
   },
   "flags": [
     {
       "analyzer": "temporal_stability",
-      "metric": "timestamp_jitter_cv",
+      "metric": "timestamp_non_monotonic",
       "level": "OK",
+      "observed": 0.0,
+      "ci_lower": null,
+      "ci_upper": null,
+      "interpretation": "Timestamps strictly increase within every episode."
+    },
+    {
+      "analyzer": "temporal_stability",
+      "metric": "timestamp_scale_mismatch",
+      "level": "OK",
+      "observed": 0.0,
+      "ci_lower": null,
+      "ci_upper": null,
+      "interpretation": "Every episode's step duration is on the same time scale."
+    },
+    {
+      "analyzer": "temporal_stability",
+      "metric": "timestamp_jitter_cv",
+      "level": "INFO",
       "observed": 2.8640388409803325e-06,
       "ci_lower": 2.7609304758288482e-06,
       "ci_upper": 2.9747536549615295e-06,
-      "interpretation": "Step-to-step timing is consistent."
+      "interpretation": "Not evaluable: every episode's timestamps lie on an exact frame_index/fps grid (synthesized by the recorder or simulator), so dropped frames and loop jitter cannot show up in them."
     },
     {
       "analyzer": "temporal_stability",
       "metric": "timestamp_dropout_rate",
-      "level": "OK",
+      "level": "INFO",
       "observed": 0.0,
       "ci_lower": 0.0,
       "ci_upper": 0.0,
-      "interpretation": "Timestamp dropout rate is within acceptable range."
+      "interpretation": "Not evaluable: every episode's timestamps lie on an exact frame_index/fps grid (synthesized by the recorder or simulator), so dropped frames and loop jitter cannot show up in them."
     },
     {
       "analyzer": "temporal_stability",
@@ -263,29 +289,29 @@
     {
       "analyzer": "control_smoothness",
       "metric": "ldlj",
-      "level": "CRITICAL",
-      "observed": -16.34000797489651,
-      "ci_lower": -16.507588375857587,
-      "ci_upper": -16.19095930475879,
-      "interpretation": "Mean LDLJ = -16.34 across 206 episodes (threshold: >-10). Action trajectories contain significant jerk."
+      "level": "OK",
+      "observed": -8.885726901769075,
+      "ci_lower": -9.006140261500214,
+      "ci_upper": -8.775786373385014,
+      "interpretation": "Action trajectories are smooth (LDLJ within threshold)."
     },
     {
       "analyzer": "control_smoothness",
       "metric": "jerk_spike_rate",
-      "level": "WARNING",
+      "level": "OK",
       "observed": 0.04946185971340376,
       "ci_lower": 0.04585118847190572,
       "ci_upper": 0.05305051707863245,
-      "interpretation": "4.9% of steps have jerk > 5.0\u00d7 median jerk: anomalous discontinuities in action sequence."
+      "interpretation": "Jerk spike rate is within acceptable range."
     },
     {
       "analyzer": "control_smoothness",
       "metric": "velocity_discontinuity_rate",
-      "level": "CRITICAL",
+      "level": "OK",
       "observed": 0.1669558075994595,
       "ci_lower": 0.15795972995063773,
       "ci_upper": 0.17584870257859603,
-      "interpretation": "16.7% of steps show velocity change > 20% of peak velocity."
+      "interpretation": "Velocity profile is continuous with no sudden reversals."
     },
     {
       "analyzer": "control_smoothness",
@@ -354,7 +380,7 @@
       "analyzer": "task_structure",
       "metric": "trajectory_diversity",
       "level": "INFO",
-      "observed": 0.45530184752578917,
+      "observed": 0.4553018475257893,
       "ci_lower": null,
       "ci_upper": null,
       "interpretation": "Trajectory diversity score 0.46: weak evidence of multiple strategies. May be within-task variation."
@@ -367,6 +393,15 @@
       "ci_lower": null,
       "ci_upper": null,
       "interpretation": "No suspiciously short episodes detected."
+    },
+    {
+      "analyzer": "task_structure",
+      "metric": "duplicate_episode_fraction",
+      "level": "OK",
+      "observed": 0.0,
+      "ci_lower": null,
+      "ci_upper": null,
+      "interpretation": "No duplicated episodes."
     }
   ]
 }

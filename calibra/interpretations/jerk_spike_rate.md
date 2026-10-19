@@ -24,15 +24,16 @@ velocity discontinuity rate.**
 
 | Dataset | Control mode | Spike rate | Flag |
 |---------|-------------|-----------|------|
-| lerobot/pusht | velocity (2D) | 4.9% | WARNING |
-| lerobot/aloha_sim_insertion_human | joint position (14D) | 0.69% | OK |
+| lerobot/pusht | absolute target position (2D) | 4.9% | WARNING (OK under the `pusht` profile) |
+| lerobot/aloha_sim_insertion_human | joint position (12 joint dims, grippers excluded) | 0.35% | OK |
 
-7× ratio, same as velocity discontinuity. Both metrics point the same direction.
+14× ratio (7× when ALOHA's grippers were scored as joints: 0.69% over 14D).
+Velocity discontinuity points the same direction.
 
 **Rule 2: The 2% warning threshold is correctly calibrated for position-command
 datasets.**
 
-aloha at 0.69% sits comfortably below the 2% warning level, consistent with clean
+aloha at 0.35% sits comfortably below the 2% warning level, consistent with clean
 teleop position commands.
 
 **Rule 3: Jerk spike rate is more frequency-robust than LDLJ.**
@@ -74,4 +75,4 @@ tasks with strong speed transitions. Watch for this in pick-and-place datasets.
 ## Datasets profiled
 
 - `references/pusht_velocity_command.json` — velocity-command reference (4.9%)
-- `references/aloha_sim_insertion_human.json` — position-command reference (0.69%)
+- `references/aloha_sim_insertion_human.json` — position-command reference (0.35%, grippers excluded)

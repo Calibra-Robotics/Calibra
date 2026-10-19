@@ -20,13 +20,26 @@ fine may be surprisingly clean compared to peers.
 | Action dim | 2 | 14 | 14 | n/a |
 | Jitter CV | 2.9e-6 | 1.1e-5 | 3.0e-5 | Sim and hardware similar here |
 | Dropout | 0.0% | 0.0% | 0.0% | n/a |
-| **LDLJ (mean)** | **−16.34** | **−20.43** | **−24.70** | All CRITICAL (see note) |
-| **Jerk spike rate** | **4.9% WARNING** | **0.69% OK** | **0.42% OK** | Position cmd consistently cleaner |
-| **Velocity disc. rate** | **16.7% CRITICAL** | **2.4% WARNING** | **0.84% OK** | Clean separation by control mode |
+| **LDLJ (mean, whole-episode)** | **−16.34** | **−20.43** | **−24.70** | All CRITICAL under the old definition (see note) |
+| **LDLJ (mean, per sub-movement)** | **−8.89 OK** | **−11.01 WARNING** | **−12.07 WARNING** | Re-profiled 2026-10-19; spread shrinks from 8.4 to 3.2 units |
+| **Jerk spike rate** | **4.9% WARNING** | **0.35% OK** | **0.42% OK** | Position cmd consistently cleaner |
+| **Velocity disc. rate** | **16.7% CRITICAL** | **1.45% OK** | **0.84% OK** | Clean separation by control mode |
 | Action entropy (bits/dim) | 5.30 | 4.85 | 4.67 | All healthy |
 | Contact fraction | 21.7% | 90.7% | 78.8% | Task-type difference |
 | Grasps per episode | none (no gripper) | 1.0 | 4.0 | Task structure detected correctly |
 | **Episode outliers (Calibra)** | **16 / 206** | **n/a (fixed length)** | **8 / 85** | Aggregate-invisible corruption |
+
+Flag levels in this table are under the global thresholds. The `pusht` profile
+rates PushT's jerk spikes and velocity discontinuities OK (it judges them
+against PushT's own clean episodes). Since 0.13.0 the velocity-discontinuity
+flag is judged on the low-pass-filtered rate. Every reference except
+`bridgedata_v2.json` was re-profiled per sub-movement on 2026-10-19
+(`ldlj_definition: per_submovement_v1`); that one does not reproduce on its Hub
+revision (see `eval/investigations/ldlj/SUBSAMPLING.md`). The whole-episode row
+and the LDLJ discussion below describe the old definition.
+All ALOHA references now exclude both grippers (`gripper_dims [6, 13]`, 12
+joint dims scored). Before that they excluded only the last dim, or none
+(aloha insertion: 0.69% spikes, 2.4% velocity discontinuities over 14 dims).
 
 PushT outliers: `calibra lerobot/pusht` on revision `7628202a` (pusht profile,
 both axes). The earlier 27 / 206 came from June 2026 code that scored the x axis
@@ -45,12 +58,13 @@ The velocity discontinuity rate separates cleanly by action space semantics:
   called these velocity commands; see the correction under
   [`pusht_velocity_command.json`](#pusht_velocity_commandjson).)
 
-- **aloha (joint positions): 2.4% → WARNING**. Position-command joint targets are
+- **aloha (joint positions): 1.45% → OK**. Position-command joint targets are
   physically bounded by the previous position; large velocity changes require
-  large position deltas, which teleoperators avoid naturally. The 2.4% rate is
-  low but not zero (some sharp approach-to-grasp transitions).
+  large position deltas, which teleoperators avoid naturally. The 1.45% rate is
+  low but not zero (some sharp approach-to-grasp transitions). (2.4% and
+  WARNING when the grippers were scored as joints.)
 
-The 7× ratio between these two numbers (16.7% vs 2.4%) under identical threshold
+The 11× ratio between these two numbers (16.7% vs 1.45%) under identical threshold
 settings confirms the metric is sensitive to a real and meaningful difference.
 Calibra correctly distinguishes dataset types without any dataset-type input from
 the user. This is the behavior that makes the tool useful before Phase 3
@@ -58,7 +72,8 @@ policy-conditioning is built.
 
 ### The unexpected finding: LDLJ is not directly comparable across dataset types
 
-Both pusht and aloha score CRITICAL on LDLJ (−16.3 and −20.4 respectively), with
+Under the whole-episode definition (Calibra ≤ 0.12), both pusht and aloha
+scored CRITICAL on LDLJ (−16.3 and −20.4 respectively), with
 aloha scoring *worse* despite using position commands. The LDLJ formula is
 theoretically dimensionless (it normalizes by T³ and v_max²) but in practice it
 is sensitive to control frequency and action space dimensionality in ways the
@@ -100,9 +115,9 @@ incompatible control frequencies.
 |--------|-------|-------|
 | Timestamp jitter CV | 2.86e-6 | Near machine-precision; sim timestamps are exact |
 | Dropout rate | 0.0% | Simulated, no dropped frames |
-| LDLJ (mean) | −16.34 | Characteristic of 10 Hz mouse teleop; not comparable to 50 Hz arm datasets |
-| Jerk spike rate | 4.9% | At edge of 5% critical threshold |
-| Velocity discontinuity rate | 16.7% | Structural: p50=16.3%, p95=27.5%; teleop artifact |
+| LDLJ (mean) | −8.89 | Per sub-movement (`per_submovement_v1`), OK; −16.34 under the old whole-episode definition |
+| Jerk spike rate | 4.9% | WARNING under the global 2% / 5% thresholds; OK under the `pusht` profile (0.11 / 0.25) |
+| Velocity discontinuity rate | 16.7% | Structural: p50=16.3%, p95=27.5%; teleop artifact. CRITICAL under the global 5%; OK under the `pusht` profile (0.28 / 0.40) |
 | Action entropy | 5.30 bits/dim | Healthy coverage of the 2D target space |
 | Contact fraction | 21.7% | Steps in slow/contact phase (velocity envelope proxy, no gripper) |
 
@@ -115,8 +130,9 @@ come alive on real hardware. Do not use pusht to calibrate temporal thresholds.
 dataset below 10% is meaningfully smoother than this reference. Any dataset above
 25% is outlying even for this setup (the `pusht` profile's regime cutoff).
 
-**LDLJ of −16.34 is the PushT-style reference.** Interpret LDLJ only within
-datasets of the same control mode and frequency.
+**LDLJ of −8.89 (per sub-movement) is the PushT-style reference.** Interpret
+LDLJ only within datasets of the same control mode and frequency, and only
+against references with the same `ldlj_definition`.
 
 ---
 
@@ -133,9 +149,9 @@ datasets of the same control mode and frequency.
 |--------|-------|-------|
 | Timestamp jitter CV | 1.1e-5 | Sim; not informative |
 | Dropout rate | 0.0% | Sim; not informative |
-| LDLJ (mean) | −20.43 | Worse than pusht despite position control (frequency/dim sensitivity); not cross-comparable |
-| Jerk spike rate | 0.69% | Well within OK (< 2% threshold); clean position trajectories |
-| Velocity discontinuity rate | 2.4% | Position-command floor; contrast with pusht's 16.7% |
+| LDLJ (mean) | −11.01 | Per sub-movement, 12 joint dims (`gripper_dims [6, 13]`). Whole-episode −20.43 (all 14 dims) was worse than pusht despite position control (frequency/dim sensitivity) |
+| Jerk spike rate | 0.35% | Well within OK (< 2% threshold); clean position trajectories. 0.69% with the grippers scored |
+| Velocity discontinuity rate | 1.45% | Position-command floor; contrast with pusht's 16.7%. 2.4% with the grippers scored |
 | Action entropy | 4.85 bits/dim | Healthy but slightly lower than pusht; structured task |
 | PCA top-2 variance | 66.9% | 14D space concentrates in ~2 effective DOFs; expected for insertion |
 | Contact fraction | 90.7% | Most steps near the insertion site; high-contact task |
@@ -152,7 +168,7 @@ in fixed-length datasets. Expected behavior.
 event, matching the task (pick up peg, insert). This validates the task structure
 analyzer on a real manipulation dataset.
 
-**2.4% velocity discontinuity is the position-command floor.** Any position-command
+**1.45% velocity discontinuity is the position-command floor** (12 joint dims). Any position-command
 arm dataset above ~8% warrants investigation. Below 2% is unusually smooth.
 
 **LDLJ is not the right cross-dataset comparator.** Use jerk spike rate and velocity
@@ -174,7 +190,7 @@ or frequencies.
 |--------|-------|-------|
 | Timestamp jitter CV | 3.0e-5 | Low but above machine-precision; hardware timing is clean |
 | Dropout rate | 0.0% | No dropped frames |
-| LDLJ (mean) | −24.70 | Worse than sim aloha; expected on real hardware with oscillation noise |
+| LDLJ (mean) | −12.07 | Per sub-movement. Whole-episode −24.70 was worse than sim aloha; expected on real hardware with oscillation noise |
 | Jerk spike rate | 0.42% | OK (< 2% threshold); position control is smooth |
 | Velocity discontinuity rate | **0.84%** | **Second real-data point supporting VD-001** (position cmd < 5%) |
 | Action entropy | 4.67 bits/dim | Healthy |

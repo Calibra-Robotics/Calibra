@@ -219,59 +219,68 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 #### LDLJ-001 — any
 
 **Status:** 🔬 active hypothesis  
-**Confidence:** 🟢 HIGH  
+**Confidence:** 🟡 MODERATE  
 **Class:** `any`  
 **Source:** `calibra/claims/ldlj.json`  
 
 **Assertion:** LDLJ is not a valid cross-dataset comparator when control modes or control frequencies differ significantly (> ~2x)
 
-**Conditions:** LDLJ = -log((T^3 / v_max^2) * integral(||jerk||^2 dt)). All evidence below was measured with the whole-episode definition (Calibra <= 0.12). Since ldlj_definition per_submovement_v1 the metric is computed per sub-movement after a 10 Hz low-pass, which removes the episode-length (-4 ln N) and sampling-rate (1/dt^3 noise) dependence this claim describes; see eval/investigations/ldlj/FINDINGS.md. The evidence does not carry over to the new definition.
+**Conditions:** Tested with ldlj_definition per_submovement_v1 by changing only the sampling rate of the same trajectories, and across datasets at native rates (eval/investigations/ldlj/SUBSAMPLING.md). The whole-episode evidence (Calibra <= 0.12) and the 2026-10-19 single-dataset measurements are retracted below.
 
 **Evidence:**
 
 | Dataset | Observed | Supports | Date | Notes |
 |---------|----------|----------|------|-------|
-| `lerobot/aloha_sim_insertion_human` | -20.43 | ✅ | 2026-06-15 | 50Hz, 14-DOF position control. Scores WORSE than pusht despite being physically smoother — confirms cross-mode incomparability [Corrected 2026-09-27: pusht is also position control, so this is a cross-frequency (10 vs 50 Hz) comparison, not cross-mode.] |
-| `lerobot/pusht` | -16.34 | ✅ | 2026-06-15 | ~10Hz, 2D velocity command. Scores BETTER than aloha despite being a jerkier control mode — anomalous direction confirms the claim [Corrected 2026-09-27: pusht is position control (2-D target positions), not velocity. It still supports the claim through the ~5x frequency gap to aloha (10 vs 50 Hz), not through a control-mode difference.] |
-| `lerobot/aloha_sim_insertion_scripted` | -17.19 | ✅ | 2026-06-15 | 50Hz, 14-DOF position control, scripted. Scores BETTER than aloha_sim_insertion_human (-20.43) despite same setup — difference driven by motion profile, not frequency. Further confirms cross-mode incomparability. |
-| `lerobot/aloha_sim_transfer_cube_scripted` | -17.23 | ✅ | 2026-06-15 | 50Hz, 14-DOF position control, scripted. Consistent with insertion_scripted (-17.19). Both scripted datasets cluster at -17.2, distinct from human demos at -20.4 — confirms LDLJ is sensitive to data collection method within the same control class. |
-| `lerobot/droid_100` | -19.39 | ✅ | 2026-06-18 | DROID, 7-DOF position-command, 15Hz, 100 episodes of real hardware teleoperation. LDLJ −19.39 at 15Hz vs aloha −20.43 at 50Hz — a gap of only 1.0 unit despite 3.3× frequency difference. Within same control mode, frequency has limited LDLJ impact. Contrast with cross-mode gap: pusht (velocity) −16.34 vs aloha (position) −20.43 = 4.1 units gap despite a smaller frequency difference. Confirms that the control-mode dimension dominates over frequency for LDLJ divergence. Resolves pending test for 'low-frequency position-command dataset'. [Corrected 2026-09-27: pusht is position control, so the pusht-vs-aloha gap is within-mode at a 5x frequency difference. The conclusion that control mode dominates frequency is not supported by this pair.] |
-| `nvidia/BridgeData2_LeRobot_v3` | -13.79 | ✅ | 2026-06-18 | BridgeData V2, 7-DOF velocity-command, 5Hz. LDLJ −13.79 vs pusht (velocity, 10Hz) at −16.34 — a 2.55-unit gap within the same control mode at 2x frequency difference. Cross-mode gap (velocity vs position): pusht −16.34 vs aloha −20.43 = 4.1 units. Shows that both frequency AND control mode contribute to LDLJ divergence. Further supports LDLJ-001: LDLJ is not a valid cross-dataset comparator even within the same control mode when frequencies differ ≥2x. [Corrected 2026-09-27: pusht is position control, so BridgeData2 vs pusht crosses control mode and frequency; the 'within the same control mode' reading does not hold. The entry still supports LDLJ-001 as a cross-mode, cross-frequency divergence.] |
+| `lerobot/aloha_static_battery subsampled 50 -> 25 -> 10 -> 5 Hz` | LDLJ -12.63 / -9.86 / -8.57 / -7.53 on the same trajectories | ✅ | 2026-10-19 | Only the sampling rate changes (every k-th step kept; gripper_dims [6, 13]). LDLJ moves 5.1 units and crosses from WARNING to OK. eval/investigations/ldlj/SUBSAMPLING.md. |
+| `lerobot/aloha_sim_insertion_human subsampled 50 -> 25 -> 10 -> 5 Hz` | LDLJ -11.01 / -9.23 / -8.82 / -8.38 on the same trajectories | ✅ | 2026-10-19 | Same test on sim human teleop. Subsampled to 10 Hz it scores like lerobot/pusht at its native 10 Hz (-8.89), so the PushT-vs-ALOHA gap is explained by sampling rate. eval/investigations/ldlj/SUBSAMPLING.md. |
+| `nvidia/BridgeData2_LeRobot_v3 (5 Hz, velocity) vs lerobot/aloha_* (50 Hz, position)` | BridgeData2 -8.70 vs ALOHA -11.0 .. -13.2 (native 50 Hz) | ✅ | 2026-10-19 | Different control mode and a 10x rate gap: the velocity-command dataset scores smoother than every position-command ALOHA dataset, the physically unexpected order. BridgeData2 measured on revision b96f7216 from its data/ and meta/ files (velocity mode, last dim excluded); spike and velocity-discontinuity rates on that revision do not match calibra/references/bridgedata_v2.json, which was made from other data (the June code gives the same numbers as today's on b96f7216), so that reference is not replaced. eval/investigations/ldlj/SUBSAMPLING.md. |
+
+**Retracted evidence** (not counted toward confidence):
+
+| Dataset | Observed | Retracted | Reason |
+|---------|----------|-----------|--------|
+| `lerobot/aloha_sim_insertion_human` | -20.43 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length and sampling rate. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/pusht` | -16.34 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length and sampling rate. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/aloha_sim_insertion_scripted` | -17.19 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length and sampling rate. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/aloha_sim_transfer_cube_scripted` | -17.23 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length and sampling rate. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/droid_100` | -19.39 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length and sampling rate. Re-profiled under per_submovement_v1 (evidence above). |
+| `nvidia/BridgeData2_LeRobot_v3` | -13.79 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), and every dataset it was compared with has been re-profiled under per_submovement_v1. Its own re-profile is pending (see pending_tests). |
+| `lerobot/aloha_sim_insertion_human` | -11.01 | 2026-10-19 | A single dataset's LDLJ value is a measurement, not a test of this assertion: differences between datasets mix sampling rate, control mode, task and hardware. Replaced by direct tests (eval/investigations/ldlj/SUBSAMPLING.md). Judged 2026-10-19. |
+| `lerobot/pusht` | -8.886 | 2026-10-19 | A single dataset's LDLJ value is a measurement, not a test of this assertion: differences between datasets mix sampling rate, control mode, task and hardware. Replaced by direct tests (eval/investigations/ldlj/SUBSAMPLING.md). Judged 2026-10-19. |
+| `lerobot/aloha_sim_insertion_scripted` | -10.96 | 2026-10-19 | A single dataset's LDLJ value is a measurement, not a test of this assertion: differences between datasets mix sampling rate, control mode, task and hardware. Replaced by direct tests (eval/investigations/ldlj/SUBSAMPLING.md). Judged 2026-10-19. |
+| `lerobot/aloha_sim_transfer_cube_scripted` | -10.89 | 2026-10-19 | A single dataset's LDLJ value is a measurement, not a test of this assertion: differences between datasets mix sampling rate, control mode, task and hardware. Replaced by direct tests (eval/investigations/ldlj/SUBSAMPLING.md). Judged 2026-10-19. |
+| `lerobot/droid_100` | -9.787 | 2026-10-19 | A single dataset's LDLJ value is a measurement, not a test of this assertion: differences between datasets mix sampling rate, control mode, task and hardware. Replaced by direct tests (eval/investigations/ldlj/SUBSAMPLING.md). Judged 2026-10-19. |
 
 **Falsification condition:**
 > Two datasets with different control modes where LDLJ ranks them in the physically expected order (position smoother than velocity) AND control frequencies differ > 2x
 
 **Pending tests:**
 
-- `Re-profile the six evidence datasets with ldlj_definition per_submovement_v1`: Evidence was measured with the whole-episode definition; cross-frequency divergence may largely disappear under the per-sub-movement metric.
+- `Control mode at matched sampling rate`: At a matched 5 Hz, BridgeData2 (velocity, -8.70) vs ALOHA subsampled to 5 Hz (position, -7.53 and -8.38) rank in the physically expected order, so the evidence supports the frequency half of the assertion, not the control-mode half. A position- and a velocity-command dataset recorded at the same native rate would test it; if mode alone does not break comparability, narrow the assertion to frequency.
 
-*Last updated: 2026-10-16*
+*Last updated: 2026-10-19*
 
 ---
 
 #### LDLJ-002 — any
 
-**Status:** 🔬 active hypothesis  
-**Confidence:** 🟢 HIGH  
+**Status:** ❌ falsified  
+**Confidence:** ⬜ NOT VALIDATED  
 **Class:** `any`  
 **Source:** `calibra/claims/ldlj.json`  
 
 **Assertion:** LDLJ may be valid for within-type comparison (same control mode, similar frequency)
 
-**Conditions:** control frequencies within ~2x, same action space semantics. All evidence below was measured with the whole-episode definition (Calibra <= 0.12), which scales with episode length (about -4 ln N for N movements); within-type rankings (e.g. aloha_mobile_shrimp as 'jerkiest') may reflect longer, multi-step episodes rather than rougher motion. Re-test with ldlj_definition per_submovement_v1; see eval/investigations/ldlj/FINDINGS.md.
+**Conditions:** control frequencies within ~2x, same action space semantics. Tested with ldlj_definition per_submovement_v1 against known-worse (spike-injected) copies; see eval/investigations/ldlj/SPIKE_INJECTION.md. The whole-episode evidence (Calibra <= 0.12) and the 2026-10-19 single-dataset measurements are retracted below.
 
 **Evidence:**
 
 | Dataset | Observed | Supports | Date | Notes |
 |---------|----------|----------|------|-------|
-| `lerobot/aloha_sim_transfer_cube_human` | -20.02 | ✅ | 2026-06-29 | Human teleop sim, 14-DOF, 50Hz, cube transfer. LDLJ -20.01 — consistent with insertion_human (-20.43). Gap of only 0.4 units between two same-control-mode, same-frequency human sim tasks. Supports within-type validity. |
-| `lerobot/aloha_static_battery` | -22.1 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, battery task. LDLJ -22.10 — clusters with other real-hardware ALOHA tasks (-20.5 to -24.1). Within-type comparison ranks this as jerkier than peg insertion (-20.4), consistent with physical expectation for a high-precision fine-motor task. |
-| `lerobot/aloha_static_candy` | -22.28 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, candy task. LDLJ -22.28 — virtually identical to battery (-22.10). Two similar real-hardware tasks cluster tightly, supporting within-type comparison reproducibility. |
-| `lerobot/aloha_static_coffee` | -24.14 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, coffee task. LDLJ -24.14 — most negative of the static ALOHA tasks; coffee involves slow, controlled pouring motions requiring high jerk for precise positioning. Within-type ranking places it correctly below battery/candy. |
-| `lerobot/aloha_static_cups_open` | -20.51 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, cups task. LDLJ -20.51 — close to human sim insertion (-20.43) and cube transfer human (-20.01). Within-type comparison clusters cups with peg-insertion-style precision tasks. |
-| `lerobot/aloha_mobile_shrimp` | -27.8 | ✅ | 2026-06-29 | Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking, 18 episodes. LDLJ -27.80 — most negative (jerkiest) of all position-command datasets. Shrimp cooking involves rapid wrist twists and high-acceleration cutting motions; within-type comparison correctly ranks this as the highest-jerk dataset. Demonstrates LDLJ can discriminate within the same control class across qualitatively different tasks. |
-| `lerobot/svla_so100_pickplace` | -20.11 | ✅ | 2026-06-29 | SO-100 low-cost arm, real hardware, position control, pick and place, 50 episodes. LDLJ -20.10 — similar to ALOHA human demos (-20.4), despite different hardware. Within-type comparison yields physically plausible ranking. Note: low-cost arm backlash may introduce noise; result treated as approximate. |
-| `lerobot/svla_so100_stacking` | -19.61 | ✅ | 2026-06-29 | SO-100 low-cost arm, real hardware, position control, block stacking, 56 episodes. LDLJ -19.61 — slightly less negative than pickplace (-20.10), plausible for a stacking task requiring fewer rapid direction changes. Within-type comparison across two SO-100 tasks produces expected relative ranking. |
+| `lerobot/aloha_static_battery clean vs 2% spike-injected` | LDLJ -12.63 -> -11.29 (clean -> corrupted); jerk spike rate 0.5% -> 15.2% | ❌ | 2026-10-19 | Known-worse copy from `calibra corrupt lerobot/aloha_static_battery --inject-spikes 0.02` (seed 42; see eval/investigations/ldlj/SPIKE_INJECTION.md). LDLJ does not fall on the corrupted copy (it rises or stays flat), so it fails to distinguish known-worse from clean within the same type, which is this claim's falsification condition. Jerk spike rate detects every run. |
+| `lerobot/aloha_sim_insertion_human clean vs 2% spike-injected` | LDLJ -11.01 -> -10.54 (clean -> corrupted); jerk spike rate 0.4% -> 15.0% | ❌ | 2026-10-19 | Known-worse copy from `calibra corrupt lerobot/aloha_sim_insertion_human --inject-spikes 0.02` (seed 42; see eval/investigations/ldlj/SPIKE_INJECTION.md). LDLJ does not fall on the corrupted copy (it rises or stays flat), so it fails to distinguish known-worse from clean within the same type, which is this claim's falsification condition. Jerk spike rate detects every run. |
+| `lerobot/aloha_sim_insertion_human clean vs 5% spike-injected` | LDLJ -11.01 -> -9.90 (clean -> corrupted); jerk spike rate 0.4% -> 33.0% | ❌ | 2026-10-19 | Known-worse copy from `calibra corrupt lerobot/aloha_sim_insertion_human --inject-spikes 0.05` (seed 42; see eval/investigations/ldlj/SPIKE_INJECTION.md). LDLJ does not fall on the corrupted copy (it rises or stays flat), so it fails to distinguish known-worse from clean within the same type, which is this claim's falsification condition. Jerk spike rate detects every run. |
+| `lerobot/svla_so100_stacking clean vs 5% spike-injected` | LDLJ -10.64 -> -10.55 (clean -> corrupted); jerk spike rate 1.0% -> 30.5% | ❌ | 2026-10-19 | Known-worse copy from `calibra corrupt lerobot/svla_so100_stacking --inject-spikes 0.05` (seed 42; see eval/investigations/ldlj/SPIKE_INJECTION.md). LDLJ does not fall on the corrupted copy (it rises or stays flat), so it fails to distinguish known-worse from clean within the same type, which is this claim's falsification condition. Jerk spike rate detects every run. |
 
 **Retracted evidence** (not counted toward confidence):
 
@@ -280,6 +289,22 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 | `lerobot/pusht_image` | -16.01 | 2026-09-27 | lerobot/pusht_image has the same actions as lerobot/pusht; its old reference scored only the x axis in float32. Profiled correctly it matches pusht exactly, so it is not a second dataset. |
 | `lerobot/pusht_velocity_command` | -16.34 | 2026-09-27 | Its support was the match with lerobot/pusht_image, which is the same data. |
 | `nvidia/BridgeData2_LeRobot_v3` | -13.79 | 2026-09-27 | Compares a 5 Hz velocity-command dataset with lerobot/pusht, which is position control, not velocity. The comparison crosses control mode and frequency at once, so it cannot isolate either. |
+| `lerobot/aloha_sim_transfer_cube_human` | -20.02 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/aloha_static_battery` | -22.1 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/aloha_static_candy` | -22.28 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/aloha_static_coffee` | -24.14 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/aloha_static_cups_open` | -20.51 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/aloha_mobile_shrimp` | -27.8 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/svla_so100_pickplace` | -20.11 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/svla_so100_stacking` | -19.61 | 2026-10-19 | Measured with the whole-episode LDLJ definition (Calibra <= 0.12), which scales with episode length. Re-profiled under per_submovement_v1 (evidence above). |
+| `lerobot/aloha_sim_transfer_cube_human` | -11.37 | 2026-10-19 | A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19. |
+| `lerobot/aloha_static_battery` | -12.63 | 2026-10-19 | A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19. |
+| `lerobot/aloha_static_candy` | -12.12 | 2026-10-19 | A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19. |
+| `lerobot/aloha_static_coffee` | -13.19 | 2026-10-19 | A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19. |
+| `lerobot/aloha_static_cups_open` | -13.01 | 2026-10-19 | A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19. |
+| `lerobot/aloha_mobile_shrimp` | -12.63 | 2026-10-19 | A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19. |
+| `lerobot/svla_so100_pickplace` | -9.895 | 2026-10-19 | A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19. |
+| `lerobot/svla_so100_stacking` | -10.64 | 2026-10-19 | A single real dataset with no known-worse counterpart; its LDLJ value is a measurement, not a test of this assertion, whose falsification condition needs a known-worse vs clean comparison within one type. Judged 2026-10-19. |
 
 **Falsification condition:**
 > Two datasets of same type where LDLJ fails to distinguish a known-worse dataset (e.g. one with injected noise) from a clean one
@@ -287,9 +312,9 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 **Pending tests:**
 
 - `Two independent velocity-command datasets at similar control frequency`: The pusht/pusht_image pair that resolved this was the same data (retracted 2026-09-27).
-- `Re-profile the eight evidence datasets with ldlj_definition per_submovement_v1`: Whole-episode LDLJ is length-driven; within-type rankings need to be re-checked under the per-sub-movement metric.
+- `Noise-type corruption (Gaussian action noise) on the same three datasets`: The falsifying runs use one injector (step swaps). Before writing a narrower successor claim, check whether LDLJ responds to smooth-noise corruption.
 
-*Last updated: 2026-10-16*
+*Last updated: 2026-10-19*
 
 ---
 
@@ -337,23 +362,23 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 | Dataset | Observed | Supports | Date | Notes |
 |---------|----------|----------|------|-------|
-| `lerobot/aloha_sim_insertion_human` | 0.0069 | ✅ | 2026-06-15 | Simulated, 14-DOF bimanual, 50Hz |
-| `lerobot/aloha_sim_insertion_scripted` | 0.249 | ❌ | 2026-06-15 | Scripted ALOHA sim, 14-DOF, 50Hz. Spike rate 24.9% — far above the 2% threshold. Scripted motions have abrupt start/stop profiles not present in human teleop. Does not trigger formal falsification (condition requires hardware dataset) but indicates claim scope should be clarified as 'human-collected' position datasets. |
-| `lerobot/aloha_sim_transfer_cube_scripted` | 0.219 | ❌ | 2026-06-15 | Scripted ALOHA sim, 14-DOF, 50Hz. Spike rate 21.9% — consistent with insertion_scripted finding. Confirms that scripted motion planners produce high jerk due to sharp trajectory waypoints. Both scripted datasets disconfirm the claim for scripted (non-human) demonstrations. |
+| `lerobot/aloha_sim_insertion_human` | 0.003541 | ✅ | 2026-06-15 | Simulated, 14-DOF bimanual, 50Hz [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.0069.] |
+| `lerobot/aloha_sim_insertion_scripted` | 0.249 | ❌ | 2026-06-15 | Scripted ALOHA sim, 14-DOF, 50Hz. Spike rate 24.9% — far above the 2% threshold. Scripted motions have abrupt start/stop profiles not present in human teleop. Does not trigger formal falsification (condition requires hardware dataset) but indicates claim scope should be clarified as 'human-collected' position datasets. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.249.] |
+| `lerobot/aloha_sim_transfer_cube_scripted` | 0.2173 | ❌ | 2026-06-15 | Scripted ALOHA sim, 14-DOF, 50Hz. Spike rate 21.9% — consistent with insertion_scripted finding. Confirms that scripted motion planners produce high jerk due to sharp trajectory waypoints. Both scripted datasets disconfirm the claim for scripted (non-human) demonstrations. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.219.] |
 | `lerobot/droid_100` | 0.045 | ❌ | 2026-06-16 | DROID, 7-DOF position-command, real hardware teleoperation, 15Hz, diverse robots and tasks. Mean spike_rate 4.5% — exceeds the 2% human-teleop threshold and meets the formal falsification condition (rate > 4%). This is the first real-hardware human-teleoperated position-control dataset to challenge JS-001. Likely contributing factors: diverse hardware platforms with varying noise characteristics, 15Hz control loop introducing coarser jerk estimates compared to 50Hz ALOHA, and a wide range of operator skill levels across 100 episodes (episode-level range: 0–13.5%). The claim boundary of 2% appears too tight for diverse real-hardware teleoperation. Evidence now supports revising to ~5% for heterogeneous hardware. |
-| `lerobot/aloha_mobile_shrimp` | 0.004581 | ✅ | 2026-06-29 | Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking task, 18 episodes. Spike rate 0.46% — well below 2%. First mobile-ALOHA evidence point; confirms claim holds for mobile-base variants. |
-| `lerobot/aloha_sim_transfer_cube_human` | 0.009421 | ✅ | 2026-06-29 | Human teleop sim, 14-DOF, 50Hz, cube transfer, 50 episodes. Spike rate 0.94% — below 2%. Consistent with insertion_human (0.69%); confirms claim across ALOHA sim tasks. |
-| `lerobot/aloha_static_battery` | 0.004376 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, battery task, 49 episodes. Spike rate 0.44% — below 2%. Confirms claim for static-ALOHA real hardware. |
-| `lerobot/aloha_static_candy` | 0.004189 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, candy task, 50 episodes. Spike rate 0.42% — below 2%. |
-| `lerobot/aloha_static_coffee` | 0.001677 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, coffee task, 50 episodes. Spike rate 0.17% — lowest observed across all human-collected datasets. Coffee prep involves slow, controlled motions. |
-| `lerobot/aloha_static_cups_open` | 0.002972 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, cups task, 50 episodes. Spike rate 0.30% — below 2%. |
+| `lerobot/aloha_mobile_shrimp` | 0.003366 | ✅ | 2026-06-29 | Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking task, 18 episodes. Spike rate 0.46% — well below 2%. First mobile-ALOHA evidence point; confirms claim holds for mobile-base variants. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.004581.] |
+| `lerobot/aloha_sim_transfer_cube_human` | 0.005441 | ✅ | 2026-06-29 | Human teleop sim, 14-DOF, 50Hz, cube transfer, 50 episodes. Spike rate 0.94% — below 2%. Consistent with insertion_human (0.69%); confirms claim across ALOHA sim tasks. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.009421.] |
+| `lerobot/aloha_static_battery` | 0.004512 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, battery task, 49 episodes. Spike rate 0.44% — below 2%. Confirms claim for static-ALOHA real hardware. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.004376.] |
+| `lerobot/aloha_static_candy` | 0.001779 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, candy task, 50 episodes. Spike rate 0.42% — below 2%. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.004189.] |
+| `lerobot/aloha_static_coffee` | 0.001349 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, coffee task, 50 episodes. Spike rate 0.17% — lowest observed across all human-collected datasets. Coffee prep involves slow, controlled motions. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.001677.] |
+| `lerobot/aloha_static_cups_open` | 0.001511 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, cups task, 50 episodes. Spike rate 0.30% — below 2%. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.002972.] |
 | `lerobot/svla_so100_pickplace` | 0.01088 | ✅ | 2026-06-29 | SO-100 low-cost arm, real hardware, position control, pick and place, 50 episodes. Spike rate 1.09% — below 2%, though notably higher than ALOHA. Low-cost arm mechanics (backlash, compliance) contribute to marginally higher spike rate while remaining within the human-teleop threshold. |
 | `lerobot/svla_so100_stacking` | 0.01018 | ✅ | 2026-06-29 | SO-100 low-cost arm, real hardware, position control, block stacking, 56 episodes. Spike rate 1.02% — below 2%. Consistent with pickplace (1.09%); confirms that low-cost arm hardware stays within the human-teleop threshold. |
 
 **Falsification condition:**
 > Any position-command hardware dataset with rate > 0.04
 
-*Last updated: 2026-06-29*
+*Last updated: 2026-10-19*
 
 ---
 
@@ -403,8 +428,8 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 | Dataset | Observed | Supports | Date | Notes |
 |---------|----------|----------|------|-------|
-| `lerobot/pusht + lerobot/aloha_sim_insertion_human` | pusht=4.9% (10Hz, 2D), aloha=0.69% (50Hz, 14D) | ✅ | 2026-06-15 | Direction of difference matches physical expectation despite 5x frequency difference — tentatively supports frequency-robustness claim |
-| `lerobot/droid_100 vs lerobot/aloha_sim_insertion_human` | droid_100=4.5% (15Hz, 7D position), aloha=0.69% (50Hz, 14D position) | ✅ | 2026-06-18 | First within-control-mode cross-frequency test (position-command, 3.3x frequency ratio). droid_100 (15Hz) spike rate 4.5% vs aloha (50Hz) spike rate 0.69%. Direction matches physical expectation: lower control frequency yields coarser jerk estimates and higher spike rates. The self-adapting 5x-median threshold still captures meaningful per-episode variation at both frequencies, tentatively supporting frequency-robustness. Note: droid_100 hardware noise may also contribute to the higher spike rate, partially confounding the pure frequency effect. |
+| `lerobot/pusht + lerobot/aloha_sim_insertion_human` | pusht=4.9% (10Hz, 2D), aloha=0.35% (50Hz, 12 joint dims) | ✅ | 2026-06-15 | Direction of difference matches physical expectation despite 5x frequency difference — tentatively supports frequency-robustness claim [Corrected 2026-10-19: aloha re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.69% over 14 dims. Direction unchanged.] |
+| `lerobot/droid_100 vs lerobot/aloha_sim_insertion_human` | droid_100=4.5% (15Hz, 7D position), aloha=0.35% (50Hz, 12 joint dims, position) | ✅ | 2026-06-18 | First within-control-mode cross-frequency test (position-command, 3.3x frequency ratio). droid_100 (15Hz) spike rate 4.5% vs aloha (50Hz) spike rate 0.69%. Direction matches physical expectation: lower control frequency yields coarser jerk estimates and higher spike rates. The self-adapting 5x-median threshold still captures meaningful per-episode variation at both frequencies, tentatively supporting frequency-robustness. Note: droid_100 hardware noise may also contribute to the higher spike rate, partially confounding the pure frequency effect. [Corrected 2026-10-19: aloha re-profiled with both grippers excluded (gripper_dims [6, 13]); 0.35%, was 0.69%. Direction unchanged.] |
 
 **Retracted evidence** (not counted toward confidence):
 
@@ -419,7 +444,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 - `Two velocity-command datasets at different control frequencies`: Replaces the confounded BridgeData2-vs-pusht counter-evidence retracted 2026-09-27.
 
-*Last updated: 2026-09-27*
+*Last updated: 2026-10-19*
 
 ---
 
@@ -476,24 +501,28 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 | Dataset | Observed | Supports | Date | Notes |
 |---------|----------|----------|------|-------|
-| `lerobot/aloha_sim_insertion_human` | 0.024 | ✅ | 2026-06-15 | Simulated, 14-DOF bimanual, 50Hz, peg insertion |
+| `lerobot/aloha_sim_insertion_human` | 0.01454 | ✅ | 2026-06-15 | Simulated, 14-DOF bimanual, 50Hz, peg insertion [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.024.] |
 | `lerobot/aloha_mobile_cabinet` | 0.008364 | ✅ | 2026-06-15 | Real hardware, mobile ALOHA, 14-DOF, 50Hz, cabinet manipulation. Aggregate rate 1.29% (well within 5%). Episode-level analysis found 7 outlier episodes with elevated vel_disc_rate (max: ep_54 at 4.8× MAD above median). Second real-data point supporting claim. [Corrected 2026-09-27: observed 0.013 came from an earlier run; the committed reference (calibra/references/aloha_mobile_cabinet.json) measures 0.008364. Still supports.] |
-| `lerobot/aloha_sim_insertion_scripted` | 0.0075 | ✅ | 2026-06-15 | Scripted ALOHA sim, 14-DOF bimanual, 50Hz, peg insertion. Rate 0.75% — fourth position-control data point supporting claim. |
-| `lerobot/aloha_sim_transfer_cube_scripted` | 0.0075 | ✅ | 2026-06-15 | Scripted ALOHA sim, 14-DOF bimanual, 50Hz, cube transfer. Rate 0.75% — fifth position-control data point supporting claim. |
+| `lerobot/aloha_sim_insertion_scripted` | 0.007538 | ✅ | 2026-06-15 | Scripted ALOHA sim, 14-DOF bimanual, 50Hz, peg insertion. Rate 0.75% — fourth position-control data point supporting claim. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.0075.] |
+| `lerobot/aloha_sim_transfer_cube_scripted` | 0.007437 | ✅ | 2026-06-15 | Scripted ALOHA sim, 14-DOF bimanual, 50Hz, cube transfer. Rate 0.75% — fifth position-control data point supporting claim. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.0075.] |
 | `lerobot/droid_100` | 0.071 | ❌ | 2026-06-16 | DROID, 7-DOF position-command, real hardware, 15Hz, diverse tasks and robots. Mean vel_disc_rate 7.1% — exceeds the 5% threshold asserted by this claim (but below the 8% formal falsification boundary). Episode-level p95 is 18.9%, indicating a long tail of noisy episodes. This is the first real-hardware data point that challenges the <5% claim for position control. Likely causes: diverse robot platforms with varying hardware quality, 15Hz control frequency introducing coarser velocity estimates, and mixed operator skill levels. Downgrading claim confidence to LOW pending a second diverse-hardware dataset. |
-| `lerobot/aloha_mobile_shrimp` | 0.006596 | ✅ | 2026-06-29 | Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking, 18 episodes. vel_disc_rate 0.66% — well below 5%. |
-| `lerobot/aloha_sim_transfer_cube_human` | 0.04563 | ✅ | 2026-06-29 | Human teleop sim, 14-DOF, 50Hz, cube transfer, 50 episodes. vel_disc_rate 4.56% — below 5%, marginally. Highest rate among ALOHA sim human datasets. |
-| `lerobot/aloha_static_battery` | 0.05464 | ❌ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, battery task, 49 episodes. vel_disc_rate 5.46% — exceeds 5% claim boundary (below 8% falsification threshold). Second hardware counter-evidence after droid_100 (7.1%); combined with cups_open (6.4%) and svla_pickplace (6.7%) this is now a pattern of hardware datasets clustering in the 5–7% range. Evidence accumulating that the 5% threshold is too tight for real-hardware human teleoperation. |
-| `lerobot/aloha_static_candy` | 0.02659 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, candy task, 50 episodes. vel_disc_rate 2.66% — below 5%. |
-| `lerobot/aloha_static_coffee` | 0.01945 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, coffee task, 50 episodes. vel_disc_rate 1.95% — below 5%. |
-| `lerobot/aloha_static_cups_open` | 0.06437 | ❌ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, cups task, 50 episodes. vel_disc_rate 6.44% — exceeds 5% (below 8% falsification boundary). Third hardware counter-evidence. Pattern: battery(5.5%), cups_open(6.4%), droid_100(7.1%), svla_pickplace(6.7%) — four hardware datasets all land in 5–7%. A revised threshold of <8% would accommodate all current evidence. |
+| `lerobot/aloha_mobile_shrimp` | 0.005099 | ✅ | 2026-06-29 | Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking, 18 episodes. vel_disc_rate 0.66% — well below 5%. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.006596.] |
+| `lerobot/aloha_sim_transfer_cube_human` | 0.04422 | ✅ | 2026-06-29 | Human teleop sim, 14-DOF, 50Hz, cube transfer, 50 episodes. vel_disc_rate 4.56% — below 5%, marginally. Highest rate among ALOHA sim human datasets. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.045628.] |
+| `lerobot/aloha_static_battery` | 0.0546 | ❌ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, battery task, 49 episodes. vel_disc_rate 5.46% — exceeds 5% claim boundary (below 8% falsification threshold). Second hardware counter-evidence after droid_100 (7.1%); combined with cups_open (6.4%) and svla_pickplace (6.7%) this is now a pattern of hardware datasets clustering in the 5–7% range. Evidence accumulating that the 5% threshold is too tight for real-hardware human teleoperation. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.054638.] |
+| `lerobot/aloha_static_candy` | 0.03808 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, candy task, 50 episodes. vel_disc_rate 2.66% — below 5%. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.02659.] |
+| `lerobot/aloha_static_coffee` | 0.0182 | ✅ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, coffee task, 50 episodes. vel_disc_rate 1.95% — below 5%. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.019454.] |
+| `lerobot/aloha_static_cups_open` | 0.08095 | ❌ | 2026-06-29 | Static ALOHA real hardware, 14-DOF, 50Hz, cups task, 50 episodes. vel_disc_rate 6.44% — exceeds 5% (below 8% falsification boundary). Third hardware counter-evidence. Pattern: battery(5.5%), cups_open(6.4%), droid_100(7.1%), svla_pickplace(6.7%) — four hardware datasets all land in 5–7%. A revised threshold of <8% would accommodate all current evidence. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.064372.] |
 | `lerobot/svla_so100_pickplace` | 0.06726 | ❌ | 2026-06-29 | SO-100 low-cost arm, real hardware, position control, pick and place, 50 episodes. vel_disc_rate 6.73% — exceeds 5% (below 8% falsification boundary). Fourth hardware counter-evidence. The four real-hardware datasets above 5% span two robot platforms (ALOHA, SO-100) and four task types, suggesting platform-independent hardware variation rather than a dataset-specific artifact. Threshold revision from <5% to <8% is now warranted. |
 | `lerobot/svla_so100_stacking` | 0.01648 | ✅ | 2026-06-29 | SO-100 low-cost arm, real hardware, position control, block stacking, 56 episodes. vel_disc_rate 1.65% — below 5%. Within-arm variation is high: pickplace (6.73%) vs stacking (1.65%) on the same hardware, suggesting task type is a strong driver of vel_disc on low-cost arms. |
 
 **Falsification condition:**
 > Any position-command hardware dataset with aggregate rate > 0.08
 
-*Last updated: 2026-09-27*
+**Pending tests:**
+
+- `Review: lerobot/aloha_static_cups_open meets the falsification condition`: Re-profiled 2026-10-19 with both grippers excluded (gripper_dims [6, 13]), its aggregate rate is 8.10% (was 6.44% with only the last dim excluded), just above the 0.08 threshold. Decide whether this falsifies VD-001 (SPEC: set status falsified) or whether the threshold or gripper handling should be revisited first.
+
+*Last updated: 2026-10-19*
 
 ---
 

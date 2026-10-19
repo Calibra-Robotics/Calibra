@@ -10,8 +10,11 @@
     ],
     "control_mode": "position",
     "gripper_dims": [
-      -1
+      6,
+      13
     ],
+    "dataset_profile": null,
+    "ldlj_definition": "per_submovement_v1",
     "note": "Real hardware, mobile ALOHA, position control, 14-DOF, shrimp cooking task"
   },
   "episode_structure": {
@@ -79,59 +82,59 @@
     },
     "control_smoothness/per_episode_ldlj": {
       "n": 18,
-      "mean": -27.795387,
-      "std": 0.263011,
-      "min": -28.15894,
-      "max": -27.27646,
-      "p5": -28.14213,
-      "p10": -28.129724,
-      "p25": -28.017612,
-      "p50": -27.820171,
-      "p75": -27.579901,
-      "p90": -27.479932,
-      "p95": -27.407838
+      "mean": -12.625318,
+      "std": 0.278929,
+      "min": -13.123273,
+      "max": -12.149471,
+      "p5": -13.038686,
+      "p10": -12.968432,
+      "p25": -12.844984,
+      "p50": -12.601849,
+      "p75": -12.443957,
+      "p90": -12.270098,
+      "p95": -12.247742
     },
     "control_smoothness/per_episode_spike_rate": {
       "n": 18,
-      "mean": 0.004581,
-      "std": 0.000976,
-      "min": 0.002936,
-      "max": 0.006939,
-      "p5": 0.002936,
-      "p10": 0.003309,
-      "p25": 0.00427,
-      "p50": 0.004537,
-      "p75": 0.004804,
-      "p90": 0.005658,
-      "p95": 0.006485
+      "mean": 0.003366,
+      "std": 0.000756,
+      "min": 0.001868,
+      "max": 0.004537,
+      "p5": 0.001868,
+      "p10": 0.002242,
+      "p25": 0.003002,
+      "p50": 0.003336,
+      "p75": 0.003936,
+      "p90": 0.004163,
+      "p95": 0.004537
     },
     "control_smoothness/per_episode_vel_disc_rate": {
       "n": 18,
-      "mean": 0.006596,
-      "std": 0.002447,
-      "min": 0.003202,
-      "max": 0.011473,
-      "p5": 0.003882,
-      "p10": 0.004189,
-      "p25": 0.004869,
-      "p50": 0.005336,
-      "p75": 0.008538,
-      "p90": 0.009925,
-      "p95": 0.010792
+      "mean": 0.005099,
+      "std": 0.002171,
+      "min": 0.001868,
+      "max": 0.009872,
+      "p5": 0.002094,
+      "p10": 0.002508,
+      "p25": 0.003535,
+      "p50": 0.00547,
+      "p75": 0.00627,
+      "p90": 0.008084,
+      "p95": 0.008511
     },
     "control_smoothness/per_episode_act_state_div": {
       "n": 18,
-      "mean": 0.118756,
-      "std": 0.001977,
-      "min": 0.115132,
-      "max": 0.12302,
-      "p5": 0.11631,
-      "p10": 0.116735,
-      "p25": 0.117019,
-      "p50": 0.119189,
-      "p75": 0.119627,
-      "p90": 0.120765,
-      "p95": 0.122709
+      "mean": 0.107794,
+      "std": 0.00202,
+      "min": 0.104638,
+      "max": 0.113104,
+      "p5": 0.105227,
+      "p10": 0.105858,
+      "p25": 0.106537,
+      "p50": 0.107465,
+      "p75": 0.108823,
+      "p90": 0.110003,
+      "p95": 0.111747
     },
     "coverage_entropy/per_episode_length": {
       "n": 18,
@@ -178,6 +181,10 @@
   },
   "aggregate_metrics": {
     "temporal_stability": {
+      "synthetic_timestamps": 0.0,
+      "non_monotonic.fraction": 0.0,
+      "timescale.median_step_s": 0.02,
+      "timescale.fraction": 0.0,
       "jitter.mean_cv": 8.5e-05,
       "jitter.ci_lower": 8.5e-05,
       "jitter.ci_upper": 8.5e-05,
@@ -185,24 +192,30 @@
       "dropout.mean_dropout_fraction": 0.0,
       "dropout.ci_lower": 0.0,
       "dropout.ci_upper": 0.0,
-      "dropout.dropout_k": 3.0
+      "dropout.dropout_k": 3.0,
+      "action_dropout.mean_zero_action_fraction": 0.0,
+      "action_dropout.ci_lower": 0.0,
+      "action_dropout.ci_upper": 0.0,
+      "action_dropout.zero_threshold": 0.089945,
+      "action_dropout.state_inconsistency_used": 1.0
     },
     "control_smoothness": {
-      "ldlj.mean_ldlj": -27.795387,
-      "ldlj.ci_lower": -27.907042,
-      "ldlj.ci_upper": -27.675567,
+      "ldlj.mean_ldlj": -12.625318,
+      "ldlj.ci_lower": -12.759517,
+      "ldlj.ci_upper": -12.496939,
       "ldlj.n_episodes": 18.0,
-      "jerk_spikes.mean_spike_fraction": 0.004581,
-      "jerk_spikes.ci_lower": 0.004151,
-      "jerk_spikes.ci_upper": 0.005041,
+      "jerk_spikes.mean_spike_fraction": 0.003366,
+      "jerk_spikes.ci_lower": 0.002951,
+      "jerk_spikes.ci_upper": 0.003707,
       "jerk_spikes.spike_k": 5.0,
-      "vel_discontinuities.mean_disc_fraction": 0.006596,
-      "vel_discontinuities.ci_lower": 0.005544,
-      "vel_discontinuities.ci_upper": 0.007723,
+      "vel_discontinuities.mean_disc_fraction": 0.005099,
+      "vel_discontinuities.mean_disc_fraction_filtered": 1.5e-05,
+      "vel_discontinuities.ci_lower": 0.0,
+      "vel_discontinuities.ci_upper": 4.4e-05,
       "vel_discontinuities.threshold": 0.2,
-      "action_state_divergence.mean_divergence": 0.118756,
-      "action_state_divergence.ci_lower": 0.115721,
-      "action_state_divergence.ci_upper": 0.122865,
+      "action_state_divergence.mean_divergence": 0.107794,
+      "action_state_divergence.ci_lower": 0.104932,
+      "action_state_divergence.ci_upper": 0.112425,
       "action_state_divergence.n_episodes": 18.0,
       "action_state_divergence.n_skipped": 0.0
     },
@@ -235,14 +248,34 @@
       "trajectory_diversity.separation_score": 0.508659,
       "trajectory_diversity.n_episodes": 18.0,
       "short_episodes.short_episode_fraction": 0.0,
-      "short_episodes.lower_fence_steps": 3750.0,
+      "short_episodes.lower_fence_steps": 2343.75,
       "short_episodes.q1_steps": 3750.0,
       "short_episodes.q3_steps": 3750.0,
       "short_episodes.iqr_steps": 0.0,
-      "short_episodes.n_outliers": 0.0
+      "short_episodes.n_outliers": 0.0,
+      "duplicate_episodes.duplicate_episode_fraction": 0.0,
+      "duplicate_episodes.n_duplicates": 0.0
     }
   },
   "flags": [
+    {
+      "analyzer": "temporal_stability",
+      "metric": "timestamp_non_monotonic",
+      "level": "OK",
+      "observed": 0.0,
+      "ci_lower": null,
+      "ci_upper": null,
+      "interpretation": "Timestamps strictly increase within every episode."
+    },
+    {
+      "analyzer": "temporal_stability",
+      "metric": "timestamp_scale_mismatch",
+      "level": "OK",
+      "observed": 0.0,
+      "ci_lower": null,
+      "ci_upper": null,
+      "interpretation": "Every episode's step duration is on the same time scale."
+    },
     {
       "analyzer": "temporal_stability",
       "metric": "timestamp_jitter_cv",
@@ -262,40 +295,49 @@
       "interpretation": "Timestamp dropout rate is within acceptable range."
     },
     {
+      "analyzer": "temporal_stability",
+      "metric": "action_dropout_rate",
+      "level": "OK",
+      "observed": 0.0,
+      "ci_lower": 0.0,
+      "ci_upper": 0.0,
+      "interpretation": "Action-dropout rate is within acceptable range."
+    },
+    {
       "analyzer": "control_smoothness",
       "metric": "ldlj",
-      "level": "CRITICAL",
-      "observed": -27.79538663855803,
-      "ci_lower": -27.9070423565034,
-      "ci_upper": -27.675567036011753,
-      "interpretation": "Mean LDLJ = -27.80 across 18 episodes (threshold: >-10). Action trajectories contain significant jerk."
+      "level": "WARNING",
+      "observed": -12.625317685330593,
+      "ci_lower": -12.759516927843071,
+      "ci_upper": -12.496938749385219,
+      "interpretation": "Mean LDLJ = -12.63 across 18 episodes (threshold: >-10). Action trajectories contain significant jerk."
     },
     {
       "analyzer": "control_smoothness",
       "metric": "jerk_spike_rate",
       "level": "OK",
-      "observed": 0.004581442932123477,
-      "ci_lower": 0.004151469323607033,
-      "ci_upper": 0.005041440559855292,
+      "observed": 0.0033656554873528455,
+      "ci_lower": 0.0029505085549921418,
+      "ci_upper": 0.003706669038934851,
       "interpretation": "Jerk spike rate is within acceptable range."
     },
     {
       "analyzer": "control_smoothness",
       "metric": "velocity_discontinuity_rate",
       "level": "OK",
-      "observed": 0.006596110518202299,
-      "ci_lower": 0.005543697379343057,
-      "ci_upper": 0.0077230078263963,
-      "interpretation": "Velocity profile is continuous \u2014 no sudden reversals."
+      "observed": 1.4822720265623148e-05,
+      "ci_lower": 0.0,
+      "ci_upper": 4.4468160796869447e-05,
+      "interpretation": "Velocity profile is continuous with no sudden reversals (after removing >10 Hz noise; unfiltered 0.5%)."
     },
     {
       "analyzer": "control_smoothness",
       "metric": "action_state_divergence",
-      "level": "CRITICAL",
-      "observed": 0.11875564315252835,
-      "ci_lower": 0.11572099011391401,
-      "ci_upper": 0.12286456618458033,
-      "interpretation": "Action-state divergence is high (0.1188, threshold: 0.100). Strong evidence of packet drops, hardware lag, or wrong control mode."
+      "level": "OK",
+      "observed": 0.10779393381542629,
+      "ci_lower": 0.10493223387748003,
+      "ci_upper": 0.11242527849972248,
+      "interpretation": "Action-state divergence is 0.1078, within the expected range for position-control teleoperation. Controller tracking is normal."
     },
     {
       "analyzer": "coverage_entropy",
@@ -358,7 +400,7 @@
       "observed": 0.5086588705456261,
       "ci_lower": null,
       "ci_upper": null,
-      "interpretation": "Trajectory diversity score 0.51 \u2014 weak evidence of multiple strategies. May be within-task variation."
+      "interpretation": "Trajectory diversity score 0.51: weak evidence of multiple strategies. May be within-task variation."
     },
     {
       "analyzer": "task_structure",
@@ -368,6 +410,15 @@
       "ci_lower": null,
       "ci_upper": null,
       "interpretation": "No suspiciously short episodes detected."
+    },
+    {
+      "analyzer": "task_structure",
+      "metric": "duplicate_episode_fraction",
+      "level": "OK",
+      "observed": 0.0,
+      "ci_lower": null,
+      "ci_upper": null,
+      "interpretation": "No duplicated episodes."
     }
   ]
 }

@@ -66,16 +66,16 @@ claims:
     assertion: "Human-collected position-command datasets have jerk spike rate below 2%; scripted/planner-generated datasets regularly exceed this due to sharp trajectory waypoints"
     evidence_count: 12
     evidence_datasets:
-      - lerobot/aloha_sim_insertion_human  # ✓ 0.0069
-      - lerobot/aloha_sim_insertion_scripted  # ✗ 0.249
-      - lerobot/aloha_sim_transfer_cube_scripted  # ✗ 0.219
+      - lerobot/aloha_sim_insertion_human  # ✓ 0.003541
+      - lerobot/aloha_sim_insertion_scripted  # ✗ 0.249018
+      - lerobot/aloha_sim_transfer_cube_scripted  # ✗ 0.21728
       - lerobot/droid_100  # ✗ 0.045
-      - lerobot/aloha_mobile_shrimp  # ✓ 0.004581
-      - lerobot/aloha_sim_transfer_cube_human  # ✓ 0.009421
-      - lerobot/aloha_static_battery  # ✓ 0.004376
-      - lerobot/aloha_static_candy  # ✓ 0.004189
-      - lerobot/aloha_static_coffee  # ✓ 0.001677
-      - lerobot/aloha_static_cups_open  # ✓ 0.002972
+      - lerobot/aloha_mobile_shrimp  # ✓ 0.003366
+      - lerobot/aloha_sim_transfer_cube_human  # ✓ 0.005441
+      - lerobot/aloha_static_battery  # ✓ 0.004512
+      - lerobot/aloha_static_candy  # ✓ 0.001779
+      - lerobot/aloha_static_coffee  # ✓ 0.001349
+      - lerobot/aloha_static_cups_open  # ✓ 0.001511
       - lerobot/svla_so100_pickplace  # ✓ 0.010879
       - lerobot/svla_so100_stacking  # ✓ 0.010179
     falsification: "Any position-command hardware dataset with rate > 0.04"
@@ -99,8 +99,8 @@ claims:
     assertion: "Jerk spike rate is more robust to cross-frequency comparison than LDLJ, because the 5x-median threshold self-adapts to episode scale"
     evidence_count: 2
     evidence_datasets:
-      - lerobot/pusht + lerobot/aloha_sim_insertion_human  # ✓ pusht=4.9% (10Hz, 2D), aloha=0.69% (50Hz, 14D)
-      - lerobot/droid_100 vs lerobot/aloha_sim_insertion_human  # ✓ droid_100=4.5% (15Hz, 7D position), aloha=0.69% (50Hz, 14D position)
+      - lerobot/pusht + lerobot/aloha_sim_insertion_human  # ✓ pusht=4.9% (10Hz, 2D), aloha=0.35% (50Hz, 12 joint dims)
+      - lerobot/droid_100 vs lerobot/aloha_sim_insertion_human  # ✓ droid_100=4.5% (15Hz, 7D position), aloha=0.35% (50Hz, 12 joint dims, position)
     falsification: "Two datasets of same control mode with 3x+ frequency difference showing inverted spike rates"
     pending_tests:
       - Two velocity-command datasets at different control frequencies
@@ -123,46 +123,37 @@ claims:
     metric: "ldlj"
     class: "any"
     status: "active_hypothesis"
-    confidence: "HIGH"
+    confidence: "MODERATE"
     assertion: "LDLJ is not a valid cross-dataset comparator when control modes or control frequencies differ significantly (> ~2x)"
-    # Evidence measured with whole-episode LDLJ (Calibra <= 0.12). Since
-    # ldlj_definition per_submovement_v1 it does not carry over; re-test pending.
-    # See calibra/claims/ldlj.json and eval/investigations/ldlj/FINDINGS.md.
-    evidence_count: 6
+    # Judged 2026-10-19 on direct tests (eval/investigations/ldlj/SUBSAMPLING.md):
+    # supported for sampling rate; the control-mode half is a pending test.
+    evidence_count: 3
     evidence_datasets:
-      - lerobot/aloha_sim_insertion_human  # ✓ -20.43
-      - lerobot/pusht  # ✓ -16.34
-      - lerobot/aloha_sim_insertion_scripted  # ✓ -17.192
-      - lerobot/aloha_sim_transfer_cube_scripted  # ✓ -17.232
-      - lerobot/droid_100  # ✓ -19.393163
-      - nvidia/BridgeData2_LeRobot_v3  # ✓ -13.788
+      - lerobot/aloha_static_battery subsampled 50 -> 25 -> 10 -> 5 Hz  # ✓ LDLJ -12.63 / -9.86 / -8.57 / -7.53 on the same trajectories
+      - lerobot/aloha_sim_insertion_human subsampled 50 -> 25 -> 10 -> 5 Hz  # ✓ LDLJ -11.01 / -9.23 / -8.82 / -8.38 on the same trajectories
+      - nvidia/BridgeData2_LeRobot_v3 (5 Hz, velocity) vs lerobot/aloha_* (50 Hz, position)  # ✓ BridgeData2 -8.70 vs ALOHA -11.0 .. -13.2 (native 50 Hz)
     falsification: "Two datasets with different control modes where LDLJ ranks them in the physically expected order (position smoother than velocity) AND control frequencies differ > 2x"
     pending_tests:
-      - Re-profile the six evidence datasets with ldlj_definition per_submovement_v1
+      - Control mode at matched sampling rate
 
   - id: "LDLJ-002"
     metric: "ldlj"
     class: "any"
-    status: "active_hypothesis"
-    confidence: "HIGH"
+    status: "falsified"
+    confidence: "NOT VALIDATED"
     assertion: "LDLJ may be valid for within-type comparison (same control mode, similar frequency)"
-    # Evidence measured with whole-episode LDLJ (Calibra <= 0.12), which scales
-    # with episode length; rankings may reflect episode length, not roughness.
-    # Re-test with ldlj_definition per_submovement_v1 pending.
-    evidence_count: 8
+    # Falsified 2026-10-19: LDLJ scores spike-injected copies as smoother or unchanged
+    # (eval/investigations/ldlj/SPIKE_INJECTION.md).
+    evidence_count: 4
     evidence_datasets:
-      - lerobot/aloha_sim_transfer_cube_human  # ✓ -20.015224
-      - lerobot/aloha_static_battery  # ✓ -22.102043
-      - lerobot/aloha_static_candy  # ✓ -22.282415
-      - lerobot/aloha_static_coffee  # ✓ -24.140276
-      - lerobot/aloha_static_cups_open  # ✓ -20.51132
-      - lerobot/aloha_mobile_shrimp  # ✓ -27.795387
-      - lerobot/svla_so100_pickplace  # ✓ -20.105093
-      - lerobot/svla_so100_stacking  # ✓ -19.61111
+      - lerobot/aloha_static_battery clean vs 2% spike-injected  # ✗ LDLJ -12.63 -> -11.29 (clean -> corrupted); jerk spike rate 0.5% -> 15.2%
+      - lerobot/aloha_sim_insertion_human clean vs 2% spike-injected  # ✗ LDLJ -11.01 -> -10.54 (clean -> corrupted); jerk spike rate 0.4% -> 15.0%
+      - lerobot/aloha_sim_insertion_human clean vs 5% spike-injected  # ✗ LDLJ -11.01 -> -9.90 (clean -> corrupted); jerk spike rate 0.4% -> 33.0%
+      - lerobot/svla_so100_stacking clean vs 5% spike-injected  # ✗ LDLJ -10.64 -> -10.55 (clean -> corrupted); jerk spike rate 1.0% -> 30.5%
     falsification: "Two datasets of same type where LDLJ fails to distinguish a known-worse dataset (e.g. one with injected noise) from a clean one"
     pending_tests:
       - Two independent velocity-command datasets at similar control frequency
-      - Re-profile the eight evidence datasets with ldlj_definition per_submovement_v1
+      - Noise-type corruption (Gaussian action noise) on the same three datasets
 
   - id: "PAI-001"
     metric: "pretraining_alignment_index"
@@ -236,20 +227,22 @@ claims:
     assertion: "Position-command datasets have velocity discontinuity rate below 5%"
     evidence_count: 13
     evidence_datasets:
-      - lerobot/aloha_sim_insertion_human  # ✓ 0.024
+      - lerobot/aloha_sim_insertion_human  # ✓ 0.014538
       - lerobot/aloha_mobile_cabinet  # ✓ 0.008364
-      - lerobot/aloha_sim_insertion_scripted  # ✓ 0.0075
-      - lerobot/aloha_sim_transfer_cube_scripted  # ✓ 0.0075
+      - lerobot/aloha_sim_insertion_scripted  # ✓ 0.007538
+      - lerobot/aloha_sim_transfer_cube_scripted  # ✓ 0.007437
       - lerobot/droid_100  # ✗ 0.071
-      - lerobot/aloha_mobile_shrimp  # ✓ 0.006596
-      - lerobot/aloha_sim_transfer_cube_human  # ✓ 0.045628
-      - lerobot/aloha_static_battery  # ✗ 0.054638
-      - lerobot/aloha_static_candy  # ✓ 0.02659
-      - lerobot/aloha_static_coffee  # ✓ 0.019454
-      - lerobot/aloha_static_cups_open  # ✗ 0.064372
+      - lerobot/aloha_mobile_shrimp  # ✓ 0.005099
+      - lerobot/aloha_sim_transfer_cube_human  # ✓ 0.044221
+      - lerobot/aloha_static_battery  # ✗ 0.054604
+      - lerobot/aloha_static_candy  # ✓ 0.03808
+      - lerobot/aloha_static_coffee  # ✓ 0.018197
+      - lerobot/aloha_static_cups_open  # ✗ 0.080955
       - lerobot/svla_so100_pickplace  # ✗ 0.067258
       - lerobot/svla_so100_stacking  # ✓ 0.016478
     falsification: "Any position-command hardware dataset with aggregate rate > 0.08"
+    pending_tests:
+      - Review: lerobot/aloha_static_cups_open meets the falsification condition
 
   - id: "VD-002"
     metric: "velocity_discontinuity_rate"

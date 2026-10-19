@@ -16,7 +16,7 @@ hardware platforms and control modes is a fact.
 
 | Metric | Document | Confidence | Key finding |
 |--------|----------|-----------|-------------|
-| Velocity discontinuity rate | [velocity_discontinuity.md](velocity_discontinuity.md) | **HIGH** | Cleanly separates control modes (16.7% velocity-cmd vs 2.4% position-cmd). Threshold correctly calibrated. |
+| Velocity discontinuity rate | [velocity_discontinuity.md](velocity_discontinuity.md) | **HIGH** | Separates PushT-style teleop from arm position control (16.7% vs 1.45% on ALOHA joints). Threshold correctly calibrated. |
 | Jerk spike rate | [jerk_spike_rate.md](jerk_spike_rate.md) | **MODERATE** | Same direction as velocity discontinuity. More frequency-robust than LDLJ. |
 | LDLJ | [ldlj.md](ldlj.md) | **LOW (cross-dataset)** | Do NOT compare across control modes or frequencies. aloha scores worse than pusht despite being smoother (frequency/dimensionality artifact). |
 | Timestamp jitter | [temporal_stability.md](temporal_stability.md) | **NOT VALIDATED** | Sim datasets are uninformative (machine-precision timestamps). Needs real hardware. |

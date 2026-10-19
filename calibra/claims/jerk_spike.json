@@ -11,24 +11,24 @@
       "evidence": [
         {
           "dataset": "lerobot/aloha_sim_insertion_human",
-          "observed": 0.0069,
+          "observed": 0.003541,
           "supports": true,
           "date": "2026-06-15",
-          "notes": "Simulated, 14-DOF bimanual, 50Hz"
+          "notes": "Simulated, 14-DOF bimanual, 50Hz [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.0069.]"
         },
         {
           "dataset": "lerobot/aloha_sim_insertion_scripted",
-          "observed": 0.249,
+          "observed": 0.249018,
           "supports": false,
           "date": "2026-06-15",
-          "notes": "Scripted ALOHA sim, 14-DOF, 50Hz. Spike rate 24.9% — far above the 2% threshold. Scripted motions have abrupt start/stop profiles not present in human teleop. Does not trigger formal falsification (condition requires hardware dataset) but indicates claim scope should be clarified as 'human-collected' position datasets."
+          "notes": "Scripted ALOHA sim, 14-DOF, 50Hz. Spike rate 24.9% — far above the 2% threshold. Scripted motions have abrupt start/stop profiles not present in human teleop. Does not trigger formal falsification (condition requires hardware dataset) but indicates claim scope should be clarified as 'human-collected' position datasets. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.249.]"
         },
         {
           "dataset": "lerobot/aloha_sim_transfer_cube_scripted",
-          "observed": 0.219,
+          "observed": 0.21728,
           "supports": false,
           "date": "2026-06-15",
-          "notes": "Scripted ALOHA sim, 14-DOF, 50Hz. Spike rate 21.9% — consistent with insertion_scripted finding. Confirms that scripted motion planners produce high jerk due to sharp trajectory waypoints. Both scripted datasets disconfirm the claim for scripted (non-human) demonstrations."
+          "notes": "Scripted ALOHA sim, 14-DOF, 50Hz. Spike rate 21.9% — consistent with insertion_scripted finding. Confirms that scripted motion planners produce high jerk due to sharp trajectory waypoints. Both scripted datasets disconfirm the claim for scripted (non-human) demonstrations. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.219.]"
         },
         {
           "dataset": "lerobot/droid_100",
@@ -39,45 +39,45 @@
         },
         {
           "dataset": "lerobot/aloha_mobile_shrimp",
-          "observed": 0.004581,
+          "observed": 0.003366,
           "supports": true,
           "date": "2026-06-29",
-          "notes": "Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking task, 18 episodes. Spike rate 0.46% — well below 2%. First mobile-ALOHA evidence point; confirms claim holds for mobile-base variants."
+          "notes": "Real hardware mobile ALOHA, 14-DOF, 50Hz, shrimp cooking task, 18 episodes. Spike rate 0.46% — well below 2%. First mobile-ALOHA evidence point; confirms claim holds for mobile-base variants. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.004581.]"
         },
         {
           "dataset": "lerobot/aloha_sim_transfer_cube_human",
-          "observed": 0.009421,
+          "observed": 0.005441,
           "supports": true,
           "date": "2026-06-29",
-          "notes": "Human teleop sim, 14-DOF, 50Hz, cube transfer, 50 episodes. Spike rate 0.94% — below 2%. Consistent with insertion_human (0.69%); confirms claim across ALOHA sim tasks."
+          "notes": "Human teleop sim, 14-DOF, 50Hz, cube transfer, 50 episodes. Spike rate 0.94% — below 2%. Consistent with insertion_human (0.69%); confirms claim across ALOHA sim tasks. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.009421.]"
         },
         {
           "dataset": "lerobot/aloha_static_battery",
-          "observed": 0.004376,
+          "observed": 0.004512,
           "supports": true,
           "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, battery task, 49 episodes. Spike rate 0.44% — below 2%. Confirms claim for static-ALOHA real hardware."
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, battery task, 49 episodes. Spike rate 0.44% — below 2%. Confirms claim for static-ALOHA real hardware. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.004376.]"
         },
         {
           "dataset": "lerobot/aloha_static_candy",
-          "observed": 0.004189,
+          "observed": 0.001779,
           "supports": true,
           "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, candy task, 50 episodes. Spike rate 0.42% — below 2%."
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, candy task, 50 episodes. Spike rate 0.42% — below 2%. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.004189.]"
         },
         {
           "dataset": "lerobot/aloha_static_coffee",
-          "observed": 0.001677,
+          "observed": 0.001349,
           "supports": true,
           "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, coffee task, 50 episodes. Spike rate 0.17% — lowest observed across all human-collected datasets. Coffee prep involves slow, controlled motions."
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, coffee task, 50 episodes. Spike rate 0.17% — lowest observed across all human-collected datasets. Coffee prep involves slow, controlled motions. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.001677.]"
         },
         {
           "dataset": "lerobot/aloha_static_cups_open",
-          "observed": 0.002972,
+          "observed": 0.001511,
           "supports": true,
           "date": "2026-06-29",
-          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, cups task, 50 episodes. Spike rate 0.30% — below 2%."
+          "notes": "Static ALOHA real hardware, 14-DOF, 50Hz, cups task, 50 episodes. Spike rate 0.30% — below 2%. [Corrected 2026-10-19: re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.002972.]"
         },
         {
           "dataset": "lerobot/svla_so100_pickplace",
@@ -99,7 +99,7 @@
         "threshold": 0.04,
         "pending_tests": []
       },
-      "last_updated": "2026-06-29"
+      "last_updated": "2026-10-19"
     },
     {
       "id": "JS-002",
@@ -158,17 +158,17 @@
       "evidence": [
         {
           "dataset": "lerobot/pusht + lerobot/aloha_sim_insertion_human",
-          "observed": "pusht=4.9% (10Hz, 2D), aloha=0.69% (50Hz, 14D)",
+          "observed": "pusht=4.9% (10Hz, 2D), aloha=0.35% (50Hz, 12 joint dims)",
           "supports": true,
           "date": "2026-06-15",
-          "notes": "Direction of difference matches physical expectation despite 5x frequency difference — tentatively supports frequency-robustness claim"
+          "notes": "Direction of difference matches physical expectation despite 5x frequency difference — tentatively supports frequency-robustness claim [Corrected 2026-10-19: aloha re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.69% over 14 dims. Direction unchanged.]"
         },
         {
           "dataset": "lerobot/droid_100 vs lerobot/aloha_sim_insertion_human",
-          "observed": "droid_100=4.5% (15Hz, 7D position), aloha=0.69% (50Hz, 14D position)",
+          "observed": "droid_100=4.5% (15Hz, 7D position), aloha=0.35% (50Hz, 12 joint dims, position)",
           "supports": true,
           "date": "2026-06-18",
-          "notes": "First within-control-mode cross-frequency test (position-command, 3.3x frequency ratio). droid_100 (15Hz) spike rate 4.5% vs aloha (50Hz) spike rate 0.69%. Direction matches physical expectation: lower control frequency yields coarser jerk estimates and higher spike rates. The self-adapting 5x-median threshold still captures meaningful per-episode variation at both frequencies, tentatively supporting frequency-robustness. Note: droid_100 hardware noise may also contribute to the higher spike rate, partially confounding the pure frequency effect."
+          "notes": "First within-control-mode cross-frequency test (position-command, 3.3x frequency ratio). droid_100 (15Hz) spike rate 4.5% vs aloha (50Hz) spike rate 0.69%. Direction matches physical expectation: lower control frequency yields coarser jerk estimates and higher spike rates. The self-adapting 5x-median threshold still captures meaningful per-episode variation at both frequencies, tentatively supporting frequency-robustness. Note: droid_100 hardware noise may also contribute to the higher spike rate, partially confounding the pure frequency effect. [Corrected 2026-10-19: aloha re-profiled with both grippers excluded (gripper_dims [6, 13]); 0.35%, was 0.69%. Direction unchanged.]"
         }
       ],
       "falsification": {
@@ -180,7 +180,7 @@
           }
         ]
       },
-      "last_updated": "2026-09-27",
+      "last_updated": "2026-10-19",
       "retracted_evidence": [
         {
           "dataset": "nvidia/BridgeData2_LeRobot_v3 vs lerobot/pusht_velocity_command",
