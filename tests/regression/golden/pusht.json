@@ -38,9 +38,9 @@
   },
   "analyze[lerobot/pusht]/flags": {
     "control_smoothness/action_state_divergence": "INFO",
-    "control_smoothness/jerk_spike_rate": "WARNING",
+    "control_smoothness/jerk_spike_rate": "OK",
     "control_smoothness/ldlj": "OK",
-    "control_smoothness/velocity_discontinuity_rate": "CRITICAL",
+    "control_smoothness/velocity_discontinuity_rate": "OK",
     "coverage_entropy/action_entropy_bits_per_dim": "OK",
     "coverage_entropy/episode_length_distribution": "OK",
     "coverage_entropy/pca_top2_variance_fraction": "INFO",

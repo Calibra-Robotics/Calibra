@@ -15,6 +15,8 @@ How much training data can Calibra remove before performance degrades?
 | ALOHA sim (`lerobot/aloha_sim_insertion_human`) | 50 | 87.3/100 | 60.6% of full | −18pp | +117% (50% vs. 23%) |
 | xArm lift (`lerobot/xarm_lift_medium`) | 800 | 82.7/100 | 97.3% of full | −1pp (≈ random) | +2% (25.0% vs. 24.6%) |
 
+Quality Scores and flags on this page were measured with Calibra 0.8.0 (2026-09-01) and have not been re-run on current code. Since then the `pusht` dataset profile and per-sub-movement LDLJ changed PushT's numbers: current Calibra scores all 206 PushT episodes 60.5, with every motion check OK (see the [`calibra analyze` example](guide.md)).
+
 "% of full" = Calibra coreset MSE / full-data baseline MSE. "Calibra vs. Random at 25%" = difference in subset MSE vs. random at the same fraction (positive = Calibra wins). Rare-behavior coverage = fraction of bottom-15% action-space-density episodes retained.
 
 Note on compute: this benchmark measures training data volume and wall-clock training time on a fixed-epoch BC-MLP. For fixed training schedules, fewer training samples translates directly into fewer gradient steps and proportionally lower GPU time.
@@ -26,7 +28,7 @@ Note on compute: this benchmark measures training data volume and wall-clock tra
 Across the current benchmark suite, datasets with lower Calibra Quality Scores showed larger improvements from quality-aware coreset selection, while higher-quality datasets showed smaller gains.
 
 Specifically:
-- PushT (76.7) and DROID-100 (77.0) — both with multiple CRITICAL flags for jerk spikes, velocity discontinuities, and action-state divergence — showed the strongest benefit: Calibra outperformed random by 8–10 percentage points at 25% retention and retained 2–3× more rare behaviors.
+- PushT (76.7) and DROID-100 (77.0), the two lowest Quality Scores, showed the strongest benefit at 25% retention: Calibra beat random by 1.3 percentage points on PushT and 10 on DROID-100, and retained about 1.5× (PushT) and 3× (DROID-100) as many rare behaviors.
 - ALOHA sim (87.3) and xArm lift (82.7) — cleaner datasets with fewer quality flags — showed smaller gains; on xArm, Calibra and random were statistically indistinguishable.
 
 **This relationship is an empirical observation from the current benchmark suite and will be evaluated on additional datasets.** Our current benchmarks suggest that lower-quality or more redundant datasets benefit more from quality-aware coreset selection than cleaner datasets. Whether this relationship holds generally — and whether the quality score itself is a reliable predictor of optimization potential — requires further study.
@@ -42,7 +44,7 @@ Consistent finding across all four datasets: Calibra preserved more rare behavio
 **Dataset:** `lerobot/pusht` (HuggingFace Hub, no modification)  
 **Episodes:** 206 total · 165 training · 41 test  
 **Frames:** 25,650  
-**Calibra quality score:** 76.7/100 (4 CRITICAL, 2 WARNING flags)  
+**Calibra quality score:** 76.7/100 (4 CRITICAL, 2 WARNING flags; Calibra 0.8.0, training split, no dataset profile)  
 **Quality-approved pool:** 123/165 episodes (75%) after Stage-1 filtering  
 
 **Tail episode identification:** k-NN density (k=5) in action-feature space (mean + std of actions + first 4 state dims, L2-normalised). Bottom 15% by local density = **25 training episodes** labelled tail, **7 test episodes** labelled tail, **34 test episodes** common.

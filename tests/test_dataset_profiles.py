@@ -83,6 +83,16 @@ class TestApplyProfile:
         assert out[3] is temporal  # no gripper_dims: untouched
         assert default.gripper_dims == [-1]  # originals are not mutated
 
+    def test_flag_thresholds_override_defaults_only(self):
+        explicit = ControlSmoothnessAnalyzer(vel_disc_critical=0.05)  # equals the default
+        default = ControlSmoothnessAnalyzer()
+        out = apply_profile([explicit, default], PROFILES["pusht"])
+        assert out[0].vel_disc_critical == 0.05  # caller's explicit choice wins
+        assert out[0].vel_disc_warning == 0.28
+        assert out[1].vel_disc_critical == 0.40
+        assert out[1].ldlj_critical == -15.0  # not in the profile: global default kept
+        assert default.vel_disc_critical == 0.05  # originals are not mutated
+
     def test_no_profile_is_identity(self):
         a = ControlSmoothnessAnalyzer()
         assert apply_profile([a], None) == [a]
@@ -114,6 +124,43 @@ class TestPipeline:
         profiled = Pipeline(profile="pusht").run(batch, cache=cache)
         assert plain.dataset_profile is None
         assert profiled.dataset_profile == "pusht"
+
+
+class TestCacheKey:
+    """A cached report is reused only for the same version and analysis settings."""
+
+    @staticmethod
+    def _run(cache, **smoothness):
+        return Pipeline(analyzers=[ControlSmoothnessAnalyzer(**smoothness)]).run(
+            _batch("./datasets/pusht"), cache=cache
+        )
+
+    def test_same_config_hits(self, tmp_path):
+        from calibra.cache import AuditCache
+
+        cache = AuditCache(str(tmp_path))
+        self._run(cache)
+        self._run(cache)
+        assert len(list((tmp_path / "reports").glob("*.json"))) == 1  # second run was a hit
+
+    def test_changed_threshold_misses(self, tmp_path):
+        from calibra.cache import AuditCache
+        from calibra.schema.report import RiskLevel
+
+        cache = AuditCache(str(tmp_path))
+        self._run(cache)
+        strict = self._run(cache, jerk_spike_warning=0.0, jerk_spike_critical=0.0)
+        spike = next(f for f in strict.flags if f.metric == "jerk_spike_rate")
+        assert spike.level == RiskLevel.CRITICAL  # recomputed, not the cached report
+
+    def test_calibra_version_misses(self, tmp_path, monkeypatch):
+        import calibra
+        from calibra.cache import AuditCache
+
+        cache = AuditCache(str(tmp_path))
+        self._run(cache)
+        monkeypatch.setattr(calibra, "__version__", "0.0.0-test")
+        assert self._run(cache).calibra_version == "0.0.0-test"
 
 
 class TestRegimeThresholds:
@@ -299,6 +346,19 @@ class TestProfileEvidence:
                 f"(clean max {baseline[metric]['max']})"
             )
 
+    def test_flag_thresholds_clear_clean_data(self, profile):
+        # Warning must sit past the clean p95 episode and Critical past the
+        # roughest clean episode, so the clean dataset never reads as a defect.
+        baseline = profile.evidence.clean_baseline
+        prefix_to_metric = {"jerk_spike": "spike_rate", "vel_disc": "vel_disc_rate"}
+        for key, value in profile.flag_thresholds.items():
+            prefix, level = key.rsplit("_", 1)
+            assert prefix in prefix_to_metric, f"{profile.name}: no baseline check for {key}"
+            metric = prefix_to_metric[prefix]
+            assert metric in baseline, f"{profile.name}: {key} has no {metric} baseline"
+            bound = baseline[metric]["p95" if level == "warning" else "max"]
+            assert value > bound, f"{profile.name}: {key}={value} not above clean {bound}"
+
     def test_regime_high_thresholds_sit_above_clean_mean(self, profile):
         # HIGH NOISE must not fire on the dataset's own clean average.
         baseline = profile.evidence.clean_baseline
@@ -309,6 +369,44 @@ class TestProfileEvidence:
             metric = key_to_metric[key]
             assert metric in baseline, f"{profile.name}: {key} has no {metric} baseline"
             assert value > baseline[metric]["mean"]
+
+
+class TestMotionFlagsOnCleanPushT:
+    """Clean PushT's motion flags read OK under its profile (Critical without it)."""
+
+    @staticmethod
+    def _levels(analyzer):
+        from calibra.analyzers.smoothness import _threshold_level_upper
+        from calibra.compare import load_reference
+
+        agg = load_reference("pusht_velocity_command")["aggregate_metrics"]["control_smoothness"]
+        # LDLJ is left out: the reference predates per-sub-movement LDLJ, and
+        # the profile does not change its thresholds.
+        return {
+            "jerk_spike_rate": _threshold_level_upper(
+                agg["jerk_spikes.mean_spike_fraction"],
+                analyzer.jerk_spike_warning,
+                analyzer.jerk_spike_critical,
+            ),
+            "velocity_discontinuity_rate": _threshold_level_upper(
+                agg["vel_discontinuities.mean_disc_fraction"],
+                analyzer.vel_disc_warning,
+                analyzer.vel_disc_critical,
+            ),
+        }
+
+    def test_global_thresholds_rate_clean_pusht_critical(self):
+        from calibra.schema.report import RiskLevel
+
+        levels = self._levels(ControlSmoothnessAnalyzer())
+        assert levels["jerk_spike_rate"] == RiskLevel.WARNING
+        assert levels["velocity_discontinuity_rate"] == RiskLevel.CRITICAL
+
+    def test_profile_rates_clean_pusht_ok(self):
+        from calibra.schema.report import RiskLevel
+
+        (profiled,) = apply_profile([ControlSmoothnessAnalyzer()], PROFILES["pusht"])
+        assert set(self._levels(profiled).values()) == {RiskLevel.OK}
 
 
 class TestCompareAgainstProfiledReference:

@@ -262,11 +262,11 @@ calibra analyze lerobot/pusht --keep 0.4 --export coreset_index.json
     ✅ Timestamps & sync
     ✅ Episode structure
     ·   Camera feed  (not evaluated)
-    ❌ Motion & control
-    Integrity score: 69/100 · Critical
+    ✅ Motion & control
+    Integrity score: 100/100 · Healthy
 ────────────────────────────────────────────────────────────
-  Quality (Calibra Score)    44.6 / 100   ·  Poor
-  Coverage / diversity       47.4 / 100
+  Quality (Calibra Score)    60.5 / 100   ·  Fair
+  Coverage / diversity       61.2 / 100
   Redundancy (estimated)     3.2%  of state-space occupies duplicate regions
 ────────────────────────────────────────────────────────────
   RECOMMENDATION

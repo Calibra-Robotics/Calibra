@@ -13,6 +13,7 @@ Usage:
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import json
 import sys
@@ -61,6 +62,27 @@ def _config_hash(
     if dataset_profile:
         # Only when set, so existing reports without a profile keep their hash.
         payload["dataset_profile"] = dataset_profile
+    blob = json.dumps(payload, sort_keys=True)
+    return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16]
+
+
+def _analysis_fingerprint(analyzers: list[Analyzer], dataset_profile: Optional[str]) -> str:
+    """
+    Fingerprint of the analysis a cached report came from: Calibra version,
+    profile, and every analyzer's name, version and settings. Dataclass
+    analyzers are keyed by their repr (all fields, after the profile is
+    applied); others by name and version only.
+    """
+    from calibra import __version__ as calibra_version
+
+    payload = {
+        "calibra_version": calibra_version,
+        "dataset_profile": dataset_profile or "",
+        "analyzers": [
+            [a.name, a.version, repr(a) if dataclasses.is_dataclass(a) else type(a).__name__]
+            for a in analyzers
+        ],
+    }
     blob = json.dumps(payload, sort_keys=True)
     return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16]
 
@@ -169,16 +191,6 @@ class Pipeline:
                     print(f"  [profile] none applied; {hint}", file=sys.stderr)
         profile_name = profile.name if profile else None
 
-        if cache is not None:
-            # A profile changes analyzer settings, so it is part of the cache key.
-            cache_key = (
-                f"{policy_family or ''}|profile={profile_name}" if profile_name else policy_family
-            )
-            fingerprint = cache.fingerprint(batch, cache_key)
-            cached = cache.get(fingerprint)
-            if cached is not None:
-                return cached
-
         analyzers = list(self.analyzers)
         pf_lower = policy_family.lower() if policy_family else ""
         if pf_lower and "gr00t" in pf_lower:
@@ -190,6 +202,16 @@ class Pipeline:
         if pf_lower and "octo" in pf_lower:
             analyzers.append(OctoCompatibilityAnalyzer())
         analyzers = apply_profile(analyzers, profile)
+
+        if cache is not None:
+            # The key covers everything that shapes the report besides the data:
+            # Calibra version and each analyzer's resolved settings (so a
+            # profile's thresholds, or a changed default, invalidate the entry).
+            cache_key = f"{policy_family or ''}|{_analysis_fingerprint(analyzers, profile_name)}"
+            fingerprint = cache.fingerprint(batch, cache_key)
+            cached = cache.get(fingerprint)
+            if cached is not None:
+                return cached
 
         capabilities = batch.capabilities
         results = []

@@ -19,6 +19,11 @@ arm datasets (ALOHA, DROID-100); PushT's mouse-teleoperated position targets at
 10 Hz have a clean velocity-discontinuity rate (16.7%) that is itself above the
 global HIGH NOISE cutoff.
 
+The same arm calibration sets the jerk-spike and velocity-discontinuity flag
+thresholds, under which clean PushT reads as Critical. A
+profile's ``flag_thresholds`` replace those defaults, so integrity severity is
+judged against the dataset's own clean episodes.
+
 Resolution
 ----------
 * Hub IDs listed in a profile (``lerobot/pusht``, ``hf://lerobot/pusht``) get
@@ -49,7 +54,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
-from calibra.analyzers.base import Analyzer, DefaultGripperDims
+from calibra.analyzers.base import Analyzer, DefaultGripperDims, DefaultThreshold
 
 
 @dataclass(frozen=True)
@@ -82,6 +87,10 @@ class DatasetProfile:
     # Defaults for `calibra prune` Stage 1 limits (max_spike_rate,
     # max_vel_disc_rate) when the user does not pass the matching --max-* flag.
     prune_thresholds: dict = field(default_factory=dict, compare=False)
+    # Overrides for flag severity thresholds, keyed by analyzer field name
+    # (ldlj_warning, jerk_spike_critical, vel_disc_warning, ...). Replaces only
+    # thresholds still at their default (DefaultThreshold).
+    flag_thresholds: dict = field(default_factory=dict, compare=False)
     notes: str = field(default="", compare=False)
     evidence: Optional[ProfileEvidence] = field(default=None, compare=False)
 
@@ -101,6 +110,18 @@ PROFILES: dict[str, DatasetProfile] = {
         # limits `analyze` applies to PushT (MODERATE NOISE regime), which clear
         # its clean maximum (16.1%, 37.5%).
         prune_thresholds={"max_spike_rate": 0.25, "max_vel_disc_rate": 0.40},
+        # The global spike / vel_disc flag thresholds were set on 50 Hz arm data,
+        # so clean PushT reads as Critical (vel_disc 16.7%). Judge the dataset
+        # mean against PushT's own clean episodes instead: Warning once it is as
+        # rough as the clean p95 episode, Critical once it is past the roughest
+        # clean episode (the prune limits). LDLJ keeps the global thresholds:
+        # per sub-movement, clean PushT is already OK.
+        flag_thresholds={
+            "jerk_spike_warning": 0.11,
+            "jerk_spike_critical": 0.25,
+            "vel_disc_warning": 0.28,
+            "vel_disc_critical": 0.40,
+        },
         notes=(
             "2-D absolute (x, y) target position, no gripper: score smoothness on both "
             "axes, and judge velocity discontinuities against PushT's own clean rate."
@@ -119,7 +140,9 @@ PROFILES: dict[str, DatasetProfile] = {
                 "disc_high=0.25: the clean mean (16.7%) is above the global 0.13, so "
                 "HIGH NOISE starts at ~1.5x the clean mean. Prune limits: the global "
                 "limits sit at the clean p95 and remove clean episodes; 0.25/0.40 "
-                "clear the clean max (16.1%, 37.5%)."
+                "clear the clean max (16.1%, 37.5%). Flag thresholds: the global "
+                "spike / vel_disc thresholds rate clean PushT Critical; Warning sits "
+                "at the clean p95 episode, Critical past the clean max."
             ),
             reproduce=(
                 "python scripts/profile_pusht.py --dataset lerobot/pusht "
@@ -240,14 +263,22 @@ def apply_profile(analyzers: list[Analyzer], profile: Optional[DatasetProfile]) 
     Return analyzers with the profile's settings applied to any analyzer still
     at its default. Analyzers are copied, never mutated.
     """
-    if profile is None or profile.gripper_dims is None:
+    if profile is None:
         return list(analyzers)
     out: list[Analyzer] = []
     for analyzer in analyzers:
-        # Only the marked default is replaced: an explicit gripper_dims, even
-        # one equal to [-1], is the caller's choice.
-        if isinstance(getattr(analyzer, "gripper_dims", None), DefaultGripperDims):
-            analyzer = dataclasses.replace(analyzer, gripper_dims=list(profile.gripper_dims))
+        # Only marked defaults are replaced: an explicit gripper_dims or
+        # threshold, even one equal to the default, is the caller's choice.
+        changes: dict = {}
+        if profile.gripper_dims is not None and isinstance(
+            getattr(analyzer, "gripper_dims", None), DefaultGripperDims
+        ):
+            changes["gripper_dims"] = list(profile.gripper_dims)
+        for name, value in profile.flag_thresholds.items():
+            if isinstance(getattr(analyzer, name, None), DefaultThreshold):
+                changes[name] = value
+        if changes:
+            analyzer = dataclasses.replace(analyzer, **changes)
         out.append(analyzer)
     return out
 

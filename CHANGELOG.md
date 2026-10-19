@@ -4,6 +4,46 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Clean PushT no longer reads as a motion defect in `integrity` and
+  `analyze`.** The `pusht` profile set gripper dims, regime thresholds and
+  prune limits, but not flag severity, so the arm-calibrated thresholds
+  (0.02 / 0.05) rated PushT's normal 16.7% velocity-discontinuity rate CRITICAL
+  and its 4.9% spike rate WARNING. Profiles now carry `flag_thresholds`; `pusht`
+  sets `jerk_spike_rate` 0.11 / 0.25 and `velocity_discontinuity_rate`
+  0.28 / 0.40 (clean p95 episode / past the clean max).
+  `tests/test_dataset_profiles.py` checks each threshold against the clean
+  baseline. Thresholds the caller sets explicitly still win
+  (`DefaultThreshold` marker, as for `gripper_dims`). Regression golden:
+  `analyze[lerobot/pusht]` `jerk_spike_rate` WARNING → OK and
+  `velocity_discontinuity_rate` CRITICAL → OK; the unprofiled path and prune
+  decisions are unchanged. The Calibra Score is not affected (it uses its own
+  thresholds in `calibra/score.py`). Detection on PushT is less sensitive as a
+  result: a dataset-wide motion fault must now push the mean past PushT's clean
+  p95 to warn.
+- **`analyze` now includes the 0.13.1 timestamp checks.** `timestamp_non_monotonic`
+  and `timestamp_scale_mismatch` were missing from `analyze`'s integrity
+  categories, so they were left out of its integrity rows and score (a CRITICAL
+  from either showed in `calibra integrity` but not in `analyze`). They now roll
+  up into "Timestamps & sync"; a test keeps the category map in sync with
+  `calibra integrity`'s metric set.
+- README, `docs/guide.md` and `docs/commands.md`: the `calibra analyze
+  lerobot/pusht` example output was from before the per-sub-movement LDLJ
+  change and these fixes. It is regenerated from the PushT regression fixture:
+  Integrity 100/100 Healthy, Calibra Score 60.5, coverage 61.2 (was 69 / 44.6 /
+  47.4); the recommendation is unchanged.
+- **`--cache-dir` no longer serves reports from older code or other settings.**
+  The key covered only the episodes, policy family and profile name, so a
+  report cached before an upgrade or a threshold change kept being returned.
+  It now also covers the Calibra version and every analyzer's resolved
+  settings (after the profile is applied). Existing cache entries are
+  recomputed once.
+- `docs/benchmarks.md`: the PushT / DROID-100 observation claimed CRITICAL
+  jerk and velocity-discontinuity flags (not true under current code) and an
+  8–10 point win over random (the table shows 1.3 on PushT). It now follows the
+  table, and the page says its scores are from Calibra 0.8.0.
+
 ## [0.13.1] - Integrity fixes from fault injection
 
 ### Added
@@ -99,7 +139,10 @@ All notable changes to Calibra are documented here.
   - PushT: `ldlj` CRITICAL → OK (mean −16.0 → −8.1); Calibra Score
     44.3 → 63.1. The old value zeroed the smoothness dimension, which through
     the integrity gate also halved coverage and task-structure credit.
-    Regression goldens updated (`ldlj` only).
+    Regression goldens updated (`ldlj` only). [Corrected 2026-10-19: these
+    numbers are from an unprofiled run (`./datasets/pusht`), which scores the x
+    axis only. With the `pusht` profile, as `lerobot/pusht` runs by default:
+    mean −16.34 → −8.89, Calibra Score 60.5 on 0.13.1.]
   - Expect higher Calibra Scores and fewer `ldlj` flags on most datasets,
     especially long or 50 Hz ones. Stage-1 per-episode drops at `min_ldlj`
     (−30) effectively no longer occur.

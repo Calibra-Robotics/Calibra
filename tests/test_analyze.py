@@ -183,3 +183,16 @@ class TestToJson:
             "Camera feed",
             "Motion & control",
         }
+
+
+def test_every_integrity_metric_has_an_analyze_category():
+    # A metric missing from _INTEGRITY_CATEGORIES is silently dropped from the
+    # analyze integrity score (the 0.13.1 timestamp checks once were). Video
+    # metrics come from `calibra integrity --decode-video`, which analyze does
+    # not run.
+    from calibra.analyze import _category_for
+    from calibra.integrity import _INTEGRITY_METRICS
+    from calibra.video_integrity import VIDEO_METRICS
+
+    missing = sorted(m for m in _INTEGRITY_METRICS - set(VIDEO_METRICS) if _category_for(m) is None)
+    assert missing == []

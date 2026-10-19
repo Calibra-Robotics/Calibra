@@ -18,14 +18,17 @@ regime. The global thresholds were calibrated on 50 Hz arm datasets (ALOHA,
 DROID-100). PushT's actions are absolute `(x, y)` targets from mouse teleop at
 10 Hz, where abrupt direction changes are normal: its clean
 velocity-discontinuity rate is 16.7%, above the global HIGH NOISE cutoff of 13%,
-which would make `analyze` filter normal PushT motion as corruption.
+which would make `analyze` filter normal PushT motion as corruption. The same
+rate is over three times the global CRITICAL threshold for the
+`velocity_discontinuity_rate` flag (5%), so a profile can also set flag
+severity thresholds.
 
 A dataset profile overrides these settings for the datasets it names, without
 changing them for anyone else:
 
 | Profile | Applied automatically to | Settings |
 |---|---|---|
-| `pusht` | `lerobot/pusht`, `lerobot/pusht_image` | `gripper_dims=[]`: score both axes. Regime `disc_high=0.25` (about 1.5× PushT's clean rate) instead of 0.13. `prune` Stage 1 limits `max_spike_rate=0.25`, `max_vel_disc_rate=0.40` instead of 0.10 / 0.25, which sit at PushT's own clean p95 and remove clean PushT episodes. Smoothness stays in the default position mode, which is correct: PushT actions are absolute target positions, not velocities. |
+| `pusht` | `lerobot/pusht`, `lerobot/pusht_image` | `gripper_dims=[]`: score both axes. Regime `disc_high=0.25` (about 1.5× PushT's clean rate) instead of 0.13. `prune` Stage 1 limits `max_spike_rate=0.25`, `max_vel_disc_rate=0.40` instead of 0.10 / 0.25, which sit at PushT's own clean p95 and remove clean PushT episodes. Integrity flags: `jerk_spike_rate` WARNING / CRITICAL at 0.11 / 0.25 and `velocity_discontinuity_rate` at 0.28 / 0.40 (instead of 0.02 / 0.05 for both): WARNING once the dataset mean reaches PushT's clean p95 episode, CRITICAL past its roughest clean episode. `ldlj` keeps the global thresholds; clean PushT is OK there. Smoothness stays in the default position mode, which is correct: PushT actions are absolute target positions, not velocities. |
 
 ```bash
 calibra audit lerobot/pusht                     # profile applied automatically
@@ -40,7 +43,8 @@ calibra prune ./datasets/pusht --profile pusht  # local copy: pass it explicitly
 - A profile only replaces *defaults*. An analyzer you configure yourself (e.g.
   `calibra compare --gripper-dims 0`) keeps your setting, `prune --max-spike-rate`
   / `--max-vel-disc-rate` beat the profile's limits (and `--policy gr00t` still
-  tightens them), and
+  tightens them), a flag threshold set on the analyzer
+  (`ControlSmoothnessAnalyzer(vel_disc_critical=...)`) beats the profile's, and
   `diagnose_regime(report, custom_thresholds=...)` overrides the profile's
   regime thresholds. The regime explanation names the profile when it applied.
 - Reports record the applied profile in `dataset_profile`, and it is part of
@@ -120,11 +124,11 @@ $ calibra analyze lerobot/pusht --policy act
     ✅ Timestamps & sync
     ✅ Episode structure
     ·   Camera feed  (not evaluated)
-    ❌ Motion & control
-    Integrity score: 69/100 · Critical
+    ✅ Motion & control
+    Integrity score: 100/100 · Healthy
 ────────────────────────────────────────────────────────────
-  Quality (Calibra Score)    44.6 / 100   ·  Poor
-  Coverage / diversity       47.4 / 100
+  Quality (Calibra Score)    60.5 / 100   ·  Fair
+  Coverage / diversity       61.2 / 100
   Redundancy (estimated)     3.2%  of state-space occupies duplicate regions
 ────────────────────────────────────────────────────────────
   RECOMMENDATION

@@ -25,6 +25,16 @@ def default_gripper_dims() -> list[int]:
     return DefaultGripperDims([-1])
 
 
+class DefaultThreshold(float):
+    """
+    A flag threshold left at its global default, marked as such.
+
+    It behaves exactly like the float it wraps; as with DefaultGripperDims, the
+    distinct type lets a dataset profile replace a threshold the caller never
+    chose while leaving an explicit value (even one equal to the default) alone.
+    """
+
+
 def parse_gripper_dims(raw: Optional[str]) -> list[int]:
     """
     Parse a ``--gripper-dims`` value: ``None`` (flag omitted) keeps the default,

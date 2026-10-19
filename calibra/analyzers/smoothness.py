@@ -37,7 +37,7 @@ from typing import Optional
 
 import numpy as np
 
-from calibra.analyzers.base import Analyzer, default_gripper_dims
+from calibra.analyzers.base import Analyzer, DefaultThreshold, default_gripper_dims
 from calibra.analyzers.temporal import _bootstrap_ci  # reuse bootstrap helper
 from calibra.schema.episode import Episode, EpisodeBatch
 from calibra.schema.report import (
@@ -154,13 +154,14 @@ class ControlSmoothnessAnalyzer(Analyzer):
     action_type: str = "position"
     gripper_dims: list[int] = field(default_factory=default_gripper_dims)
     jerk_spike_k: float = 5.0
-    ldlj_warning: float = _LDLJ_WARNING
-    ldlj_critical: float = _LDLJ_CRITICAL
-    jerk_spike_warning: float = _JERK_SPIKE_WARNING
-    jerk_spike_critical: float = _JERK_SPIKE_CRITICAL
+    # Marked as defaults so a dataset profile's flag_thresholds can replace them.
+    ldlj_warning: float = DefaultThreshold(_LDLJ_WARNING)
+    ldlj_critical: float = DefaultThreshold(_LDLJ_CRITICAL)
+    jerk_spike_warning: float = DefaultThreshold(_JERK_SPIKE_WARNING)
+    jerk_spike_critical: float = DefaultThreshold(_JERK_SPIKE_CRITICAL)
     vel_disc_threshold: float = _VEL_DISC_THRESHOLD
-    vel_disc_warning: float = _VEL_DISC_WARNING
-    vel_disc_critical: float = _VEL_DISC_CRITICAL
+    vel_disc_warning: float = DefaultThreshold(_VEL_DISC_WARNING)
+    vel_disc_critical: float = DefaultThreshold(_VEL_DISC_CRITICAL)
     act_state_div_warning: float = _ACT_STATE_DIV_WARNING
     act_state_div_critical: float = _ACT_STATE_DIV_CRITICAL
     scripted_spike_min: float = _SCRIPTED_SIGNATURE_SPIKE_MIN

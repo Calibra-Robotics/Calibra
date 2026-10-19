@@ -95,8 +95,10 @@ class AuditCache:
 
     Each cached entry maps a batch fingerprint to a serialized DiagnosticReport.
     The fingerprint encodes the full episode manifest (sorted episode_id + content
-    hash pairs) and the policy family, so it automatically invalidates when the
-    dataset or configuration changes.
+    hash pairs) and the key the caller passes. Pipeline.run passes the policy
+    family plus a fingerprint of the Calibra version, dataset profile and
+    resolved analyzer settings, so an entry is invalidated when the dataset, the
+    Calibra version or the analysis configuration changes.
 
     Parameters
     ----------

@@ -87,11 +87,11 @@ $ calibra analyze lerobot/pusht
     ✅ Timestamps & sync
     ✅ Episode structure
     ·   Camera feed  (not evaluated)
-    ❌ Motion & control
-    Integrity score: 69/100 · Critical
+    ✅ Motion & control
+    Integrity score: 100/100 · Healthy
 ────────────────────────────────────────────────────────────
-  Quality (Calibra Score)    44.6 / 100   ·  Poor
-  Coverage / diversity       47.4 / 100
+  Quality (Calibra Score)    60.5 / 100   ·  Fair
+  Coverage / diversity       61.2 / 100
   Redundancy (estimated)     3.2%  of state-space occupies duplicate regions
 ────────────────────────────────────────────────────────────
   RECOMMENDATION
@@ -134,8 +134,9 @@ not for PushT, whose 2-D action is an `(x, y)` target with no gripper. The
 built-in `pusht` profile scores both axes instead. PushT's mouse teleop at 10 Hz
 also gives it a clean velocity-discontinuity rate (16.7%) above the global
 HIGH NOISE cutoff; the profile judges it against PushT's own clean rate instead,
-so `analyze` does not treat normal PushT motion as corruption, and `prune`'s quality
-filter uses matching limits instead of cutting PushT's clean tail. It applies automatically to
+so `analyze` does not treat normal PushT motion as corruption, `integrity` rates
+motion against PushT's clean episodes instead of arm-calibrated thresholds, and
+`prune`'s quality filter uses matching limits instead of cutting PushT's clean tail. It applies automatically to
 `lerobot/pusht` and `lerobot/pusht_image`; for a local copy, pass
 `--profile pusht` (supported by `integrity`, `audit`, `review`, `prune`,
 `analyze`, and `score`). Reports record the profile in `dataset_profile`.
