@@ -44,6 +44,16 @@ All notable changes to Calibra are documented here.
   benign-firing benchmark rerun with it changes only ALOHA corrupted-episode
   detection (`vel_disc_rate` 1/7 → 2/7, `ldlj` 5/7 → 6/7); clean firing rates
   and the `calibra/calibration.py` baselines are unchanged.
+- **Docs site Home page and README results corrected against the result
+  files** (`experiments/figures/benchmark_lerobot_pusht.json`,
+  `targeted_lerobot_pusht.json`). PushT at 25% retention is 0.8% above
+  full-data prediction error (random: 2.2%) with 52% of rare behaviors kept vs
+  34%; the Home page said "within 0.5%" and "67% more", the README "99.5% of
+  full". Every benchmark row is now labelled as offline action-prediction error,
+  not policy success rate. The Home page drops an unsourced "60–80% near
+  duplicates" figure, lists the five core commands and marks the rest as not
+  validated to the same standard. `benchmarks.md` is in the site navigation; the
+  June blog post carries an editor's note on LDLJ.
 
 ### Fixed
 

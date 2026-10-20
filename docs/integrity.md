@@ -41,7 +41,7 @@ CI result: Failed  ·  Reason: 1 CRITICAL block-level finding(s): camera_freeze_
 ──────────────────────────────────────────────────────────
 ```
 
-`Status` and `CI result` are deliberately separate. `Status` is a severity summary across every finding (can read "Warning" even with a CRITICAL present, if enough other checks passed). `CI result` — the thing that actually sets the exit code — only fails on **block**-level findings: objective acquisition/format/sync/completeness failures (dropped timestamps, missing frames, a frozen or corrupted camera, incomplete episodes). Findings whose `suggested_action` is `inspect` — the two motion-smoothness metrics (`jerk_spike_rate`, `velocity_discontinuity_rate`), which can legitimately hit CRITICAL on a scripted/planner-collected dataset — are a review signal, not proof the dataset is broken, and don't fail CI on their own.
+`Status` and `CI result` are deliberately separate. `Status` is a severity summary across every finding (can read "Warning" even with a CRITICAL present, if enough other checks passed). `CI result`, which is what actually sets the exit code, only fails on **block**-level findings: objective acquisition/format/sync/completeness failures (dropped timestamps, missing frames, a frozen or corrupted camera, incomplete episodes). Findings whose `suggested_action` is `inspect` are a review signal, not proof the dataset is broken, and don't fail CI on their own. These are the two motion-smoothness metrics (`jerk_spike_rate`, `velocity_discontinuity_rate`), which can legitimately hit CRITICAL on a scripted/planner-collected dataset.
 
 ```bash
 calibra integrity /data/my_demos.h5 --strict
@@ -170,7 +170,7 @@ All four are objective format failures, so a CRITICAL finding is `block`-level. 
 
 ### Jittery / jerky motion
 
-**Detects:** physically jittery recorded motion via two metrics — abrupt jerk spikes (`jerk_spike_rate`) and sudden velocity reversals (`velocity_discontinuity_rate`).
+**Detects:** physically jittery recorded motion via two metrics: abrupt jerk spikes (`jerk_spike_rate`) and sudden velocity reversals (`velocity_discontinuity_rate`).
 
 **Not an integrity check: `ldlj`.** Calibra still computes LDLJ (Logarithmic Dimensionless Jerk) for the Calibra Score, but it is not part of `calibra integrity`, its score or its CI result. Injecting jerk spikes into ALOHA data makes LDLJ score the corrupted copy as *smoother*, and on the same trajectories it moves by about 4 units between 50 Hz and 10 Hz ([spike injection](https://github.com/Calibra-Robotics/Calibra/blob/main/eval/investigations/ldlj/SPIKE_INJECTION.md), [sampling rate](https://github.com/Calibra-Robotics/Calibra/blob/main/eval/investigations/ldlj/SUBSAMPLING.md)).
 
@@ -189,7 +189,7 @@ All four are objective format failures, so a CRITICAL finding is `block`-level. 
 ```
 
 !!! note "Integrity vs. Quality split for motion"
-    `calibra integrity` only checks whether the recorded motion is *physically jittery* — the same two metrics regardless of why. It does not check action-state tracking error or scripted-vs-teleoperated collection signature; those are collection-method questions, not a trust check, and stay under `calibra audit` (Motion Quality dimension).
+    `calibra integrity` only checks whether the recorded motion is *physically jittery*, with the same two metrics regardless of why. It does not check action-state tracking error or scripted-vs-teleoperated collection signature; those are collection-method questions, not a trust check, and stay under `calibra audit` (Motion Quality dimension).
 
 ### Leader/follower calibration drift
 

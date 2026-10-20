@@ -7,6 +7,17 @@ authors:
 
 # Calibra: Catch Bad Robot Data Before You Waste GPU Time
 
+!!! note "Editor's note, October 2026"
+    This post was written in June 2026 and its example output comes from that
+    version. Since then LDLJ is computed per sub-movement, and it is no longer
+    an integrity check: its fault detection proved inconsistent and it shifts
+    with sampling rate alone
+    ([investigation](https://github.com/Calibra-Robotics/Calibra/tree/main/eval/investigations/ldlj)).
+    `calibra integrity` now judges motion by jerk spikes and velocity
+    discontinuities. For current output and results, see
+    [Using Calibra](guide.md) and the
+    [benchmark results](benchmarks.md).
+
 Robot learning labs spend weeks collecting demonstration data and days training
 policies — only to discover mid-evaluation that the dataset had jerk spikes,
 dropped frames, and missing language annotations the whole time.

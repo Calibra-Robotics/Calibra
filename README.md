@@ -20,8 +20,8 @@ Calibra is a robotics dataset decision layer. It audits integrity, characterizes
 
 | Dataset | Quality Score | Best Retention | Result |
 |---|---:|---:|---|
-| PushT (`lerobot/pusht`) | 76.7 | 25% | 99.5% of full-data performance with 75% less training data |
-| DROID-100 (`lerobot/droid_100`) | 77.0 | 75% | Outperformed full-data baseline (+3%) |
+| PushT (`lerobot/pusht`) | 76.7 | 25% | Held-out action-prediction error 0.8% above full data with 75% less training data (random: 2.2% above) |
+| DROID-100 (`lerobot/droid_100`) | 77.0 | 75% | Held-out action-prediction error 3% below full data |
 | ALOHA sim (`lerobot/aloha_sim_insertion_human`) | 87.3 | Higher | Smaller gains; already a clean dataset |
 | xArm lift (`lerobot/xarm_lift_medium`) | 82.7 | n/a | Little benefit; already a high-quality simulation dataset |
 
@@ -29,7 +29,7 @@ Across four public robotics datasets, Calibra consistently preserved more rare b
 
 Across three datasets and three policy families (BC-MLP, ACT, Diffusion Policy) at 30% retention, Calibra improves over random by **+24.5%** on average.
 
-Quality scores in this table were recorded at benchmark time (Calibra v0.8.0, on the dataset revisions then on the Hub; PushT had 165 episodes in LeRobot v2 format). Scoring and the datasets have both changed since, so `calibra analyze` on today's `lerobot/pusht` (206 episodes, LeRobot v3) reports a different score.
+Quality scores in this table were recorded at benchmark time (Calibra v0.8.0, on the dataset revisions then on the Hub; PushT had 206 episodes in LeRobot v2 format, 165 used for training and 41 held out). All four results are offline action-prediction error on held-out episodes (BC-MLP), not policy success rate. Scoring and the datasets have both changed since, so `calibra analyze` on today's `lerobot/pusht` (206 episodes, LeRobot v3) reports a different score.
 
 → [Full benchmark results, ablation tables, and limitations](docs/benchmarks.md)
 

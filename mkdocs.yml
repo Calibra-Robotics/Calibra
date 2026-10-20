@@ -51,6 +51,7 @@ nav:
   - Integrity Checks: integrity.md
   - Annotate Mode: annotate.md
   - Command Reference: commands.md
+  - Benchmark Results: benchmarks.md
   - Interactive Playground: /Calibra/
   - Claims Registry: claims.md
   - Architecture Decision Records:
