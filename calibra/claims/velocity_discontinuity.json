@@ -121,10 +121,10 @@
       "evidence": [
         {
           "dataset": "nvidia/BridgeData2_LeRobot_v3",
-          "observed": 0.8048,
+          "observed": 0.599227,
           "supports": false,
           "date": "2026-06-18",
-          "notes": "BridgeData V2, 7-DOF real hardware velocity-command, 5Hz, 50415 episodes. vel_disc_rate 80.5% — far above the 10–20% range and exceeds the 0.25 formal falsification threshold. This FORMALLY FALSIFIES VD-002. Root cause: at 5Hz control frequency, virtually every step-to-step velocity change exceeds the 20% threshold because the time resolution is coarse enough that smooth real-world paths appear as abrupt step changes in the discretised action sequence. VD-002's 10–20% range appears to be specific to ~10Hz velocity-command datasets; the claim must be refined with a frequency qualifier. Additionally, BridgeData2 has very short episodes (mean 36 steps) and exceptionally diverse operator styles across 22k tasks."
+          "notes": "BridgeData V2, 7-DOF real hardware velocity-command, 5Hz, 50415 episodes. vel_disc_rate 80.5% — far above the 10–20% range and exceeds the 0.25 formal falsification threshold. This FORMALLY FALSIFIES VD-002. Root cause: at 5Hz control frequency, virtually every step-to-step velocity change exceeds the 20% threshold because the time resolution is coarse enough that smooth real-world paths appear as abrupt step changes in the discretised action sequence. VD-002's 10–20% range appears to be specific to ~10Hz velocity-command datasets; the claim must be refined with a frequency qualifier. Additionally, BridgeData2 has very short episodes (mean 36 steps) and exceptionally diverse operator styles across 22k tasks. [Corrected 2026-10-20: the reference had computed BridgeData2's smoothness in position mode; in velocity mode on revision b96f7216 the value is 59.92% (was 80.48%). The verdict is unchanged.]"
         }
       ],
       "falsification": {
@@ -167,10 +167,10 @@
       "evidence": [
         {
           "dataset": "nvidia/BridgeData2_LeRobot_v3",
-          "observed": 0.8048,
+          "observed": 0.599227,
           "supports": true,
           "date": "2026-06-18",
-          "notes": "5Hz velocity-command, 7-DOF, 50415 episodes. 80.5% — confirms ≤5Hz rate is far above 10-20%. Supports the frequency-split assertion."
+          "notes": "5Hz velocity-command, 7-DOF, 50415 episodes. 80.5% — confirms ≤5Hz rate is far above 10-20%. Supports the frequency-split assertion. [Corrected 2026-10-20: the reference had computed BridgeData2's smoothness in position mode; in velocity mode on revision b96f7216 the value is 59.92% (was 80.48%). The verdict is unchanged.]"
         }
       ],
       "falsification": {

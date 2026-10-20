@@ -32,11 +32,12 @@ fine may be surprisingly clean compared to peers.
 Flag levels in this table are under the global thresholds. The `pusht` profile
 rates PushT's jerk spikes and velocity discontinuities OK (it judges them
 against PushT's own clean episodes). Since 0.13.0 the velocity-discontinuity
-flag is judged on the low-pass-filtered rate. Every reference except
-`bridgedata_v2.json` was re-profiled per sub-movement on 2026-10-19
-(`ldlj_definition: per_submovement_v1`); that one does not reproduce on its Hub
-revision (see `eval/investigations/ldlj/SUBSAMPLING.md`). The whole-episode row
-and the LDLJ discussion below describe the old definition.
+flag is judged on the low-pass-filtered rate. Every reference was re-profiled
+per sub-movement on 2026-10-19/20 (`ldlj_definition: per_submovement_v1`).
+`bridgedata_v2.json` had been labelled velocity mode but computed in position
+mode; it is now computed in velocity mode and records its Hub revision
+(`meta.dataset_revision`). The whole-episode row and the LDLJ discussion below
+describe the old definition.
 All ALOHA references now exclude both grippers (`gripper_dims [6, 13]`, 12
 joint dims scored). Before that they excluded only the last dim, or none
 (aloha insertion: 0.69% spikes, 2.4% velocity discontinuities over 14 dims).

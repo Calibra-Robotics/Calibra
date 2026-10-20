@@ -39,10 +39,13 @@ rate, not the control mode, is what breaks cross-dataset comparison.
 BridgeData2 was measured from the revision's `data/` and `meta/` files only
 (170 MB; loading the Hub ID instead downloads the whole repo, about 90 GB of
 video). Its spike and velocity-discontinuity rates on this revision (0.81%,
-59.9%) do not match `calibra/references/bridgedata_v2.json` (0.71%, 80.5%).
-The June 2026 analyzer (commit `f8ec78b`) gives the same numbers as today's on
-this data, so the reference was made from other data (an unrecorded revision
-or loader); it is not replaced.
+59.9%) did not match the old `calibra/references/bridgedata_v2.json` (0.71%,
+80.5%). The cause was the old file, not the data: it was labelled velocity
+mode but its smoothness metrics had been computed in position mode, and the
+June 2026 analyzer (commit `f8ec78b`) in position mode reproduces all three
+old values exactly (spike 0.71%, vel_disc 80.5%, whole-episode LDLJ −13.79);
+entropy, PCA, jitter and dropout were already identical. The reference was
+re-profiled in velocity mode on 2026-10-20 and records its revision.
 
 ## Interpretation
 

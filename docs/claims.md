@@ -233,7 +233,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 |---------|----------|----------|------|-------|
 | `lerobot/aloha_static_battery subsampled 50 -> 25 -> 10 -> 5 Hz` | LDLJ -12.63 / -9.86 / -8.57 / -7.53 on the same trajectories | ✅ | 2026-10-19 | Only the sampling rate changes (every k-th step kept; gripper_dims [6, 13]). LDLJ moves 5.1 units and crosses from WARNING to OK. eval/investigations/ldlj/SUBSAMPLING.md. |
 | `lerobot/aloha_sim_insertion_human subsampled 50 -> 25 -> 10 -> 5 Hz` | LDLJ -11.01 / -9.23 / -8.82 / -8.38 on the same trajectories | ✅ | 2026-10-19 | Same test on sim human teleop. Subsampled to 10 Hz it scores like lerobot/pusht at its native 10 Hz (-8.89), so the PushT-vs-ALOHA gap is explained by sampling rate. eval/investigations/ldlj/SUBSAMPLING.md. |
-| `nvidia/BridgeData2_LeRobot_v3 (5 Hz, velocity) vs lerobot/aloha_* (50 Hz, position)` | BridgeData2 -8.70 vs ALOHA -11.0 .. -13.2 (native 50 Hz) | ✅ | 2026-10-19 | Different control mode and a 10x rate gap: the velocity-command dataset scores smoother than every position-command ALOHA dataset, the physically unexpected order. BridgeData2 measured on revision b96f7216 from its data/ and meta/ files (velocity mode, last dim excluded); spike and velocity-discontinuity rates on that revision do not match calibra/references/bridgedata_v2.json, which was made from other data (the June code gives the same numbers as today's on b96f7216), so that reference is not replaced. eval/investigations/ldlj/SUBSAMPLING.md. |
+| `nvidia/BridgeData2_LeRobot_v3 (5 Hz, velocity) vs lerobot/aloha_* (50 Hz, position)` | BridgeData2 -8.70 vs ALOHA -11.0 .. -13.2 (native 50 Hz) | ✅ | 2026-10-19 | Different control mode and a 10x rate gap: the velocity-command dataset scores smoother than every position-command ALOHA dataset, the physically unexpected order. BridgeData2 measured on revision b96f7216 from its data/ and meta/ files (velocity mode, last dim excluded), matching calibra/references/bridgedata_v2.json as re-profiled 2026-10-20. eval/investigations/ldlj/SUBSAMPLING.md. |
 
 **Retracted evidence** (not counted toward confidence):
 
@@ -397,7 +397,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 | Dataset | Observed | Supports | Date | Notes |
 |---------|----------|----------|------|-------|
-| `nvidia/BridgeData2_LeRobot_v3` | 0.0071 | ❌ | 2026-06-18 | BridgeData V2, 7-DOF real hardware velocity-command, 5Hz, 50415 episodes. Spike rate 0.71% — below the 1% lower falsification threshold. This FORMALLY FALSIFIES JS-002. At 5Hz, the median jerk magnitude within each short episode is elevated, so the 5x-median adaptive threshold is harder to exceed — few individual steps qualify as spikes even when the motion is objectively jerky. This reveals that JS-002's 2–8% range is specific to ~10Hz velocity-command datasets; the spike rate at 5Hz is systematically suppressed by the self-adaptive threshold. The claim must be frequency-qualified. |
+| `nvidia/BridgeData2_LeRobot_v3` | 0.008104 | ❌ | 2026-06-18 | BridgeData V2, 7-DOF real hardware velocity-command, 5Hz, 50415 episodes. Spike rate 0.71% — below the 1% lower falsification threshold. This FORMALLY FALSIFIES JS-002. At 5Hz, the median jerk magnitude within each short episode is elevated, so the 5x-median adaptive threshold is harder to exceed — few individual steps qualify as spikes even when the motion is objectively jerky. This reveals that JS-002's 2–8% range is specific to ~10Hz velocity-command datasets; the spike rate at 5Hz is systematically suppressed by the self-adaptive threshold. The claim must be frequency-qualified. [Corrected 2026-10-20: the reference had computed BridgeData2's smoothness in position mode; in velocity mode on revision b96f7216 the value is 0.81% (was 0.71%). The verdict is unchanged.] |
 
 **Retracted evidence** (not counted toward confidence):
 
@@ -463,7 +463,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 | Dataset | Observed | Supports | Date | Notes |
 |---------|----------|----------|------|-------|
-| `nvidia/BridgeData2_LeRobot_v3` | 0.0071 | ✅ | 2026-06-18 | 5Hz velocity-command, 7-DOF, 50415 episodes. 0.71% — below 1% as predicted for ≤5Hz. |
+| `nvidia/BridgeData2_LeRobot_v3` | 0.008104 | ✅ | 2026-06-18 | 5Hz velocity-command, 7-DOF, 50415 episodes. 0.71% — below 1% as predicted for ≤5Hz. [Corrected 2026-10-20: the reference had computed BridgeData2's smoothness in position mode; in velocity mode on revision b96f7216 the value is 0.81% (was 0.71%). The verdict is unchanged.] |
 
 **Retracted evidence** (not counted toward confidence):
 
@@ -537,7 +537,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 | Dataset | Observed | Supports | Date | Notes |
 |---------|----------|----------|------|-------|
-| `nvidia/BridgeData2_LeRobot_v3` | 0.8048 | ❌ | 2026-06-18 | BridgeData V2, 7-DOF real hardware velocity-command, 5Hz, 50415 episodes. vel_disc_rate 80.5% — far above the 10–20% range and exceeds the 0.25 formal falsification threshold. This FORMALLY FALSIFIES VD-002. Root cause: at 5Hz control frequency, virtually every step-to-step velocity change exceeds the 20% threshold because the time resolution is coarse enough that smooth real-world paths appear as abrupt step changes in the discretised action sequence. VD-002's 10–20% range appears to be specific to ~10Hz velocity-command datasets; the claim must be refined with a frequency qualifier. Additionally, BridgeData2 has very short episodes (mean 36 steps) and exceptionally diverse operator styles across 22k tasks. |
+| `nvidia/BridgeData2_LeRobot_v3` | 0.5992 | ❌ | 2026-06-18 | BridgeData V2, 7-DOF real hardware velocity-command, 5Hz, 50415 episodes. vel_disc_rate 80.5% — far above the 10–20% range and exceeds the 0.25 formal falsification threshold. This FORMALLY FALSIFIES VD-002. Root cause: at 5Hz control frequency, virtually every step-to-step velocity change exceeds the 20% threshold because the time resolution is coarse enough that smooth real-world paths appear as abrupt step changes in the discretised action sequence. VD-002's 10–20% range appears to be specific to ~10Hz velocity-command datasets; the claim must be refined with a frequency qualifier. Additionally, BridgeData2 has very short episodes (mean 36 steps) and exceptionally diverse operator styles across 22k tasks. [Corrected 2026-10-20: the reference had computed BridgeData2's smoothness in position mode; in velocity mode on revision b96f7216 the value is 59.92% (was 80.48%). The verdict is unchanged.] |
 
 **Retracted evidence** (not counted toward confidence):
 
@@ -568,7 +568,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 | Dataset | Observed | Supports | Date | Notes |
 |---------|----------|----------|------|-------|
-| `nvidia/BridgeData2_LeRobot_v3` | 0.8048 | ✅ | 2026-06-18 | 5Hz velocity-command, 7-DOF, 50415 episodes. 80.5% — confirms ≤5Hz rate is far above 10-20%. Supports the frequency-split assertion. |
+| `nvidia/BridgeData2_LeRobot_v3` | 0.5992 | ✅ | 2026-06-18 | 5Hz velocity-command, 7-DOF, 50415 episodes. 80.5% — confirms ≤5Hz rate is far above 10-20%. Supports the frequency-split assertion. [Corrected 2026-10-20: the reference had computed BridgeData2's smoothness in position mode; in velocity mode on revision b96f7216 the value is 59.92% (was 80.48%). The verdict is unchanged.] |
 
 **Retracted evidence** (not counted toward confidence):
 

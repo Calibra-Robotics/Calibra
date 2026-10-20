@@ -88,7 +88,7 @@ claims:
     assertion: "Velocity-command datasets have jerk spike rate in the range 2–8% due to frequent direction reversals"
     evidence_count: 1
     evidence_datasets:
-      - nvidia/BridgeData2_LeRobot_v3  # ✗ 0.0071
+      - nvidia/BridgeData2_LeRobot_v3  # ✗ 0.008104
     falsification: "A second velocity-command dataset with rate < 0.01 or > 0.12"
 
   - id: "JS-003"
@@ -113,7 +113,7 @@ claims:
     assertion: "Velocity-command spike rate using the 5x-median threshold is frequency-dependent: ~10Hz datasets produce 2–8% spike rates; ≤5Hz datasets produce < 1% because the elevated median jerk raises the threshold"
     evidence_count: 1
     evidence_datasets:
-      - nvidia/BridgeData2_LeRobot_v3  # ✓ 0.0071
+      - nvidia/BridgeData2_LeRobot_v3  # ✓ 0.008104
     falsification: "A ≤5Hz velocity-command dataset with spike rate > 0.02, OR a ~10Hz velocity-command dataset with spike rate < 0.01"
     pending_tests:
       - A ~10 Hz velocity-command human-teleop dataset
@@ -253,7 +253,7 @@ claims:
     assertion: "Velocity-command datasets have velocity discontinuity rate in the range 10–20% due to unconstrained instantaneous reversals in human teleop"
     evidence_count: 1
     evidence_datasets:
-      - nvidia/BridgeData2_LeRobot_v3  # ✗ 0.8048
+      - nvidia/BridgeData2_LeRobot_v3  # ✗ 0.599227
     falsification: "A second velocity-command dataset with rate < 0.08 or > 0.25"
 
   - id: "VD-003"
@@ -264,7 +264,7 @@ claims:
     assertion: "Velocity-command datasets at ~10Hz have velocity discontinuity rate in the range 10–20%; at ≤5Hz the rate exceeds 50% due to coarse step resolution"
     evidence_count: 1
     evidence_datasets:
-      - nvidia/BridgeData2_LeRobot_v3  # ✓ 0.8048
+      - nvidia/BridgeData2_LeRobot_v3  # ✓ 0.599227
     falsification: "A ≤5Hz velocity-command dataset with rate < 0.30, OR a ~10Hz velocity-command dataset with rate > 0.25"
     pending_tests:
       - A ~10 Hz velocity-command human-teleop dataset

@@ -30,7 +30,7 @@
           "observed": "BridgeData2 -8.70 vs ALOHA -11.0 .. -13.2 (native 50 Hz)",
           "supports": true,
           "date": "2026-10-19",
-          "notes": "Different control mode and a 10x rate gap: the velocity-command dataset scores smoother than every position-command ALOHA dataset, the physically unexpected order. BridgeData2 measured on revision b96f7216 from its data/ and meta/ files (velocity mode, last dim excluded); spike and velocity-discontinuity rates on that revision do not match calibra/references/bridgedata_v2.json, which was made from other data (the June code gives the same numbers as today's on b96f7216), so that reference is not replaced. eval/investigations/ldlj/SUBSAMPLING.md."
+          "notes": "Different control mode and a 10x rate gap: the velocity-command dataset scores smoother than every position-command ALOHA dataset, the physically unexpected order. BridgeData2 measured on revision b96f7216 from its data/ and meta/ files (velocity mode, last dim excluded), matching calibra/references/bridgedata_v2.json as re-profiled 2026-10-20. eval/investigations/ldlj/SUBSAMPLING.md."
         }
       ],
       "falsification": {

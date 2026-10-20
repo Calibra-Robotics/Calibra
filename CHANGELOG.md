@@ -107,11 +107,16 @@ All notable changes to Calibra are documented here.
   differences are documented code changes (velocity-discontinuity CIs now on
   the filtered rate, the 0.13.x short-episode fence, current flag thresholds);
   raw means are unchanged. LDLJ values move from −17…−28 to −9…−13.
-  `bridgedata_v2.json` is not replaced: on its Hub revision `b96f7216` its
-  spike and velocity-discontinuity rates do not reproduce (0.81% / 59.9% vs
-  0.71% / 80.5%), and the June 2026 analyzer gives today's numbers on that
-  data, so the reference came from other data (an unrecorded revision or
-  loader). It stays whole-episode.
+  `bridgedata_v2.json` was left whole-episode at first because its spike and
+  velocity-discontinuity rates did not reproduce; see the next entry.
+- **`bridgedata_v2.json` re-profiled in velocity mode.** The old file was
+  labelled velocity mode, but its smoothness metrics had been computed in
+  position mode: the June 2026 analyzer reproduces its spike 0.71%,
+  velocity-discontinuity 80.5% and LDLJ −13.79 exactly that way, on the same
+  data (entropy, PCA, jitter and dropout were identical). In velocity mode on
+  revision `b96f7216`, now recorded in `meta.dataset_revision`: spike 0.81%,
+  velocity discontinuity 59.9%, LDLJ −8.70 per sub-movement. JS-002, JS-004,
+  VD-002 and VD-003 cite the corrected values; all four verdicts are unchanged.
 - **ALOHA references exclude both grippers** (`gripper_dims [6, 13]`, the
   ALOHA/ACT layout of 6 joints + gripper per arm). Before, nine excluded only
   the last dim (scoring the left gripper as a joint), `aloha_sim_insertion_human`

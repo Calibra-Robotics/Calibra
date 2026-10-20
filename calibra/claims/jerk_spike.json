@@ -112,10 +112,10 @@
       "evidence": [
         {
           "dataset": "nvidia/BridgeData2_LeRobot_v3",
-          "observed": 0.0071,
+          "observed": 0.008104,
           "supports": false,
           "date": "2026-06-18",
-          "notes": "BridgeData V2, 7-DOF real hardware velocity-command, 5Hz, 50415 episodes. Spike rate 0.71% — below the 1% lower falsification threshold. This FORMALLY FALSIFIES JS-002. At 5Hz, the median jerk magnitude within each short episode is elevated, so the 5x-median adaptive threshold is harder to exceed — few individual steps qualify as spikes even when the motion is objectively jerky. This reveals that JS-002's 2–8% range is specific to ~10Hz velocity-command datasets; the spike rate at 5Hz is systematically suppressed by the self-adaptive threshold. The claim must be frequency-qualified."
+          "notes": "BridgeData V2, 7-DOF real hardware velocity-command, 5Hz, 50415 episodes. Spike rate 0.71% — below the 1% lower falsification threshold. This FORMALLY FALSIFIES JS-002. At 5Hz, the median jerk magnitude within each short episode is elevated, so the 5x-median adaptive threshold is harder to exceed — few individual steps qualify as spikes even when the motion is objectively jerky. This reveals that JS-002's 2–8% range is specific to ~10Hz velocity-command datasets; the spike rate at 5Hz is systematically suppressed by the self-adaptive threshold. The claim must be frequency-qualified. [Corrected 2026-10-20: the reference had computed BridgeData2's smoothness in position mode; in velocity mode on revision b96f7216 the value is 0.81% (was 0.71%). The verdict is unchanged.]"
         }
       ],
       "falsification": {
@@ -204,10 +204,10 @@
       "evidence": [
         {
           "dataset": "nvidia/BridgeData2_LeRobot_v3",
-          "observed": 0.0071,
+          "observed": 0.008104,
           "supports": true,
           "date": "2026-06-18",
-          "notes": "5Hz velocity-command, 7-DOF, 50415 episodes. 0.71% — below 1% as predicted for ≤5Hz."
+          "notes": "5Hz velocity-command, 7-DOF, 50415 episodes. 0.71% — below 1% as predicted for ≤5Hz. [Corrected 2026-10-20: the reference had computed BridgeData2's smoothness in position mode; in velocity mode on revision b96f7216 the value is 0.81% (was 0.71%). The verdict is unchanged.]"
         }
       ],
       "falsification": {
