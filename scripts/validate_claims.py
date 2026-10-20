@@ -120,6 +120,7 @@ def print_table(claims: list[dict], ref_names: set[str], pending_only: bool) -> 
                 "n_pending": n_pending,
                 "has_zero": has_zero,
                 "pending_list": pending,
+                "claim_status": claim.get("status", ""),
                 "assertion": claim.get("assertion", "")[:65],
             }
         )
@@ -139,7 +140,10 @@ def print_table(claims: list[dict], ref_names: set[str], pending_only: bool) -> 
     for r in rows:
         conf_str = r["conf"]
         color = _CONF_COLOR.get(conf_str, "")
-        if r["has_zero"]:
+        # A falsified claim with no pending tests is not "validated".
+        if r["claim_status"] in ("falsified", "superseded"):
+            status = f"❌ {r['claim_status']}"
+        elif r["has_zero"]:
             status = "⬜ NO EVIDENCE"
         elif r["n_pending"] > 0:
             status = f"🔬 {r['n_pending']} pending"
@@ -159,7 +163,11 @@ def print_table(claims: list[dict], ref_names: set[str], pending_only: bool) -> 
     zero_count = sum(1 for r in rows if r["has_zero"])
     total = len(claims)
     fully_validated = sum(
-        1 for c in claims if len(c.get("evidence", [])) > 0 and not _pending_datasets(c)
+        1
+        for c in claims
+        if len(c.get("evidence", [])) > 0
+        and not _pending_datasets(c)
+        and c.get("status") not in ("falsified", "superseded")
     )
     print(
         f"\n  {total} claims  ·  {zero_count} with zero evidence  ·  {fully_validated} fully validated"

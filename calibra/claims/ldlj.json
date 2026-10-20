@@ -3,6 +3,7 @@
     {
       "id": "LDLJ-001",
       "metric": "ldlj",
+      "kb_note": "Judged 2026-10-19 on direct tests (eval/investigations/ldlj/SUBSAMPLING.md): supported for sampling rate; the control-mode half is a pending test.",
       "evidence_ldlj_definition": "per_submovement_v1",
       "class": "any",
       "assertion": "LDLJ is not a valid cross-dataset comparator when control modes or control frequencies differ significantly (> ~2x)",
@@ -147,6 +148,7 @@
     {
       "id": "LDLJ-002",
       "metric": "ldlj",
+      "kb_note": "Falsified 2026-10-19: LDLJ scores far-swap spike-injected copies as smoother or unchanged (eval/investigations/ldlj/SPIKE_INJECTION.md); injector-dependent.",
       "evidence_ldlj_definition": "per_submovement_v1",
       "class": "any",
       "assertion": "LDLJ may be valid for within-type comparison (same control mode, similar frequency)",

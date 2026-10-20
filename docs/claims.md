@@ -9,9 +9,9 @@ Do not edit manually — edit the source JSON files in `calibra/claims/`.
 
 | Stat | Value |
 |------|-------|
-| Active claims | 15 |
+| Active claims | 16 |
 | Reference profiles | 16 |
-| Ratio | ✅ 16:15 (evidence outpaces theory ✓) |
+| Ratio | ✅ 16:16 (evidence outpaces theory ✓) |
 
 **Rule:** Number of reference profiles should be ≥ number of active claims.
 See `calibra/claims/SPEC.md` for the claims schema and protocol details.
@@ -488,7 +488,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 #### VD-001 — position
 
-**Status:** 🔬 active hypothesis  
+**Status:** ❌ falsified  
 **Confidence:** 🟢 HIGH  
 **Class:** `position`  
 **Source:** `calibra/claims/velocity_discontinuity.json`  
@@ -518,11 +518,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 **Falsification condition:**
 > Any position-command hardware dataset with aggregate rate > 0.08
 
-**Pending tests:**
-
-- `Review: lerobot/aloha_static_cups_open meets the falsification condition`: Re-profiled 2026-10-19 with both grippers excluded (gripper_dims [6, 13]), its aggregate rate is 8.10% (was 6.44% with only the last dim excluded), just above the 0.08 threshold. Decide whether this falsifies VD-001 (SPEC: set status falsified) or whether the threshold or gripper handling should be revisited first.
-
-*Last updated: 2026-10-19*
+*Last updated: 2026-10-20*
 
 ---
 
@@ -590,6 +586,36 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 - `Any second 5Hz velocity-command dataset`: Single 5Hz data point (BridgeData2). Need a second to confirm the >50% pattern.
 
 *Last updated: 2026-09-27*
+
+---
+
+#### VD-004 — position
+
+**Status:** 🔬 active hypothesis  
+**Confidence:** 🟡 MODERATE  
+**Class:** `position`  
+**Source:** `calibra/claims/velocity_discontinuity.json`  
+
+**Assertion:** Velocity discontinuity rate depends strongly on sampling rate: on the same trajectories it changes several-fold between 50 Hz and 10 Hz, so rates are only comparable between datasets recorded at similar sampling rates
+
+**Conditions:** threshold=0.20 (step velocity change > 20% of peak counts as discontinuity). Tested by keeping every k-th step of the same episodes (eval/investigations/ldlj/SUBSAMPLING.md, subsample.py). The change is not necessarily monotonic in rate. Successor to VD-001; states no numeric bound.
+
+**Evidence:**
+
+| Dataset | Observed | Supports | Date | Notes |
+|---------|----------|----------|------|-------|
+| `lerobot/aloha_static_battery subsampled 50 -> 25 -> 10 -> 5 Hz` | 5.46% / 2.93% / 14.11% / 32.72% on the same trajectories | ✅ | 2026-10-20 | Real hardware, gripper_dims [6, 13]. 2.6x from 50 to 10 Hz, 6x to 5 Hz; dips at 25 Hz before rising. |
+| `lerobot/aloha_sim_insertion_human subsampled 50 -> 25 -> 10 -> 5 Hz` | 1.45% / 3.56% / 15.57% / 27.92% on the same trajectories | ✅ | 2026-10-20 | Sim human teleop, gripper_dims [6, 13]. 10.7x from 50 to 10 Hz; at 10 Hz it reaches lerobot/pusht's native 10 Hz rate (16.7%). |
+
+**Falsification condition:**
+> A dataset whose aggregate rate stays within its own 95% CI when its trajectories are subsampled by 2x to 5x
+
+**Pending tests:**
+
+- `A dataset recorded natively at two sampling rates (same task, same operators)`: Subsampling changes only the rate; a native second recording would show whether the effect holds for real sensors and controllers at each rate.
+- `A velocity-command dataset recorded at >= 25 Hz, subsampled`: Both tests so far are ALOHA position control; the claim is stated for position commands only until a velocity-command dataset is tested.
+
+*Last updated: 2026-10-20*
 
 ---
 

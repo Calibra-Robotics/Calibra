@@ -22,7 +22,20 @@ All notable changes to Calibra are documented here.
 - README / `docs/integrity.md`: motion checks depend on sampling rate (the same
   ALOHA trajectories read 1.45% velocity discontinuities at 50 Hz and 15.6% at
   10 Hz); compare motion findings only between datasets at similar rates.
-
+- **Claim VD-001 falsified; successor VD-004.** VD-001 ("position-command
+  datasets below 5%") meets its own falsification condition on
+  `lerobot/aloha_static_cups_open`, a 50 Hz hardware dataset at 8.10% (> 0.08),
+  so a frequency qualifier would not rescue it. VD-004 states what the evidence
+  supports instead: on the same trajectories the rate changes several-fold
+  between 50 and 10 Hz (ALOHA insertion 1.45% → 15.6%), so rates compare only
+  at similar sampling rates. It sets no new numeric bound.
+- **Claim docs can no longer be hand-edited silently.** `claims.yaml` and
+  `docs/claims.md` are generated; comments typed into `claims.yaml` were wiped
+  on every run. Claims now take an optional `"kb_note"` (rendered as comments),
+  and `tests/test_claims_references.py` fails if either file differs from the
+  generator's output.
+- `scripts/validate_claims.py` showed falsified claims as "✅ validated" and
+  counted them as fully validated (9 → 6 once excluded).
 ### Fixed
 
 - **Clean PushT no longer reads as a motion defect in `integrity` and

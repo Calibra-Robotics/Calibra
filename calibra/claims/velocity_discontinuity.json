@@ -4,10 +4,11 @@
       "id": "VD-001",
       "metric": "velocity_discontinuity_rate",
       "class": "position",
+      "kb_note": "Falsified 2026-10-20 by lerobot/aloha_static_cups_open (50 Hz hardware, 8.10% > 0.08). The bound also states no sampling rate, which the rate depends on; see successor VD-004.",
       "assertion": "Position-command datasets have velocity discontinuity rate below 5%",
       "conditions": "threshold=0.20 (step velocity change > 20% of peak counts as discontinuity)",
       "confidence": "HIGH",
-      "status": "active_hypothesis",
+      "status": "falsified",
       "evidence": [
         {
           "dataset": "lerobot/aloha_sim_insertion_human",
@@ -104,14 +105,10 @@
       "falsification": {
         "condition": "Any position-command hardware dataset with aggregate rate > 0.08",
         "threshold": 0.08,
-        "pending_tests": [
-          {
-            "dataset": "Review: lerobot/aloha_static_cups_open meets the falsification condition",
-            "reason": "Re-profiled 2026-10-19 with both grippers excluded (gripper_dims [6, 13]), its aggregate rate is 8.10% (was 6.44% with only the last dim excluded), just above the 0.08 threshold. Decide whether this falsifies VD-001 (SPEC: set status falsified) or whether the threshold or gripper handling should be revisited first."
-          }
-        ]
+        "pending_tests": [],
+        "note": "Formally falsified 2026-10-20 by lerobot/aloha_static_cups_open: a 50 Hz position-command hardware dataset at 8.10% aggregate rate, above the 0.08 threshold. It crossed the threshold when ALOHA references started excluding both grippers (6.44% with only the last dim excluded); the both-grippers measurement is the correct one for this claim's subject (joint motion). A frequency qualifier would not rescue the claim, since the dataset is at 50 Hz. Successor: VD-004 (sampling-rate dependence)."
       },
-      "last_updated": "2026-10-19"
+      "last_updated": "2026-10-20"
     },
     {
       "id": "VD-002",
@@ -210,6 +207,45 @@
           "retraction_reason": "lerobot/pusht_image has the same actions as lerobot/pusht; its old reference scored only the x axis in float32. Profiled correctly it matches pusht exactly, so it is not a second dataset."
         }
       ]
+    },
+    {
+      "id": "VD-004",
+      "metric": "velocity_discontinuity_rate",
+      "class": "position",
+      "assertion": "Velocity discontinuity rate depends strongly on sampling rate: on the same trajectories it changes several-fold between 50 Hz and 10 Hz, so rates are only comparable between datasets recorded at similar sampling rates",
+      "conditions": "threshold=0.20 (step velocity change > 20% of peak counts as discontinuity). Tested by keeping every k-th step of the same episodes (eval/investigations/ldlj/SUBSAMPLING.md, subsample.py). The change is not necessarily monotonic in rate. Successor to VD-001; states no numeric bound.",
+      "confidence": "MODERATE",
+      "status": "active_hypothesis",
+      "evidence": [
+        {
+          "dataset": "lerobot/aloha_static_battery subsampled 50 -> 25 -> 10 -> 5 Hz",
+          "observed": "5.46% / 2.93% / 14.11% / 32.72% on the same trajectories",
+          "supports": true,
+          "date": "2026-10-20",
+          "notes": "Real hardware, gripper_dims [6, 13]. 2.6x from 50 to 10 Hz, 6x to 5 Hz; dips at 25 Hz before rising."
+        },
+        {
+          "dataset": "lerobot/aloha_sim_insertion_human subsampled 50 -> 25 -> 10 -> 5 Hz",
+          "observed": "1.45% / 3.56% / 15.57% / 27.92% on the same trajectories",
+          "supports": true,
+          "date": "2026-10-20",
+          "notes": "Sim human teleop, gripper_dims [6, 13]. 10.7x from 50 to 10 Hz; at 10 Hz it reaches lerobot/pusht's native 10 Hz rate (16.7%)."
+        }
+      ],
+      "falsification": {
+        "condition": "A dataset whose aggregate rate stays within its own 95% CI when its trajectories are subsampled by 2x to 5x",
+        "pending_tests": [
+          {
+            "dataset": "A dataset recorded natively at two sampling rates (same task, same operators)",
+            "reason": "Subsampling changes only the rate; a native second recording would show whether the effect holds for real sensors and controllers at each rate."
+          },
+          {
+            "dataset": "A velocity-command dataset recorded at >= 25 Hz, subsampled",
+            "reason": "Both tests so far are ALOHA position control; the claim is stated for position commands only until a velocity-command dataset is tested."
+          }
+        ]
+      },
+      "last_updated": "2026-10-20"
     }
   ]
 }

@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import textwrap
 from pathlib import Path
 
 _REPO = Path(__file__).parent.parent
@@ -222,6 +223,10 @@ def _render_claims_yaml(claims: list[dict]) -> str:
         lines.append(f'    confidence: "{claim.get("confidence", "")}"')
         assertion = claim.get("assertion", "").replace('"', "'")
         lines.append(f'    assertion: "{assertion}"')
+        # kb_note is the JSON home for what used to be hand-written comments
+        # here; anything typed into this file directly is lost on the next run.
+        if claim.get("kb_note"):
+            lines += [f"    # {ln}" for ln in textwrap.wrap(claim["kb_note"], width=80)]
         evidence = claim.get("evidence", [])
         lines.append(f"    evidence_count: {len(evidence)}")
         if evidence:

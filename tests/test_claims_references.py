@@ -116,6 +116,29 @@ def test_confidence_follows_spec_scale(n_supporting, expected):
     assert _derive_confidence({"evidence": evidence}) == expected
 
 
+def test_generated_claim_docs_are_current():
+    # claims.yaml and docs/claims.md are generated from calibra/claims/*.json.
+    # Hand edits there were silently lost on the next run; annotate a claim
+    # with "kb_note" in its JSON instead (SPEC.md).
+    import importlib.util
+
+    repo = PKG.parent
+    spec = importlib.util.spec_from_file_location(
+        "generate_claims_doc", repo / "scripts" / "generate_claims_doc.py"
+    )
+    gen = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gen)
+    claims = gen.load_claims(PKG / "claims")
+    references = gen.load_references(PKG / "references")
+    stale = "out of date; run: python scripts/generate_claims_doc.py"
+    assert (PKG / "knowledge_base" / "claims.yaml").read_text() == gen._render_claims_yaml(
+        claims
+    ), f"calibra/knowledge_base/claims.yaml is {stale}"
+    assert (repo / "docs" / "claims.md").read_text() == gen.render_claims_doc(claims, references), (
+        f"docs/claims.md is {stale}"
+    )
+
+
 def test_unjudged_evidence_does_not_count():
     # supports: null is a measured value awaiting judgment (SPEC.md).
     from calibra.claims import _derive_confidence
