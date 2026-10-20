@@ -8,7 +8,7 @@
 
 ## Context
 
-Calibra is licensed under BSL 1.1 (see [LICENSING.md](../../LICENSING.md)),
+Calibra is licensed under BSL 1.1 (see [LICENSING.md](https://github.com/Calibra-Robotics/Calibra/blob/main/LICENSING.md)),
 with a scheduled conversion to Apache 2.0 on 2030-06-30. The project intends to
 move the core to Apache 2.0 now, starting with v0.12, so that the integrity,
 review and dataset decision workflow is OSI open source today rather than in
@@ -288,7 +288,7 @@ policies require an OSI license. Rejected.
 ## References
 
 - [open-core-boundary.md](../open-core-boundary.md): feature-level boundary and rules of thumb
-- [LICENSING.md](../../LICENSING.md): licensing terms (BSL 1.1 when this ADR was written)
+- [LICENSING.md](https://github.com/Calibra-Robotics/Calibra/blob/main/LICENSING.md): licensing terms (BSL 1.1 when this ADR was written)
 - `calibra/__init__.py`, `calibra/analyze.py`, `calibra/card.py`, `calibra/benchmark.py`: the module-level couplings listed above
 - `calibra/outcome_db.py`: local store and network sync (split target)
 - `calibra/cloud/`, `server/main.py`: commercial code to move

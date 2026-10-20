@@ -1,6 +1,6 @@
 # Calibra Command Reference
 
-Full documentation for all Calibra CLI commands. For a quick overview see the [README](../README.md).
+Full documentation for all Calibra CLI commands. For a quick overview see the [README](https://github.com/Calibra-Robotics/Calibra/blob/main/README.md).
 
 ---
 
