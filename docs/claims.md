@@ -416,7 +416,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 #### JS-003 — any
 
 **Status:** 🔬 active hypothesis  
-**Confidence:** 🟡 MODERATE  
+**Confidence:** ⬜ NOT VALIDATED  
 **Class:** `any`  
 **Source:** `calibra/claims/jerk_spike.json`  
 
@@ -428,13 +428,15 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 | Dataset | Observed | Supports | Date | Notes |
 |---------|----------|----------|------|-------|
-| `lerobot/pusht + lerobot/aloha_sim_insertion_human` | pusht=4.9% (10Hz, 2D), aloha=0.35% (50Hz, 12 joint dims) | ✅ | 2026-06-15 | Direction of difference matches physical expectation despite 5x frequency difference — tentatively supports frequency-robustness claim [Corrected 2026-10-19: aloha re-profiled with both grippers excluded (gripper_dims [6, 13]); was 0.69% over 14 dims. Direction unchanged.] |
-| `lerobot/droid_100 vs lerobot/aloha_sim_insertion_human` | droid_100=4.5% (15Hz, 7D position), aloha=0.35% (50Hz, 12 joint dims, position) | ✅ | 2026-06-18 | First within-control-mode cross-frequency test (position-command, 3.3x frequency ratio). droid_100 (15Hz) spike rate 4.5% vs aloha (50Hz) spike rate 0.69%. Direction matches physical expectation: lower control frequency yields coarser jerk estimates and higher spike rates. The self-adapting 5x-median threshold still captures meaningful per-episode variation at both frequencies, tentatively supporting frequency-robustness. Note: droid_100 hardware noise may also contribute to the higher spike rate, partially confounding the pure frequency effect. [Corrected 2026-10-19: aloha re-profiled with both grippers excluded (gripper_dims [6, 13]); 0.35%, was 0.69%. Direction unchanged.] |
+| `lerobot/aloha_sim_insertion_human subsampled 50 -> 25 -> 10 -> 5 Hz` | spike 0.35% / 0.66% / 4.35% / 6.43%; LDLJ -11.01 / -9.23 / -8.82 / -8.38 | ❌ | 2026-10-20 | Same trajectories, only the rate changes (gripper_dims [6, 13]). Spike rate rises 12x from 50 to 10 Hz and crosses the 2% warning level; LDLJ crosses -10 the other way. The 5x-median threshold does not make spike rate frequency-invariant. eval/investigations/ldlj/SUBSAMPLING.md. |
+| `lerobot/aloha_static_battery subsampled 50 -> 25 -> 10 -> 5 Hz` | spike 0.45% / 0.39% / 1.55% / 3.22%; LDLJ -12.63 / -9.86 / -8.57 / -7.53 | ❌ | 2026-10-20 | Real hardware, gripper_dims [6, 13]. Spike rate 3.4x from 50 to 10 Hz, 7x to 5 Hz; LDLJ moves 4 units. eval/investigations/ldlj/SUBSAMPLING.md. |
 
 **Retracted evidence** (not counted toward confidence):
 
 | Dataset | Observed | Retracted | Reason |
 |---------|----------|-----------|--------|
+| `lerobot/pusht + lerobot/aloha_sim_insertion_human` | pusht=4.9% (10Hz, 2D), aloha=0.35% (50Hz, 12 joint dims) | 2026-10-20 | Confounded: the datasets differ in sampling rate, action dimensionality and hardware, and the same-trajectory subsampling test shows the difference is explained by sampling rate alone (aloha at 10 Hz reads 4.35%, near pusht's 4.9%; eval/investigations/ldlj/SUBSAMPLING.md). It does not test whether spike rate is more frequency-robust than LDLJ. |
+| `lerobot/droid_100 vs lerobot/aloha_sim_insertion_human` | droid_100=4.5% (15Hz, 7D position), aloha=0.35% (50Hz, 12 joint dims, position) | 2026-10-20 | Confounded: the datasets differ in sampling rate, action dimensionality and hardware, and the same-trajectory subsampling test shows the difference is explained by sampling rate alone (aloha at 10 Hz reads 4.35%, near pusht's 4.9%; eval/investigations/ldlj/SUBSAMPLING.md). It does not test whether spike rate is more frequency-robust than LDLJ. |
 | `nvidia/BridgeData2_LeRobot_v3 vs lerobot/pusht_velocity_command` | bridgedata2=0.71% (5Hz, 7D velocity), pusht=4.9% (10Hz, 2D velocity) | 2026-09-27 | Compares a 5 Hz velocity-command dataset with lerobot/pusht, which is position control, not velocity. The comparison crosses control mode and frequency at once, so it cannot isolate either. |
 
 **Falsification condition:**
@@ -442,9 +444,10 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 **Pending tests:**
 
+- `Review: counter-evidence from same-trajectory subsampling`: Two direct tests contradict the premise (spike rate changes 3-12x between 50 and 10 Hz on identical motion). The literal condition (inverted spike rates between two datasets 3x apart in rate) is not what was tested, so per SPEC this opens a review: falsify, or narrow the claim to a comparison at a stated rate.
 - `Two velocity-command datasets at different control frequencies`: Replaces the confounded BridgeData2-vs-pusht counter-evidence retracted 2026-09-27.
 
-*Last updated: 2026-10-19*
+*Last updated: 2026-10-20*
 
 ---
 

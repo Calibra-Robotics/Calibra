@@ -118,8 +118,8 @@ def _interp_vel_disc(yours: float, ref: float, ref_mode: str, ref_label: str) ->
 
     if ref_mode == "profiled":
         # The reference was profiled under a dataset profile because its clean
-        # rate departs from its control mode's norm (PushT: 10 Hz mouse-teleop
-        # position targets, ~17% clean). Judge against that baseline, not the
+        # rate departs from the class-wide norm (PushT: ~17% clean, mostly from
+        # its 10 Hz sampling rate). Judge against that baseline, not the
         # class-wide thresholds below.
         if rel < 0.30:
             return (

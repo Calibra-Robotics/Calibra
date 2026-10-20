@@ -95,14 +95,18 @@ claims:
     metric: "spike_rate"
     class: "any"
     status: "active_hypothesis"
-    confidence: "MODERATE"
+    confidence: "NOT VALIDATED"
     assertion: "Jerk spike rate is more robust to cross-frequency comparison than LDLJ, because the 5x-median threshold self-adapts to episode scale"
+    # Under review 2026-10-20: same-trajectory subsampling shows spike rate changes
+    # 3-12x with sampling rate, so its premise does not hold; the old cross-dataset
+    # support is retracted.
     evidence_count: 2
     evidence_datasets:
-      - lerobot/pusht + lerobot/aloha_sim_insertion_human  # ✓ pusht=4.9% (10Hz, 2D), aloha=0.35% (50Hz, 12 joint dims)
-      - lerobot/droid_100 vs lerobot/aloha_sim_insertion_human  # ✓ droid_100=4.5% (15Hz, 7D position), aloha=0.35% (50Hz, 12 joint dims, position)
+      - lerobot/aloha_sim_insertion_human subsampled 50 -> 25 -> 10 -> 5 Hz  # ✗ spike 0.35% / 0.66% / 4.35% / 6.43%; LDLJ -11.01 / -9.23 / -8.82 / -8.38
+      - lerobot/aloha_static_battery subsampled 50 -> 25 -> 10 -> 5 Hz  # ✗ spike 0.45% / 0.39% / 1.55% / 3.22%; LDLJ -12.63 / -9.86 / -8.57 / -7.53
     falsification: "Two datasets of same control mode with 3x+ frequency difference showing inverted spike rates"
     pending_tests:
+      - Review: counter-evidence from same-trajectory subsampling
       - Two velocity-command datasets at different control frequencies
 
   - id: "JS-004"

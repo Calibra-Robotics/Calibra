@@ -1,6 +1,8 @@
 # Velocity Discontinuity Rate
 
-**Confidence: HIGH** (2 datasets, clean separation, no hardcoding)
+**Confidence: MODERATE.** Reliable within one dataset or between datasets at
+similar sampling rates; the rate itself depends strongly on sampling rate
+(claim VD-004).
 
 ---
 
@@ -18,38 +20,38 @@ its motion faster than smooth physical actuation would allow.
 
 ## Rules with evidence
 
-**Rule 1: The metric cleanly separates velocity-command from position-command datasets.**
+**Rule 1: The rate depends strongly on sampling rate; compare only at similar rates.**
 
-From two datasets, no dataset-specific configuration:
+| Dataset | Rate (native) | Velocity discontinuity |
+|---------|---------------|------------------------|
+| lerobot/aloha_sim_insertion_human, 12 joint dims | 50 Hz | 1.45% |
+| same trajectories, subsampled | 10 Hz | 15.6% |
+| lerobot/pusht, absolute (x, y) targets | 10 Hz | 16.7% |
+| nvidia/BridgeData2_LeRobot_v3, velocity commands | 5 Hz | 59.9% |
 
-| Dataset | Control mode | Rate | Flag |
-|---------|-------------|------|------|
-| lerobot/pusht | absolute target position (2D) | 16.7% | CRITICAL (OK under the `pusht` profile) |
-| lerobot/aloha_sim_insertion_human | joint position (12 joint dims, grippers excluded) | 1.45% | OK |
+An earlier version of this page read the pusht/aloha gap (11×) as the metric
+separating control modes. Subsampling aloha's own trajectories to 10 Hz closes
+most of that gap, so the rate mostly reflects the sampling rate
+([`SUBSAMPLING.md`](../../eval/investigations/ldlj/SUBSAMPLING.md)). It does
+not, on this evidence, identify control mode by itself.
 
-11× ratio without any dataset-type input (7× when ALOHA's grippers were scored
-as joints: 2.4% over 14D). The metric recovers a structural property
-of the control mode from raw trajectories alone.
+**Rule 2: At 50 Hz, the 5% critical threshold does not false-positive on clean
+ALOHA joint data, but it is not a universal bound.** aloha insertion reads
+1.45%; real ALOHA tasks at the same rate range up to 8.1% (aloha_static_cups_open),
+which falsified the old "position-command datasets below 5%" claim (VD-001).
 
-**Rule 2: The 5% critical threshold is correctly calibrated for position-command datasets.**
-
-1.45% is well below the critical threshold for aloha — the tool does not
-false-positive on clean position-command teleop data.
-
-**Rule 3: ~16% is the empirical floor for velocity-command teleop.**
-
-Human velocity-command control allows instantaneous direction reversal at the
-command level (no physical inertia constraint). Frequent reversals are a property
-of the control interface, not a data quality failure. Do not flag velocity-command
-datasets for discontinuity rates below ~20% without additional context.
+**Rule 3: Judge a dataset against its own clean episodes, or against references
+at the same sampling rate.** PushT's 16.7% is normal for PushT at 10 Hz (the
+`pusht` profile judges it that way); it is not a property of velocity-command
+teleop, and PushT is position control.
 
 ---
 
 ## Open questions (needs more datasets)
 
-1. **Is 1.45% the position-command floor, or is it aloha-specific?** A second
-   position-command dataset (e.g., BridgeData V2, DROID) with a different task or
-   hardware would confirm whether the position-command baseline is stable.
+1. **Does the rate change the same way on data recorded natively at two rates?**
+   Subsampling changes only the rate; a dataset recorded at two native rates
+   would separate the sampling effect from sensor and controller effects (VD-004).
 
 2. **Does the rate correlate with task success?** If failed episodes in a dataset
    have higher discontinuity rates than successful ones, the metric has quality

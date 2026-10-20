@@ -19,16 +19,18 @@ baseline.
 
 ## Rules with evidence
 
-**Rule 1: Jerk spike rate separates control modes in the same direction as
-velocity discontinuity rate.**
+**Rule 1: Jerk spike rate depends on sampling rate; compare only at similar rates.**
 
-| Dataset | Control mode | Spike rate | Flag |
-|---------|-------------|-----------|------|
-| lerobot/pusht | absolute target position (2D) | 4.9% | WARNING (OK under the `pusht` profile) |
-| lerobot/aloha_sim_insertion_human | joint position (12 joint dims, grippers excluded) | 0.35% | OK |
+| Dataset | Rate (native) | Spike rate |
+|---------|---------------|-----------|
+| lerobot/aloha_sim_insertion_human, 12 joint dims | 50 Hz | 0.35% |
+| same trajectories, subsampled | 10 Hz | 4.35% |
+| lerobot/pusht, absolute (x, y) targets | 10 Hz | 4.9% |
 
-14× ratio (7× when ALOHA's grippers were scored as joints: 0.69% over 14D).
-Velocity discontinuity points the same direction.
+An earlier version of this page read the pusht/aloha gap (14×) as the metric
+separating control modes. Subsampled to 10 Hz, aloha's own trajectories read
+about what pusht reads at its native 10 Hz, so the gap is mostly sampling rate
+([`SUBSAMPLING.md`](../../eval/investigations/ldlj/SUBSAMPLING.md)).
 
 **Rule 2: The 2% warning threshold is correctly calibrated for position-command
 datasets.**
@@ -36,13 +38,14 @@ datasets.**
 aloha at 0.35% sits comfortably below the 2% warning level, consistent with clean
 teleop position commands.
 
-**Rule 3: Jerk spike rate is more frequency-robust than LDLJ.**
+**Rule 3 (retracted 2026-10-20): "jerk spike rate is more frequency-robust than LDLJ".**
 
-Unlike LDLJ, jerk spike rate uses a within-episode relative threshold (5× median).
-The median jerk naturally scales with the control frequency, so the ratio is
-approximately frequency-invariant. This makes it a better cross-dataset comparator
-than LDLJ. (Hypothesis — not yet confirmed with high-frequency vs low-frequency
-matched data.)
+The reasoning was that the 5× median threshold scales with control frequency, so
+the spike fraction would be roughly frequency-invariant. Tested on the same
+trajectories at different rates, it is not: aloha insertion goes from 0.35% at
+50 Hz to 4.35% at 10 Hz (12×, crossing the 2% warning level), aloha battery from
+0.45% to 1.55%. LDLJ moves by 2 to 4 units over the same range. Neither metric is
+frequency-robust (claim JS-003 is under review).
 
 ---
 

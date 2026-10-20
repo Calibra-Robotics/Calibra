@@ -131,9 +131,9 @@ local path (`.h5`, `.hdf5`, a LeRobot directory) or a HuggingFace Hub ID.
 **Dataset profiles.** By default, smoothness checks treat the last action
 dimension as a gripper and leave it out. That is right for most arm datasets but
 not for PushT, whose 2-D action is an `(x, y)` target with no gripper. The
-built-in `pusht` profile scores both axes instead. PushT's mouse teleop at 10 Hz
-also gives it a clean velocity-discontinuity rate (16.7%) above the global
-HIGH NOISE cutoff; the profile judges it against PushT's own clean rate instead,
+built-in `pusht` profile scores both axes instead. PushT is also sampled at
+10 Hz, which alone puts its clean velocity-discontinuity rate (16.7%) above the
+global HIGH NOISE cutoff (ALOHA arm motion subsampled to 10 Hz reads 14–16%); the profile judges it against PushT's own clean rate instead,
 so `analyze` does not treat normal PushT motion as corruption, `integrity` rates
 motion against PushT's clean episodes instead of arm-calibrated thresholds, and
 `prune`'s quality filter uses matching limits instead of cutting PushT's clean tail. It applies automatically to

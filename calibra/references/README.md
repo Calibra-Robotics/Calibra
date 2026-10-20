@@ -22,8 +22,8 @@ fine may be surprisingly clean compared to peers.
 | Dropout | 0.0% | 0.0% | 0.0% | n/a |
 | **LDLJ (mean, whole-episode)** | **−16.34** | **−20.43** | **−24.70** | All CRITICAL under the old definition (see note) |
 | **LDLJ (mean, per sub-movement)** | **−8.89 OK** | **−11.01 WARNING** | **−12.07 WARNING** | Re-profiled 2026-10-19; spread shrinks from 8.4 to 3.2 units |
-| **Jerk spike rate** | **4.9% WARNING** | **0.35% OK** | **0.42% OK** | Position cmd consistently cleaner |
-| **Velocity disc. rate** | **16.7% CRITICAL** | **1.45% OK** | **0.84% OK** | Clean separation by control mode |
+| **Jerk spike rate** | **4.9% WARNING** | **0.35% OK** | **0.42% OK** | Mostly sampling rate (aloha at 10 Hz: 4.35%) |
+| **Velocity disc. rate** | **16.7% CRITICAL** | **1.45% OK** | **0.84% OK** | Mostly sampling rate (aloha at 10 Hz: 15.6%) |
 | Action entropy (bits/dim) | 5.30 | 4.85 | 4.67 | All healthy |
 | Contact fraction | 21.7% | 90.7% | 78.8% | Task-type difference |
 | Grasps per episode | none (no gripper) | 1.0 | 4.0 | Task structure detected correctly |
@@ -47,29 +47,27 @@ both axes). The earlier 27 / 206 came from June 2026 code that scored the x axis
 only and differentiated in float32; it reproduces on that code but not on
 current code.
 
-### Verdict: Outcome 1, velocity discontinuity threshold is correctly calibrated
+### Verdict (revised 2026-10-20): the pusht/aloha gap is mostly sampling rate
 
-The velocity discontinuity rate separates cleanly by action space semantics:
+An earlier version of this page read the 11× gap between pusht (16.7%) and
+aloha insertion (1.45%) as the metric separating dataset types by action
+semantics: mouse-teleop target positions reversing freely vs physically bounded
+joint targets. Changing only the sampling rate of aloha's own trajectories shows
+that most of the gap is the rate: subsampled from 50 Hz to 10 Hz, aloha insertion
+reads 15.6% velocity discontinuities and 4.35% jerk spikes, close to pusht's
+16.7% and 4.9% at its native 10 Hz
+([`eval/investigations/ldlj/SUBSAMPLING.md`](../../eval/investigations/ldlj/SUBSAMPLING.md)).
 
-- **pusht (mouse-teleoperated position targets): 16.7% → CRITICAL**. The action
-  is the absolute (x, y) target the operator points at, sampled at 10 Hz, so the
-  step-to-step target change can reverse abruptly with nothing smoothing it at
-  the command level. Frequent direction changes are a structural property of
-  this teleop setup, not a data quality failure. (Earlier versions of this page
-  called these velocity commands; see the correction under
-  [`pusht_velocity_command.json`](#pusht_velocity_commandjson).)
+- **pusht (position targets, 10 Hz): 16.7%.** Normal for this dataset, not a
+  quality failure; the `pusht` profile judges it against PushT's own clean
+  episodes. Whether mouse teleop adds anything on top of the 10 Hz rate is
+  untested.
+- **aloha (joint positions, 50 Hz): 1.45%, OK.** (2.4% and WARNING when the
+  grippers were scored as joints.)
 
-- **aloha (joint positions): 1.45% → OK**. Position-command joint targets are
-  physically bounded by the previous position; large velocity changes require
-  large position deltas, which teleoperators avoid naturally. The 1.45% rate is
-  low but not zero (some sharp approach-to-grasp transitions). (2.4% and
-  WARNING when the grippers were scored as joints.)
-
-The 11× ratio between these two numbers (16.7% vs 1.45%) under identical threshold
-settings confirms the metric is sensitive to a real and meaningful difference.
-Calibra correctly distinguishes dataset types without any dataset-type input from
-the user. This is the behavior that makes the tool useful before Phase 3
-policy-conditioning is built.
+Consequence: velocity-discontinuity and jerk-spike rates only compare between
+datasets recorded at similar sampling rates (claim VD-004). The metric does not,
+on this evidence, identify control mode or dataset type on its own.
 
 ### The unexpected finding: LDLJ is not directly comparable across dataset types
 
@@ -118,7 +116,7 @@ incompatible control frequencies.
 | Dropout rate | 0.0% | Simulated, no dropped frames |
 | LDLJ (mean) | −8.89 | Per sub-movement (`per_submovement_v1`), OK; −16.34 under the old whole-episode definition |
 | Jerk spike rate | 4.9% | WARNING under the global 2% / 5% thresholds; OK under the `pusht` profile (0.11 / 0.25) |
-| Velocity discontinuity rate | 16.7% | Structural: p50=16.3%, p95=27.5%; teleop artifact. CRITICAL under the global 5%; OK under the `pusht` profile (0.28 / 0.40) |
+| Velocity discontinuity rate | 16.7% | p50=16.3%, p95=27.5%; mostly the 10 Hz sampling rate (aloha at 10 Hz: 15.6%). CRITICAL under the global 5%; OK under the `pusht` profile (0.28 / 0.40) |
 | Action entropy | 5.30 bits/dim | Healthy coverage of the 2D target space |
 | Contact fraction | 21.7% | Steps in slow/contact phase (velocity envelope proxy, no gripper) |
 
@@ -127,8 +125,9 @@ incompatible control frequencies.
 **Temporal metrics are not informative from sim data.** Jitter and dropout only
 come alive on real hardware. Do not use pusht to calibrate temporal thresholds.
 
-**16.7% velocity discontinuity is the PushT-style teleop floor.** A comparable
-dataset below 10% is meaningfully smoother than this reference. Any dataset above
+**16.7% velocity discontinuity is PushT's clean level at 10 Hz.** A comparable
+dataset at a similar sampling rate below 10% is meaningfully smoother than this
+reference; at a different rate the comparison does not hold (VD-004). Any dataset above
 25% is outlying even for this setup (the `pusht` profile's regime cutoff).
 
 **LDLJ of −8.89 (per sub-movement) is the PushT-style reference.** Interpret

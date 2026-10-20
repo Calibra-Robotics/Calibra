@@ -15,10 +15,12 @@ ignores its `y` axis.
 
 A profile can also set the thresholds `calibra analyze` uses to pick a noise
 regime. The global thresholds were calibrated on 50 Hz arm datasets (ALOHA,
-DROID-100). PushT's actions are absolute `(x, y)` targets from mouse teleop at
-10 Hz, where abrupt direction changes are normal: its clean
-velocity-discontinuity rate is 16.7%, above the global HIGH NOISE cutoff of 13%,
-which would make `analyze` filter normal PushT motion as corruption. The same
+DROID-100). PushT's actions are absolute `(x, y)` targets sampled at 10 Hz, and
+its clean velocity-discontinuity rate is 16.7%, above the global HIGH NOISE
+cutoff of 13%, which would make `analyze` filter normal PushT motion as
+corruption. Most of that rate is the sampling rate itself: ALOHA arm motion
+subsampled to 10 Hz reads 14–16%
+([details](https://github.com/Calibra-Robotics/Calibra/blob/main/eval/investigations/ldlj/SUBSAMPLING.md)). The same
 rate is over three times the global CRITICAL threshold for the
 `velocity_discontinuity_rate` flag (5%), so a profile can also set flag
 severity thresholds.

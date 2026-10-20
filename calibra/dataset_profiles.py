@@ -15,9 +15,10 @@ configured by the caller (e.g. ``calibra compare --gripper-dims``) is left as is
 A profile can also set regime thresholds (``regime_thresholds``), which
 ``calibra.strategy.diagnose_regime`` applies to reports whose
 ``dataset_profile`` names it. The global thresholds were calibrated on 50 Hz
-arm datasets (ALOHA, DROID-100); PushT's mouse-teleoperated position targets at
-10 Hz have a clean velocity-discontinuity rate (16.7%) that is itself above the
-global HIGH NOISE cutoff.
+arm datasets (ALOHA, DROID-100); PushT is sampled at 10 Hz, and its clean
+velocity-discontinuity rate (16.7%) is itself above the global HIGH NOISE
+cutoff. That rate is mostly the sampling rate: ALOHA arm trajectories
+subsampled to 10 Hz read 14-16% (eval/investigations/ldlj/SUBSAMPLING.md).
 
 The same arm calibration sets the jerk-spike and velocity-discontinuity flag
 thresholds, under which clean PushT reads as Critical. A
@@ -100,8 +101,9 @@ PROFILES: dict[str, DatasetProfile] = {
         name="pusht",
         datasets=frozenset({"lerobot/pusht", "lerobot/pusht_image"}),
         gripper_dims=(),
-        # 16.7% velocity discontinuities is PushT's measured clean rate, a property
-        # of mouse teleop at 10 Hz (calibra/references/README.md), not corruption.
+        # 16.7% velocity discontinuities is PushT's measured clean rate, not
+        # corruption. It is mostly what 10 Hz sampling produces: ALOHA arm motion
+        # subsampled to 10 Hz reads 14-16% (eval/investigations/ldlj/SUBSAMPLING.md).
         # HIGH NOISE starts at ~1.5x that (the reference's own "above 25% is
         # outlying" line) instead of the global 0.13.
         regime_thresholds={"disc_high": 0.25},

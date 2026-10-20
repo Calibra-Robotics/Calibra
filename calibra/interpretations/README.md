@@ -16,8 +16,8 @@ hardware platforms and control modes is a fact.
 
 | Metric | Document | Confidence | Key finding |
 |--------|----------|-----------|-------------|
-| Velocity discontinuity rate | [velocity_discontinuity.md](velocity_discontinuity.md) | **HIGH** | Separates PushT-style teleop from arm position control (16.7% vs 1.45% on ALOHA joints). Threshold correctly calibrated. |
-| Jerk spike rate | [jerk_spike_rate.md](jerk_spike_rate.md) | **MODERATE** | Same direction as velocity discontinuity. More frequency-robust than LDLJ. |
+| Velocity discontinuity rate | [velocity_discontinuity.md](velocity_discontinuity.md) | **MODERATE** | Strongly sampling-rate dependent (same ALOHA motion: 1.45% at 50 Hz, 15.6% at 10 Hz); compare only at similar rates. |
+| Jerk spike rate | [jerk_spike_rate.md](jerk_spike_rate.md) | **MODERATE** | Best integrity detector of injected jerk faults, but also sampling-rate dependent (0.35% at 50 Hz, 4.35% at 10 Hz). Not more frequency-robust than LDLJ. |
 | LDLJ | [ldlj.md](ldlj.md) | **LOW (cross-dataset)** | Do NOT compare across control modes or frequencies. aloha scores worse than pusht despite being smoother (frequency/dimensionality artifact). |
 | Timestamp jitter | [temporal_stability.md](temporal_stability.md) | **NOT VALIDATED** | Sim datasets are uninformative (machine-precision timestamps). Needs real hardware. |
 | Timestamp dropout | [temporal_stability.md](temporal_stability.md) | **NOT VALIDATED** | Same as jitter: zero on all sim datasets. |
@@ -34,9 +34,10 @@ hardware platforms and control modes is a fact.
 These rules are supported by at least two datasets with different characteristics
 and no dataset-specific hardcoding.
 
-**Rule 1: Velocity discontinuity separates control modes without configuration.**  
-A velocity discontinuity rate > 10% on a position-command dataset is anomalous.
-A rate of 10–20% on a velocity-command dataset is expected from human teleop.
+**Rule 1: Velocity discontinuity rates only compare at similar sampling rates.**  
+The same ALOHA trajectories read 1.45% at 50 Hz and 15.6% at 10 Hz, so a rate
+that is anomalous at 50 Hz can be normal at 10 Hz (claim VD-004). Judge a
+dataset against its own clean episodes or references at the same rate.
 
 **Rule 2: LDLJ is not a cross-mode or cross-frequency comparator.**  
 Do not compare LDLJ values between position-command and velocity-command datasets,

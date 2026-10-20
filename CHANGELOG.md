@@ -44,6 +44,17 @@ All notable changes to Calibra are documented here.
   benign-firing benchmark rerun with it changes only ALOHA corrupted-episode
   detection (`vel_disc_rate` 1/7 → 2/7, `ldlj` 5/7 → 6/7); clean firing rates
   and the `calibra/calibration.py` baselines are unchanged.
+- **PushT's motion rates are explained by its 10 Hz sampling, not by mouse
+  teleop or control mode.** ALOHA arm trajectories subsampled to 10 Hz read
+  15.6% velocity discontinuities and 4.35% jerk spikes, close to PushT's 16.7%
+  and 4.9%. The `pusht` profile's comments, the README and `docs/commands.md`
+  now say so; the references README and the interpretation docs no longer
+  claim these metrics "cleanly separate control modes" or that ~16% is a
+  velocity-command floor (PushT is position control). Claim JS-003 ("spike rate
+  is more frequency-robust than LDLJ") gets the subsampling tests as
+  counter-evidence (spike rate changes 3–12× between 50 and 10 Hz on identical
+  motion), its two cross-dataset entries are retracted as confounded by rate,
+  and a review is opened; it reads NOT VALIDATED.
 - **Docs site Home page and README results corrected against the result
   files** (`experiments/figures/benchmark_lerobot_pusht.json`,
   `targeted_lerobot_pusht.json`). PushT at 25% retention is 0.8% above
