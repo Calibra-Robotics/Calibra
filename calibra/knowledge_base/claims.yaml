@@ -127,18 +127,23 @@ claims:
     metric: "ldlj"
     class: "any"
     status: "active_hypothesis"
-    confidence: "MODERATE"
-    assertion: "LDLJ is not a valid cross-dataset comparator when control modes or control frequencies differ significantly (> ~2x)"
-    # Judged 2026-10-19 on direct tests (eval/investigations/ldlj/SUBSAMPLING.md):
-    # supported for sampling rate; the control-mode half is a pending test.
-    evidence_count: 3
+    confidence: "HIGH"
+    assertion: "LDLJ is not a valid cross-dataset comparator when sampling rates differ significantly (> ~2x); at a matched rate, control mode alone does not break comparability"
+    # Revised 2026-10-20: narrowed from 'LDLJ is not a valid cross-dataset comparator
+    # when control modes or control frequencies differ significantly (> ~2x)'. Two
+    # matched-rate comparisons rank position smoother than velocity (the expected
+    # order), so the control-mode half was dropped; the sampling-rate half stands
+    # (eval/investigations/ldlj/SUBSAMPLING.md).
+    evidence_count: 5
     evidence_datasets:
       - lerobot/aloha_static_battery subsampled 50 -> 25 -> 10 -> 5 Hz  # ✓ LDLJ -12.63 / -9.86 / -8.57 / -7.53 on the same trajectories
       - lerobot/aloha_sim_insertion_human subsampled 50 -> 25 -> 10 -> 5 Hz  # ✓ LDLJ -11.01 / -9.23 / -8.82 / -8.38 on the same trajectories
       - nvidia/BridgeData2_LeRobot_v3 (5 Hz, velocity) vs lerobot/aloha_* (50 Hz, position)  # ✓ BridgeData2 -8.70 vs ALOHA -11.0 .. -13.2 (native 50 Hz)
-    falsification: "Two datasets with different control modes where LDLJ ranks them in the physically expected order (position smoother than velocity) AND control frequencies differ > 2x"
+      - lerobot/pusht (sim, position) vs lerobot/columbia_cairlab_pusht_real (real, velocity), both 10 Hz  # ✓ LDLJ -8.89 (CI -9.01..-8.78) vs -9.71 (CI -9.83..-9.58)
+      - nvidia/BridgeData2_LeRobot_v3 (velocity) vs lerobot/aloha_* subsampled (position), both 5 Hz  # ✓ BridgeData2 -8.70 vs ALOHA -7.53 / -8.38
+    falsification: "Two datasets more than 2x apart in sampling rate that LDLJ ranks in the physically expected order, OR two datasets of different control mode at a matched rate that it ranks in the unexpected order"
     pending_tests:
-      - Control mode at matched sampling rate
+      - A position- and a velocity-command dataset on the same platform (both sim or both real) at the same native rate
 
   - id: "LDLJ-002"
     metric: "ldlj"

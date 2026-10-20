@@ -28,13 +28,29 @@ on the result. The trajectories are the same; only the sampling rate changes.
 For reference, lerobot/pusht (10 Hz, native) scores LDLJ −8.89, spike 4.9%,
 vel. discontinuity 16.7%.
 
-**Control mode at a matched rate.** nvidia/BridgeData2_LeRobot_v3 (velocity
+**Control mode at a matched native rate, same task.** `lerobot/pusht` (sim,
+absolute (x, y) position targets) and `lerobot/columbia_cairlab_pusht_real`
+(real robot, velocity commands: its actions correlate 1.00 with the next
+state change and 0.03 with the state) are both recorded at 10 Hz:
+
+| Dataset | Control | LDLJ (95% CI) | Jerk spikes | Vel. discontinuity |
+|---|---|---:|---:|---:|
+| lerobot/pusht | position | −8.89 (−9.01 to −8.78) | 4.95% | 16.7% |
+| columbia_cairlab_pusht_real | velocity | −9.71 (−9.83 to −9.58) | 1.83% | 17.3% |
+
+At the same rate LDLJ ranks position as smoother than velocity, the physically
+expected order, by 0.8 units with non-overlapping CIs; velocity discontinuities
+are nearly identical across the two control modes. Sim vs real is a remaining
+confound. Reproduce: `python eval/investigations/ldlj/control_mode.py`.
+
+**Control mode at a matched rate, across tasks.** nvidia/BridgeData2_LeRobot_v3 (velocity
 command, native 5 Hz, revision `b96f7216`, last dim excluded) scores LDLJ
 −8.70 (CI −8.71 to −8.70, 50,413 episodes). Against ALOHA at its native 50 Hz
 (−11.0 to −13.2) the velocity-command data looks smoother, the physically
 unexpected order. Against ALOHA subsampled to the same 5 Hz (−7.53, −8.38) the
-order is the expected one (position smoother). On this evidence the sampling
-rate, not the control mode, is what breaks cross-dataset comparison.
+order is the expected one (position smoother). On both matched-rate
+comparisons the sampling rate, not the control mode, is what breaks
+cross-dataset comparison.
 
 BridgeData2 was measured from the revision's `data/` and `meta/` files only
 (170 MB; loading the Hub ID instead downloads the whole repo, about 90 GB of

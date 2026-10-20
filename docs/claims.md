@@ -219,13 +219,13 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 #### LDLJ-001 — any
 
 **Status:** 🔬 active hypothesis  
-**Confidence:** 🟡 MODERATE  
+**Confidence:** 🟢 HIGH  
 **Class:** `any`  
 **Source:** `calibra/claims/ldlj.json`  
 
-**Assertion:** LDLJ is not a valid cross-dataset comparator when control modes or control frequencies differ significantly (> ~2x)
+**Assertion:** LDLJ is not a valid cross-dataset comparator when sampling rates differ significantly (> ~2x); at a matched rate, control mode alone does not break comparability
 
-**Conditions:** Tested with ldlj_definition per_submovement_v1 by changing only the sampling rate of the same trajectories, and across datasets at native rates (eval/investigations/ldlj/SUBSAMPLING.md). The whole-episode evidence (Calibra <= 0.12) and the 2026-10-19 single-dataset measurements are retracted below.
+**Conditions:** Tested with ldlj_definition per_submovement_v1 by changing only the sampling rate of the same trajectories, and across datasets at native rates (eval/investigations/ldlj/SUBSAMPLING.md). The whole-episode evidence (Calibra <= 0.12) and the 2026-10-19 single-dataset measurements are retracted below. Revised 2026-10-20: the control-mode half of the assertion was dropped after two matched-rate tests.
 
 **Evidence:**
 
@@ -234,6 +234,8 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 | `lerobot/aloha_static_battery subsampled 50 -> 25 -> 10 -> 5 Hz` | LDLJ -12.63 / -9.86 / -8.57 / -7.53 on the same trajectories | ✅ | 2026-10-19 | Only the sampling rate changes (every k-th step kept; gripper_dims [6, 13]). LDLJ moves 5.1 units and crosses from WARNING to OK. eval/investigations/ldlj/SUBSAMPLING.md. |
 | `lerobot/aloha_sim_insertion_human subsampled 50 -> 25 -> 10 -> 5 Hz` | LDLJ -11.01 / -9.23 / -8.82 / -8.38 on the same trajectories | ✅ | 2026-10-19 | Same test on sim human teleop. Subsampled to 10 Hz it scores like lerobot/pusht at its native 10 Hz (-8.89), so the PushT-vs-ALOHA gap is explained by sampling rate. eval/investigations/ldlj/SUBSAMPLING.md. |
 | `nvidia/BridgeData2_LeRobot_v3 (5 Hz, velocity) vs lerobot/aloha_* (50 Hz, position)` | BridgeData2 -8.70 vs ALOHA -11.0 .. -13.2 (native 50 Hz) | ✅ | 2026-10-19 | Different control mode and a 10x rate gap: the velocity-command dataset scores smoother than every position-command ALOHA dataset, the physically unexpected order. BridgeData2 measured on revision b96f7216 from its data/ and meta/ files (velocity mode, last dim excluded), matching calibra/references/bridgedata_v2.json as re-profiled 2026-10-20. eval/investigations/ldlj/SUBSAMPLING.md. |
+| `lerobot/pusht (sim, position) vs lerobot/columbia_cairlab_pusht_real (real, velocity), both 10 Hz` | LDLJ -8.89 (CI -9.01..-8.78) vs -9.71 (CI -9.83..-9.58) | ✅ | 2026-10-20 | Same task (PushT), same native rate, different control mode: position scores smoother, the physically expected order, with non-overlapping CIs. cairlab actions correlate 1.00 with the next state change. Confound: sim vs real hardware. eval/investigations/ldlj/control_mode.py. |
+| `nvidia/BridgeData2_LeRobot_v3 (velocity) vs lerobot/aloha_* subsampled (position), both 5 Hz` | BridgeData2 -8.70 vs ALOHA -7.53 / -8.38 | ✅ | 2026-10-20 | Different tasks and hardware, matched 5 Hz: position scores smoother, the expected order. eval/investigations/ldlj/SUBSAMPLING.md. |
 
 **Retracted evidence** (not counted toward confidence):
 
@@ -252,13 +254,13 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 | `lerobot/droid_100` | -9.787 | 2026-10-19 | A single dataset's LDLJ value is a measurement, not a test of this assertion: differences between datasets mix sampling rate, control mode, task and hardware. Replaced by direct tests (eval/investigations/ldlj/SUBSAMPLING.md). Judged 2026-10-19. |
 
 **Falsification condition:**
-> Two datasets with different control modes where LDLJ ranks them in the physically expected order (position smoother than velocity) AND control frequencies differ > 2x
+> Two datasets more than 2x apart in sampling rate that LDLJ ranks in the physically expected order, OR two datasets of different control mode at a matched rate that it ranks in the unexpected order
 
 **Pending tests:**
 
-- `Control mode at matched sampling rate`: At a matched 5 Hz, BridgeData2 (velocity, -8.70) vs ALOHA subsampled to 5 Hz (position, -7.53 and -8.38) rank in the physically expected order, so the evidence supports the frequency half of the assertion, not the control-mode half. A position- and a velocity-command dataset recorded at the same native rate would test it; if mode alone does not break comparability, narrow the assertion to frequency.
+- `A position- and a velocity-command dataset on the same platform (both sim or both real) at the same native rate`: The same-task matched-rate pair (pusht vs columbia_cairlab_pusht_real) also differs in sim vs real; this removes that confound.
 
-*Last updated: 2026-10-19*
+*Last updated: 2026-10-20*
 
 ---
 

@@ -31,9 +31,14 @@ Evidence from two datasets, measured with the whole-episode definition
 
 Per sub-movement (`ldlj_definition: per_submovement_v1`, re-profiled
 2026-10-19), PushT scores −8.89 (OK) and ALOHA insertion −11.01 (WARNING, both
-grippers excluded): the gap shrinks from 4.1 to 2.1 units. Whether the finding below survives the new
-definition is open; claims LDLJ-001 / LDLJ-002 hold the re-profiled values,
-not yet judged. The rest of this section describes the whole-episode metric.
+grippers excluded): the gap shrinks from 4.1 to 2.1 units. Under the new
+definition the finding holds for sampling rate but not for control mode: the
+same ALOHA trajectories move about 4 units between 50 Hz and 10 Hz, while at a
+matched rate LDLJ ranks position smoother than velocity, the expected order
+(claim LDLJ-001, revised 2026-10-20). Within one type it is unreliable as a
+fault detector (claim LDLJ-002, falsified). See
+[`eval/investigations/ldlj/`](../../eval/investigations/ldlj/). The rest of this
+section describes the whole-episode metric.
 
 aloha scores *worse* than pusht despite being position-controlled and physically
 smoother. This is counterintuitive and reveals a limitation of the metric at scale.

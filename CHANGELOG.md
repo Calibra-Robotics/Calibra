@@ -55,6 +55,17 @@ All notable changes to Calibra are documented here.
   counter-evidence (spike rate changes 3–12× between 50 and 10 Hz on identical
   motion), its two cross-dataset entries are retracted as confounded by rate,
   and a review is opened; it reads NOT VALIDATED.
+- **Claim LDLJ-001 narrowed to sampling rate.** At a matched native 10 Hz, on
+  the same task, `lerobot/pusht` (sim, position targets) scores LDLJ −8.89 and
+  `lerobot/columbia_cairlab_pusht_real` (real, velocity commands; its actions
+  correlate 1.00 with the next state change) scores −9.71: the physically
+  expected order, with non-overlapping CIs. BridgeData2 vs ALOHA at a matched
+  5 Hz agrees. So control mode alone does not break LDLJ comparability; the
+  claim now asserts the sampling-rate half only (HIGH, 5 entries), with a
+  pending test for the remaining sim-vs-real confound
+  (`eval/investigations/ldlj/control_mode.py`). VD-004's pending test (a
+  dataset recorded natively at two rates) stays open: no such dataset is
+  available.
 - **Docs site Home page and README results corrected against the result
   files** (`experiments/figures/benchmark_lerobot_pusht.json`,
   `targeted_lerobot_pusht.json`). PushT at 25% retention is 0.8% above
