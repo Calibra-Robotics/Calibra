@@ -308,16 +308,20 @@ _BUILTIN_PROFILES: list[CalibrationProfile] = [
         dataset="lerobot/pusht",
         task_family="pusht",
         detector="ldlj",
-        detector_version="0.10.0",
+        detector_version="0.13.1",
         config_hash=None,
         n_episodes=206,
-        n_flagged=0,
-        firing_rate=0.0,
-        ci_lower=0.0,
-        ci_upper=0.0183,
-        measured_at="2026-09-10",
+        n_flagged=2,
+        firing_rate=0.0097,
+        ci_lower=0.0027,
+        ci_upper=0.0347,
+        measured_at="2026-10-20",
         provenance="benchmark_run",
-        notes="Within-dataset MAD outlier at 4.0x. PushT 2D planar task produces uniformly smooth LDLJ.",
+        notes=(
+            "Within-dataset MAD outlier at 4.0x, per-sub-movement LDLJ "
+            "(experiments/results/benign_firing_rates.json). Was 0/206 with the "
+            "whole-episode definition."
+        ),
     ),
     # ── lerobot/aloha_sim_insertion_scripted (bimanual sim, n=50 episodes) ─────
     # n=50 makes CIs wide. Treat as task-family signal, not a point estimate.

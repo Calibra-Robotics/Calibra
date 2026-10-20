@@ -88,7 +88,7 @@ _INTEGRITY_CATEGORIES: dict[str, frozenset[str]] = {
         }
     ),
     "Motion & control": frozenset(
-        {"ldlj", "jerk_spike_rate", "velocity_discontinuity_rate", "joint_offset_max_abs"}
+        {"jerk_spike_rate", "velocity_discontinuity_rate", "joint_offset_max_abs"}
     ),
 }
 

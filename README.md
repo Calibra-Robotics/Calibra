@@ -62,12 +62,12 @@ Warnings (1)
   ⚠️  blurry_episode_fraction: camera frames markedly blurrier than the
      rest of the dataset in 1 episode.
 
-Passed (8)
+Passed (7)
   ✅ timestamp_jitter_cv  ✅ timestamp_dropout_rate  ✅ short_episode_fraction
-  ✅ action_dropout_rate  ✅ duplicate_frame_rate    ✅ ldlj
-  ✅ jerk_spike_rate      ✅ velocity_discontinuity_rate
+  ✅ action_dropout_rate  ✅ duplicate_frame_rate    ✅ jerk_spike_rate
+  ✅ velocity_discontinuity_rate
 
-Integrity Score: 85/100  ·  Status: Warning
+Integrity Score: 83/100  ·  Status: Warning
 ```
 
 Or run all four steps as one report with `calibra analyze`: integrity, Calibra Score, estimated redundancy, and a training-set recommendation from the diversity selector (`calibra prune --strategy diversity`):
@@ -160,6 +160,10 @@ local LeRobot v2/v3 copies with `--decode-video`). Read it top-down:
 - **Status: Healthy** (Integrity Score ≥ 90) means nothing objective is broken.
   **Warning** (70–89) and **Critical** (below 70) mean you should expect to lose
   or fix episodes. The `CI result` line (and exit code) fails only on `block` findings.
+- **Motion checks depend on sampling rate.** The same ALOHA trajectories read
+  1.45% velocity discontinuities at 50 Hz and 15.6% at 10 Hz. Compare motion
+  findings only between datasets recorded at similar rates
+  ([details](eval/investigations/ldlj/SUBSAMPLING.md)).
 
 ### 2. Quality: `calibra audit`
 
@@ -289,9 +293,11 @@ Calibra flags episodes that look unusual relative to the rest of the dataset. No
 | `dropout_rate` | 0.0% | 18.8% | n/a |
 | `spike_rate` | 6.9% | 62.9% | 9× |
 | `vel_disc_rate` | 1.0% | 23.8% | 25× |
-| `ldlj` | 0.0% | 50.0% | n/a |
+| `ldlj` | 0.5% | 35.7% | 74× |
 
-Averaged across `lerobot/pusht` (n=206) and `lerobot/aloha_sim_insertion_scripted` (n=50) with 95% Wilson CIs. Signal ratio is undefined (n/a) when the benign rate is 0%. PushT is measured with its `pusht` dataset profile (both action axes scored; last re-measured 2026-09-23).
+Averaged across `lerobot/pusht` (n=206) and `lerobot/aloha_sim_insertion_scripted` (n=50) with 95% Wilson CIs. Signal ratio is undefined (n/a) when the benign rate is 0%. PushT is measured with its `pusht` dataset profile (both action axes scored; last re-measured 2026-10-20).
+
+`ldlj` is the least consistent detector: it catches 5 of 7 corrupted ALOHA episodes but 0 of 30 on PushT, it scores some spike-injected data as *smoother*, and it shifts with sampling rate alone ([investigation](eval/investigations/ldlj/)). It is therefore not part of `calibra integrity`; it only feeds the Calibra Score.
 
 **A detected anomaly is not the same as confirmed corruption.** Use `calibra review` to inspect flagged episodes before deciding to drop, downweight, or annotate them.
 

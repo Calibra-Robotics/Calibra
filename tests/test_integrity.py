@@ -73,10 +73,12 @@ class TestIntegrityFiltering:
             "short_episode_fraction",
             "timestamp_jitter_cv",
             "camera_lag_std[camera_rgb]",
-            "ldlj",
             "jerk_spike_rate",
             "velocity_discontinuity_rate",
         }
+        # ldlj's fault detection is inconsistent (eval/investigations/ldlj/), so
+        # even a CRITICAL ldlj stays out of integrity.
+        assert "ldlj" not in metrics
         assert "trajectory_diversity" not in metrics
         assert "contact_density" not in metrics
         # action_state_divergence (tracking error) and motion_collection_signature

@@ -4,7 +4,7 @@
 - **Calibra:** 0.13.1 + unreleased (`ldlj_definition: per_submovement_v1`)
 - **Data:** lerobot/aloha_static_battery @ `06dc3da8`, lerobot/aloha_sim_insertion_human @ `cc571a3c`, lerobot/svla_so100_stacking @ `476c6810`
 - **Question:** claim LDLJ-002's falsification condition: does LDLJ distinguish a known-worse copy of a dataset from the clean one, within the same type?
-- **Status:** answered (no). Not fixed; see Implications.
+- **Status:** answered (no, for this injector at dataset level; see Implications for a second benchmark where it partly does).
 
 ## Method
 
@@ -55,8 +55,13 @@ the remaining segments are each closer to a single smooth movement.
 
 ## Implications
 
-- The `ldlj` flag should not be relied on to catch jerk faults; `jerk_spike_rate`
-  (and `velocity_discontinuity_rate`) do.
-- One injector only. Noise-type corruption (Gaussian action noise) may behave
-  differently; FINDINGS.md reports that heavy white noise still lowers LDLJ on
-  synthetic data.
+- The result depends on the injector. `experiments/benign_firing_rate_benchmark.py`
+  swaps *adjacent* steps (mixed with timestamp jitter and dropped frames) and
+  uses per-episode MAD outliers; rerun on 2026-10-20 it catches 5 of 7
+  corrupted episodes on aloha_sim_insertion_scripted with `ldlj`, but 0 of 30
+  on PushT (`jerk_spike_rate`: 6/7 and 12/30). So LDLJ is not blind to faults;
+  it is inconsistent, and `jerk_spike_rate` catches more on both datasets.
+- `ldlj` was removed from `calibra integrity` on that basis; it still feeds
+  the Calibra Score.
+- Noise-type corruption (Gaussian action noise) is untested here; FINDINGS.md
+  reports that heavy white noise still lowers LDLJ on synthetic data.

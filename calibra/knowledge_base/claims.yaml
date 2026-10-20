@@ -142,8 +142,8 @@ claims:
     status: "falsified"
     confidence: "NOT VALIDATED"
     assertion: "LDLJ may be valid for within-type comparison (same control mode, similar frequency)"
-    # Falsified 2026-10-19: LDLJ scores spike-injected copies as smoother or unchanged
-    # (eval/investigations/ldlj/SPIKE_INJECTION.md).
+    # Falsified 2026-10-19: LDLJ scores far-swap spike-injected copies as smoother or
+    # unchanged (eval/investigations/ldlj/SPIKE_INJECTION.md); injector-dependent.
     evidence_count: 4
     evidence_datasets:
       - lerobot/aloha_static_battery clean vs 2% spike-injected  # ✗ LDLJ -12.63 -> -11.29 (clean -> corrupted); jerk spike rate 0.5% -> 15.2%

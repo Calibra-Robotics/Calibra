@@ -4,6 +4,25 @@ All notable changes to Calibra are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- **`ldlj` is no longer an integrity check.** It no longer counts toward
+  `calibra integrity`'s score, findings or CI result, or `calibra analyze`'s
+  "Motion & control" row; it still feeds the Calibra Score (unchanged). Its
+  fault detection is inconsistent: rerun on current code, the benign-firing
+  benchmark has it catching 5 of 7 corrupted ALOHA episodes but 0 of 30 on
+  PushT (`jerk_spike_rate`: 6/7 and 12/30), it scores far-swap spike injection
+  as smoother, and it moves about 4 units with sampling rate alone
+  (`eval/investigations/ldlj/`). Integrity scores that included an LDLJ
+  WARNING or CRITICAL go up.
+- **Benign-firing benchmark rerun** (`experiments/results/benign_firing_rates.*`,
+  2026-10-20): only `ldlj` changed (PushT clean flag rate 0/206 → 2/206;
+  detection 50.0% → 35.7%); the README table and the PushT `ldlj` baseline in
+  `calibra/calibration.py` follow it.
+- README / `docs/integrity.md`: motion checks depend on sampling rate (the same
+  ALOHA trajectories read 1.45% velocity discontinuities at 50 Hz and 15.6% at
+  10 Hz); compare motion findings only between datasets at similar rates.
+
 ### Fixed
 
 - **Clean PushT no longer reads as a motion defect in `integrity` and

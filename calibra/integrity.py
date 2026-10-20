@@ -53,9 +53,13 @@ from calibra.video_integrity import VIDEO_METRICS, VideoContentResult
 # emits trajectory_diversity/contact_density/grasp_events_per_episode, and
 # ControlSmoothnessAnalyzer also emits action_state_divergence/
 # motion_collection_signature, which belong to the Quality layer, not
-# Integrity. Only the three raw jerkiness metrics below ("are the recorded
+# Integrity. Only the two raw jerkiness metrics below ("are the recorded
 # motions physically jittery") count as an Integrity-layer trust question —
 # tracking error and collection-method signature are Quality-layer questions.
+# ldlj is left out: its fault detection is inconsistent (5/7 corrupted ALOHA
+# episodes but 0/30 on PushT in experiments/results/benign_firing_rates.md, and
+# it scores far-swap spike injection as smoother) and it shifts with sampling
+# rate alone (eval/investigations/ldlj/). It still feeds the Calibra Score.
 _INTEGRITY_METRICS = frozenset(
     {
         "timestamp_jitter_cv",
@@ -71,7 +75,6 @@ _INTEGRITY_METRICS = frozenset(
         "camera_freeze_events",
         "blurry_episode_fraction",
         "camera_view_name_mismatch",
-        "ldlj",
         "jerk_spike_rate",
         "velocity_discontinuity_rate",
         "joint_offset_max_abs",
@@ -90,7 +93,6 @@ _INTEGRITY_METRICS = frozenset(
 # and the cap is lifted later.
 _MOTION_REVIEW_METRICS = frozenset(
     {
-        "ldlj",
         "jerk_spike_rate",
         "velocity_discontinuity_rate",
         "joint_offset_max_abs",
