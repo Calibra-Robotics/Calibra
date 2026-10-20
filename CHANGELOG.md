@@ -6,6 +6,21 @@ All notable changes to Calibra are documented here.
 
 ### Changed
 
+- **Calibra Score no longer uses LDLJ, and judges smoothness by the same
+  thresholds as the integrity flags.** LDLJ was 15 of the 35 smoothness points;
+  smoothness is now 20 points (jerk spikes and velocity discontinuities, 10
+  each) and the 85-point total is normalized to 100. Removing LDLJ alone dropped
+  PushT to 52.5 (Poor): the global 2% / 5% spike and velocity-discontinuity
+  bounds take every smoothness point from 10 Hz data, and the integrity gate
+  then halves coverage. The score now uses a dataset profile's flag thresholds
+  when one applies, so PushT reads 98.3 (Excellent), consistent with its
+  Healthy integrity result (52.1 without the profile). A profiled score means
+  "clean for its kind" and does not compare directly with unprofiled scores.
+  The report rubric (`calibra/schema/scoring.py`) no longer scores `ldlj`
+  flags; rubric id `robot-dataset-quality-v1.1`. Scores from before and after
+  are not comparable. `docs/calibra-score.md` matches the code and drops an
+  unsourced "r = 0.71 across 38 datasets" correlation.
+
 - **`ldlj` is no longer an integrity check.** It no longer counts toward
   `calibra integrity`'s score, findings or CI result, or `calibra analyze`'s
   "Motion & control" row; it still feeds the Calibra Score (unchanged). Its

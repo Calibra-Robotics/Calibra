@@ -12,9 +12,15 @@ across all diagnostic dimensions. It is designed to be:
 Scoring dimensions and weights
 -------------------------------
   Temporal stability     (25 pts)  — jitter CV, dropout rate
-  Control smoothness     (35 pts)  — LDLJ, jerk spike rate, velocity discontinuity
+  Control smoothness     (20 pts)  — jerk spike rate, velocity discontinuity
   Coverage / diversity   (25 pts)  — action entropy, episode length CV
   Task structure         (15 pts)  — trajectory diversity, short-episode fraction
+
+The 85 points are normalized to 0–100. LDLJ was dropped from smoothness on
+2026-10-20 (it was worth 15 of 35 points): its fault detection is inconsistent
+and it shifts with sampling rate alone (eval/investigations/ldlj/). The two
+remaining smoothness metrics are also sampling-rate dependent, so scores
+compare best between datasets recorded at similar rates.
 
 Score categories
 -----------------
@@ -50,7 +56,7 @@ from calibra.schema.report import DiagnosticReport, RiskLevel
 # ── scoring constants ─────────────────────────────────────────────────────────
 
 _MAX_TEMPORAL = 25.0
-_MAX_SMOOTHNESS = 35.0
+_MAX_SMOOTHNESS = 20.0
 _MAX_COVERAGE = 25.0
 _MAX_STRUCTURE = 15.0
 _MAX_TOTAL = _MAX_TEMPORAL + _MAX_SMOOTHNESS + _MAX_COVERAGE + _MAX_STRUCTURE
@@ -60,10 +66,6 @@ _JITTER_CV_WARNING = 0.05
 _JITTER_CV_CRITICAL = 0.20
 _DROPOUT_WARNING = 0.01
 _DROPOUT_CRITICAL = 0.05
-
-_LDLJ_GOOD = -7.0
-_LDLJ_WARNING = -10.0
-_LDLJ_CRITICAL = -15.0
 
 _SPIKE_WARNING = 0.02
 _SPIKE_CRITICAL = 0.05
@@ -136,45 +138,62 @@ def _score_temporal(report: DiagnosticReport) -> tuple[float, dict]:
     return score, details
 
 
+def _smoothness_thresholds(report: DiagnosticReport) -> tuple[float, float, float, float]:
+    """
+    (spike warning, spike critical, vel_disc warning, vel_disc critical): the
+    global values, or the report's dataset-profile flag thresholds, so the score
+    judges a dataset by the same bounds as its integrity flags (PushT at 10 Hz
+    would otherwise lose every smoothness point for its sampling rate).
+    """
+    th = {
+        "jerk_spike_warning": _SPIKE_WARNING,
+        "jerk_spike_critical": _SPIKE_CRITICAL,
+        "vel_disc_warning": _VEL_DISC_WARNING,
+        "vel_disc_critical": _VEL_DISC_CRITICAL,
+    }
+    if report.dataset_profile:
+        from calibra.dataset_profiles import PROFILES
+
+        profile = PROFILES.get(report.dataset_profile)
+        if profile is not None:
+            th.update({k: v for k, v in profile.flag_thresholds.items() if k in th})
+    return (
+        th["jerk_spike_warning"],
+        th["jerk_spike_critical"],
+        th["vel_disc_warning"],
+        th["vel_disc_critical"],
+    )
+
+
 def _score_smoothness(report: DiagnosticReport) -> tuple[float, dict]:
-    """Returns (score 0–35, details dict)."""
+    """Returns (score 0–20, details dict). LDLJ is not scored (see module docstring)."""
     s = _raw(report, "control_smoothness")
-    ldlj = s.get("ldlj", {}).get("mean_ldlj", None)
     spike = s.get("jerk_spikes", {}).get("mean_spike_fraction", None)
     vel_disc = s.get("vel_discontinuities", {}).get("mean_disc_fraction", None)
+    spike_warn, spike_crit, disc_warn, disc_crit = _smoothness_thresholds(report)
 
     deduction = 0.0
     details: dict = {}
 
-    # LDLJ (up to 15 pts)
-    if ldlj is not None:
-        details["ldlj"] = ldlj
-        if ldlj <= _LDLJ_CRITICAL:
-            deduction += 15.0
-        elif ldlj <= _LDLJ_WARNING:
-            frac = (ldlj - _LDLJ_WARNING) / (_LDLJ_CRITICAL - _LDLJ_WARNING)
-            deduction += 15.0 * _clamp(frac)
-        elif ldlj <= _LDLJ_GOOD:
-            frac = (ldlj - _LDLJ_GOOD) / (_LDLJ_WARNING - _LDLJ_GOOD)
-            deduction += 7.5 * _clamp(frac)
-
     # Spike rate (up to 10 pts)
     if spike is not None:
         details["spike_rate"] = spike
-        if spike >= _SPIKE_CRITICAL:
+        if spike >= spike_crit:
             deduction += 10.0
-        elif spike >= _SPIKE_WARNING:
-            frac = (spike - _SPIKE_WARNING) / (_SPIKE_CRITICAL - _SPIKE_WARNING)
+        elif spike >= spike_warn:
+            frac = (spike - spike_warn) / (spike_crit - spike_warn)
             deduction += 10.0 * _clamp(frac)
 
     # Velocity discontinuity (up to 10 pts)
     if vel_disc is not None:
         details["vel_disc_rate"] = vel_disc
-        if vel_disc >= _VEL_DISC_CRITICAL:
+        if vel_disc >= disc_crit:
             deduction += 10.0
-        elif vel_disc >= _VEL_DISC_WARNING:
-            frac = (vel_disc - _VEL_DISC_WARNING) / (_VEL_DISC_CRITICAL - _VEL_DISC_WARNING)
+        elif vel_disc >= disc_warn:
+            frac = (vel_disc - disc_warn) / (disc_crit - disc_warn)
             deduction += 10.0 * _clamp(frac)
+    if report.dataset_profile:
+        details["thresholds_profile"] = report.dataset_profile
 
     score = max(0.0, _MAX_SMOOTHNESS - deduction)
     return score, details

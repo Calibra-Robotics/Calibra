@@ -15,7 +15,7 @@ How much training data can Calibra remove before performance degrades?
 | ALOHA sim (`lerobot/aloha_sim_insertion_human`) | 50 | 87.3/100 | 60.6% of full | −18pp | +117% (50% vs. 23%) |
 | xArm lift (`lerobot/xarm_lift_medium`) | 800 | 82.7/100 | 97.3% of full | −1pp (≈ random) | +2% (25.0% vs. 24.6%) |
 
-Quality Scores and flags on this page were measured with Calibra 0.8.0 (2026-09-01) and have not been re-run on current code. Since then the `pusht` dataset profile and per-sub-movement LDLJ changed PushT's numbers: current Calibra scores all 206 PushT episodes 60.5, with every motion check OK (see the [`calibra analyze` example](guide.md)).
+Quality Scores and flags on this page were measured with Calibra 0.8.0 (2026-09-01) and have not been re-run on current code. Since then the `pusht` dataset profile and per-sub-movement LDLJ changed PushT's numbers: current Calibra scores all 206 PushT episodes 98.3 with its profile (the Calibra Score no longer uses LDLJ, and judges smoothness by the same profile thresholds as the integrity flags), with every motion check OK (see the [`calibra analyze` example](guide.md) and [Calibra Score](calibra-score.md)). Scores from different Calibra versions are not comparable.
 
 "% of full" = Calibra coreset MSE / full-data baseline MSE. "Calibra vs. Random at 25%" = difference in subset MSE vs. random at the same fraction (positive = Calibra wins). Rare-behavior coverage = fraction of bottom-15% action-space-density episodes retained.
 

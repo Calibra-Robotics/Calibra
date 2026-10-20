@@ -130,8 +130,8 @@ $ calibra analyze lerobot/pusht --policy act
     ✅ Motion & control
     Integrity score: 100/100 · Healthy
 ────────────────────────────────────────────────────────────
-  Quality (Calibra Score)    60.5 / 100   ·  Fair
-  Coverage / diversity       61.2 / 100
+  Quality (Calibra Score)    98.3 / 100   ·  Excellent
+  Coverage / diversity       94.3 / 100
   Redundancy (estimated)     3.2%  of state-space occupies duplicate regions
 ────────────────────────────────────────────────────────────
   RECOMMENDATION
@@ -457,11 +457,11 @@ calibra score hf://lerobot/pusht_image --badge   # print markdown badge for data
   Episodes : 120  ·  Steps: 180000
 
 ────────────────────────────────────────────────────────────
-  🟢  78.0 / 100  —  Good
+  🟢  78.8 / 100  —  Good
 ────────────────────────────────────────────────────────────
 
   Temporal Stability       22.00/25  [█████████████████░░░]  88%
-  Control Smoothness       26.00/35  [██████████████░░░░░░]  74%
+  Control Smoothness       15.00/20  [███████████████░░░░░]  75%
   Coverage / Diversity     19.00/25  [███████████████░░░░░]  76%
   Task Structure           11.00/15  [██████████████░░░░░░]  73%
 

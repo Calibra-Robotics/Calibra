@@ -10,12 +10,16 @@ The score is computed by `calibra card` and embedded as `calibra_score` YAML fro
 
 | Dimension | Weight | Max pts | What it measures |
 |-----------|-------:|--------:|-----------------|
-| Temporal Stability | 25% | 25 | Timestamp regularity, dropout rate, jitter |
-| Control Smoothness | 35% | 35 | Jerk spikes, velocity discontinuities, LDLJ |
-| Coverage Diversity | 25% | 25 | Action entropy, state-space coverage |
-| Task Structure | 15% | 15 | Contact phase balance, phase completeness |
+| Temporal Stability | 29% | 25 | Timestamp regularity, dropout rate, jitter |
+| Control Smoothness | 24% | 20 | Jerk spikes, velocity discontinuities |
+| Coverage Diversity | 29% | 25 | Action entropy, state-space coverage |
+| Task Structure | 18% | 15 | Contact phase balance, phase completeness |
 
-**Total: 100 points**
+**Total: 85 points, normalized to 0–100.** Until 2026-10-20 Control Smoothness
+was 35 points, 15 of them for LDLJ. LDLJ was dropped: its fault detection is
+inconsistent and it shifts with sampling rate alone
+([investigation](https://github.com/Calibra-Robotics/Calibra/tree/main/eval/investigations/ldlj)).
+Scores computed before and after that change are not comparable.
 
 ---
 
@@ -47,19 +51,25 @@ Measures the regularity of the timestamp stream across episodes.
 
 ---
 
-### 2. Control Smoothness (35 pts)
+### 2. Control Smoothness (20 pts)
 
 Measures the smoothness of the demonstrated joint trajectories.
 
 | Sub-metric | Max pts | Threshold |
 |-----------|--------:|-----------|
-| LDLJ (log dimensionless jerk) | 15 | warn < −10, crit < −15 |
-| Jerk spike rate | 12 | warn >2%, crit >5% |
-| Velocity discontinuity rate | 8 | warn >2%, crit >5% |
+| Jerk spike rate | 10 | warn >2%, crit >5% |
+| Velocity discontinuity rate | 10 | warn >2%, crit >5% |
 
-**Why it matters:** Smoothness is the single strongest predictor of policy success rate across the Calibra claims evidence base (correlation r = 0.71 across 38 datasets). High jerk forces the policy to learn discontinuous action distributions, increasing training variance.
+When the dataset has a profile with flag thresholds, the score uses those
+instead, the same bounds as its integrity flags: `pusht` uses 11% / 25% for
+spikes and 28% / 40% for velocity discontinuities. Both metrics depend strongly
+on sampling rate (the same ALOHA motion reads 1.45% velocity discontinuities at
+50 Hz and 15.6% at 10 Hz), so compare scores between datasets recorded at
+similar rates.
 
-Control Smoothness has the highest weight (35%) because it dominates the variance in empirical outcomes more than any other single dimension.
+**Why it matters:** High jerk forces the policy to learn discontinuous action distributions, increasing training variance. (An earlier version of this page cited a correlation with policy success rate, r = 0.71 across 38 datasets; no data in the repository supports it, so it was removed.)
+
+**Profiled datasets.** With profile thresholds, a dataset is judged against its own clean episodes, so clean data of a profiled dataset scores well on smoothness by construction (PushT: 98.3 with its profile, 52.1 without). A profiled score means "clean for its kind" and does not compare directly with unprofiled scores.
 
 ---
 

@@ -90,8 +90,8 @@ $ calibra analyze lerobot/pusht
     ✅ Motion & control
     Integrity score: 100/100 · Healthy
 ────────────────────────────────────────────────────────────
-  Quality (Calibra Score)    60.5 / 100   ·  Fair
-  Coverage / diversity       61.2 / 100
+  Quality (Calibra Score)    98.3 / 100   ·  Excellent
+  Coverage / diversity       94.3 / 100
   Redundancy (estimated)     3.2%  of state-space occupies duplicate regions
 ────────────────────────────────────────────────────────────
   RECOMMENDATION

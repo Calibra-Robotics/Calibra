@@ -1,7 +1,7 @@
 """
 Scoring rubric for Calibra public reports.
 
-Rubric identifier: robot-dataset-quality-v1.0
+Rubric identifier: robot-dataset-quality-v1.1
 
 Methodology identifiers are versioned independently of the Calibra package
 version. A Calibra release may fix the CLI without changing any rubric;
@@ -11,13 +11,20 @@ v1 uses flag-severity-based normalization: each flag's level maps directly
 to a metric score. Per-metric scoring functions (threshold interpolation)
 will replace this in v2 once rubric calibration data is available from the
 public audit corpus.
+
+v1.1 (2026-10-20): `ldlj` flags no longer count toward any dimension. Its
+fault detection is inconsistent and it shifts with sampling rate alone
+(eval/investigations/ldlj/).
 """
 
 from __future__ import annotations
 
 from calibra.schema.report import RiskLevel
 
-CURRENT_RUBRIC = "robot-dataset-quality-v1.0"
+CURRENT_RUBRIC = "robot-dataset-quality-v1.1"
+
+# Metrics reported but not scored (see the v1.1 note above).
+UNSCORED_METRICS: frozenset[str] = frozenset({"ldlj"})
 
 # ── dimension weights (must sum to 1.0) ───────────────────────────────────────
 

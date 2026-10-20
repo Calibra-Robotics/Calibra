@@ -100,6 +100,46 @@ class TestScore:
         assert badge.startswith("![Calibra Score]")
         assert "img.shields.io" in badge
 
+    def test_ldlj_does_not_move_either_score(self):
+        # LDLJ was dropped from the Calibra Score and the report rubric on
+        # 2026-10-20 (eval/investigations/ldlj/): changing it alone must not
+        # change either score.
+        import copy
+
+        from calibra.report_json import _build_dimensions
+        from calibra.schema.report import RiskLevel
+        from calibra.score import compute_score
+
+        report = Pipeline().run(_make_batch())
+        worse = copy.deepcopy(report)
+        smooth = next(r for r in worse.analyzer_results if r.analyzer_name == "control_smoothness")
+        smooth.raw_metrics["ldlj"]["mean_ldlj"] = -40.0
+        for flag in smooth.flags:
+            if flag.metric == "ldlj":
+                flag.level = RiskLevel.CRITICAL
+        assert compute_score(worse)["total_score"] == compute_score(report)["total_score"]
+        assert "ldlj" not in compute_score(report)["dimensions"]["control_smoothness"]["details"]
+        dims = _build_dimensions(worse.flags)
+        assert all("ldlj" not in d.metrics for d in dims.values())
+
+    def test_smoothness_uses_profile_flag_thresholds(self):
+        # PushT's clean 10 Hz rates (spike 4.9%, vel_disc 16.7%) lose every
+        # smoothness point under the global 2% / 5% bounds, but none under the
+        # pusht profile's flag thresholds, matching its integrity flags.
+        import copy
+
+        from calibra.score import _score_smoothness
+
+        report = Pipeline().run(_make_batch())
+        smooth = next(r for r in report.analyzer_results if r.analyzer_name == "control_smoothness")
+        smooth.raw_metrics["jerk_spikes"]["mean_spike_fraction"] = 0.049
+        smooth.raw_metrics["vel_discontinuities"]["mean_disc_fraction"] = 0.167
+        report.dataset_profile = None
+        profiled = copy.deepcopy(report)
+        profiled.dataset_profile = "pusht"
+        assert _score_smoothness(report)[0] < 5.0
+        assert _score_smoothness(profiled)[0] == 20.0
+
     def test_exit_code_logic(self):
         from calibra.score import _exit_code
 

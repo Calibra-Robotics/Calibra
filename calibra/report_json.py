@@ -48,6 +48,7 @@ from calibra.schema.report import CompatibilityHint, DiagnosticReport, RiskFlag,
 from calibra.schema.scoring import (
     CURRENT_RUBRIC,
     DIMENSION_WEIGHTS,
+    UNSCORED_METRICS,
     dimension_score,
     flag_level_to_score,
     get_methodology,
@@ -117,6 +118,8 @@ def _hints_to_recommendations(hints: list[CompatibilityHint]) -> Recommendations
 def _build_dimensions(flags: list[RiskFlag]) -> dict[str, DimensionResult]:
     dim_flags: dict[str, list[RiskFlag]] = {d: [] for d in DIMENSION_WEIGHTS}
     for flag in flags:
+        if flag.metric in UNSCORED_METRICS:
+            continue
         dim = route_metric_to_dimension(flag.metric)
         dim_flags[dim].append(flag)
 
