@@ -27,7 +27,7 @@ Calibra is a robotics dataset decision layer. It audits integrity, characterizes
 
 Across four public robotics datasets, Calibra consistently preserved more rare behaviors than random selection. The magnitude of training-data reduction depended on the dataset's quality and redundancy.
 
-Across three datasets and three policy families (BC-MLP, ACT, Diffusion Policy) at 30% retention, Calibra improves over random by **+24.5%** on average.
+Across three datasets and three policy families (BC-MLP, ACT, Diffusion Policy) at 30% retention, Calibra's selection lowers held-out action-prediction error relative to random selection by 24.5%, 23.7% and 13.8%. That puts it on par with K-Center greedy on BC-MLP and ACT, where diversity-only selection (no quality filter) does best, and first on Diffusion Policy. Which strategy wins depends on the policy and the retention budget; see the [ablation](#benchmark-details).
 
 Quality scores in this table were recorded at benchmark time (Calibra v0.8.0, on the dataset revisions then on the Hub; PushT had 206 episodes in LeRobot v2 format, 165 used for training and 41 held out). All four results are offline action-prediction error on held-out episodes (BC-MLP), not policy success rate. Scoring and the datasets have both changed since, so `calibra analyze` on today's `lerobot/pusht` (206 episodes, LeRobot v3) reports a different score.
 
@@ -37,7 +37,7 @@ Quality scores in this table were recorded at benchmark time (Calibra v0.8.0, on
 
 ## How it works
 
-The reason Calibra can remove 75% of demonstrations without hurting performance is that most robotics datasets contain two distinct problems: bad episodes (jerk spikes, dropped frames, sync errors) and redundant episodes (near-duplicate demonstrations of the same behavior). Calibra finds both, then assigns each episode a disposition: drop it, keep it, downweight it, flag it for review, or keep it with a characterization annotation so a metadata-aware trainer can still use it.
+Robotics datasets have two distinct problems: bad episodes (jerk spikes, dropped frames, sync errors) and redundant episodes (near-duplicate demonstrations of the same behavior). Calibra checks for both. In the selection ablation, most of the gain at a fixed data budget comes from diversity selection; the quality filter helps on some policy architectures (Diffusion Policy) and not on others (BC-MLP, ACT), so its main job is integrity, not selection. Calibra then assigns each episode a disposition: drop it, keep it, downweight it, flag it for review, or keep it with a characterization annotation so a metadata-aware trainer can still use it.
 
 **The pipeline:**
 
@@ -262,15 +262,15 @@ No installation required.
   <img src="experiments/figures/fig_retention_columbia_cairlab_pusht_real.png" alt="Calibra vs random retention curve on PushT real" width="600"/>
 </p>
 
-On real PushT data: at **10% retention**, Calibra achieves lower prediction error than training on the **full dataset**, while random selection degrades sharply.
+On real PushT data (`lerobot/columbia_cairlab_pusht_real`), at **10% retention** Calibra's subset gave lower held-out prediction error (0.113) than training on the **full dataset** (0.194), while random selection gave 0.260 (`results/ablation_pusht_real_contact_aware.json`; one dataset, 3 random seeds, BC-MLP, offline error).
 
 <p align="center">
   <img src="experiments/figures/fig_ablation_aloha_mobile_cabinet.png" alt="Ablation: which component drives Calibra's gains?" width="600"/>
 </p>
 
-Ablation across 5 seeds on ALOHA mobile (keep 30%): Calibra full pipeline and diversity-only both outperform all published baselines.
+Ablation across 5 seeds on ALOHA mobile (keep 30%), one of the three datasets below.
 
-**Mean improvement over random selection (5 seeds, 30% retention, 3 datasets):**
+**Mean reduction in held-out action-prediction error vs random selection (5 seeds, 30% retention, 3 datasets: ALOHA mobile cabinet, DROID-100, PushT real):**
 
 | Method | BC-MLP | ACT | Diffusion Policy |
 |---|---:|---:|---:|
@@ -280,7 +280,15 @@ Ablation across 5 seeds on ALOHA mobile (keep 30%): Calibra full pipeline and di
 | Facility Location | +21.5% | +18.4% | +8.7% |
 | Random | 0.0% | 0.0% | 0.0% |
 
-Method rankings are stable across all three policy families (Spearman ρ ≥ 0.86).
+What the paired per-seed tests (`experiments/aggregate_ablation.py`) show:
+
+- **Calibra full vs K-Center greedy** is on par on BC-MLP (1 win, 1 tie, 1 loss across the three datasets) and ACT (2–0–1), and better on Diffusion Policy (3–0–0). K-Center beats it on PushT real for BC-MLP and ACT.
+- **Diversity-only beats Calibra full** on BC-MLP (0–1–2) and ACT (1–0–2) and trails it on Diffusion Policy (2–1–0): the quality filter's value depends on the policy architecture.
+- **Calibra full vs random** is significant on ALOHA and DROID-100 for every policy, but not on PushT real (p = 0.07–0.09).
+- **Full data (100%)** beats every 30%-retention method on Diffusion Policy.
+- Rankings agree between BC-MLP and ACT (Spearman ρ = 1.0 on mean improvement) and less with Diffusion Policy (ρ = 0.86), mostly because Random and Herding rank last everywhere; the top three change order.
+
+These are offline prediction-error results, not policy success rates.
 
 → [Full benchmarks and ablations](docs/benchmarks.md)
 

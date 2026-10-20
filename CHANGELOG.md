@@ -6,6 +6,17 @@ All notable changes to Calibra are documented here.
 
 ### Changed
 
+- **README selection results now say what the ablation shows.** The numbers
+  reproduce from `results/*ablation*.json` via `experiments/aggregate_ablation.py`
+  (Calibra full vs random: 24.5% BC-MLP, 23.7% ACT, 13.8% Diffusion Policy), but
+  the paired per-seed tests put Calibra on par with K-Center greedy on BC-MLP and
+  ACT, behind diversity-only there, and first only on Diffusion Policy. The
+  headline no longer reads as a lead over all methods; "outperform all published
+  baselines" is removed (K-Center beats it on PushT real, p = 0.001); the
+  ranking-stability line gives ρ = 1.0 / 0.86 and says why; Calibra vs random is
+  not significant on PushT real; "How it works" no longer credits the quality
+  filter for the selection gains. All marked as offline prediction error.
+
 - **Calibra Score no longer uses LDLJ, and judges smoothness by the same
   thresholds as the integrity flags.** LDLJ was 15 of the 35 smoothness points;
   smoothness is now 20 points (jerk spikes and velocity discontinuities, 10
