@@ -79,8 +79,11 @@ All notable changes to Calibra are documented here.
   velocity-command floor (PushT is position control). Claim JS-003 ("spike rate
   is more frequency-robust than LDLJ") gets the subsampling tests as
   counter-evidence (spike rate changes 3–12× between 50 and 10 Hz on identical
-  motion), its two cross-dataset entries are retracted as confounded by rate,
-  and a review is opened; it reads NOT VALIDATED.
+  motion), and its two cross-dataset entries are retracted as confounded by
+  rate. It is then falsified on its own condition: aloha_static_battery at
+  50 Hz vs aloha_sim_insertion_human at 10 Hz (same control mode, 5× rate gap)
+  invert the spike-rate order they have at a matched rate. A spike-rate
+  successor claim waits for a new reference (claims/references parity).
 - **Claim LDLJ-001 narrowed to sampling rate.** At a matched native 10 Hz, on
   the same task, `lerobot/pusht` (sim, position targets) scores LDLJ −8.89 and
   `lerobot/columbia_cairlab_pusht_real` (real, velocity commands; its actions

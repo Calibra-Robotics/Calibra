@@ -45,7 +45,8 @@ the spike fraction would be roughly frequency-invariant. Tested on the same
 trajectories at different rates, it is not: aloha insertion goes from 0.35% at
 50 Hz to 4.35% at 10 Hz (12×, crossing the 2% warning level), aloha battery from
 0.45% to 1.55%. LDLJ moves by 2 to 4 units over the same range. Neither metric is
-frequency-robust (claim JS-003 is under review).
+frequency-robust (claim JS-003, falsified 2026-10-20: compared across a 5× rate
+gap, two ALOHA datasets invert their spike-rate order).
 
 ---
 

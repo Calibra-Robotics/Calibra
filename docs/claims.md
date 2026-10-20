@@ -417,7 +417,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 #### JS-003 — any
 
-**Status:** 🔬 active hypothesis  
+**Status:** ❌ falsified  
 **Confidence:** ⬜ NOT VALIDATED  
 **Class:** `any`  
 **Source:** `calibra/claims/jerk_spike.json`  
@@ -432,6 +432,7 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 |---------|----------|----------|------|-------|
 | `lerobot/aloha_sim_insertion_human subsampled 50 -> 25 -> 10 -> 5 Hz` | spike 0.35% / 0.66% / 4.35% / 6.43%; LDLJ -11.01 / -9.23 / -8.82 / -8.38 | ❌ | 2026-10-20 | Same trajectories, only the rate changes (gripper_dims [6, 13]). Spike rate rises 12x from 50 to 10 Hz and crosses the 2% warning level; LDLJ crosses -10 the other way. The 5x-median threshold does not make spike rate frequency-invariant. eval/investigations/ldlj/SUBSAMPLING.md. |
 | `lerobot/aloha_static_battery subsampled 50 -> 25 -> 10 -> 5 Hz` | spike 0.45% / 0.39% / 1.55% / 3.22%; LDLJ -12.63 / -9.86 / -8.57 / -7.53 | ❌ | 2026-10-20 | Real hardware, gripper_dims [6, 13]. Spike rate 3.4x from 50 to 10 Hz, 7x to 5 Hz; LDLJ moves 4 units. eval/investigations/ldlj/SUBSAMPLING.md. |
+| `lerobot/aloha_static_battery @ 50 Hz vs lerobot/aloha_sim_insertion_human @ 10 Hz (subsampled)` | battery 0.45% vs insertion 4.35%; at a matched 50 Hz battery 0.45% vs insertion 0.35% | ❌ | 2026-10-20 | Meets the falsification condition: same control mode (ALOHA joint position), 5x frequency difference, and the spike-rate order inverts. At a matched 50 Hz battery reads higher than insertion; compared across the 5x rate gap insertion reads 10x higher. eval/investigations/ldlj/SUBSAMPLING.md. |
 
 **Retracted evidence** (not counted toward confidence):
 
@@ -446,7 +447,6 @@ See `calibra/claims/SPEC.md` for the claims schema and protocol details.
 
 **Pending tests:**
 
-- `Review: counter-evidence from same-trajectory subsampling`: Two direct tests contradict the premise (spike rate changes 3-12x between 50 and 10 Hz on identical motion). The literal condition (inverted spike rates between two datasets 3x apart in rate) is not what was tested, so per SPEC this opens a review: falsify, or narrow the claim to a comparison at a stated rate.
 - `Two velocity-command datasets at different control frequencies`: Replaces the confounded BridgeData2-vs-pusht counter-evidence retracted 2026-09-27.
 
 *Last updated: 2026-10-20*
