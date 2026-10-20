@@ -225,6 +225,45 @@ vhs docs/demo.tape   # writes docs/figures/integrity_demo.gif
 
 ---
 
+## How reliable are the checks?
+
+### Detector calibration
+
+Calibra flags episodes that look unusual relative to the rest of the dataset. Not every flag is corruption; some episodes are just at the tail of a clean distribution. The table below shows, for each detector, how often it fires on **ground-truth-clean data** (benign firing rate) and how often it catches **synthetically-corrupted episodes** (episode detection rate). Both measured on real LeRobot datasets via `experiments/benign_firing_rate_benchmark.py`.
+
+| Detector | Benign firing rate | Episode detection rate | Signal ratio |
+|---|---:|---:|---:|
+| `jitter_cv` | 0.0% | 37.1% | n/a |
+| `dropout_rate` | 0.0% | 18.8% | n/a |
+| `spike_rate` | 6.9% | 62.9% | 9× |
+| `vel_disc_rate` | 1.0% | 31.0% | 32× |
+| `ldlj` | 0.5% | 42.9% | 88× |
+
+Averaged across `lerobot/pusht` (n=206) and `lerobot/aloha_sim_insertion_scripted` (n=50) with 95% Wilson CIs. Signal ratio is undefined (n/a) when the benign rate is 0%. PushT is measured with its `pusht` dataset profile (both action axes scored) and ALOHA with its `aloha` profile (both grippers excluded); last re-measured 2026-10-20.
+
+`ldlj` is the least consistent detector: it catches 6 of 7 corrupted ALOHA episodes but 0 of 30 on PushT, it scores some spike-injected data as *smoother*, and it shifts with sampling rate alone ([investigation](https://github.com/Calibra-Robotics/Calibra/tree/main/eval/investigations/ldlj)). It is therefore not part of `calibra integrity`; it only feeds the Calibra Score.
+
+**A detected anomaly is not the same as confirmed corruption.** Use `calibra review` to inspect flagged episodes before deciding to drop, downweight, or annotate them.
+
+[Full per-dataset tables with confidence intervals](https://github.com/Calibra-Robotics/Calibra/blob/main/experiments/results/benign_firing_rates.md)
+
+### Fault injection
+
+We injected controlled acquisition faults into on-disk copies of three LeRobot v3.0 datasets (`unitreeh1_rearrange_objects`, `pusht`, `aloha_static_battery`) and ran `calibra integrity` on each copy: 981 trials on v0.13.0 and 471 after the fixes it led to, protocol pre-registered.
+
+| Fault (clearly above threshold) | v0.13.0 | Current |
+|---|---:|---:|
+| Duplicate episodes | 105/105 | 105/105 |
+| Missing, truncated, or wrong-fps video | 96/96 | 96/96 |
+| Dropped video frames | 60/60 | 60/60 |
+| Frozen camera stream (every episode decoded) | 60/60 | 60/60 |
+| Repeated frames (10% to 30%) | n/a | 3/3 |
+| Timestamp dropout, jitter, swaps, and unit errors | 150/180 | 210/210 |
+
+On unmodified data, 1 of 300 evaluated checks fired: `duplicate_frame_rate` on ALOHA, which detects real repeated frames (most likely cameras slower than the 50 Hz recording rate), an anomaly rather than confirmed corruption. Known limits: on AV1 video, `duplicate_frame_rate` sees only repeats coded as predicted frames, so it reports about half the true rate; frozen cameras are missed when the frozen episode is outside the default 20-episode video sample (19/60), which the output now says. All three datasets have synthetic timestamps, so timing results show the detectors respond to injected faults, not to real clock faults. These are synthetic injections: they show what Calibra can detect, not how often faults occur in real data.
+
+[Report, findings, and limitations](https://github.com/Calibra-Robotics/Calibra/blob/main/eval/integrity_fault_injection/REPORT.md)
+
 ## Next steps
 
 Once a dataset passes Integrity, move to:

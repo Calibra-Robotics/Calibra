@@ -140,9 +140,10 @@ shows up as a quality risk, that's the one to fix by hand rather than drop.
 
 ## 4. Select — `calibra prune`
 
-`--export-dataset` needs a local copy, so download the dataset first. A local
-copy has no Hub ID, so pass `--profile pusht` to get the same settings
-`lerobot/pusht` gets automatically (see [Dataset profiles](commands.md#dataset-profiles)):
+`--export-dataset` needs a local copy, so download the dataset first. A copy made
+with `hf download` is usually recognised and gets the same profile
+`lerobot/pusht` gets automatically; passing `--profile pusht` makes sure of it
+(see [Dataset profiles](commands.md#dataset-profiles)):
 
 ```bash
 hf download lerobot/pusht --repo-type dataset --local-dir ./datasets/pusht

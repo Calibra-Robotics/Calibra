@@ -35,12 +35,17 @@ changing them for anyone else:
 
 ```bash
 calibra audit lerobot/pusht                     # profile applied automatically
-calibra prune ./datasets/pusht --profile pusht  # local copy: pass it explicitly
+calibra prune ./datasets/pusht --profile pusht  # local copy it cannot identify: pass it explicitly
 ```
 
-- A local copy has no Hub ID, so it only gets the profile with `--profile`.
-  Without it, `./datasets/pusht` is analysed with the defaults and gives
-  different results from `lerobot/pusht`.
+- A local copy has no Hub ID, so Calibra identifies it from its own files: the
+  profile is applied automatically when the `hf download` revision is the one
+  the profile was measured on, or the dataset card (`README.md`) links a covered
+  Hub ID. The applied profile and the reason are printed and stored in the
+  report (`dataset_profile_reason`). A directory merely named like a profiled
+  dataset only prints a `--profile` hint; otherwise the copy is analysed with
+  the defaults and gives different results from `lerobot/pusht`. An explicit
+  `--profile` always wins.
 - `--profile` is supported by `integrity`, `audit`, `review`, `prune`,
   `analyze`, and `score`. In Python: `Pipeline(profile="pusht")`.
 - A profile only replaces *defaults*. An analyzer you configure yourself (e.g.

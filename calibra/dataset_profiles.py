@@ -344,7 +344,8 @@ def add_profile_argument(parser) -> None:
         choices=sorted(PROFILES),
         help=(
             "Dataset profile with analyzer settings for a known dataset "
-            f"({', '.join(sorted(PROFILES))}). Applied automatically for its Hub IDs; "
-            "pass it for a local copy, e.g. --profile pusht for ./datasets/pusht."
+            f"({', '.join(sorted(PROFILES))}). Applied automatically for its Hub IDs "
+            "and for local copies identified by download revision or dataset card; "
+            "otherwise pass it, e.g. --profile pusht for ./datasets/pusht."
         ),
     )

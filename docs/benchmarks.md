@@ -282,7 +282,18 @@ python experiments/lerobot_coreset_benchmark.py \
 
 ## Synthetic Rare-Mode Benchmark (Controlled)
 
-See README § "Rare-mode preservation" for the controlled 2D multigoal benchmark (worst-group success, 5-seed). Results: 98.7% worst-group (Calibra) vs. 36.5% (Random) at 5% retention.
+A 2D point-mass must pass a wall through a top or bottom gap to reach one of two goals. The dataset is imbalanced: 140 episodes for goal A and 20 for the rare goal B. A BC policy is trained on each subset and evaluated over 150 rollouts per goal. Worst-group success is the lower of the two per-goal success rates. Calibra's selection is deterministic (one run); random is averaged over 5 seeds.
+
+| Keep | Episodes | Calibra overall | Calibra worst-group | Random overall | Random worst-group |
+|---:|---:|---:|---:|---:|---:|
+| 5% | 8 | 100.0% | **100.0%** | 67.2% | 34.4% |
+| 10% | 16 | 100.0% | **100.0%** | 92.4% | 84.8% |
+| 20% | 32 | 99.3% | **98.7%** | 92.8% | 85.6% |
+| 30% | 48 | 98.7% | 97.3% | 98.7% | 97.3% |
+| 50% | 80 | 99.3% | 98.7% | 100.0% | 100.0% |
+| 100% | 160 | 100.0% | 100.0% | 100.0% | 100.0% |
+
+Measured 2026-10-20 at commit `4fa219c`. Calibra's advantage is at 5–20% retention, where random subsets often contain few or no goal-B episodes; from 30% up the two match. This is a synthetic environment, so it shows the mechanism, not real-robot performance.
 
 ```bash
 python experiments/multigoal_obstacle_benchmark.py
@@ -292,7 +303,33 @@ python experiments/multigoal_obstacle_benchmark.py
 
 ## Multi-Dataset Ablation (BC-MLP, ACT, Diffusion Policy)
 
-See README § "Ablation study" and § "Cross-architecture check" for full tables across ALOHA Mobile, DROID-100, and PushT real at 30% retention with 5 seeds, 3 policy families, and 7 competing methods including K-Center, Facility Location, and Herding.
+**Mean reduction in held-out action-prediction error vs random selection (5 seeds, 30% retention, 3 datasets: ALOHA mobile cabinet, DROID-100, PushT real):**
+
+| Method | BC-MLP | ACT | Diffusion Policy |
+|---|---:|---:|---:|
+| Diversity-only | **+29.5%** | **+26.5%** | +11.9% |
+| Calibra full | +24.5% | +23.7% | **+13.8%** |
+| K-Center | +24.0% | +23.1% | +10.1% |
+| Facility Location | +21.5% | +18.4% | +8.7% |
+| Random | 0.0% | 0.0% | 0.0% |
+
+What the paired per-seed tests (`experiments/aggregate_ablation.py`) show:
+
+- **Calibra full vs K-Center greedy** is on par on BC-MLP (1 win, 1 tie, 1 loss across the three datasets) and ACT (2–0–1), and better on Diffusion Policy (3–0–0). K-Center beats it on PushT real for BC-MLP and ACT.
+- **Diversity-only beats Calibra full** on BC-MLP (0–1–2) and ACT (1–0–2) and trails it on Diffusion Policy (2–1–0): the quality filter's value depends on the policy architecture.
+- **Calibra full vs random** is significant on ALOHA and DROID-100 for every policy, but not on PushT real (p = 0.07–0.09).
+- **Full data (100%)** beats every 30%-retention method on Diffusion Policy.
+- Rankings agree between BC-MLP and ACT (Spearman ρ = 1.0 on mean improvement) and less with Diffusion Policy (ρ = 0.86), mostly because Random and Herding rank last everywhere; the top three change order.
+
+Per-component ablation on ALOHA mobile (keep 30%, 5 seeds): [figure](https://github.com/Calibra-Robotics/Calibra/blob/main/experiments/figures/fig_ablation_aloha_mobile_cabinet.png).
+
+These are offline prediction-error results, not policy success rates.
+
+### PushT real at 10% retention
+
+On real PushT data (`lerobot/columbia_cairlab_pusht_real`), at **10% retention** Calibra's subset gave lower held-out prediction error (0.113) than training on the **full dataset** (0.194), while random selection gave 0.260 (`results/ablation_pusht_real_contact_aware.json`; one dataset, 3 random seeds, BC-MLP, offline error). [Retention curve](https://github.com/Calibra-Robotics/Calibra/blob/main/experiments/figures/fig_retention_columbia_cairlab_pusht_real.png).
+
+### Reproduce
 
 ```bash
 python experiments/ablation_benchmark.py --dataset lerobot/aloha_mobile_cabinet --seeds 5
