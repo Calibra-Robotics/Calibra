@@ -150,7 +150,7 @@
       "dataset_version": null,
       "measured_at": "2026-10-20",
       "provenance": "benchmark_run",
-      "corrupted_episode_detection_rate": 0.1429,
+      "corrupted_episode_detection_rate": 0.2857,
       "notes": "Measured by benign_firing_rate_benchmark.py"
     },
     {
@@ -167,7 +167,7 @@
       "dataset_version": null,
       "measured_at": "2026-10-20",
       "provenance": "benchmark_run",
-      "corrupted_episode_detection_rate": 0.7143,
+      "corrupted_episode_detection_rate": 0.8571,
       "notes": "Measured by benign_firing_rate_benchmark.py"
     }
   ]

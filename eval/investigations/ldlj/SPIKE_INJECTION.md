@@ -57,10 +57,11 @@ the remaining segments are each closer to a single smooth movement.
 
 - The result depends on the injector. `experiments/benign_firing_rate_benchmark.py`
   swaps *adjacent* steps (mixed with timestamp jitter and dropped frames) and
-  uses per-episode MAD outliers; rerun on 2026-10-20 it catches 5 of 7
-  corrupted episodes on aloha_sim_insertion_scripted with `ldlj`, but 0 of 30
-  on PushT (`jerk_spike_rate`: 6/7 and 12/30). So LDLJ is not blind to faults;
-  it is inconsistent, and `jerk_spike_rate` catches more on both datasets.
+  uses per-episode MAD outliers; rerun on 2026-10-20 (with the `aloha` profile)
+  it catches 6 of 7 corrupted episodes on aloha_sim_insertion_scripted with
+  `ldlj`, but 0 of 30 on PushT (`jerk_spike_rate`: 6/7 and 12/30). So LDLJ is
+  not blind to faults; it is inconsistent, and `jerk_spike_rate` matches it on
+  ALOHA and catches far more on PushT.
 - `ldlj` was removed from `calibra integrity` on that basis; it still feeds
   the Calibra Score.
 - Noise-type corruption (Gaussian action noise) is untested here; FINDINGS.md

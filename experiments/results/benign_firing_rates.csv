@@ -7,5 +7,5 @@ lerobot/pusht,pusht,ldlj,0.13.1,206,2,0.0097,0.0027,0.0347,0.0,2026-10-20
 lerobot/aloha_sim_insertion_scripted,aloha,jitter_cv,0.13.1,50,0,0.0,0.0,0.0714,0.1429,2026-10-20
 lerobot/aloha_sim_insertion_scripted,aloha,dropout_rate,0.13.1,50,0,0.0,0.0,0.0714,0.1429,2026-10-20
 lerobot/aloha_sim_insertion_scripted,aloha,spike_rate,0.13.1,50,4,0.08,0.0315,0.1884,0.8571,2026-10-20
-lerobot/aloha_sim_insertion_scripted,aloha,vel_disc_rate,0.13.1,50,0,0.0,0.0,0.0714,0.1429,2026-10-20
-lerobot/aloha_sim_insertion_scripted,aloha,ldlj,0.13.1,50,0,0.0,0.0,0.0714,0.7143,2026-10-20
+lerobot/aloha_sim_insertion_scripted,aloha,vel_disc_rate,0.13.1,50,0,0.0,0.0,0.0714,0.2857,2026-10-20
+lerobot/aloha_sim_insertion_scripted,aloha,ldlj,0.13.1,50,0,0.0,0.0,0.0714,0.8571,2026-10-20

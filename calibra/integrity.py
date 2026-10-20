@@ -56,7 +56,7 @@ from calibra.video_integrity import VIDEO_METRICS, VideoContentResult
 # Integrity. Only the two raw jerkiness metrics below ("are the recorded
 # motions physically jittery") count as an Integrity-layer trust question —
 # tracking error and collection-method signature are Quality-layer questions.
-# ldlj is left out: its fault detection is inconsistent (5/7 corrupted ALOHA
+# ldlj is left out: its fault detection is inconsistent (6/7 corrupted ALOHA
 # episodes but 0/30 on PushT in experiments/results/benign_firing_rates.md, and
 # it scores far-swap spike injection as smoother) and it shifts with sampling
 # rate alone (eval/investigations/ldlj/). It still feeds the Calibra Score.

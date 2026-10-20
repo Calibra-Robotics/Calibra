@@ -150,6 +150,56 @@ PROFILES: dict[str, DatasetProfile] = {
             ),
         ),
     ),
+    "aloha": DatasetProfile(
+        name="aloha",
+        # The ALOHA references measured with both grippers excluded (2026-10-19).
+        # Other ALOHA datasets share the layout; pass --profile aloha for them.
+        datasets=frozenset(
+            {
+                "lerobot/aloha_mobile_cabinet",
+                "lerobot/aloha_mobile_shrimp",
+                "lerobot/aloha_sim_insertion_human",
+                "lerobot/aloha_sim_insertion_scripted",
+                "lerobot/aloha_sim_transfer_cube_human",
+                "lerobot/aloha_sim_transfer_cube_scripted",
+                "lerobot/aloha_static_battery",
+                "lerobot/aloha_static_candy",
+                "lerobot/aloha_static_coffee",
+                "lerobot/aloha_static_cups_open",
+            }
+        ),
+        # 14-D action = 6 joints + gripper per arm: grippers at 6 and 13. The
+        # default [-1] excludes only the right gripper and scores the left one
+        # as a joint.
+        gripper_dims=(6, 13),
+        notes=(
+            "Bimanual ALOHA: 6 joints + gripper per arm. Exclude both grippers "
+            "(dims 6 and 13) from smoothness and calibration-drift checks."
+        ),
+        evidence=ProfileEvidence(
+            dataset_revision="cc571a3c661df81b566dbfde3d5c1e85fcdf7884",
+            sampling_rate_hz=50.0,
+            action_space=(
+                "14-D joint positions: [left 6 joints, left gripper, right 6 joints, right gripper]"
+            ),
+            reference="aloha_sim_insertion_human.json",
+            clean_baseline={
+                "spike_rate": {"mean": 0.003541, "p95": 0.010262, "max": 0.020121},
+                "vel_disc_rate": {"mean": 0.014538, "p95": 0.035241, "max": 0.048193},
+            },
+            justification=(
+                "gripper_dims=(6, 13): in the ALOHA/ACT action layout dims 6 and 13 are "
+                "the grippers; in aloha_sim_insertion_human they span 0..1 and sit at "
+                "their ends far more often than the joint dims (26% and 33% of steps vs "
+                "3-11%). No thresholds are changed."
+            ),
+            reproduce=(
+                "python scripts/profile_dataset.py lerobot/aloha_sim_insertion_human "
+                "--control-mode position --gripper-dims 6,13 "
+                "--out calibra/references/aloha_sim_insertion_human.json"
+            ),
+        ),
+    ),
 }
 
 

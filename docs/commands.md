@@ -29,6 +29,7 @@ changing them for anyone else:
 | Profile | Applied automatically to | Settings |
 |---|---|---|
 | `pusht` | `lerobot/pusht`, `lerobot/pusht_image` | `gripper_dims=[]`: score both axes. Regime `disc_high=0.25` (about 1.5× PushT's clean rate) instead of 0.13. `prune` Stage 1 limits `max_spike_rate=0.25`, `max_vel_disc_rate=0.40` instead of 0.10 / 0.25, which sit at PushT's own clean p95 and remove clean PushT episodes. Integrity flags: `jerk_spike_rate` WARNING / CRITICAL at 0.11 / 0.25 and `velocity_discontinuity_rate` at 0.28 / 0.40 (instead of 0.02 / 0.05 for both): WARNING once the dataset mean reaches PushT's clean p95 episode, CRITICAL past its roughest clean episode. `ldlj` keeps the global thresholds; clean PushT is OK there. Smoothness stays in the default position mode, which is correct: PushT actions are absolute target positions, not velocities. |
+| `aloha` | the 10 ALOHA datasets with references: `lerobot/aloha_mobile_{cabinet,shrimp}`, `lerobot/aloha_sim_{insertion,transfer_cube}_{human,scripted}`, `lerobot/aloha_static_{battery,candy,coffee,cups_open}` | `gripper_dims=[6, 13]`: exclude both grippers (6 joints + gripper per arm) instead of only the last dim, which scored the left gripper as a joint. No thresholds change. Other ALOHA datasets share the layout: pass `--profile aloha`. |
 
 ```bash
 calibra audit lerobot/pusht                     # profile applied automatically

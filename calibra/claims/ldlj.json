@@ -197,7 +197,7 @@
             "reason": "The falsifying runs use one injector (step swaps). Before writing a narrower successor claim, check whether LDLJ responds to smooth-noise corruption."
           }
         ],
-        "note": "Falsified 2026-10-19 by spike injection on ALOHA (real and sim) and SO-100: per-sub-movement LDLJ scores the corrupted copy as smoother or unchanged in 5 of 6 runs (eval/investigations/ldlj/SPIKE_INJECTION.md). Injector-dependent: with adjacent-step swaps and per-episode MAD outliers (experiments/results/benign_firing_rates.md, rerun 2026-10-20) ldlj catches 5 of 7 corrupted aloha_sim_insertion_scripted episodes but 0 of 30 on PushT. A successor claim should state which corruption types and detection mode it covers, and be tested with noise-type corruption too."
+        "note": "Falsified 2026-10-19 by spike injection on ALOHA (real and sim) and SO-100: per-sub-movement LDLJ scores the corrupted copy as smoother or unchanged in 5 of 6 runs (eval/investigations/ldlj/SPIKE_INJECTION.md). Injector-dependent: with adjacent-step swaps and per-episode MAD outliers (experiments/results/benign_firing_rates.md, rerun 2026-10-20) ldlj catches 6 of 7 corrupted aloha_sim_insertion_scripted episodes (with the aloha profile; 5 of 7 without) but 0 of 30 on PushT. A successor claim should state which corruption types and detection mode it covers, and be tested with noise-type corruption too."
       },
       "last_updated": "2026-10-19",
       "retracted_evidence": [

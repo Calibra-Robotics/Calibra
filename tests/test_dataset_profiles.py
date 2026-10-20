@@ -51,9 +51,7 @@ class TestResolution:
     def test_pusht_hub_ids(self, path):
         assert profile_for_path(path) is PROFILES["pusht"]
 
-    @pytest.mark.parametrize(
-        "path", ["./datasets/pusht", "lerobot/aloha_sim_insertion_human", "demos.hdf5"]
-    )
+    @pytest.mark.parametrize("path", ["./datasets/pusht", "lerobot/droid_100", "demos.hdf5"])
     def test_no_profile(self, path):
         assert profile_for_path(path) is None
 
@@ -68,6 +66,37 @@ class TestResolution:
         assert p.parse_args([]).profile is None
         with pytest.raises(SystemExit):
             p.parse_args(["--profile", "nope"])
+
+
+class TestAlohaProfile:
+    @pytest.mark.parametrize(
+        "path", ["lerobot/aloha_static_battery", "hf://lerobot/aloha_sim_insertion_human"]
+    )
+    def test_aloha_hub_ids(self, path):
+        assert profile_for_path(path) is PROFILES["aloha"]
+
+    def test_excludes_both_grippers_only(self):
+        smooth, drift = apply_profile(
+            [ControlSmoothnessAnalyzer(), CalibrationDriftAnalyzer()], PROFILES["aloha"]
+        )
+        assert smooth.gripper_dims == [6, 13]
+        assert drift.gripper_dims == [6, 13]
+        # Thresholds are untouched: the profile changes only which dims are scored.
+        assert smooth.vel_disc_critical == ControlSmoothnessAnalyzer().vel_disc_critical
+
+    def test_every_covered_reference_uses_the_profile_dims(self):
+        import json
+        from pathlib import Path
+
+        import calibra
+
+        refs = {}
+        for path in (Path(calibra.__file__).parent / "references").glob("*.json"):
+            meta = json.loads(path.read_text())["meta"]
+            refs[meta["dataset"]] = meta
+        for ds in PROFILES["aloha"].datasets:
+            assert ds in refs, f"{ds} has no reference"
+            assert refs[ds]["gripper_dims"] == [6, 13], f"{ds} reference uses other dims"
 
 
 class TestApplyProfile:
@@ -518,7 +547,7 @@ class TestLocalCopyDetection:
 
         root = tmp_path / "copy"
         root.mkdir()
-        (root / "README.md").write_text("visualize?path=lerobot/aloha_static_battery")
+        (root / "README.md").write_text("visualize?path=lerobot/xarm_lift_medium")
         assert detect_local_profile(str(root)).profile is None
 
     def test_directory_name_is_only_a_hint(self, tmp_path):

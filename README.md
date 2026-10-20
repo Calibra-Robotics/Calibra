@@ -139,7 +139,10 @@ motion against PushT's clean episodes instead of arm-calibrated thresholds, and
 `prune`'s quality filter uses matching limits instead of cutting PushT's clean tail. It applies automatically to
 `lerobot/pusht` and `lerobot/pusht_image`; for a local copy, pass
 `--profile pusht` (supported by `integrity`, `audit`, `review`, `prune`,
-`analyze`, and `score`). Reports record the profile in `dataset_profile`.
+`analyze`, and `score`). The `aloha` profile excludes both of ALOHA's grippers
+(dims 6 and 13) instead of only the last dim; it applies to the ten ALOHA Hub
+datasets Calibra has references for, and `--profile aloha` covers the rest.
+Reports record the profile in `dataset_profile`.
 
 ### 1. Trust: `calibra integrity`
 
@@ -292,12 +295,12 @@ Calibra flags episodes that look unusual relative to the rest of the dataset. No
 | `jitter_cv` | 0.0% | 37.1% | n/a |
 | `dropout_rate` | 0.0% | 18.8% | n/a |
 | `spike_rate` | 6.9% | 62.9% | 9× |
-| `vel_disc_rate` | 1.0% | 23.8% | 25× |
-| `ldlj` | 0.5% | 35.7% | 74× |
+| `vel_disc_rate` | 1.0% | 31.0% | 32× |
+| `ldlj` | 0.5% | 42.9% | 88× |
 
-Averaged across `lerobot/pusht` (n=206) and `lerobot/aloha_sim_insertion_scripted` (n=50) with 95% Wilson CIs. Signal ratio is undefined (n/a) when the benign rate is 0%. PushT is measured with its `pusht` dataset profile (both action axes scored; last re-measured 2026-10-20).
+Averaged across `lerobot/pusht` (n=206) and `lerobot/aloha_sim_insertion_scripted` (n=50) with 95% Wilson CIs. Signal ratio is undefined (n/a) when the benign rate is 0%. PushT is measured with its `pusht` dataset profile (both action axes scored) and ALOHA with its `aloha` profile (both grippers excluded); last re-measured 2026-10-20.
 
-`ldlj` is the least consistent detector: it catches 5 of 7 corrupted ALOHA episodes but 0 of 30 on PushT, it scores some spike-injected data as *smoother*, and it shifts with sampling rate alone ([investigation](eval/investigations/ldlj/)). It is therefore not part of `calibra integrity`; it only feeds the Calibra Score.
+`ldlj` is the least consistent detector: it catches 6 of 7 corrupted ALOHA episodes but 0 of 30 on PushT, it scores some spike-injected data as *smoother*, and it shifts with sampling rate alone ([investigation](eval/investigations/ldlj/)). It is therefore not part of `calibra integrity`; it only feeds the Calibra Score.
 
 **A detected anomaly is not the same as confirmed corruption.** Use `calibra review` to inspect flagged episodes before deciding to drop, downweight, or annotate them.
 

@@ -36,6 +36,15 @@ All notable changes to Calibra are documented here.
   generator's output.
 - `scripts/validate_claims.py` showed falsified claims as "✅ validated" and
   counted them as fully validated (9 → 6 once excluded).
+- **`aloha` dataset profile:** the ten ALOHA Hub datasets with references now
+  exclude both grippers (`gripper_dims [6, 13]`) by default, in every command;
+  before, the default excluded only the last dim and scored the left gripper
+  as a joint. No thresholds change; `--profile aloha` covers other ALOHA
+  datasets. ALOHA smoothness and calibration-drift results change. The
+  benign-firing benchmark rerun with it changes only ALOHA corrupted-episode
+  detection (`vel_disc_rate` 1/7 → 2/7, `ldlj` 5/7 → 6/7); clean firing rates
+  and the `calibra/calibration.py` baselines are unchanged.
+
 ### Fixed
 
 - **Clean PushT no longer reads as a motion defect in `integrity` and
