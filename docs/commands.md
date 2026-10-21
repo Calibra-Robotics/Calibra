@@ -104,6 +104,32 @@ See [Integrity Checks](integrity.md) for what each check detects and why it matt
 
 ---
 
+## `calibra leakage`: does validation overlap training?
+
+```bash
+calibra leakage /data/robot_demos.h5 --holdout 0:50          # ids 0-49 are the validation split
+calibra leakage /data/robot_demos.h5 --holdout 3,17,40:45
+calibra leakage /data/robot_demos.h5 --holdout-file val_ids.json
+calibra leakage /data/train /data/val                        # separate validation dataset
+```
+
+Compares each validation episode against the training episodes. Exact copies (same episode digest) and near-identical episodes (fingerprint distance within 1% of the median train-to-train gap) are Critical. Episodes closer to training than 99% of train pairs are a Warning only when their count is improbable under a random split. In holdout mode the dataset is read in one pass and only fingerprints are kept.
+
+| Flag | Description |
+|---|---|
+| `--holdout IDS` | Held-out episode ids, e.g. `0:50` or `3,17,40:45`. |
+| `--holdout-file FILE` | File of held-out episode ids (one per line, or a JSON list). |
+| `VAL_PATH` | Second positional argument: a separate validation dataset. |
+| `--format FMT` | Force a format adapter (default: auto-detect). |
+| `--top N` | Number of closest pairs to list (default 10). |
+| `--json` | Print the result as JSON. |
+
+Give exactly one of `VAL_PATH`, `--holdout` or `--holdout-file`. Exit code `1` on any Critical finding, `2` on bad arguments or holdout ids missing from the dataset.
+
+The thresholds are first choices and have not yet been measured on planted copies.
+
+---
+
 ## `calibra analyze` — one-command report
 
 ```bash

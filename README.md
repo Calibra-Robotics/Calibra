@@ -145,6 +145,7 @@ result = selector.select(batch, report)
 |---|---|
 | `calibra analyze` | One-command report: integrity, Calibra Score, estimated redundancy, and a training-set recommendation |
 | `calibra integrity` | "Can I trust this dataset?" Timestamps, sync, episode completeness, duplicate/frozen/blurry camera frames, jittery/jerky motion |
+| `calibra leakage` | Validation episodes that copy or nearly copy training episodes, from a holdout id list or a second dataset |
 | `calibra audit` | Full diagnostic report with bootstrap CIs and per-episode outlier detection |
 | `calibra review` | Ranked episode review queue: separates anomaly, quality-risk, and coverage-value signals |
 | `calibra prune` | Two-stage coreset: quality filter + greedy max-coverage selection, or `--annotate` for a per-episode sidecar |
