@@ -43,7 +43,6 @@ Metrics
 
 from __future__ import annotations
 
-import hashlib
 from dataclasses import dataclass
 from typing import Optional
 
@@ -51,7 +50,7 @@ import numpy as np
 
 from calibra.analyzers.base import Analyzer
 from calibra.analyzers.temporal import _bootstrap_ci
-from calibra.schema.episode import Episode, EpisodeBatch
+from calibra.schema.episode import Episode, EpisodeBatch, episode_digest
 from calibra.schema.report import (
     AnalyzerResult,
     CompatibilityHint,
@@ -368,7 +367,7 @@ class TaskStructureAnalyzer(Analyzer):
         first_by_digest: dict[str, str] = {}
         groups: dict[str, list[str]] = {}
         for ep in batch.episodes:
-            digest = _episode_digest(ep)
+            digest = episode_digest(ep)
             eid = ep.metadata.episode_id
             if digest in first_by_digest:
                 groups.setdefault(first_by_digest[digest], []).append(eid)
@@ -405,8 +404,8 @@ class TaskStructureAnalyzer(Analyzer):
             ),
             implication=(
                 "Duplicates double-weight a demonstration and can put the same data in "
-                "both training and validation splits. Usually an export or merge mistake: "
-                "remove the copies."
+                "both training and validation splits (check a split with `calibra leakage`). "
+                "Usually an export or merge mistake: remove the copies."
             ),
             affected_fraction=frac,
         ), raw
@@ -566,21 +565,6 @@ class TaskStructureAnalyzer(Analyzer):
 
 
 # ── per-episode and per-batch helpers ────────────────────────────────────────
-
-
-def _episode_digest(ep: Episode) -> str:
-    """Hash of an episode's actions and numeric non-image observations."""
-    h = hashlib.sha256()
-    arrays = [("actions", np.asarray(ep.actions))]
-    for key in sorted(ep.observations):
-        arr = np.asarray(ep.observations[key])
-        if arr.ndim <= 2 and np.issubdtype(arr.dtype, np.number):
-            arrays.append((key, arr))
-    for name, arr in arrays:
-        arr = np.ascontiguousarray(arr)
-        h.update(f"{name}:{arr.dtype}:{arr.shape}".encode())
-        h.update(arr.tobytes())
-    return h.hexdigest()
 
 
 def _collect_actions(batch: EpisodeBatch) -> np.ndarray:

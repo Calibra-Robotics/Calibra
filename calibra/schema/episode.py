@@ -5,6 +5,7 @@ No format-specific logic belongs here.
 
 from __future__ import annotations
 
+import hashlib
 from collections import OrderedDict
 from collections.abc import Sequence
 from dataclasses import dataclass, field
@@ -57,6 +58,21 @@ class Episode:
     @property
     def action_dim(self) -> int:
         return self.actions.shape[1] if self.actions.ndim > 1 else 1
+
+
+def episode_digest(ep: Episode) -> str:
+    """Hash of an episode's actions and numeric non-image observations."""
+    h = hashlib.sha256()
+    arrays = [("actions", np.asarray(ep.actions))]
+    for key in sorted(ep.observations):
+        arr = np.asarray(ep.observations[key])
+        if arr.ndim <= 2 and np.issubdtype(arr.dtype, np.number):
+            arrays.append((key, arr))
+    for name, arr in arrays:
+        arr = np.ascontiguousarray(arr)
+        h.update(f"{name}:{arr.dtype}:{arr.shape}".encode())
+        h.update(arr.tobytes())
+    return h.hexdigest()
 
 
 class LazyEpisodeList(Sequence):

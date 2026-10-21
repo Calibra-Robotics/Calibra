@@ -11,6 +11,7 @@ CLI entry point.
     python -m calibra prune <path> --keep FRACTION [--out coreset_index.json]
     python -m calibra review <path> [--top N] [--mode fast|full] [--group-by task] [--output episode_ids.json]
     python -m calibra integrity <path> [--format FORMAT] [--json]
+    python -m calibra leakage <path> (--holdout IDS | --holdout-file FILE | <val_path>) [--json]
     python -m calibra audit <path> [--html-out report.html] [--json] [--policy FAMILY]
     python -m calibra corrupt <path> --drop-frames RATE [--add-jitter-ms STD] ...
     python -m calibra retarget <path> [--out DIR] [--obs-key-pos KEY] [--obs-key-quat KEY]
@@ -103,6 +104,12 @@ def main() -> None:
         from calibra.integrity import run_integrity
 
         run_integrity(sys.argv[2:])
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "leakage":
+        from calibra.leakage import run_leakage
+
+        run_leakage(sys.argv[2:])
         return
 
     if len(sys.argv) > 1 and sys.argv[1] == "audit":
