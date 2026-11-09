@@ -91,6 +91,14 @@ const ECOSYSTEMS = [
   { name: 'Hugging Face', detail: 'Hub IDs', logo: 'huggingface.svg' },
 ]
 
+// Organizations that use Calibra and have approved being named here.
+// Each entry: { name, logo?, href? }. `logo` is a file in web/public/ (shown
+// as a monochrome mark); without one, the name is shown as text. The section
+// stays hidden while this list is empty.
+const TRUSTED_BY = [
+  { name: 'SE3 Labs', logo: 'se3-labs.png', href: 'https://se3.ai' },
+]
+
 // Decorative hero backdrop: a drifting constellation of nodes that link to any
 // neighbour within reach. Purely visual and non-interactive: it ignores the
 // cursor, is hidden from assistive tech, and freezes to a single static frame
@@ -397,6 +405,32 @@ function StatNumber({ raw, active, delay }) {
   return <strong className="stat-number">{display.toFixed(decimals)}{suffix}</strong>
 }
 
+function TrustedBy() {
+  if (TRUSTED_BY.length === 0) return null
+
+  return (
+    <section className="trusted-by" aria-labelledby="trusted-by-title">
+      <div className="container trusted-by-inner">
+        <p className="trusted-by-title" id="trusted-by-title">Trusted by robotics teams at</p>
+        <ul className="trusted-by-list">
+          {TRUSTED_BY.map((org, index) => {
+            const mark = org.logo
+              ? <img src={`${import.meta.env.BASE_URL}${org.logo}`} alt={org.name} loading="lazy" />
+              : <span>{org.name}</span>
+            return (
+              <Reveal as="li" className="trusted-by-item" key={org.name} delay={index * 70}>
+                {org.href
+                  ? <a href={org.href} target="_blank" rel="noreferrer">{mark}</a>
+                  : mark}
+              </Reveal>
+            )
+          })}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
 function StatsBar() {
   const [active, setActive] = useState(false)
   const barRef = useRef(null)
@@ -585,6 +619,8 @@ function App() {
             See benchmark results <ArrowDown size={15} />
           </a>
         </header>
+
+        <TrustedBy />
 
         <StatsBar />
 
