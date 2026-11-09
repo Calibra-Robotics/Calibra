@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   AlertTriangle,
-  ArrowDown,
   ArrowRight,
   Check,
   CheckCircle2,
@@ -20,6 +19,7 @@ const LINKS = {
   linkedin: 'https://www.linkedin.com/company/calibrarobotics',
   demo: 'https://huggingface.co/spaces/omert27/robot-dataset-health-check',
   docs: 'https://calibra-robotics.github.io/Calibra/',
+  integrity: 'https://calibra-robotics.github.io/Calibra/integrity/',
   commands: 'https://calibra-robotics.github.io/Calibra/commands/',
   benchmarks: 'https://github.com/Calibra-Robotics/Calibra#benchmark-results',
   license: 'https://github.com/Calibra-Robotics/Calibra/blob/main/LICENSE',
@@ -99,140 +99,68 @@ const TRUSTED_BY = [
   { name: 'SE3 Labs', logo: 'se3-labs.png', href: 'https://se3.ai' },
 ]
 
-// Decorative hero backdrop: a drifting constellation of nodes that link to any
-// neighbour within reach. Purely visual and non-interactive: it ignores the
-// cursor, is hidden from assistive tech, and freezes to a single static frame
-// when reduced motion is requested.
-const LINK_DIST = 172
+// Hero product visual. Counts come from `calibra analyze lerobot/pusht`
+// (206 episodes, 175 kept, 31 dropped). Which cells are marked as dropped is
+// illustrative only: a fixed pseudo-random layout so the render is stable.
+const EPISODE_TOTAL = 206
+const EPISODE_KEPT = 175
+const EPISODE_COLS = 23
 
-function HeroTrajectories() {
-  const canvasRef = useRef(null)
+const DROPPED_EPISODES = (() => {
+  const set = new Set()
+  let s = 7
+  while (set.size < EPISODE_TOTAL - EPISODE_KEPT) {
+    s = (s * 1103515245 + 12345) % 2147483648
+    set.add(s % EPISODE_TOTAL)
+  }
+  return set
+})()
 
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-
-    let width = 0
-    let height = 0
-    let points = []
-    let raf = 0
-
-    const WAVES = [
-      { yRatio: 0.22, amp: 38, freq: 0.0042, speed: 0.008, opacity: 0.10, width: 1.5, phase: 0 },
-      { yRatio: 0.38, amp: 28, freq: 0.0055, speed: 0.006, opacity: 0.07, width: 1.2, phase: 1.8 },
-      { yRatio: 0.54, amp: 44, freq: 0.0036, speed: 0.010, opacity: 0.09, width: 1.8, phase: 3.5 },
-      { yRatio: 0.70, amp: 22, freq: 0.0064, speed: 0.007, opacity: 0.06, width: 1.0, phase: 0.9 },
-      { yRatio: 0.85, amp: 32, freq: 0.0048, speed: 0.009, opacity: 0.08, width: 1.4, phase: 2.6 },
-    ]
-
-    const seed = () => {
-      const count = Math.round(Math.min(104, Math.max(30, (width * height) / 14000)))
-      points = Array.from({ length: count }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.24,
-        vy: (Math.random() - 0.5) * 0.24,
-      }))
-    }
-
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect()
-      width = rect.width
-      height = rect.height
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      canvas.width = Math.round(width * dpr)
-      canvas.height = Math.round(height * dpr)
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      seed()
-    }
-
-    const step = () => {
-      for (const p of points) {
-        p.x += p.vx
-        p.y += p.vy
-        if (p.x <= 0 || p.x >= width) p.vx *= -1
-        if (p.y <= 0 || p.y >= height) p.vy *= -1
-        p.x = Math.max(0, Math.min(width, p.x))
-        p.y = Math.max(0, Math.min(height, p.y))
-      }
-      for (const w of WAVES) {
-        w.phase += w.speed
-      }
-    }
-
-    const drawWaves = () => {
-      for (const w of WAVES) {
-        const baseY = height * w.yRatio
-        ctx.beginPath()
-        ctx.lineWidth = w.width
-        ctx.strokeStyle = `rgba(255, 255, 255, ${w.opacity})`
-        for (let x = 0; x <= width; x += 2) {
-          const y = baseY + Math.sin(x * w.freq + w.phase) * w.amp
-          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
-        }
-        ctx.stroke()
-      }
-    }
-
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height)
-
-      drawWaves()
-
-      for (let i = 0; i < points.length; i++) {
-        const a = points[i]
-        for (let j = i + 1; j < points.length; j++) {
-          const b = points[j]
-          const dx = a.x - b.x
-          const dy = a.y - b.y
-          const d = Math.hypot(dx, dy)
-          if (d < LINK_DIST) {
-            ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - d / LINK_DIST) * 0.4})`
-            ctx.lineWidth = 1.2
-            ctx.beginPath()
-            ctx.moveTo(a.x, a.y)
-            ctx.lineTo(b.x, b.y)
-            ctx.stroke()
-          }
-        }
-      }
-
-      for (const p of points) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, 1.9, 0, Math.PI * 2)
-        ctx.fill()
-      }
-    }
-
-    const tick = () => {
-      step()
-      draw()
-      raf = requestAnimationFrame(tick)
-    }
-
-    resize()
-    window.addEventListener('resize', resize)
-
-    const reduce =
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduce) {
-      draw()
-    } else {
-      raf = requestAnimationFrame(tick)
-    }
-
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('resize', resize)
-    }
-  }, [])
-
+function HeroVisual() {
   return (
-    <div className="hero-trajectories" aria-hidden="true">
-      <canvas ref={canvasRef} />
+    <div className="hv" aria-label="Calibra analysis of lerobot/pusht: 175 of 206 episodes kept, 31 dropped">
+      <div className="hv-bar">
+        <span className="hv-dots"><i /><i /><i /></span>
+        <span className="hv-title"><span>$</span> calibra analyze lerobot/pusht</span>
+        <span className="hv-status"><i /> complete</span>
+      </div>
+      <div className="hv-body">
+        <div className="hv-map">
+          <div className="hv-map-head">
+            <span>Episode map</span>
+            <span>{EPISODE_TOTAL} episodes · 25,650 frames</span>
+          </div>
+          <div className="hv-grid" style={{ '--cols': EPISODE_COLS }} aria-hidden="true">
+            {Array.from({ length: EPISODE_TOTAL }, (_, i) => (
+              <i
+                key={i}
+                className={DROPPED_EPISODES.has(i) ? 'drop' : 'keep'}
+                style={{ '--d': `${(i % EPISODE_COLS) * 45 + Math.floor(i / EPISODE_COLS) * 12}ms` }}
+              />
+            ))}
+          </div>
+          <div className="hv-legend">
+            <span><i className="keep" /> Keep</span>
+            <span><i className="drop" /> Drop</span>
+          </div>
+        </div>
+        <div className="hv-side">
+          <ul className="hv-checks">
+            {ANALYZE_LINES.map((check) => (
+              <li className={check.ok ? 'ok' : 'warn'} key={check.label}>
+                {check.ok ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
+                <span>{check.label}</span>
+                <small>{check.detail}</small>
+              </li>
+            ))}
+          </ul>
+          <div className="hv-decision">
+            <span>Decision</span>
+            <strong>Train on {EPISODE_KEPT} / {EPISODE_TOTAL}</strong>
+            <small>{EPISODE_TOTAL - EPISODE_KEPT} redundant episodes dropped, every one traceable to a signal</small>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
@@ -297,62 +225,6 @@ function StarPill() {
     <a className="nav-pill" href={LINKS.github} target="_blank" rel="noreferrer">
       <Star size={13} /> {stars == null ? 'Star' : stars.toLocaleString()}
     </a>
-  )
-}
-
-function HeroTerminal() {
-  const [typed, setTyped] = useState('')
-  const [showResults, setShowResults] = useState(false)
-  const CMD = 'calibra analyze lerobot/pusht'
-  const done = typed.length >= CMD.length
-
-  useEffect(() => {
-    let ticker, startTimer, resultTimer
-    startTimer = setTimeout(() => {
-      let i = 0
-      ticker = setInterval(() => {
-        i++
-        setTyped(CMD.slice(0, i))
-        if (i >= CMD.length) {
-          clearInterval(ticker)
-          resultTimer = setTimeout(() => setShowResults(true), 250)
-        }
-      }, 38)
-    }, 800)
-    return () => {
-      clearTimeout(startTimer)
-      clearInterval(ticker)
-      clearTimeout(resultTimer)
-    }
-  }, [])
-
-  return (
-    <Reveal as="div" className="hero-terminal" delay={220}>
-      <div className="hero-terminal-bar">
-        <span><i /><i /><i /></span>
-        calibra analyze
-      </div>
-      <div className="hero-terminal-body">
-        <p className="ht-cmd">
-          <span className="ht-prompt">$</span> {typed}
-          {!done && <span className="ht-cursor" aria-hidden="true" />}
-        </p>
-        {showResults && (
-          <div className="ht-results">
-            {ANALYZE_LINES.map((check) => (
-              <p className={check.ok ? 'ht-ok' : 'ht-warn'} key={check.label}>
-                {check.ok ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
-                {check.label}
-                <span className="ht-detail">{check.detail}</span>
-              </p>
-            ))}
-            <p className="ht-score">
-              <strong>train on 175 / 206</strong> 31 redundant episodes dropped
-            </p>
-          </div>
-        )}
-      </div>
-    </Reveal>
   )
 }
 
@@ -590,34 +462,37 @@ function App() {
 
       <main>
         <header className="hero">
-          <HeroTrajectories />
-          <div className="container hero-grid">
+          <div className="hero-bg" aria-hidden="true" />
+          <div className="container hero-inner">
             <div className="hero-copy">
-              <h1>Stop wasting <span className="accent-word">GPU hours</span> on robot data.</h1>
-              <p>
-                Calibra is an open source robotics dataset decision layer. It audits
-                integrity, measures quality and coverage, and tells you what data to keep, drop,
-                review, or annotate before training, so you train on less data, preserve the
-                behaviors that matter, and understand every decision before spending compute.
-                Full source on GitHub, no account or upload required.
+              <a className="hero-eyebrow" href={LINKS.integrity} target="_blank" rel="noreferrer">
+                <span>v0.13</span> Integrity checks validated by fault injection <ArrowRight size={13} />
+              </a>
+              <h1>
+                Train robot policies on
+                <br />
+                <span className="hero-h1-muted">the data that matters.</span>
+              </h1>
+              <p className="hero-lede">
+                Calibra audits robotics datasets, flags broken and redundant episodes, and
+                gives you an explicit keep or drop decision for each one. Open source, runs
+                locally, nothing to upload.
               </p>
               <div className="hero-actions">
                 <a className="button button-primary" href={LINKS.demo} target="_blank" rel="noreferrer">
-                  Try the demo <ExternalLink size={16} />
+                  Try the live demo <ArrowRight size={16} />
                 </a>
-                <a className="button" href={LINKS.github} target="_blank" rel="noreferrer">
-                  <Github size={16} /> View on GitHub
-                </a>
-              </div>
-              <div className="hero-meta-row">
                 <CopyCommand />
               </div>
+              <p className="hero-proof">
+                <strong>75% less data</strong> within 0.8% of full-data performance on LeRobot PushT.{' '}
+                <a href="#benchmark">See the benchmark</a>
+              </p>
             </div>
-            <HeroTerminal />
+            <div className="hero-visual-wrap">
+              <HeroVisual />
+            </div>
           </div>
-          <a className="scroll-cue" href="#benchmark">
-            See benchmark results <ArrowDown size={15} />
-          </a>
         </header>
 
         <TrustedBy />
