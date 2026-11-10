@@ -8,7 +8,9 @@ import {
   Github,
   Linkedin,
   Menu,
+  Moon,
   Star,
+  Sun,
   X,
 } from 'lucide-react'
 import HeroFigure from './HeroFigure'
@@ -128,6 +130,35 @@ function Logo() {
     <a className="brand" href="#top" aria-label="Calibra home">
       <span>Calibra</span>
     </a>
+  )
+}
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState(
+    () => document.documentElement.dataset.theme || 'light',
+  )
+
+  const toggle = () => {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    if (next === 'dark') document.documentElement.dataset.theme = 'dark'
+    else delete document.documentElement.dataset.theme
+    try {
+      localStorage.setItem('calibra-theme', next)
+    } catch {
+      // storage unavailable; the choice just won't persist
+    }
+    setTheme(next)
+  }
+
+  return (
+    <button
+      className="nav-theme"
+      type="button"
+      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      onClick={toggle}
+    >
+      {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+    </button>
   )
 }
 
@@ -346,6 +377,7 @@ function App() {
             >
               <Linkedin size={17} />
             </a>
+            <ThemeToggle />
             <button
               className="nav-toggle"
               type="button"

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f4f5ef" />
+    <meta name="theme-color" content="#fafaf8" />
     <meta name="description" content="Stop wasting GPU hours on robot data. Calibra is a robotics dataset intelligence layer. It audits integrity, measures quality and coverage, and tells you what to keep, drop, review, or annotate before training. Cut training data by up to 75% without sacrificing policy performance." />
     <meta property="og:title" content="Calibra: Train on less robot data. Spend less compute." />
     <meta property="og:description" content="75% less training data. 0.8% difference from full-data performance. Dataset intelligence and episode-level training decisions for robot learning." />
@@ -19,6 +19,11 @@
     <meta name="twitter:image" content="https://omertt27.github.io/Calibra/social-card.png" />
     <link rel="canonical" href="https://omertt27.github.io/Calibra/" />
     <title>Calibra: Stop Wasting GPU Hours on Robot Data</title>
+    <script>
+      try {
+        if (localStorage.getItem('calibra-theme') === 'dark') document.documentElement.dataset.theme = 'dark'
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

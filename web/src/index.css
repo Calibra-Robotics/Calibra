@@ -2,11 +2,46 @@
 
 :root {
   font-family: 'IBM Plex Sans', sans-serif;
-  color: #f2f2f0;
-  background: #0a0a0a;
+  color: var(--ink);
+  background: var(--paper);
+  color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  --ink: #111111;
+  --ink-strong: #000000;
+  --ink-soft: #3d3d3a;
+  --muted: #5c5c58;
+  --paper: #fafaf8;
+  --surface: #ffffff;
+  --surface-2: #f1f1ee;
+  --line: rgba(10, 10, 10, 0.1);
+  --line-strong: rgba(10, 10, 10, 0.22);
+  --green: #ecece8;
+  --green-bright: #111111;
+  --orange: #8a8a86;
+  --nav-bg: rgba(250, 250, 248, 0.82);
+  --nav-menu-bg: rgba(250, 250, 248, 0.97);
+  --nav-link: rgba(17, 17, 17, 0.86);
+  --spotlight: rgba(0, 0, 0, 0.03);
+  --accent-shadow: rgba(0, 0, 0, 0.2);
+  --copy-ink: #2a2a2a;
+  --shadow: rgba(0, 0, 0, 0.12);
+  --shadow-strong: rgba(0, 0, 0, 0.18);
+  --hover-ring: rgba(0, 0, 0, 0.1);
+  --chip-bg: rgba(0, 0, 0, 0.04);
+  --bar: #c4c4bf;
+  --cta-glow: rgba(0, 0, 0, 0.08);
+  --cta-copy-bg: rgba(255, 255, 255, 0.7);
+  --logo-filter: grayscale(1);
+  --mono: 'IBM Plex Mono', monospace;
+  --display: 'IBM Plex Sans', sans-serif;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
   --ink: #f2f2f0;
+  --ink-strong: #ffffff;
+  --ink-soft: #d4d4d2;
   --muted: #a3a3a0;
   --paper: #0a0a0a;
   --surface: #131313;
@@ -16,8 +51,20 @@
   --green: #202020;
   --green-bright: #ffffff;
   --orange: #6b6b6b;
-  --mono: 'IBM Plex Mono', monospace;
-  --display: 'IBM Plex Sans', sans-serif;
+  --nav-bg: rgba(10, 13, 9, 0.78);
+  --nav-menu-bg: rgba(10, 10, 10, 0.96);
+  --nav-link: rgba(255, 255, 255, 0.86);
+  --spotlight: rgba(255, 255, 255, 0.033);
+  --accent-shadow: rgba(255, 255, 255, 0.25);
+  --copy-ink: #c5cec7;
+  --shadow: rgba(0, 0, 0, 0.55);
+  --shadow-strong: rgba(0, 0, 0, 0.65);
+  --hover-ring: rgba(255, 255, 255, 0.12);
+  --chip-bg: rgba(255, 255, 255, 0.06);
+  --bar: #3a3a3a;
+  --cta-glow: rgba(255, 255, 255, 0.06);
+  --cta-copy-bg: rgba(10, 13, 9, 0.35);
+  --logo-filter: grayscale(1) brightness(1.6);
 }
 
 * {

@@ -19,7 +19,7 @@
   top: 0;
   z-index: 20;
   border-bottom: 1px solid var(--line);
-  background: rgba(10, 13, 9, 0.78);
+  background: var(--nav-bg);
   backdrop-filter: blur(14px);
 }
 
@@ -50,7 +50,7 @@
 }
 
 .nav-links a {
-  color: rgba(255, 255, 255, 0.86);
+  color: var(--nav-link);
   font-size: 16px;
   font-weight: 500;
 }
@@ -118,7 +118,7 @@ footer a:hover {
 
 .nav-menu {
   border-top: 1px solid var(--line);
-  background: rgba(10, 10, 10, 0.96);
+  background: var(--nav-menu-bg);
 }
 
 .nav-menu .container {
@@ -163,7 +163,8 @@ footer a:hover {
   border-color: var(--green-bright);
 }
 
-.nav-linkedin {
+.nav-linkedin,
+.nav-theme {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -174,7 +175,13 @@ footer a:hover {
   transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
 }
 
-.nav-linkedin:hover {
+.nav-theme {
+  background: none;
+  cursor: pointer;
+}
+
+.nav-linkedin:hover,
+.nav-theme:hover {
   color: var(--paper);
   background: var(--green-bright);
   border-color: var(--green-bright);
@@ -187,7 +194,7 @@ footer a:hover {
   z-index: 100;
   background: radial-gradient(
     500px circle at var(--mx, -999px) var(--my, -999px),
-    rgba(255, 255, 255, 0.033) 0%,
+    var(--spotlight) 0%,
     transparent 60%
   );
 }
@@ -220,7 +227,7 @@ footer a:hover {
 }
 
 .button-primary:hover {
-  box-shadow: 4px 4px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: 4px 4px 0 var(--accent-shadow);
 }
 
 .copy-command {
@@ -231,7 +238,7 @@ footer a:hover {
   justify-content: space-between;
   gap: 20px;
   padding: 0 8px 0 16px;
-  color: #c5cec7;
+  color: var(--copy-ink);
   background: var(--surface-2);
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -302,7 +309,7 @@ footer a:hover {
   width: auto;
   max-width: 140px;
   object-fit: contain;
-  filter: grayscale(1) brightness(1.6);
+  filter: var(--logo-filter);
   opacity: 0.7;
   transition: opacity 0.2s ease;
 }
@@ -511,11 +518,11 @@ footer a:hover {
 }
 
 .workflow-step:last-child .step-question {
-  color: #ffffff;
+  color: var(--ink-strong);
 }
 
 .workflow-step:last-child .step-detail {
-  color: #d4d4d2;
+  color: var(--ink-soft);
 }
 
 .proof {
@@ -579,7 +586,7 @@ footer a:hover {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 10px;
-  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 24px 60px -24px var(--shadow);
 }
 
 .coverage-head {
@@ -644,7 +651,7 @@ footer a:hover {
   width: 0;
   height: 100%;
   display: block;
-  background: #3a3a3a;
+  background: var(--bar);
   border-radius: 3px;
   transition: width 900ms cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -785,13 +792,13 @@ footer a:hover {
   border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--surface);
-  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 24px 60px -24px var(--shadow);
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 .demo-frame:hover {
   transform: translateY(-3px);
-  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 70px -20px var(--shadow-strong), 0 0 0 1px var(--hover-ring);
 }
 
 .demo-frame-bar {
@@ -865,7 +872,7 @@ footer a:hover {
 .benchmark-meta span {
   padding: 6px 9px;
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--chip-bg);
   border: 1px solid var(--line-strong);
   border-radius: 4px;
   font-family: var(--mono);
@@ -878,7 +885,7 @@ footer a:hover {
   background: var(--surface-2);
   border: 1px solid var(--line);
   border-radius: 10px;
-  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 24px 60px -24px var(--shadow);
 }
 
 .benchmark-title {
@@ -927,7 +934,7 @@ footer a:hover {
   height: 100%;
   display: block;
   float: right;
-  background: #3a3a3a;
+  background: var(--bar);
   transition: width 900ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -967,10 +974,10 @@ footer a:hover {
 .cta-panel {
   padding: 78px 42px;
   text-align: center;
-  color: white;
+  color: var(--ink-strong);
   background: var(--green);
   border-radius: 12px;
-  box-shadow: 0 30px 80px -24px rgba(255, 255, 255, 0.06);
+  box-shadow: 0 30px 80px -24px var(--cta-glow);
 }
 
 .cta-kicker {
@@ -985,13 +992,13 @@ footer a:hover {
 
 .cta-panel > p {
   margin: 18px auto 30px;
-  color: #d4d4d2;
+  color: var(--ink-soft);
 }
 
 .cta-panel .copy-command {
   display: flex;
   margin: 0 auto 14px;
-  background: rgba(10, 13, 9, 0.35);
+  background: var(--cta-copy-bg);
 }
 
 .cta-panel .button {
