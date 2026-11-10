@@ -32,7 +32,7 @@
   --bar: #c4c4bf;
   --cta-glow: rgba(0, 0, 0, 0.08);
   --cta-copy-bg: rgba(255, 255, 255, 0.7);
-  --logo-filter: grayscale(1);
+  --logo-filter: brightness(0);
   --mono: 'IBM Plex Mono', monospace;
   --display: 'IBM Plex Sans', sans-serif;
 }
@@ -64,7 +64,7 @@
   --bar: #3a3a3a;
   --cta-glow: rgba(255, 255, 255, 0.06);
   --cta-copy-bg: rgba(10, 13, 9, 0.35);
-  --logo-filter: grayscale(1) brightness(1.6);
+  --logo-filter: brightness(0) invert(1);
 }
 
 * {
