@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  AlertTriangle,
   ArrowRight,
   Check,
   CheckCircle2,
@@ -12,7 +11,9 @@ import {
   Star,
   X,
 } from 'lucide-react'
+import HeroFigure from './HeroFigure'
 import './App.css'
+import './hero.css'
 
 const LINKS = {
   github: 'https://github.com/Calibra-Robotics/Calibra',
@@ -35,15 +36,6 @@ const NAV_LINKS = [
   { href: '#benchmark', label: 'Benchmark' },
   { href: '#workflow', label: 'How it works' },
   { href: LINKS.docs, label: 'Docs' },
-]
-
-// Trimmed from real `calibra analyze lerobot/pusht` and `calibra audit` output (v0.11.0).
-const ANALYZE_LINES = [
-  { label: 'Dataset', detail: '206 episodes · 25,650 frames', ok: true },
-  { label: 'Timestamps & sync', detail: 'passed', ok: true },
-  { label: 'Episode structure', detail: 'passed', ok: true },
-  { label: 'Motion & control', detail: 'jerk above generic limits', ok: false },
-  { label: 'vs. clean baseline', detail: 'spike rate 5.8% · within normal range', ok: true },
 ]
 
 const STATS = [
@@ -98,72 +90,6 @@ const ECOSYSTEMS = [
 const TRUSTED_BY = [
   { name: 'SE3 Labs', logo: 'se3-labs.png', href: 'https://se3.ai' },
 ]
-
-// Hero product visual. Counts come from `calibra analyze lerobot/pusht`
-// (206 episodes, 175 kept, 31 dropped). Which cells are marked as dropped is
-// illustrative only: a fixed pseudo-random layout so the render is stable.
-const EPISODE_TOTAL = 206
-const EPISODE_KEPT = 175
-const EPISODE_COLS = 23
-
-const DROPPED_EPISODES = (() => {
-  const set = new Set()
-  let s = 7
-  while (set.size < EPISODE_TOTAL - EPISODE_KEPT) {
-    s = (s * 1103515245 + 12345) % 2147483648
-    set.add(s % EPISODE_TOTAL)
-  }
-  return set
-})()
-
-function HeroVisual() {
-  return (
-    <div className="hv" aria-label="Calibra analysis of lerobot/pusht: 175 of 206 episodes kept, 31 dropped">
-      <div className="hv-bar">
-        <span className="hv-dots"><i /><i /><i /></span>
-        <span className="hv-title"><span>$</span> calibra analyze lerobot/pusht</span>
-        <span className="hv-status"><i /> complete</span>
-      </div>
-      <div className="hv-body">
-        <div className="hv-map">
-          <div className="hv-map-head">
-            <span>Episode map</span>
-            <span>{EPISODE_TOTAL} episodes · 25,650 frames</span>
-          </div>
-          <div className="hv-grid" style={{ '--cols': EPISODE_COLS }} aria-hidden="true">
-            {Array.from({ length: EPISODE_TOTAL }, (_, i) => (
-              <i
-                key={i}
-                className={DROPPED_EPISODES.has(i) ? 'drop' : 'keep'}
-                style={{ '--d': `${(i % EPISODE_COLS) * 45 + Math.floor(i / EPISODE_COLS) * 12}ms` }}
-              />
-            ))}
-          </div>
-          <div className="hv-legend">
-            <span><i className="keep" /> Keep</span>
-            <span><i className="drop" /> Drop</span>
-          </div>
-        </div>
-        <div className="hv-side">
-          <ul className="hv-checks">
-            {ANALYZE_LINES.map((check) => (
-              <li className={check.ok ? 'ok' : 'warn'} key={check.label}>
-                {check.ok ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
-                <span>{check.label}</span>
-                <small>{check.detail}</small>
-              </li>
-            ))}
-          </ul>
-          <div className="hv-decision">
-            <span>Decision</span>
-            <strong>Train on {EPISODE_KEPT} / {EPISODE_TOTAL}</strong>
-            <small>{EPISODE_TOTAL - EPISODE_KEPT} redundant episodes dropped, every one traceable to a signal</small>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 function Reveal({ as: Tag = 'div', className = '', delay = 0, children, ...props }) {
   const ref = useRef(null)
@@ -462,16 +388,13 @@ function App() {
 
       <main>
         <header className="hero">
-          <div className="hero-bg" aria-hidden="true" />
-          <div className="container hero-inner">
+          <div className="hero-inner">
             <div className="hero-copy">
               <a className="hero-eyebrow" href={LINKS.integrity} target="_blank" rel="noreferrer">
                 <span>v0.13</span> Integrity checks validated by fault injection <ArrowRight size={13} />
               </a>
               <h1>
-                Train robot policies on
-                <br />
-                <span className="hero-h1-muted">the data that matters.</span>
+                Train robot policies on <span className="hero-h1-muted">the data that matters.</span>
               </h1>
               <p className="hero-lede">
                 Calibra audits robotics datasets, flags broken and redundant episodes, and
@@ -490,7 +413,7 @@ function App() {
               </p>
             </div>
             <div className="hero-visual-wrap">
-              <HeroVisual />
+              <HeroFigure />
             </div>
           </div>
         </header>
