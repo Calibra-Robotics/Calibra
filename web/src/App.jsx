@@ -39,8 +39,8 @@ const NAV_LINKS = [
 ]
 
 const STATS = [
-  { number: '75%', label: 'less training data', note: 'at matched policy performance' },
-  { number: '0.8%', label: 'difference from full-data performance', note: 'LeRobot PushT · 25% retention · 5 seeds' },
+  { number: '75%', label: 'less training data', note: 'at matched prediction error' },
+  { number: '0.8%', label: 'difference from full-data prediction error', note: 'LeRobot PushT · 25% retention · 5 seeds' },
   { number: '55%', label: 'better rare-behavior preservation', note: 'vs. random coreset selection' },
 ]
 
@@ -49,14 +49,14 @@ const WORKFLOW = [
     number: '01',
     name: 'Integrity',
     question: 'Can I trust this data?',
-    detail: 'Detect corrupted episodes, timing problems, invalid actions, broken frames, and other structural failures.',
+    detail: 'Detect corrupted episodes, timing problems, invalid actions, and broken frames.',
     command: 'calibra integrity',
   },
   {
     number: '02',
     name: 'Characterize',
     question: 'What does each episode contain?',
-    detail: 'Measure quality risk, anomaly signals, coverage contribution, redundancy, success, and other episode-level characteristics.',
+    detail: 'Measure quality risk, anomaly signals, coverage contribution, redundancy, and success for every episode.',
     command: 'calibra <path>',
   },
   {
@@ -257,8 +257,8 @@ function StatsBar() {
       </div>
       <div className="container">
         <p className="stats-caveat">
-          Measured on LeRobot PushT. Curation gains hold up across a broader 5-seed sweep on
-          3 datasets and 3 policy families (BC-MLP, ACT, Diffusion Policy).{' '}
+          Measured on LeRobot PushT; gains hold across 3 datasets and 3 policy families
+          (BC-MLP, ACT, Diffusion Policy).{' '}
           <a href={LINKS.benchmarks} target="_blank" rel="noreferrer">See the full benchmark table</a>.
         </p>
       </div>
@@ -332,9 +332,7 @@ function App() {
           </div>
           <div className="nav-right">
             <div className="nav-badges">
-              <a className="nav-pill" href={LINKS.licensing} target="_blank" rel="noreferrer">Open Source</a>
               <StarPill />
-              <a className="nav-pill" href={LINKS.pypi} target="_blank" rel="noreferrer">PyPI</a>
             </div>
             <a className="nav-github" href={LINKS.github} target="_blank" rel="noreferrer">
               <Github size={17} /> GitHub
@@ -407,10 +405,6 @@ function App() {
                 </a>
                 <CopyCommand />
               </div>
-              <p className="hero-proof">
-                <strong>75% less data</strong> within 0.8% of full-data performance on LeRobot PushT.{' '}
-                <a href="#benchmark">See the benchmark</a>
-              </p>
             </div>
             <div className="hero-visual-wrap">
               <HeroFigure />
@@ -429,8 +423,7 @@ function App() {
                 <h2><strong>75% smaller</strong> dataset. Prediction error within 0.8% of full-data training.</h2>
                 <p>
                   Calibra retained 41 of 165 training episodes while preserving more
-                  action-space tail coverage than a random coreset, and matching the
-                  full-dataset baseline across 5 seeds.
+                  action-space tail coverage than a random coreset.
                 </p>
                 <div className="benchmark-meta">
                   <span>5 seeds</span><span>120 epochs</span><span>BC-MLP</span><span>25% retained</span>
@@ -459,10 +452,6 @@ function App() {
                   <div><i style={{ '--bar-width': '97.9%' }} /></div>
                   <strong>429.77</strong>
                 </div>
-                <div className="tail-coverage">
-                  <div><span>Calibra tail coverage</span><strong>52.0%</strong></div>
-                  <div><span>Random tail coverage</span><strong>33.6%</strong></div>
-                </div>
                 <p>Source: 5-seed retention sweep. Full-data MSE is the unfiltered 165-episode baseline.</p>
               </div>
             </Reveal>
@@ -473,7 +462,6 @@ function App() {
           <div className="container">
             <Reveal as="div" className="section-intro">
               <h2>Fix the data question before the model question.</h2>
-              <p>Calibra turns an unknown robotics dataset into an explicit training decision.</p>
             </Reveal>
             <div className="workflow-grid">
               {WORKFLOW.map((step, index) => (
@@ -502,8 +490,6 @@ function App() {
                 your training pipeline.
               </p>
               <ul>
-                <li><CheckCircle2 size={18} /> Open source: read, modify, and self-host the code</li>
-                <li><CheckCircle2 size={18} /> Episode-level characterization</li>
                 <li><CheckCircle2 size={18} /> Explicit KEEP / DROP / REVIEW / ANNOTATE decisions</li>
                 <li><CheckCircle2 size={18} /> JSONL and Parquet annotation exports</li>
                 <li><CheckCircle2 size={18} /> CI-friendly, deterministic analysis</li>
@@ -568,11 +554,8 @@ function App() {
             <Reveal as="div" className="cta-panel">
               <span className="cta-kicker">Before your next training run</span>
               <h2>Check the data first.</h2>
-              <p>Free and open source. Install Calibra locally or inspect a public LeRobot dataset in the browser, no account, no cloud upload.</p>
+              <p>Free and open source. One command to install.</p>
               <CopyCommand large />
-              <a className="button button-primary" href={LINKS.demo} target="_blank" rel="noreferrer">
-                Try the Hugging Face demo <ExternalLink size={16} />
-              </a>
             </Reveal>
           </div>
         </section>

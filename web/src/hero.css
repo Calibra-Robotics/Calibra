@@ -84,7 +84,7 @@
   color: var(--ink);
   font-family: var(--display);
   font-size: clamp(40px, 4.9vw, 68px);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.02;
   letter-spacing: -0.04em;
   text-wrap: balance;
@@ -113,33 +113,6 @@
 .hero-actions .copy-command {
   width: auto;
   min-height: 50px;
-}
-
-.hero-proof {
-  margin: 28px 0 0;
-  padding-left: 14px;
-  color: var(--muted);
-  border-left: 2px solid var(--ink);
-  font-size: 13px;
-  line-height: 1.55;
-}
-
-.hero-proof strong {
-  color: var(--ink);
-  font-weight: 600;
-}
-
-.hero-proof a {
-  margin-left: 4px;
-  color: var(--ink);
-  text-decoration: underline;
-  text-decoration-color: var(--line-strong);
-  text-underline-offset: 3px;
-  transition: text-decoration-color 160ms ease;
-}
-
-.hero-proof a:hover {
-  text-decoration-color: var(--ink);
 }
 
 .hero-visual-wrap {

@@ -951,36 +951,6 @@ footer a:hover {
   background: var(--green-bright);
 }
 
-.tail-coverage {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 25px;
-}
-
-.tail-coverage > div {
-  padding: 13px;
-  background: var(--paper);
-  border-radius: 5px;
-}
-
-.tail-coverage span,
-.tail-coverage strong {
-  display: block;
-}
-
-.tail-coverage span {
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.tail-coverage strong {
-  margin-top: 4px;
-  color: var(--green-bright);
-  font-family: var(--mono);
-  font-size: 16px;
-}
-
 .benchmark-card > p {
   margin: 17px 0 0;
   color: var(--muted);
