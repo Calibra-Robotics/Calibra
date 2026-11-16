@@ -161,22 +161,36 @@ def _run(cmd: list[str], dry_run: bool) -> None:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     ap.add_argument("--policy-path", help="Hub repo id or local pretrained_model directory")
-    ap.add_argument("--stage0", action="store_true", help=f"Evaluate {REFERENCE_REPO} with the model-card settings and apply the Stage 0 gate")
+    ap.add_argument(
+        "--stage0",
+        action="store_true",
+        help=f"Evaluate {REFERENCE_REPO} with the model-card settings and apply the Stage 0 gate",
+    )
     ap.add_argument("--n-episodes", type=int, default=REFERENCE_N_EPISODES)
     ap.add_argument("--batch-size", type=int, default=REFERENCE_BATCH_SIZE)
     ap.add_argument("--start-seed", type=int, default=REFERENCE_START_SEED)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--tolerance", type=float, default=STAGE0_TOLERANCE_PP)
-    ap.add_argument("--work-dir", type=pathlib.Path, default=REPO_ROOT / "outputs" / "closed_loop_eval")
+    ap.add_argument(
+        "--work-dir", type=pathlib.Path, default=REPO_ROOT / "outputs" / "closed_loop_eval"
+    )
     ap.add_argument("--out", type=pathlib.Path, help="Result JSON path")
     ap.add_argument("--dry-run", action="store_true", help="Print commands only")
     args = ap.parse_args()
 
     if args.stage0:
-        if args.policy_path or args.n_episodes != REFERENCE_N_EPISODES or args.start_seed != REFERENCE_START_SEED:
-            ap.error("--stage0 fixes the policy, episode count and seeds to the model card's settings")
+        if (
+            args.policy_path
+            or args.n_episodes != REFERENCE_N_EPISODES
+            or args.start_seed != REFERENCE_START_SEED
+        ):
+            ap.error(
+                "--stage0 fixes the policy, episode count and seeds to the model card's settings"
+            )
         args.policy_path = REFERENCE_REPO
     if not args.policy_path:
         ap.error("--policy-path is required unless --stage0 is given")
@@ -188,8 +202,15 @@ def main() -> int:
     if args.dry_run or _needs_migration(policy_path):
         migrated = run_dir / "migrated_policy"
         _run(
-            [sys.executable, "-m", "lerobot.processor.migrate_policy_normalization",
-             "--pretrained-path", policy_path, "--output-dir", str(migrated)],
+            [
+                sys.executable,
+                "-m",
+                "lerobot.processor.migrate_policy_normalization",
+                "--pretrained-path",
+                policy_path,
+                "--output-dir",
+                str(migrated),
+            ],
             args.dry_run,
         )
         policy_path = str(migrated)
@@ -198,15 +219,17 @@ def main() -> int:
     lerobot_eval = shutil.which("lerobot-eval") or "lerobot-eval"
     started = time.time()
     _run(
-        [lerobot_eval,
-         f"--policy.path={policy_path}",
-         "--env.type=pusht",
-         f"--eval.n_episodes={args.n_episodes}",
-         f"--eval.batch_size={args.batch_size}",
-         f"--seed={args.start_seed}",
-         f"--policy.device={args.device}",
-         "--policy.use_amp=false",
-         f"--output_dir={eval_dir}"],
+        [
+            lerobot_eval,
+            f"--policy.path={policy_path}",
+            "--env.type=pusht",
+            f"--eval.n_episodes={args.n_episodes}",
+            f"--eval.batch_size={args.batch_size}",
+            f"--seed={args.start_seed}",
+            f"--policy.device={args.device}",
+            "--policy.use_amp=false",
+            f"--output_dir={eval_dir}",
+        ],
         args.dry_run,
     )
     wall_clock_s = time.time() - started
@@ -217,7 +240,9 @@ def main() -> int:
     outcomes = per_episode_outcomes(eval_info, args.start_seed)
     expected = set(range(args.start_seed, args.start_seed + args.n_episodes))
     if set(outcomes) != expected:
-        raise RuntimeError(f"got {len(outcomes)} episodes, expected seeds {args.start_seed}..{args.start_seed + args.n_episodes - 1}")
+        raise RuntimeError(
+            f"got {len(outcomes)} episodes, expected seeds {args.start_seed}..{args.start_seed + args.n_episodes - 1}"
+        )
 
     record = {
         "protocol": "experiments/CLOSED_LOOP_PROTOCOL.md",
@@ -232,7 +257,10 @@ def main() -> int:
             "device": args.device,
         },
         "result": summarize(outcomes),
-        "timing": {"wall_clock_s": wall_clock_s, "eval_s": eval_info.get("overall", {}).get("eval_s")},
+        "timing": {
+            "wall_clock_s": wall_clock_s,
+            "eval_s": eval_info.get("overall", {}).get("eval_s"),
+        },
         "revision": _git_revision(),
         "environment": _environment(),
         "eval_dir": str(eval_dir),
@@ -241,7 +269,9 @@ def main() -> int:
     if args.stage0:
         from huggingface_hub import hf_hub_download
 
-        ref_info = json.loads(pathlib.Path(hf_hub_download(REFERENCE_REPO, "eval_info.json")).read_text())
+        ref_info = json.loads(
+            pathlib.Path(hf_hub_download(REFERENCE_REPO, "eval_info.json")).read_text()
+        )
         ref = per_episode_outcomes(ref_info, REFERENCE_START_SEED)
         gap = record["result"]["pc_success"] - REFERENCE_PC_SUCCESS
         record["stage0"] = {
@@ -259,12 +289,18 @@ def main() -> int:
 
     res = record["result"]
     lo, hi = res["wilson95_pc"]
-    print(f"success {res['pc_success']:.1f}% ({res['n_success']}/{res['n_episodes']}), 95% CI [{lo:.1f}, {hi:.1f}]")
-    print(f"wall clock {wall_clock_s / 60:.1f} min ({wall_clock_s / args.n_episodes:.2f} s/episode)")
+    print(
+        f"success {res['pc_success']:.1f}% ({res['n_success']}/{res['n_episodes']}), 95% CI [{lo:.1f}, {hi:.1f}]"
+    )
+    print(
+        f"wall clock {wall_clock_s / 60:.1f} min ({wall_clock_s / args.n_episodes:.2f} s/episode)"
+    )
     if args.stage0:
         s0 = record["stage0"]
         verdict = "PASS" if s0["passed"] else "FAIL"
-        print(f"Stage 0 {verdict}: {s0['difference_pp']:+.1f} pp vs {REFERENCE_PC_SUCCESS}% (tolerance ±{args.tolerance} pp)")
+        print(
+            f"Stage 0 {verdict}: {s0['difference_pp']:+.1f} pp vs {REFERENCE_PC_SUCCESS}% (tolerance ±{args.tolerance} pp)"
+        )
         print(f"per-seed agreement with reference: {s0['per_seed_vs_reference']['agreement']:.1%}")
         return 0 if s0["passed"] else 1
     return 0
