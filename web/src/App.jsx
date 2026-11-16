@@ -35,6 +35,7 @@ const LINKS = {
 const INSTALL_COMMAND = 'pip install calibra-robotics'
 
 const NAV_LINKS = [
+  { href: '#video', label: 'Video' },
   { href: '#benchmark', label: 'Benchmark' },
   { href: '#workflow', label: 'How it works' },
   { href: LINKS.docs, label: 'Docs' },
@@ -42,7 +43,7 @@ const NAV_LINKS = [
 
 const STATS = [
   { number: '75%', label: 'less training data', note: 'at matched prediction error' },
-  { number: '0.8%', label: 'difference from full-data prediction error', note: 'LeRobot PushT · 25% retention · 5 seeds' },
+  { number: '0.8%', label: 'higher prediction error than full-data training', note: 'LeRobot PushT · 25% retention · 5 seeds' },
   { number: '55%', label: 'better rare-behavior preservation', note: 'vs. random coreset selection' },
 ]
 
@@ -448,11 +449,38 @@ function App() {
 
         <StatsBar />
 
+        <section className="video section" id="video">
+          <div className="container">
+            <Reveal as="div" className="section-intro compact video-intro">
+              <h2>See it in 60 seconds.</h2>
+              <p>
+                Calibra audits a real LeRobot dataset, keeps a diverse 25% of the episodes,
+                and we compare training on that subset against training on everything.
+              </p>
+            </Reveal>
+            <Reveal as="div" className="video-frame" delay={120}>
+              <video
+                controls
+                playsInline
+                preload="none"
+                poster={`${import.meta.env.BASE_URL}calibra-demo-poster.jpg`}
+                aria-label="Calibra demo: auditing and pruning the lerobot/pusht dataset"
+              >
+                <source src={`${import.meta.env.BASE_URL}calibra-demo.mp4`} type="video/mp4" />
+              </video>
+            </Reveal>
+            <p className="video-note">
+              Offline action-prediction error on one benchmark (LeRobot PushT, BC-MLP), not
+              policy success rate. Clips are training demonstrations, not policy rollouts.
+            </p>
+          </div>
+        </section>
+
         <section className="research section" id="benchmark">
           <div className="container">
             <Reveal as="div" className="research-card">
               <div className="research-copy">
-                <h2><strong>75% smaller</strong> dataset. Prediction error within 0.8% of full-data training.</h2>
+                <h2><strong>75% smaller</strong> dataset. Only 0.8% higher prediction error than full-data training.</h2>
                 <p>
                   Calibra retained 41 of 165 training episodes while preserving more
                   action-space tail coverage than a random coreset.

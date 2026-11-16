@@ -1,0 +1,42 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CALIBRA ANALYSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Dataset
+    Name       : pusht
+    Episodes   : 206
+    Frames     : 25,650
+    Format     : lerobot
+    Tasks      : 1 distinct
+    Action dim : 2
+
+────────────────────────────────────────────────────────────
+  Integrity
+    ✅ Timestamps & sync
+    ✅ Episode structure
+    ·   Camera feed  (not evaluated)
+    ✅ Motion & control
+    Integrity score: 100/100 · Healthy
+────────────────────────────────────────────────────────────
+  Quality (Calibra Score)    98.3 / 100   ·  Excellent
+  Coverage / diversity       94.3 / 100
+  Redundancy (estimated)     3.2%  of state-space occupies duplicate regions
+────────────────────────────────────────────────────────────
+  RECOMMENDATION
+
+    Regime             : MODERATE NOISE
+    Training set       : 175 / 206 episodes
+    Expected retention : 85%
+
+    Reasons:
+      • removes 31 redundant episodes (diversity selection)
+      • preserves behavioral coverage via greedy max-coverage selection
+
+    This is a heuristic starting point (~1 - measured redundancy), not a
+    validated retention curve. Run the design-partner protocol
+    (`calibra experiment` + `calibra case-study`) before committing a
+    production training run to this number.
+
+    Export this coreset: calibra analyze <path> --export coreset_index.json
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Calibra v0.13.1  ·  config dbe2627e527dc227  ·  generated 2026-11-16T10:41:34+00:00

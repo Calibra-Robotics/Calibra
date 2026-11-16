@@ -1,0 +1,16 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CALIBRA PRUNING SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Original episodes  : 206
+  Quality failures   : 0  (removed in Stage 1)
+  Diversity pruned   : 154  (removed in Stage 2)
+  Coreset size       : 52  (25.2% of original)
+  Not evaluated      : 0  (passed Stage 1 with no quality metrics)
+  Method             : quality_filter + greedy_max_coverage
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Train on the kept episodes (no export needed):
+    lerobot-train --policy.type=<policy> \
+      --dataset.repo_id=local/pusht \
+      --dataset.root=pusht \
+      '--dataset.episodes=[4,6,8,13,19,20,24,27,30,31,36,37,41,43,54,55,61,62,63,67,69,74,76,82,92,93,98,107,120,122,136,137,140,148,151,154,156,157,159,161,168,174,176,179,180,181,184,185,186,190,195,200]'

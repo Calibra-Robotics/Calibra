@@ -1,0 +1,27 @@
+1
+00:00:00,600 --> 00:00:07,800
+Robot learning teams train on every demonstration they collect.
+
+2
+00:00:08,400 --> 00:00:14,000
+Calibra audits the dataset first: integrity, quality and coverage.
+
+3
+00:00:14,000 --> 00:00:21,800
+Then it keeps a diverse 25%: quality filter plus greedy max-coverage selection.
+
+4
+00:00:22,400 --> 00:00:29,800
+PushT benchmark: all 165 training episodes vs. Calibra's 41.
+
+5
+00:00:30,200 --> 00:00:41,800
+At 5 to 25% budgets, Calibra subsets stay closer to full-data error than random subsets.
+
+6
+00:00:42,400 --> 00:00:51,800
+75% less training data. Only 0.8% higher prediction error than full-data training.
+
+7
+00:00:52,400 --> 00:00:59,000
+Have a robotics dataset? Let's test Calibra on it.

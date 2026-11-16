@@ -838,6 +838,43 @@ footer a:hover {
   filter: brightness(0.92) saturate(1.05);
 }
 
+.video {
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.video-intro {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.video-frame {
+  max-width: 1040px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0a0a0a;
+  box-shadow: 0 24px 60px -24px var(--shadow);
+}
+
+.video-frame video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  background: #0a0a0a;
+}
+
+.video-note {
+  max-width: 640px;
+  margin: 20px auto 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
 .research {
   background: var(--surface);
   border-bottom: 1px solid var(--line);
